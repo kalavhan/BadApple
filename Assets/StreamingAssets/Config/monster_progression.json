@@ -1,0 +1,352 @@
+{
+  "baseXp": 60,
+  "growth": 1.15,
+  "aliveXpPerSecond": 1,
+  "doorDamageXp": 0.2,
+  "biteDamageXp": 0.5,
+  "partXp": 25,
+  "killXp": 150,
+  "healthPerLevel": 0.08,
+  "attackPerLevel": 0.07,
+  "speedPerLevel": 0.01,
+  "speedBonusCap": 0.3,
+  "slotLevels": [
+    1,
+    3,
+    6,
+    9,
+    12
+  ],
+  "evolutionLevels": [
+    5,
+    10,
+    15,
+    20
+  ],
+  "ascensionEvery": 5,
+  "hungerSeconds": 45,
+  "frenzyMultiplier": 1.3,
+  "incomeThreshold": 8,
+  "incomeExcessMultiplier": 0.75,
+  "partSpawnSeconds": 55,
+  "partSpawnReductionPerNight": 4,
+  "partSpawnMinSeconds": 16,
+  "lairHealPerSecond": 0.06,
+  "commitAfterSeconds": 10,
+  "riskPerNight": 0.18,
+  "riskPerMinuteWithoutKill": 0.25,
+  "retreatHealth": 0.3,
+  "pools": [
+    {
+      "monster": "stitchwork_chef",
+      "abilities": [
+        "rampage",
+        "jam",
+        "blackout",
+        "lunge",
+        "cloak",
+        "sticky_slime",
+        "nightmare_gaze"
+      ]
+    },
+    {
+      "monster": "moldy_matron",
+      "abilities": [
+        "rampage",
+        "jam",
+        "blackout",
+        "lunge",
+        "cloak",
+        "sticky_slime",
+        "nightmare_gaze"
+      ]
+    },
+    {
+      "monster": "bellhop_wraith",
+      "abilities": [
+        "rampage",
+        "jam",
+        "blackout",
+        "lunge",
+        "cloak",
+        "sticky_slime",
+        "nightmare_gaze"
+      ]
+    }
+  ],
+  "evolutions": [
+    {
+      "monster": "stitchwork_chef",
+      "branch": "butcher",
+      "level": 5,
+      "name": "Butcher",
+      "tint": "#CB7666",
+      "passive": "door",
+      "ability": "cleaver",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "stitchwork_chef",
+      "branch": "butcher",
+      "level": 10,
+      "name": "Head Butcher",
+      "tint": "#CB7666",
+      "passive": "door",
+      "ability": "cleaver",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "stitchwork_chef",
+      "branch": "butcher",
+      "level": 15,
+      "name": "The Abattoir",
+      "tint": "#CB7666",
+      "passive": "door",
+      "ability": "cleaver",
+      "art": "",
+      "accountLevel": 2
+    },
+    {
+      "monster": "stitchwork_chef",
+      "branch": "butcher",
+      "level": 20,
+      "name": "The Abattoir Ascendant",
+      "tint": "#CB7666",
+      "passive": "door",
+      "ability": "cleaver",
+      "art": "",
+      "accountLevel": 3
+    },
+    {
+      "monster": "stitchwork_chef",
+      "branch": "glutton",
+      "level": 5,
+      "name": "Glutton",
+      "tint": "#B2CB76",
+      "passive": "eat",
+      "ability": "devour",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "stitchwork_chef",
+      "branch": "glutton",
+      "level": 10,
+      "name": "Banquet Horror",
+      "tint": "#B2CB76",
+      "passive": "eat",
+      "ability": "devour",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "stitchwork_chef",
+      "branch": "glutton",
+      "level": 15,
+      "name": "The Feast",
+      "tint": "#B2CB76",
+      "passive": "eat",
+      "ability": "devour",
+      "art": "",
+      "accountLevel": 2
+    },
+    {
+      "monster": "stitchwork_chef",
+      "branch": "glutton",
+      "level": 20,
+      "name": "The Endless Feast",
+      "tint": "#B2CB76",
+      "passive": "eat",
+      "ability": "devour",
+      "art": "",
+      "accountLevel": 3
+    },
+    {
+      "monster": "moldy_matron",
+      "branch": "spore",
+      "level": 5,
+      "name": "Spore Mother",
+      "tint": "#99E4E8",
+      "passive": "slow",
+      "ability": "spore_burst",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "moldy_matron",
+      "branch": "spore",
+      "level": 10,
+      "name": "Mycelium Matriarch",
+      "tint": "#99E4E8",
+      "passive": "slow",
+      "ability": "spore_burst",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "moldy_matron",
+      "branch": "spore",
+      "level": 15,
+      "name": "The Bloom",
+      "tint": "#99E4E8",
+      "passive": "slow",
+      "ability": "spore_burst",
+      "art": "",
+      "accountLevel": 2
+    },
+    {
+      "monster": "moldy_matron",
+      "branch": "spore",
+      "level": 20,
+      "name": "The Bloom Ascendant",
+      "tint": "#99E4E8",
+      "passive": "slow",
+      "ability": "spore_burst",
+      "art": "",
+      "accountLevel": 3
+    },
+    {
+      "monster": "moldy_matron",
+      "branch": "rot",
+      "level": 5,
+      "name": "Rot Queen",
+      "tint": "#BD83CD",
+      "passive": "decay",
+      "ability": "rot_wave",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "moldy_matron",
+      "branch": "rot",
+      "level": 10,
+      "name": "Blight Empress",
+      "tint": "#BD83CD",
+      "passive": "decay",
+      "ability": "rot_wave",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "moldy_matron",
+      "branch": "rot",
+      "level": 15,
+      "name": "The Decay",
+      "tint": "#BD83CD",
+      "passive": "decay",
+      "ability": "rot_wave",
+      "art": "",
+      "accountLevel": 2
+    },
+    {
+      "monster": "moldy_matron",
+      "branch": "rot",
+      "level": 20,
+      "name": "The Eternal Decay",
+      "tint": "#BD83CD",
+      "passive": "decay",
+      "ability": "rot_wave",
+      "art": "",
+      "accountLevel": 3
+    },
+    {
+      "monster": "bellhop_wraith",
+      "branch": "phantom",
+      "level": 5,
+      "name": "Phantom",
+      "tint": "#AED8FF",
+      "passive": "phase",
+      "ability": "haunt",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "bellhop_wraith",
+      "branch": "phantom",
+      "level": 10,
+      "name": "Night Porter",
+      "tint": "#AED8FF",
+      "passive": "phase",
+      "ability": "haunt",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "bellhop_wraith",
+      "branch": "phantom",
+      "level": 15,
+      "name": "The Concierge",
+      "tint": "#AED8FF",
+      "passive": "phase",
+      "ability": "haunt",
+      "art": "",
+      "accountLevel": 2
+    },
+    {
+      "monster": "bellhop_wraith",
+      "branch": "phantom",
+      "level": 20,
+      "name": "The Eternal Concierge",
+      "tint": "#AED8FF",
+      "passive": "phase",
+      "ability": "haunt",
+      "art": "",
+      "accountLevel": 3
+    },
+    {
+      "monster": "bellhop_wraith",
+      "branch": "poltergeist",
+      "level": 5,
+      "name": "Poltergeist",
+      "tint": "#F1DD76",
+      "passive": "stun",
+      "ability": "furniture",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "bellhop_wraith",
+      "branch": "poltergeist",
+      "level": 10,
+      "name": "Room Service",
+      "tint": "#F1DD76",
+      "passive": "stun",
+      "ability": "furniture",
+      "art": "",
+      "accountLevel": 1
+    },
+    {
+      "monster": "bellhop_wraith",
+      "branch": "poltergeist",
+      "level": 15,
+      "name": "The Checkout",
+      "tint": "#F1DD76",
+      "passive": "stun",
+      "ability": "furniture",
+      "art": "",
+      "accountLevel": 2
+    },
+    {
+      "monster": "bellhop_wraith",
+      "branch": "poltergeist",
+      "level": 20,
+      "name": "The Final Checkout",
+      "tint": "#F1DD76",
+      "passive": "stun",
+      "ability": "furniture",
+      "art": "",
+      "accountLevel": 3
+    }
+  ],
+  "ascensionPerks": [
+    "Vitality",
+    "Haste",
+    "Quickening",
+    "Disruption",
+    "Sight"
+  ],
+  "maxStunSeconds": 0.3,
+  "stunRecoverySeconds": 1.2
+}

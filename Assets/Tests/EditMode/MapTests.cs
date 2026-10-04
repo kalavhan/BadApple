@@ -24,7 +24,7 @@ namespace BadAppleHotel.Tests
         [Test]
         public void Every_letter_shape_is_connected()
         {
-            foreach (var letter in cfg.map.letters)
+            foreach (var letter in new[] { "L", "T", "U", "C", "E", "F", "H", "J", "O", "P", "S", "Z", "I", "Y", "A", "G" })
             {
                 var b = LetterShapes.Get(letter);
                 Assert.IsNotNull(b, "unknown letter " + letter);

@@ -22,7 +22,8 @@ namespace BadAppleHotel.Game
             // Irregular plots, separated by enough space for a full-width corridor and walls.
             for (int tries = 0; reservedLots.Count < roomCount && tries < 1600; tries++)
             {
-                int w = R(cfg.lotWidthMin, cfg.lotWidthMax), h = R(cfg.lotHeightMin, cfg.lotHeightMax);
+                int w = R(cfg.roomInteriorMin.x + 2, cfg.roomInteriorMax.x + 2), h = R(cfg.roomInteriorMin.y + 2, cfg.roomInteriorMax.y + 2);
+                if ((w-2)*(h-2)-(w+h-5) < cfg.roomMinBuildTiles) continue;
                 var rect = new RectInt(R(4, W - w - 4), R(4, H - h - 4), w, h);
                 var padded = new RectInt(rect.x - 3, rect.y - 3, w + 6, h + 6);
                 bool overlap = false;

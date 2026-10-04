@@ -1,32 +1,14 @@
 {
-  "width": 88,
-  "height": 56,
+  "width": 104,
+  "height": 64,
   "corridorWidth": 3,
   "verticalCorridors": 1,
   "lotWidthMin": 8,
-  "lotWidthMax": 14,
-  "lotHeightMin": 9,
-  "lotHeightMax": 16,
+  "lotWidthMax": 11,
+  "lotHeightMin": 7,
+  "lotHeightMax": 9,
   "lotGapMax": 4,
   "sideDoorChance": 0.35,
-  "letters": [
-    "L",
-    "T",
-    "U",
-    "C",
-    "E",
-    "F",
-    "H",
-    "J",
-    "O",
-    "P",
-    "S",
-    "Z",
-    "I",
-    "Y",
-    "A",
-    "G"
-  ],
   "cellSizeMin": 2,
   "cellSizeMax": 4,
   "nibbleMax": 3,
@@ -38,5 +20,15 @@
   "minDoorDistance": 7,
   "maxNearestDoorDistance": 32,
   "deadEndCount": 4,
-  "loopCount": 2
+  "loopCount": 2,
+  "roomMinBuildTiles": 24,
+  "roomInteriorMin": {
+    "x": 6,
+    "y": 5
+  },
+  "roomInteriorMax": {
+    "x": 9,
+    "y": 7
+  },
+  "roomFeatureChance": 0.85
 }

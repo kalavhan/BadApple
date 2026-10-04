@@ -26,14 +26,17 @@ namespace BadAppleHotel.Game
             return i >= 0 ? Cfg.bodyParts.parts[i].perPart : 0f;
         }
 
-        public float MaxHp(Monster m) => m.Def.baseHealth + PartCount(m, "torso") * PartValue("torso");
-        public float AttackMult(Monster m) => 1f + PartCount(m, "arm") * PartValue("arm");
-        public float RevealRadius(Monster m) => PartCount(m, "eye") * PartValue("eye");
+        public float MaxHp(Monster m) => (m.Def.baseHealth + PartCount(m, "torso") * PartValue("torso")) * (1 + (m.Level-1)*Cfg.progression.healthPerLevel + m.BonusHp) * (Endless ? Cfg.match.endless.healthMultiplier+(Night-1)*Cfg.match.endless.healthPerNight : 1);
+        public float AttackMult(Monster m) => (1f + PartCount(m, "arm") * PartValue("arm")) * (1+(m.Level-1)*Cfg.progression.attackPerLevel) * (Endless ? Cfg.match.endless.damageMultiplier+(Night-1)*Cfg.match.endless.damagePerNight : 1);
+        public float RevealRadius(Monster m) => PartCount(m, "eye") * PartValue("eye") + m.BonusReveal;
 
         public float MonsterSpeed(Monster m, float now)
         {
             if (now < m.StunUntil) return 0f;
             float s = m.Def.moveSpeed * (1f + PartCount(m, "leg") * PartValue("leg"));
+            s *= 1 + Mathf.Min(Cfg.progression.speedBonusCap, (m.Level-1)*Cfg.progression.speedPerLevel) + m.BonusSpeed;
+            if (now < m.SprintUntil) s *= Cfg.monsters.sprintMultiplier;
+            if (m.Frenzy) s *= Cfg.progression.frenzyMultiplier;
             if (now < m.SlowUntil) s *= 1f - m.SlowPct;
             return s;
         }
@@ -63,6 +66,8 @@ namespace BadAppleHotel.Game
             if (GameInput.ConsumePressed(KeyCode.Alpha1)) UseAbility(0);
             if (GameInput.ConsumePressed(KeyCode.Alpha2)) UseAbility(1);
             if (GameInput.ConsumePressed(KeyCode.Alpha3)) UseAbility(2);
+            if (GameInput.ConsumePressed(KeyCode.Alpha4)) UseAbility(3);
+            if (GameInput.ConsumePressed(KeyCode.Alpha5)) UseAbility(4);
         }
 
         void UpdateMonster(float dt, float now)
@@ -100,6 +105,7 @@ namespace BadAppleHotel.Game
             if (Phase == Phase.Night) MonsterAttack(m, dt, now);
             UpdateEating(m, dt);
 
+            if (Simulation) return;
             // visuals
             m.Sr.transform.position = new Vector3(m.Pos.x, m.Pos.y - 0.3f, 0f);
             m.Sr.sortingOrder = OrderFor(m.Pos.y - 0.3f);
@@ -111,11 +117,20 @@ namespace BadAppleHotel.Game
             else m.Sr.flipX = m.Facing.x < 0f;
             m.Sr.enabled = IsVisible(m.Pos);
             Color tint = Color.white;
+            var evolution = Evolution(m);
+            if (evolution != null) ColorUtility.TryParseHtmlString(evolution.tint, out tint);
+            m.Sr.transform.localScale = Vector3.one * (1 + m.EvolutionStage * 0.1f);
+            if (now-m.RevealedAt < 0.8f)
+            {
+                tint = Color.Lerp(tint,Color.white,0.5f+0.5f*Mathf.Sin(now*40));
+                m.Sr.transform.position += new Vector3(Mathf.Sin(now*60)*0.08f,0,0);
+            }
             if (now < m.StunUntil) tint = (Color)Palette.Mint;
             else if (now < m.SlowUntil) tint = new Color(0.75f, 0.9f, 1f);
             else if (now < m.BurnUntil) tint = new Color(1f, 0.8f, 0.55f);
             if (now < m.CloakUntil) tint.a = 0.35f;
             m.Sr.color = tint;
+            DrawAscensionAura(m);
         }
 
         /// <summary>True when nothing solid (wall, closed door, void) sits between two points.</summary>
@@ -152,13 +167,17 @@ namespace BadAppleHotel.Game
             if (prey != null)
             {
                 m.Biting = prey;
+                RecordAssault(prey.Room, false);
                 if (prey.Room != null)
                 {
                     prey.Room.LastAttackedTime = now;
                     m.AttackingRoom = prey.Room;
                 }
                 if (prey.Asleep) Wake(prey);
-                prey.Health -= m.Def.residentDamagePerSecond * AttackMult(m) * dt;
+                float biteDamage = Mathf.Min(prey.Health, m.Def.residentDamagePerSecond * AttackMult(m) * dt);
+                prey.Health -= biteDamage;
+                GainMonsterXp(m, biteDamage * Cfg.progression.biteDamageXp);
+                m.LastDamageAt = now; m.Frenzy = false;
                 if (prey.Health <= 0f) KillResident(prey);
                 return;
             }
@@ -177,7 +196,13 @@ namespace BadAppleHotel.Game
             float resist = Cfg.doors.levels[door.DoorLevel - 1].damageResistancePct;
             float rampage = now < m.RampageUntil ? m.RampageValue : 1f;
             float dmg = m.Def.doorDamagePerSecond * AttackMult(m) * rampage * (1f - resist) * dt;
+            dmg *= (m.Branch == "butcher" ? 1.6f : 1f) * (m.Frenzy ? Cfg.progression.frenzyMultiplier : 1f);
+            dmg = Mathf.Min(door.DoorHp, dmg);
             door.DoorHp -= dmg;
+            Wake(door.Owner);
+            RecordAssault(door);
+            GainMonsterXp(m, dmg * Cfg.progression.doorDamageXp);
+            m.LastDamageAt = now; m.Frenzy = false;
             door.LastAttackedTime = now;
             m.AttackingRoom = door;
             m.DreamPower += dmg * Cfg.economy.monsterIncome.dreamPowerPerDoorDamage;
@@ -185,6 +210,7 @@ namespace BadAppleHotel.Game
             {
                 door.DoorHp = 0f;
                 door.DoorBroken = true;
+                Metrics.DoorBreaks++;
                 RefreshDoor(door);
                 Announce(door.Owner.IsHuman ? "Your door is broken! Rebuild it or fight back!" : door.Owner.Name + "'s door is broken!", 3f);
             }
@@ -203,15 +229,17 @@ namespace BadAppleHotel.Game
                 return;
             }
             if (m.EatingPart != near) { m.EatingPart = near; m.EatProgress = 0f; }
-            m.EatProgress += dt;
+            m.EatProgress += dt * (m.Branch == "glutton" ? 2 : 1);
             if (m.EatProgress < Cfg.bodyParts.eatSeconds) return;
 
             float oldMax = MaxHp(m);
             m.Parts[near.TypeIndex]++;
             m.Hp += MaxHp(m) - oldMax;
             m.Faith += Cfg.economy.monsterIncome.faithPerBodyPart;
+            GainMonsterXp(m, Cfg.progression.partXp);
+            if (m.Branch == "glutton") m.Hp = Mathf.Min(MaxHp(m),m.Hp+MaxHp(m)*0.15f);
             Parts.Remove(near);
-            Destroy(near.Sr.gameObject);
+            RemoveObject(near.Sr.gameObject);
             m.EatingPart = null;
             m.EatProgress = 0f;
             AddFloater(m.Pos + Vector2.up * 1.5f, "+" + near.Def.name, (Color)Palette.Moss);
@@ -221,7 +249,7 @@ namespace BadAppleHotel.Game
         void Respawn(Monster m)
         {
             m.Dead = false;
-            m.Pos = HotelMap.Center(Map.MonsterSpawn);
+            m.Pos = m.Lair != null ? HotelMap.Center(m.Lair.Def.BedTile) : HotelMap.Center(Map.MonsterSpawn);
             m.Hp = MaxHp(m);
             Announce("The " + m.Def.name + " crawls back out of the dark...", 3f);
         }
@@ -247,7 +275,7 @@ namespace BadAppleHotel.Game
             var m = Monster;
             m.Dead = true;
             m.Hp = 0f;
-            m.RespawnAt = Time.time + Cfg.match.monsterRespawnSeconds;
+            m.RespawnAt = Now + Cfg.match.monsterRespawnSeconds;
             m.Sr.enabled = false;
             if (killer != null && killer.Alive)
             {
@@ -276,10 +304,16 @@ namespace BadAppleHotel.Game
             r.Alive = false;
             r.Asleep = false;
             r.Health = 0f;
+            // A phased-in wraith must not remain sealed inside a dead guest's room.
+            if (r.Room != null)
+            {
+                r.Room.DoorOpen = true; r.Room.CloseWhenClear = false; RefreshDoor(r.Room);
+            }
             var reward = EconomyRules.MonsterKillReward(Cfg.economy, r.DreamPower, r.Faith, r.XpValue);
             m.DreamPower += reward.DreamPower + Cfg.economy.monsterIncome.dreamPowerPerResidentKill;
             m.Faith += reward.Faith;
-            m.MatchXp += reward.Xp;
+            GainMonsterXp(m, Cfg.progression.killXp);
+            m.LastKillAt = Now;
             m.Kills++;
             r.DreamPower = 0f;
             r.Faith = 0f;
@@ -300,7 +334,7 @@ namespace BadAppleHotel.Game
             if (m == null || m.Dead || Phase != Phase.Night) return false;
             if (i < 0 || i >= m.Loadout.Length || m.Cooldowns[i] > 0f) return false;
             var a = m.Loadout[i];
-            float now = Time.time;
+            float now = Now;
             switch (a.effect)
             {
                 case "towerDamageMultiplier":
@@ -326,11 +360,13 @@ namespace BadAppleHotel.Game
                 case "towerUntargetable":
                     m.CloakUntil = now + a.durationSeconds;
                     break;
+                case "residentSlowZone":
+                    m.SlowZoneUntil = now + a.durationSeconds; break;
                 default:
                     AddLog(a.name + " is not in the demo yet.");
                     return false;
             }
-            m.Cooldowns[i] = a.cooldownSeconds;
+            m.Cooldowns[i] = a.cooldownSeconds * (1-m.CooldownReduction);
             if (IsVisible(m.Pos)) AddFloater(m.Pos + Vector2.up * 2.2f, a.name + "!", (Color)Palette.Mint);
             if (!m.IsHuman) AddLog("The monster used " + a.name + ".");
             return true;

@@ -19,6 +19,8 @@ namespace BadAppleHotel.EditorTools
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
             PlayerSettings.Android.useCustomKeystore = false;
+            PlayerSettings.bundleVersion = "1.1-playtest";
+            PlayerSettings.Android.bundleVersionCode = 2;
             EditorUserBuildSettings.buildAppBundle = false;
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {

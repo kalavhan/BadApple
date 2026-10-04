@@ -44,6 +44,8 @@ namespace BadAppleHotel.Game
         public Vector2Int Tile;
         public float Cooldown;
         public float BlinkUntil;
+        public bool Decoy;
+        public float DisabledUntil, Decay;
         public SpriteRenderer Sr;
         public bool IsWeapon => Def.damageType != "none" && Def.damageType != "" && Def.damageType != null;
         public bool IsFaith => Def.effect == "faith" || Def.faithPerSecond > 0f;
@@ -59,6 +61,7 @@ namespace BadAppleHotel.Game
         public float DoorHp;
         public bool DoorBroken;
         public bool DoorOpen = true;
+        public bool CloseWhenClear;
         public int BedLevel = 1;
         public readonly TowerInstance[] Slots;
         public float LastAttackedTime = -99f;
@@ -109,6 +112,7 @@ namespace BadAppleHotel.Game
         public int Id;
         public string Name;
         public bool IsHuman;
+        public bool IsMonster;
         public int ColorIndex;
         public Room Room;
         public float DreamPower;
@@ -123,6 +127,9 @@ namespace BadAppleHotel.Game
         public Vector2 Pos;
         public Vector2 Facing = Vector2.right;
         public bool Asleep;
+        public bool SleepRequested;
+        public readonly Navigator Navigator = new Navigator();
+        public float SlowUntil;
         public float SleepBlend = 1f;      // 0..1: how far the sprite has glided onto the bed
         public Vector2 SleepFrom;          // where the glide started
         public SpriteRenderer Sr;
@@ -137,7 +144,10 @@ namespace BadAppleHotel.Game
     public class Monster
     {
         public MonsterDef Def;
+        public Room Lair;
+        public float RevealedAt;
         public bool IsHuman;
+        public bool IsMonster;
         public Vector2 Pos;
         public Vector2 Facing = Vector2.right;
         public float Hp;
@@ -150,7 +160,16 @@ namespace BadAppleHotel.Game
         public bool Dead;
         public float RespawnAt;
         public int Kills;
-        public float MatchXp;
+        public double MatchXp;
+        public int Level = 1, AccountLevel = 1, EvolutionStage, Ascensions;
+        public double LevelXp;
+        public float SprintUntil, NextSprint, LastDamageAt, LastKillAt, SlowZoneUntil;
+        public bool Frenzy, Retreating;
+        public string Branch;
+        public float BonusHp, BonusSpeed, CooldownReduction, JamAura, BonusReveal;
+        public int PhasedNight;
+        public float EvolutionUntil;
+        public readonly System.Collections.Generic.Queue<ProgressChoice> Choices = new System.Collections.Generic.Queue<ProgressChoice>();
         public Room AttackingRoom;
         public Resident Biting;
         public Resident LastDamager;
@@ -158,7 +177,7 @@ namespace BadAppleHotel.Game
         public float EatProgress;
 
         // timed effects
-        public float SlowPct, SlowUntil, StunUntil;
+        public float SlowPct, SlowUntil, StunUntil, StunImmuneUntil;
         public float BurnDps, BurnUntil;
         public Resident BurnSource;
         public float JamUntil, JamValue = 1f, JamRadius;

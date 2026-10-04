@@ -40,7 +40,7 @@ namespace BadAppleHotel.Tests
             float settle = Time.realtimeSinceStartup + 1f;
             while (Vector2.Distance(gm.Cam.transform.position, expectedCenter) > 0.01f && Time.realtimeSinceStartup < settle) yield return null;
             var camera = gm.Cam.transform.position;
-            GameInput.Joystick = Vector2.right;
+            gm.DragCamera(new Vector2(-150, 0));
             for (int i = 0; i < 15; i++) yield return null;
             Assert.IsTrue(me.Asleep);
             Assert.AreEqual(resting, me.Pos);
@@ -75,7 +75,7 @@ namespace BadAppleHotel.Tests
             Assert.IsFalse(me.Asleep);
             typeof(GameManager).GetMethod("BeginNights", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(gm, null);
             var empty = gm.Map.Rooms.Where(gm.IsRoomFree).ToArray();
-            Assert.AreEqual(4, empty.Length);
+            Assert.AreEqual(3, empty.Length);
             foreach (var spare in empty)
             {
                 Assert.IsTrue(gm.MonsterWalkable(spare.DoorTile.x, spare.DoorTile.y));

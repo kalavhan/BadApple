@@ -10,5 +10,17 @@
   "residentHealth": 100,
   "monsterRespawnSeconds": 10,
   "bodyPartsPerNight": 6,
-  "deadResidentsSpectate": true
+  "deadResidentsSpectate": true,
+  "disguiseBuildEverySeconds": [
+    6,
+    14
+  ],
+  "disguiseMaxBuildings": 4,
+  "endless": {
+    "freeLevelsPerNight": 1,
+    "healthPerNight": 0.042772277227722776,
+    "damagePerNight": 0.04,
+    "healthMultiplier": 0.801980198019802,
+    "damageMultiplier": 0.6
+  }
 }

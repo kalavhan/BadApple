@@ -50,9 +50,10 @@ namespace BadAppleHotel.Game
         /// False: always use the placeholders. Saved in PlayerPrefs; changing it clears the cache, so the new look
         /// shows up from the next match (or when the sprite is next requested).
         /// </summary>
+        public static bool? ArtOverride;
         public static bool UseArt
         {
-            get => PlayerPrefs.GetInt(UseArtKey, 1) == 1;
+            get => ArtOverride ?? (PlayerPrefs.GetInt(UseArtKey, 1) == 1);
             set
             {
                 PlayerPrefs.SetInt(UseArtKey, value ? 1 : 0);

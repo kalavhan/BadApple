@@ -30,7 +30,7 @@ namespace BadAppleHotel.Game
         public int BuildIndex(Vector2Int t) => BuildTiles.IndexOf(t);
     }
 
-    /// <summary>Seeded corridor graph with crooked branches, loops, dead ends and deformed letter rooms.</summary>
+    /// <summary>Seeded corridor graph with crooked branches, loops, dead ends and natural guest rooms.</summary>
     public partial class HotelMap
     {
         public readonly int W;
@@ -83,49 +83,29 @@ namespace BadAppleHotel.Game
             var interior = new RectInt(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2);
             for (int tries = 0; tries < 16; tries++)
             {
-                string letter = cfg.letters[rng.Next(cfg.letters.Length)];
-                var bmp = LetterShapes.Get(letter);
-                if (bmp == null) continue;
-                if (rng.Next(2) == 0) bmp = LetterShapes.Transpose(bmp);
-                if (rng.Next(2) == 0) bmp = LetterShapes.FlipX(bmp);
-                if (rng.Next(2) == 0) bmp = LetterShapes.FlipY(bmp);
-                int cols = bmp.GetLength(0), rows = bmp.GetLength(1);
-
-                var colW = Sizes(cols, interior.width);
-                var rowH = Sizes(rows, interior.height);
-                if (colW == null || rowH == null) continue;
-                int sumW = 0, sumH = 0;
-                foreach (int v in colW) sumW += v;
-                foreach (int v in rowH) sumH += v;
-
-                int ox = interior.x + R(0, interior.width - sumW);
-                int slackY = interior.height - sumH;
-                int oy = lot.Top ? interior.y + R(0, Mathf.Min(1, slackY)) : interior.yMax - sumH - R(0, Mathf.Min(1, slackY));
-
+                // Generous rectangular rooms with a closet recess, alcove or chamfer.
+                // Features remove corners rather than growing single-tile letter arms.
                 var floor = new HashSet<Vector2Int>();
-                int cx = ox;
-                for (int c = 0; c < cols; c++)
+                for (int x = interior.xMin; x < interior.xMax; x++)
+                    for (int y = interior.yMin; y < interior.yMax; y++) floor.Add(new Vector2Int(x, y));
+                int features = rng.NextDouble() < cfg.roomFeatureChance ? R(1, 2) : 0;
+                for (int feature = 0; feature < features; feature++)
                 {
-                    int cy = oy;
-                    for (int r = 0; r < rows; r++)
-                    {
-                        if (bmp[c, r])
-                            for (int x = cx; x < cx + colW[c]; x++)
-                                for (int y = cy; y < cy + rowH[r]; y++) floor.Add(new Vector2Int(x, y));
-                        cy += rowH[r];
-                    }
-                    cx += colW[c];
+                    int w = R(1, Mathf.Min(3, interior.width - 3));
+                    int h = R(1, Mathf.Min(3, interior.height - 3));
+                    bool left = rng.Next(2) == 0, bottom = rng.Next(2) == 0;
+                    for (int x = 0; x < w; x++) for (int y = 0; y < h; y++)
+                        floor.Remove(new Vector2Int(left ? interior.xMin + x : interior.xMax - 1 - x,
+                            bottom ? interior.yMin + y : interior.yMax - 1 - y));
                 }
-                if (floor.Count < 10) continue;
-
-                Deform(floor, interior);
+                if (floor.Count < interior.width * interior.height * 0.6f) continue;
                 if (!Connected(floor)) continue;
                 if (!CarveDoor(lot, floor, out var door, out var inside, out var outside)) continue;
 
                 var def = new RoomDef
                 {
                     Index = Rooms.Count,
-                    Letter = letter[0],
+                    Letter = ' ',
                     Lot = rect,
                     DoorTile = door,
                     DoorInside = inside,
@@ -134,6 +114,7 @@ namespace BadAppleHotel.Game
                 foreach (var f in floor) { def.Floor.Add(f); def.FloorSet.Add(f); }
                 def.Floor.Sort((a, b) => a.y != b.y ? b.y.CompareTo(a.y) : a.x.CompareTo(b.x));
                 if (!FurnishRoom(def)) continue;
+                if (def.BuildTiles.FindAll(t => !def.Walkway.Contains(t)).Count < cfg.roomMinBuildTiles) continue;
 
                 Vector2 sum = Vector2.zero;
                 foreach (var f in def.Floor)
@@ -147,53 +128,6 @@ namespace BadAppleHotel.Game
                 return true;
             }
             return false;
-        }
-
-        /// <summary>Random cell sizes for a letter, shrunk until they fit the space (cells may end up 1 tile wide).</summary>
-        int[] Sizes(int n, int avail)
-        {
-            var a = new int[n];
-            int sum = 0;
-            for (int i = 0; i < n; i++) { a[i] = R(cfg.cellSizeMin, cfg.cellSizeMax); sum += a[i]; }
-            while (sum > avail)
-            {
-                int bi = -1;
-                for (int i = 0; i < n; i++) if (a[i] > 1 && (bi < 0 || a[i] > a[bi])) bi = i;
-                if (bi < 0) return null;
-                a[bi]--;
-                sum--;
-            }
-            return a;
-        }
-
-        /// <summary>Nibbles a few corners and pushes out a few bulges so no two rooms look machine-made.</summary>
-        void Deform(HashSet<Vector2Int> floor, RectInt interior)
-        {
-            int nibbles = R(0, cfg.nibbleMax);
-            for (int n = 0; n < nibbles; n++)
-            {
-                var list = new List<Vector2Int>(floor);
-                var t = list[rng.Next(list.Count)];
-                bool openX = !floor.Contains(t + Vector2Int.left) || !floor.Contains(t + Vector2Int.right);
-                bool openY = !floor.Contains(t + Vector2Int.up) || !floor.Contains(t + Vector2Int.down);
-                if (!openX || !openY || floor.Count <= 12) continue;
-                floor.Remove(t);
-                if (!Connected(floor)) floor.Add(t);
-            }
-
-            int bulges = R(0, cfg.bulgeMax);
-            for (int n = 0; n < bulges; n++)
-            {
-                var list = new List<Vector2Int>(floor);
-                var t = list[rng.Next(list.Count)];
-                var d = Dirs4[rng.Next(4)];
-                var a = t + d;
-                if (floor.Contains(a) || !interior.Contains(a)) continue;
-                floor.Add(a);
-                var perp = new Vector2Int(d.y, d.x);
-                var b = a + perp;
-                if (interior.Contains(b) && floor.Contains(t + perp)) floor.Add(b);
-            }
         }
 
         static bool Connected(HashSet<Vector2Int> floor)
@@ -247,6 +181,8 @@ namespace BadAppleHotel.Game
             if (candidates.Count == 0) return false;
             candidates.Sort((a, b) => a.x != b.x ? a.x.CompareTo(b.x) : a.y.CompareTo(b.y));
 
+            candidates.RemoveAll(c => !floor.Contains(c + inward));
+            if (candidates.Count == 0) return false;
             door = candidates[rng.Next(candidates.Count)];
             outside = door - inward;
             inside = door + inward;

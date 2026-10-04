@@ -64,19 +64,12 @@ namespace BadAppleHotel.Game
 
         static bool CanStand(Vector2 p, System.Func<int, int, bool> walkable, float r)
         {
-            return walkable(Mathf.FloorToInt(p.x - r), Mathf.FloorToInt(p.y - r))
-                && walkable(Mathf.FloorToInt(p.x + r), Mathf.FloorToInt(p.y - r))
-                && walkable(Mathf.FloorToInt(p.x - r), Mathf.FloorToInt(p.y + r))
-                && walkable(Mathf.FloorToInt(p.x + r), Mathf.FloorToInt(p.y + r));
+            return TileMovement.CanStand(p, walkable, r);
         }
 
         static Vector2 Slide(Vector2 p, Vector2 delta, System.Func<int, int, bool> walkable, float r)
         {
-            var nx = new Vector2(p.x + delta.x, p.y);
-            if (CanStand(nx, walkable, r)) p = nx;
-            var ny = new Vector2(p.x, p.y + delta.y);
-            if (CanStand(ny, walkable, r)) p = ny;
-            return p;
+            return TileMovement.Slide(p, delta, walkable, r);
         }
 
         static Vector2 Unstick(Vector2 p, System.Func<int, int, bool> walkable, float r, Vector2 fallback)
@@ -94,6 +87,13 @@ namespace BadAppleHotel.Game
 
         void UpdateResidents(float dt, float now)
         {
+            foreach (var room in RoomsByDef.Values)
+                if (room.CloseWhenClear && !DoorwayOccupied(room))
+                {
+                    room.CloseWhenClear = false;
+                    if (!room.DoorBroken) room.DoorOpen = false;
+                    RefreshDoor(room);
+                }
             float speed = Cfg.residents.moveSpeed;
             foreach (var r in Residents)
             {
@@ -104,14 +104,28 @@ namespace BadAppleHotel.Game
                 if (r.IsHuman) move = GameInput.Move;
                 else if (r.Ai != null) move = r.Ai.Tick(dt, now);
 
-                // Sleeping movement belongs to the camera. Only the Wake action ends sleep.
+                if (r.SleepRequested && !r.Asleep)
+                {
+                    if (r.IsHuman && move.sqrMagnitude > 0.01f) r.SleepRequested = false;
+                    else if (OnBed(r)) TrySleep(r);
+                    else move = r.Navigator.Steer(ref r.Pos, r.Room.Def.BedTile, walk, ResidentRadius, dt, now);
+                }
+                // Sleeping guests stay anchored to their bed.
                 if (r.Asleep) move = Vector2.zero;
                 if (!r.Asleep && move.sqrMagnitude > 0.0001f)
                 {
                     move = Vector2.ClampMagnitude(move, 1f);
                     r.Facing = move.normalized;
-                    r.Pos = Slide(r.Pos, move * speed * dt, walk, ResidentRadius);
+                    r.Pos = Slide(r.Pos, move * speed * (now < r.SlowUntil ? 0.5f : 1f) * dt, walk, ResidentRadius);
                 }
+                if (!r.Asleep)
+                    foreach (var other in Residents)
+                    {
+                        if (other == r || !other.Alive || other.Asleep) continue;
+                        var away = r.Pos-other.Pos;
+                        if (away.sqrMagnitude > 0.0001f && away.sqrMagnitude < 0.16f)
+                            r.Pos = Slide(r.Pos, away.normalized * (0.4f-away.magnitude) * dt * 3f, walk, ResidentRadius);
+                    }
                 if (!CanStand(r.Pos, walk, ResidentRadius))
                     r.Pos = Unstick(r.Pos, walk, ResidentRadius, r.Room != null ? HotelMap.Center(r.Room.Def.BedTile) : HotelMap.Center(Map.Lobby));
 
@@ -159,7 +173,7 @@ namespace BadAppleHotel.Game
             {
                 float dt = Mathf.Max(Time.deltaTime, 1e-4f);
                 bool moving = !r.Asleep && (r.Pos - r.LastPos).magnitude / dt > 0.4f;
-                bool attacking = !r.Asleep && Time.time < r.AttackUntil;
+                bool attacking = !r.Asleep && Now < r.AttackUntil;
                 r.Anim.Drive(r.Asleep ? Vector2.down : r.Facing, moving, attacking);
             }
             r.LastPos = r.Pos;
@@ -177,8 +191,8 @@ namespace BadAppleHotel.Game
         {
             if (r == null || !r.Alive || r.Room == null || !InMatch) return ResidentAction.None;
             if (r.Asleep) return ResidentAction.Wake;
-            if (NearDoor(r)) return r.Room.DoorBroken ? ResidentAction.DoorBroken : (r.Room.DoorOpen ? ResidentAction.CloseDoor : ResidentAction.OpenDoor);
-            if (OnBed(r)) return ResidentAction.Sleep;
+            if (r.Room.Def.ContainsInterior(HotelMap.ToTile(r.Pos))) return ResidentAction.Sleep;
+            if (NearDoor(r)) return r.Room.DoorOpen ? ResidentAction.CloseDoor : ResidentAction.OpenDoor;
             return ResidentAction.None;
         }
 
@@ -198,7 +212,11 @@ namespace BadAppleHotel.Game
         public ActionResult TrySleep(Resident r)
         {
             if (r == null || !r.Alive || r.Room == null) return ActionResult.Invalid;
-            if (!OnBed(r)) return ActionResult.TooFar;
+            if (!r.Room.Def.ContainsInterior(HotelMap.ToTile(r.Pos))) return ActionResult.TooFar;
+            r.Room.CloseWhenClear = !r.Room.DoorBroken;
+            r.SleepRequested = true;
+            if (!OnBed(r)) return ActionResult.Ok;
+            r.SleepRequested = false;
             r.Asleep = true;
             r.SleepFrom = r.Pos;
             r.SleepBlend = 0f;
@@ -211,6 +229,7 @@ namespace BadAppleHotel.Game
         {
             if (r == null || !r.Asleep) return;
             r.Asleep = false;
+            r.SleepRequested = false;
             if (r.IsHuman) AddFloater(r.Pos + Vector2.up, "Awake! Towers x" + Cfg.residents.awakeWeaponDamageMultiplier, (Color)Palette.Candle);
         }
 
@@ -221,6 +240,7 @@ namespace BadAppleHotel.Game
             if (!NearDoor(r)) return ActionResult.TooFar;
             if (room.DoorBroken) return ActionResult.Blocked;
             if (room.DoorOpen && DoorwayOccupied(room)) return ActionResult.Blocked;
+            room.CloseWhenClear = false;
             room.DoorOpen = !room.DoorOpen;
             RefreshDoor(room);
             return ActionResult.Ok;
@@ -228,10 +248,11 @@ namespace BadAppleHotel.Game
 
         bool DoorwayOccupied(Room room)
         {
-            var c = HotelMap.Center(room.Def.DoorTile);
-            if (Monster != null && !Monster.Dead && Vector2.Distance(Monster.Pos, c) < 0.8f) return true;
+            var tile = room.Def.DoorTile;
+            bool Clear(int x, int y) => x != tile.x || y != tile.y;
+            if (Monster != null && !Monster.Dead && !TileMovement.CanStand(Monster.Pos, Clear, MonsterRadius)) return true;
             foreach (var r in Residents)
-                if (r.Alive && Vector2.Distance(r.Pos, c) < 0.6f) return true;
+                if (r.Alive && !TileMovement.CanStand(r.Pos, Clear, ResidentRadius)) return true;
             return false;
         }
 
@@ -247,7 +268,7 @@ namespace BadAppleHotel.Game
         {
             foreach (var r in Residents)
             {
-                if (!r.Alive || r.Room == null) continue;
+                if (!r.Alive || r.IsMonster || r.Room == null) continue;
                 r.DreamPower += (DreamPerSecond(r, now) + DreamGenPerSecond(r.Room)) * dt;
                 if (now < r.FaithBlockedUntil) continue;
                 r.Faith += FaithPerSecond(r.Room) * dt;
@@ -269,23 +290,27 @@ namespace BadAppleHotel.Game
             foreach (var t in room.Slots)
                 if (t != null && t.IsFaith)
                     f += UpgradeRules.FaithRate(t.Def, t.Level);
-            return f;
+            return room.Owner.IsMonster ? 0f : Income(f);
         }
 
         /// <summary>Bed income while asleep; awakeDreamPowerMultiplier (0 by default) while awake.</summary>
         public float DreamPerSecond(Resident r, float now)
         {
-            if (r.Room == null) return 0f;
+            if (r.Room == null || r.IsMonster) return 0f;
             float bed = Cfg.beds.levels[r.Room.BedLevel - 1].dreamPowerPerSecond;
             if (now < r.BedSlowUntil) bed *= r.BedSlowValue;
-            return bed * (r.Asleep ? 1f : Cfg.residents.awakeDreamPowerMultiplier);
+            return Income(bed) * (r.Asleep ? 1f : Cfg.residents.awakeDreamPowerMultiplier);
         }
 
         public float BedRate(Room room) => Cfg.beds.levels[room.BedLevel - 1].dreamPowerPerSecond;
 
         // ------------------------------------------------------------------ building
 
-        bool CanAct(Resident r) => r != null && r.Alive && r.Room != null && InMatch;
+        bool CanAct(Resident r)
+        {
+            if (r != null && r.IsMonster) { if (r.IsHuman) Toast("You are hiding. Wait for lights out."); return false; }
+            return r != null && r.Alive && r.Room != null && InMatch;
+        }
 
         public float Wallet(Resident r, string res) => res == "faith" ? r.Faith : r.DreamPower;
 
@@ -477,7 +502,7 @@ namespace BadAppleHotel.Game
             if (t == null) return ActionResult.Invalid;
             float refund = TowerSellValue(t);
             Earn(r, t.Def.costResource, refund);
-            if (t.Sr != null) Destroy(t.Sr.gameObject);
+            if (t.Sr != null) RemoveObject(t.Sr.gameObject);
             r.Room.Slots[slot] = null;
             AddFloater(HotelMap.Center(t.Tile) + Vector2.up * 0.8f, "+" + Mathf.RoundToInt(refund) + (t.Def.costResource == "faith" ? " Faith" : " DP"), (Color)Palette.Candle);
             return ActionResult.Ok;
@@ -507,11 +532,11 @@ namespace BadAppleHotel.Game
             if (to.IsHuman)
             {
                 PendingHelpFrom = from;
-                PendingHelpUntil = Time.time + 8f;
+                PendingHelpUntil = Now + 8f;
                 AddLog(from.Name + " begs you for Dream Power.");
                 return "";
             }
-            bool canSpare = to.DreamPower > 120f && !to.Room.UnderAttack(Time.time);
+            bool canSpare = to.DreamPower > 120f && !to.Room.UnderAttack(Now);
             if (!canSpare)
             {
                 AddLog(to.Name + " refuses to share with " + (from.IsHuman ? "you" : from.Name) + ".");
