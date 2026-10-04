@@ -18,8 +18,8 @@ namespace BadAppleHotel.Game
         public Vector2Int DoorOutside;      // corridor tile in front of the door
         public Vector2Int DoorInside;       // first floor tile inside
         public Vector2Int BedTile;          // farthest walkable tile from the door
-        public readonly HashSet<Vector2Int> Walkway = new HashSet<Vector2Int>(); // door -> bed path, never buildable
-        public readonly List<Vector2Int> BuildTiles = new List<Vector2Int>();     // where buildings can be attached
+        public readonly HashSet<Vector2Int> Walkway = new HashSet<Vector2Int>(); // default door -> bed path (used by bots)
+        public readonly List<Vector2Int> BuildTiles = new List<Vector2Int>();     // every floor tile except bed and door-inside
         public bool Isolated;               // no other door nearby: gets a free building when claimed
         public int NearestDoorDistance;
         public Vector2 Center;
@@ -427,19 +427,11 @@ namespace BadAppleHotel.Game
             }
             def.Walkway.Add(def.DoorInside);
 
-            var cand = new List<Vector2Int>();
+            // every floor tile can hold a building, except the bed and the tile right inside the door.
+            // (GameManager.CanBuildAt refuses placements that would wall the bed off.)
             foreach (var f in def.Floor)
-                if (f != def.BedTile && !def.Walkway.Contains(f)) cand.Add(f);
-            if (cand.Count < 2) return false;
-
-            int want = Mathf.Clamp(Mathf.RoundToInt(def.Floor.Count * cfg.buildTileDensity), cfg.buildTilesMin, cfg.buildTilesMax);
-            want = Mathf.Min(want, cand.Count);
-            for (int i = cand.Count - 1; i > 0; i--)
-            {
-                int j = rng.Next(i + 1);
-                (cand[i], cand[j]) = (cand[j], cand[i]);
-            }
-            for (int i = 0; i < want; i++) def.BuildTiles.Add(cand[i]);
+                if (f != def.BedTile && f != def.DoorInside) def.BuildTiles.Add(f);
+            if (def.BuildTiles.Count < 2) return false;
             def.BuildTiles.Sort((a, b) => a.y != b.y ? b.y.CompareTo(a.y) : a.x.CompareTo(b.x));
             return true;
         }

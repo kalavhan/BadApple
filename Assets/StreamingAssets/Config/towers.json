@@ -1,42 +1,171 @@
 {
   "maxLevel": 10,
   "sellRefundPct": 0.5,
-  "rangeTiles": { "short": 3.0, "mid": 5.5, "long": 8.0 },
-  "levelScaling": { "damage": 1.25, "fireRate": 1.04, "range": 1.02, "upgradeCostGrowth": 1.5 },
+  "rangeTiles": {
+    "short": 3.0,
+    "mid": 5.5,
+    "long": 8.0
+  },
+  "levelScaling": {
+    "damage": 1.25,
+    "fireRate": 1.04,
+    "range": 1.02,
+    "upgradeCostGrowth": 1.5
+  },
   "towers": [
     {
-      "id": "gun_turret", "name": "Gun turret", "damageType": "bullet", "rangeClass": "mid",
-      "costResource": "dreamPower", "buildCost": 30, "baseUpgradeCost": 25,
-      "damage": 8, "shotsPerSecond": 2.0
+      "id": "gun_turret",
+      "name": "Gun turret",
+      "damageType": "bullet",
+      "rangeClass": "mid",
+      "costResource": "dreamPower",
+      "buildCost": 30,
+      "baseUpgradeCost": 25,
+      "damage": 8,
+      "shotsPerSecond": 2.0,
+      "category": "bullets",
+      "description": "Fast, cheap bullets. Reliable at mid range."
     },
     {
-      "id": "missile_launcher", "name": "Missile launcher", "damageType": "bullet", "rangeClass": "long",
-      "costResource": "dreamPower", "buildCost": 70, "baseUpgradeCost": 55,
-      "damage": 40, "shotsPerSecond": 0.5, "areaRadius": 1.5
+      "id": "missile_launcher",
+      "name": "Missile launcher",
+      "damageType": "bullet",
+      "rangeClass": "long",
+      "costResource": "dreamPower",
+      "buildCost": 70,
+      "baseUpgradeCost": 55,
+      "damage": 40,
+      "shotsPerSecond": 0.5,
+      "areaRadius": 1.5,
+      "category": "bullets",
+      "description": "Slow, heavy rockets that splash. Longest reach."
     },
     {
-      "id": "electric_tower", "name": "Electric tower", "damageType": "electric", "rangeClass": "mid",
-      "costResource": "faith", "buildCost": 40, "baseUpgradeCost": 30,
-      "damage": 12, "shotsPerSecond": 1.2, "chainTargets": 2, "stunSeconds": 0.3
+      "id": "electric_tower",
+      "name": "Electric tower",
+      "damageType": "electric",
+      "rangeClass": "mid",
+      "costResource": "faith",
+      "buildCost": 40,
+      "baseUpgradeCost": 30,
+      "damage": 12,
+      "shotsPerSecond": 1.2,
+      "chainTargets": 2,
+      "stunSeconds": 0.3,
+      "category": "electric",
+      "description": "Shocks the monster and stuns it briefly."
     },
     {
-      "id": "dragon_statue", "name": "Dragon statue", "damageType": "fire", "rangeClass": "short",
-      "costResource": "faith", "buildCost": 80, "baseUpgradeCost": 60,
-      "damage": 6, "shotsPerSecond": 4.0, "coneDegrees": 60, "burnDamagePerSecond": 6, "burnSeconds": 3
+      "id": "dragon_statue",
+      "name": "Dragon statue",
+      "damageType": "fire",
+      "rangeClass": "short",
+      "costResource": "faith",
+      "buildCost": 80,
+      "baseUpgradeCost": 60,
+      "damage": 6,
+      "shotsPerSecond": 4.0,
+      "coneDegrees": 60,
+      "burnDamagePerSecond": 6,
+      "burnSeconds": 3,
+      "category": "fire",
+      "description": "Breathes fire in a short cone and sets the monster ablaze."
     },
     {
-      "id": "slow_totem", "name": "Slow totem", "damageType": "slow", "rangeClass": "mid",
-      "costResource": "faith", "buildCost": 35, "baseUpgradeCost": 25,
-      "damage": 0, "shotsPerSecond": 1.0, "slowPct": 0.30, "slowSeconds": 2.0
+      "id": "slow_totem",
+      "name": "Slow totem",
+      "damageType": "slow",
+      "rangeClass": "mid",
+      "costResource": "faith",
+      "buildCost": 35,
+      "baseUpgradeCost": 25,
+      "damage": 0,
+      "shotsPerSecond": 1.0,
+      "slowPct": 0.3,
+      "slowSeconds": 2.0,
+      "category": "effects",
+      "description": "Chills the monster so everything else hits more often."
     },
     {
-      "id": "faith_tower", "name": "Faith tower", "damageType": "none", "effect": "faith",
-      "costResource": "dreamPower", "buildCost": 60, "baseUpgradeCost": 45,
-      "faithPerSecond": 0.8, "faithLevelScaling": 1.3
+      "id": "faith_tower",
+      "name": "Faith tower",
+      "damageType": "none",
+      "effect": "faith",
+      "costResource": "dreamPower",
+      "buildCost": 60,
+      "baseUpgradeCost": 45,
+      "faithPerSecond": 0.8,
+      "faithLevelScaling": 1.3,
+      "category": "resources",
+      "description": "Turns candlelight into Faith over time."
     },
     {
-      "id": "crystal_ball", "name": "Crystal ball", "damageType": "none", "effect": "clairvoyance",
-      "costResource": "faith", "buildCost": 50, "baseUpgradeCost": 0, "maxLevel": 1
+      "id": "crystal_ball",
+      "name": "Crystal ball",
+      "damageType": "none",
+      "effect": "clairvoyance",
+      "costResource": "faith",
+      "buildCost": 50,
+      "baseUpgradeCost": 0,
+      "maxLevel": 1,
+      "category": "effects",
+      "description": "Lets you see the whole hotel. Look around with Hotel view."
+    },
+    {
+      "id": "dream_lamp",
+      "name": "Dream lamp",
+      "damageType": "none",
+      "effect": "dream",
+      "category": "resources",
+      "description": "A drowsy lantern that distils Dream Power, awake or asleep.",
+      "costResource": "faith",
+      "buildCost": 45,
+      "baseUpgradeCost": 35,
+      "dreamPerSecond": 0.6,
+      "dreamLevelScaling": 1.3
+    },
+    {
+      "id": "flame_brazier",
+      "name": "Flame brazier",
+      "damageType": "fire",
+      "rangeClass": "short",
+      "category": "fire",
+      "description": "Cheap cauldron of cursed coals. Scorches anything that wanders close.",
+      "costResource": "faith",
+      "buildCost": 35,
+      "baseUpgradeCost": 28,
+      "damage": 3,
+      "shotsPerSecond": 3.0,
+      "coneDegrees": 360,
+      "burnDamagePerSecond": 8,
+      "burnSeconds": 3
+    },
+    {
+      "id": "sniper_nest",
+      "name": "Sniper nest",
+      "damageType": "bullet",
+      "rangeClass": "long",
+      "category": "bullets",
+      "description": "One slow, brutal shot from across the room.",
+      "costResource": "dreamPower",
+      "buildCost": 60,
+      "baseUpgradeCost": 45,
+      "damage": 55,
+      "shotsPerSecond": 0.35
+    },
+    {
+      "id": "tesla_coil",
+      "name": "Tesla coil",
+      "damageType": "electric",
+      "rangeClass": "short",
+      "category": "electric",
+      "description": "Short-range lightning that hits hard and stuns for longer.",
+      "costResource": "faith",
+      "buildCost": 60,
+      "baseUpgradeCost": 45,
+      "damage": 22,
+      "shotsPerSecond": 0.9,
+      "stunSeconds": 0.6
     }
   ]
 }

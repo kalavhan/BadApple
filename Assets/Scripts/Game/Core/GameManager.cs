@@ -202,8 +202,6 @@ namespace BadAppleHotel.Game
         {
             var floorRoot = new GameObject("Tiles").transform;
             floorRoot.SetParent(worldRoot, false);
-            var buildTiles = new HashSet<Vector2Int>();
-            foreach (var def in Map.Rooms) foreach (var b in def.BuildTiles) buildTiles.Add(b);
 
             for (int x = 0; x < Map.W; x++)
                 for (int y = 0; y < Map.H; y++)
@@ -215,7 +213,6 @@ namespace BadAppleHotel.Game
                         case Tile.Corridor: MakeSprite("c", Sprites.CorridorFloor, pos, -3000, floorRoot); break;
                         case Tile.RoomFloor:
                             MakeSprite("f", Sprites.RoomFloor, pos, -3000, floorRoot);
-                            if (buildTiles.Contains(v)) MakeSprite("b", Sprites.BuildTile, pos, -2990, floorRoot);
                             break;
                         case Tile.Wall: MakeSprite("w", Sprites.Wall, pos, -2900, floorRoot); break;
                         case Tile.Door: MakeSprite("f", Sprites.RoomFloor, pos, -3000, floorRoot); break;

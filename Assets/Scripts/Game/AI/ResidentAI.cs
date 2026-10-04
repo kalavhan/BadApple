@@ -222,7 +222,7 @@ namespace BadAppleHotel.Game
             var door = HotelMap.Center(room.Def.DoorOutside);
             for (int i = 0; i < room.Slots.Length; i++)
             {
-                if (room.Slots[i] != null) continue;
+                if (room.Slots[i] != null || !gm.CanBuildAt(room, i)) continue;
                 float d = Vector2.Distance(HotelMap.Center(room.Def.BuildTiles[i]), door);
                 if (d > far) { far = d; slot = i; }
             }
@@ -269,7 +269,7 @@ namespace BadAppleHotel.Game
             coverage = 0f;
             for (int i = 0; i < room.Slots.Length; i++)
             {
-                if (room.Slots[i] != null) continue;
+                if (room.Slots[i] != null || !gm.CanBuildAt(room, i)) continue;
                 float d = Vector2.Distance(HotelMap.Center(room.Def.BuildTiles[i]), door);
                 float score = d <= range ? 1f + (range - d) / range : 0.15f / (1f + d - range);
                 if (score > coverage) { coverage = score; best = i; }

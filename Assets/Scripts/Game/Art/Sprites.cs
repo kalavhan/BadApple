@@ -72,7 +72,8 @@ namespace BadAppleHotel.Game
         static readonly Dictionary<string, float> TowerSize = new Dictionary<string, float>
         {
             { "gun_turret", 1.1f }, { "missile_launcher", 1.1f }, { "electric_tower", 1.35f }, { "dragon_statue", 1.1f },
-            { "slow_totem", 1.4f }, { "faith_tower", 1.2f }, { "crystal_ball", 1.1f }
+            { "slow_totem", 1.4f }, { "faith_tower", 1.2f }, { "crystal_ball", 1.1f },
+            { "dream_lamp", 1.2f }, { "flame_brazier", 1.0f }, { "sniper_nest", 1.45f }, { "tesla_coil", 1.4f }
         };
 
         static bool ArtFor(string key, out ArtSpec a)

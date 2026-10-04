@@ -45,8 +45,9 @@ namespace BadAppleHotel.Game
         public float Cooldown;
         public float BlinkUntil;
         public SpriteRenderer Sr;
-        public bool IsWeapon => Def.damageType != "none";
+        public bool IsWeapon => Def.damageType != "none" && Def.damageType != "" && Def.damageType != null;
         public bool IsFaith => Def.effect == "faith" || Def.faithPerSecond > 0f;
+        public bool IsDreamGen => Def.dreamPerSecond > 0f;
         public bool IsClairvoyance => Def.effect == "clairvoyance";
     }
 
@@ -122,6 +123,8 @@ namespace BadAppleHotel.Game
         public Vector2 Pos;
         public Vector2 Facing = Vector2.right;
         public bool Asleep;
+        public float SleepBlend = 1f;      // 0..1: how far the sprite has glided onto the bed
+        public Vector2 SleepFrom;          // where the glide started
         public SpriteRenderer Sr;
         public ResidentAI Ai;
         public float ClaimAt;   // bots: when they start walking to a room during setup

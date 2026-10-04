@@ -588,7 +588,7 @@ namespace BadAppleHotel.Game
                     if (gm.Phase == Phase.Setup)
                     {
                         var c = WorldToGui(def.Center);
-                        string text = "Room " + (def.Index + 1) + "\n" + def.BuildTiles.Count + " plates" +
+                        string text = "Room " + (def.Index + 1) + "\n" + def.BuildTiles.Count + " build spots" +
                                       (def.Isolated ? "\n<color=#9FE3C8>lonely: free building</color>" : "");
                         Shadowed(new Rect(c.x - 80, c.y - 26, 160, 52), text, Bone);
                     }
@@ -615,19 +615,21 @@ namespace BadAppleHotel.Game
                 if (mine && me.Alive)
                 {
                     bool blinkEmpty = Time.unscaledTime < room.NoWeaponBlinkUntil && Mathf.FloorToInt(Time.unscaledTime * 8f) % 2 == 0;
-                    for (int i = 0; i < room.Slots.Length; i++)
-                    {
-                        if (room.Slots[i] != null) continue;
-                        var pg = WorldToGui(HotelMap.Center(def.BuildTiles[i]));
-                        if (blinkEmpty)
+                    if (sel == Sel.Slot || blinkEmpty)
+                        for (int i = 0; i < room.Slots.Length; i++)
                         {
-                            var old = GUI.color;
-                            GUI.color = new Color(Red.r, Red.g, Red.b, 0.55f);
-                            GUI.DrawTexture(new Rect(pg.x - tile / 2, pg.y - tile / 2, tile, tile), Sprites.White);
-                            GUI.color = old;
+                            if (room.Slots[i] != null) continue;
+                            var pg = WorldToGui(HotelMap.Center(def.BuildTiles[i]));
+                            if (blinkEmpty)
+                            {
+                                var old = GUI.color;
+                                GUI.color = new Color(Red.r, Red.g, Red.b, 0.3f);
+                                GUI.DrawTexture(new Rect(pg.x - tile / 2, pg.y - tile / 2, tile, tile), Sprites.White);
+                                GUI.color = old;
+                            }
+                            bool can = gm.CanBuildAt(room, i);
+                            Shadowed(new Rect(pg.x - 10, pg.y - 10, 20, 20), "+", can ? new Color(Candle.r, Candle.g, Candle.b, 0.75f) : new Color(Red.r, Red.g, Red.b, 0.6f));
                         }
-                        Shadowed(new Rect(pg.x - 10, pg.y - 10, 20, 20), "+", new Color(Candle.r, Candle.g, Candle.b, 0.8f));
-                    }
                 }
             }
 
@@ -816,52 +818,160 @@ namespace BadAppleHotel.Game
             }
         }
 
+        // ---- build dock: tabs by kind of building, tap a card to preview its range, BUILD to place it
+        static readonly string[] TabIds = { "resources", "fire", "bullets", "electric", "effects" };
+        static readonly string[] TabNames = { "Resources", "Fire", "Bullets", "Electric", "Effects" };
+        static readonly Color[] TabColors =
+        {
+            new Color(0.95f, 0.76f, 0.31f), new Color(1f, 0.52f, 0.18f), new Color(0.78f, 0.80f, 0.86f),
+            new Color(0.38f, 0.86f, 1f), new Color(0.72f, 0.48f, 0.98f)
+        };
+        int buildTab = 2;
+        string previewId;
+
+        static string CategoryOf(Config.TowerDef t)
+        {
+            if (!string.IsNullOrEmpty(t.category)) return t.category;
+            switch (t.damageType) { case "bullet": return "bullets"; case "fire": return "fire"; case "electric": return "electric"; case "slow": return "effects"; }
+            return t.effect == "clairvoyance" ? "effects" : "resources";
+        }
+
+        /// <summary>Draws a sprite with its pivot on a world point (used for the placement ghost).</summary>
+        void DrawSpriteAt(Sprite sp, Vector2 world, Color tint)
+        {
+            if (sp == null) return;
+            var g = WorldToGui(world);
+            float s = GuiPerTile;
+            var b = sp.bounds;
+            var rect = new Rect(g.x + b.min.x * s, g.y - b.max.y * s, b.size.x * s, b.size.y * s);
+            var tr = sp.textureRect;
+            var tex = sp.texture;
+            var uv = new Rect(tr.x / tex.width, tr.y / tex.height, tr.width / tex.width, tr.height / tex.height);
+            var old = GUI.color;
+            GUI.color = tint;
+            GUI.DrawTextureWithTexCoords(rect, tex, uv);
+            GUI.color = old;
+        }
+
         void DrawBuildMenu(Resident me, Room room, int slot)
         {
             var tile = room.Def.BuildTiles[slot];
             var wpos = HotelMap.Center(tile);
-            var rt = gm.Cfg.towers.rangeTiles;
-            DrawRing(wpos, rt.@short, new Color(1f, 1f, 1f, 0.35f));
-            DrawRing(wpos, rt.mid, new Color(1f, 1f, 1f, 0.25f));
-            DrawRing(wpos, rt.@long, new Color(1f, 1f, 1f, 0.18f));
-            HighlightTile(tile);
-
             var towers = gm.Cfg.towers.towers;
-            float h = 46 + towers.Length * 44;
-            var r = PopupRect(wpos, 330, h);
-            Panel(r);
-            GUI.Label(new Rect(r.x + 10, r.y + 8, r.width - 50, 22), "<b>Build here</b>  <size=11>(rings: short / mid / long)</size>", label);
-            if (CloseButton(r)) { ClearSelection(); return; }
-            float yy = r.y + 40;
-            var m = gm.Monster;
-            foreach (var t in towers)
+            if (buildTab < 0 || buildTab >= TabIds.Length) buildTab = 0;
+            string tabId = TabIds[buildTab];
+            var inTab = new List<Config.TowerDef>();
+            foreach (var t in towers) if (CategoryOf(t) == tabId) inTab.Add(t);
+            Config.TowerDef sel2 = null;
+            foreach (var t in inTab) if (t.id == previewId) sel2 = t;
+            if (sel2 == null && inTab.Count > 0) { sel2 = inTab[0]; previewId = sel2.id; }
+
+            bool placeable = gm.CanBuildAt(room, slot);
+            var tabCol = TabColors[buildTab];
+
+            // ---- preview in the world: tile marker, translucent range disc + ring, ghost building
+            var tileCol = placeable ? new Color(0.62f, 0.89f, 0.78f) : Red;
+            var oldc = GUI.color;
+            float ts = GuiPerTile;
+            var tg = WorldToGui(wpos);
+            GUI.color = new Color(tileCol.r, tileCol.g, tileCol.b, 0.28f + 0.12f * Mathf.Sin(Time.unscaledTime * 6f));
+            GUI.DrawTexture(new Rect(tg.x - ts / 2, tg.y - ts / 2, ts, ts), Sprites.White);
+            GUI.color = oldc;
+            if (sel2 != null)
             {
-                string tag;
-                int type = DamageTypes.Index(t.damageType);
+                bool weapon = DamageTypes.Index(sel2.damageType) >= 0;
+                if (weapon)
+                {
+                    float rng = gm.RangeOf(sel2, 1);
+                    Circle(tg, rng * 2f * ts, new Color(tabCol.r, tabCol.g, tabCol.b, 0.10f));
+                    DrawRing(wpos, rng, new Color(tabCol.r, tabCol.g, tabCol.b, 0.85f));
+                }
+                if (sel2.areaRadius > 0f) DrawRing(wpos, sel2.areaRadius, new Color(1f, 1f, 1f, 0.4f));
+                DrawSpriteAt(Sprites.Tower(sel2.id), wpos, new Color(1f, 1f, 1f, placeable ? 0.78f : 0.4f));
+            }
+
+            // ---- dock (moves to the top when the tile is down there)
+            float w = Mathf.Min(780f, vw - 300f), h = 214f;
+            bool tileLow = tg.y > VH - h - 30f;
+            var r = new Rect(10f, tileLow ? 56f : VH - h - 10f, w, h);
+            Panel(r);
+
+            float tx = r.x + 10f, tabW = (w - 60f) / TabIds.Length;
+            for (int i = 0; i < TabIds.Length; i++)
+            {
+                var tr = new Rect(tx + i * tabW, r.y + 8f, tabW - 4f, 30f);
+                bool on = i == buildTab;
+                var oc = GUI.color;
+                GUI.color = on ? TabColors[i] : new Color(TabColors[i].r, TabColors[i].g, TabColors[i].b, 0.45f);
+                if (GUI.Button(tr, "<b>" + TabNames[i] + "</b>", centerButton)) { buildTab = i; previewId = null; }
+                GUI.color = oc;
+                if (on) { GUI.color = TabColors[i]; GUI.DrawTexture(new Rect(tr.x, tr.yMax, tr.width, 3f), Sprites.White); GUI.color = oc; }
+            }
+            if (CloseButton(r)) { ClearSelection(); return; }
+
+            // cards
+            float cx = r.x + 10f, cy = r.y + 48f;
+            float cardW = Mathf.Min(142f, (w - 320f - 8f * Mathf.Max(0, inTab.Count - 1)) / Mathf.Max(1, inTab.Count)), cardH = 152f;
+            if (inTab.Count == 0) GUI.Label(new Rect(cx, cy + 40f, 400f, 40f), "Nothing here yet.", small);
+            for (int i = 0; i < inTab.Count; i++)
+            {
+                var t = inTab[i];
+                var cr = new Rect(cx + i * (cardW + 8f), cy, cardW, cardH);
+                bool chosen = t == sel2;
+                bool afford = gm.Wallet(me, t.costResource) >= t.buildCost;
+                var oc = GUI.color;
+                GUI.color = chosen ? new Color(tabCol.r, tabCol.g, tabCol.b, 1f) : (afford ? Color.white : new Color(1f, 1f, 1f, 0.55f));
+                if (GUI.Button(cr, GUIContent.none, centerButton)) previewId = t.id;
+                GUI.color = oc;
+                var ico = Sprites.Tower(t.id);
+                GUI.DrawTexture(new Rect(cr.x + 10f, cr.y + 6f, cr.width - 20f, 78f), ico.texture, ScaleMode.ScaleToFit);
+                GUI.Label(new Rect(cr.x + 4f, cr.y + 86f, cr.width - 8f, 40f), "<b>" + t.name + "</b>", center);
+                GUI.Label(new Rect(cr.x + 4f, cr.y + 126f, cr.width - 8f, 22f), (afford ? "" : "<color=#D7263D>") + t.buildCost + "</color> " + ResShort(t.costResource), center);
+            }
+
+            // detail pane
+            var dr = new Rect(r.xMax - 300f, r.y + 46f, 290f, h - 56f);
+            if (sel2 != null)
+            {
+                GUI.Label(new Rect(dr.x, dr.y, dr.width, 22f), "<b>" + sel2.name + "</b>", label);
+                GUI.Label(new Rect(dr.x, dr.y + 22f, dr.width, 40f), sel2.description ?? "", small);
+                string stats;
+                int type = DamageTypes.Index(sel2.damageType);
                 if (type >= 0)
                 {
-                    tag = RangeLabel(t.rangeClass);
+                    float rng = gm.RangeOf(sel2, 1);
+                    stats = RangeLabel(sel2.rangeClass) + " (" + rng.ToString("0.#") + " tiles)";
+                    if (sel2.damageType == "slow") stats += "  ·  slows " + Mathf.RoundToInt(sel2.slowPct * 100f) + "%";
+                    else stats += "  ·  " + Mathf.RoundToInt(sel2.damage * sel2.shotsPerSecond + (sel2.burnSeconds > 0f ? sel2.burnDamagePerSecond : 0f)) + " dmg/s";
+                    var m = gm.Monster;
                     if (m != null)
                     {
                         float mult = gm.DamageTaken(m, type);
-                        if (mult > 1.05f) tag += " <color=#9FE3C8>strong</color>";
-                        else if (mult < 0.95f) tag += " <color=#D7263D>weak</color>";
+                        if (mult > 1.05f) stats += "\n<color=#9FE3C8>The monster is weak to this</color>";
+                        else if (mult < 0.95f) stats += "\n<color=#D7263D>The monster resists this</color>";
                     }
                 }
-                else tag = t.effect == "clairvoyance" ? "<color=#9FE3C8>see the whole hotel</color>" : "<color=#D7263D>+Faith</color>";
+                else if (sel2.dreamPerSecond > 0f) stats = "+" + sel2.dreamPerSecond.ToString("0.#") + " Dream Power/s, awake or asleep";
+                else if (sel2.effect == "clairvoyance") stats = "See the whole hotel";
+                else stats = "+" + sel2.faithPerSecond.ToString("0.#") + " Faith/s";
+                GUI.Label(new Rect(dr.x, dr.y + 62f, dr.width, 40f), stats, small);
 
-                bool afford = gm.Wallet(me, t.costResource) >= t.buildCost;
-                GUI.DrawTexture(new Rect(r.x + 10, yy + 6, 28, 28), Sprites.Tower(t.id).texture, ScaleMode.ScaleToFit);
-                var old = GUI.color;
-                if (!afford) GUI.color = new Color(1f, 1f, 1f, 0.55f);
-                if (GUI.Button(new Rect(r.x + 44, yy, r.width - 54, 40),
-                        "<b>" + t.name + "</b>  " + t.buildCost + " " + ResShort(t.costResource) + "\n<size=11>" + tag + "</size>", button))
+                bool afford = gm.Wallet(me, sel2.costResource) >= sel2.buildCost;
+                string btn;
+                if (!placeable) btn = "<color=#D7263D>Keep a path to your bed</color>";
+                else if (!afford) btn = "<color=#D7263D>Need " + Mathf.CeilToInt(sel2.buildCost - gm.Wallet(me, sel2.costResource)) + " more " + ResName(sel2.costResource) + "</color>";
+                else btn = "<b>BUILD</b>  " + sel2.buildCost + " " + ResShort(sel2.costResource);
+                var br = new Rect(dr.x, dr.yMax - 44f, dr.width, 44f);
+                var oc2 = GUI.color;
+                GUI.color = (placeable && afford) ? tabCol : new Color(1f, 1f, 1f, 0.5f);
+                if (GUI.Button(br, btn, centerButton))
                 {
-                    var res = gm.TryBuildTower(me, slot, t.id);
-                    Report(res, ResName(t.costResource));
+                    var res = gm.TryBuildTower(me, slot, sel2.id);
+                    if (res == ActionResult.Blocked) gm.Toast("That would wall off your bed. Keep a path from the door.");
+                    else Report(res, ResName(sel2.costResource));
+                    if (res == ActionResult.Ok) ClearSelection();
                 }
-                GUI.color = old;
-                yy += 44;
+                GUI.color = oc2;
             }
         }
 

@@ -55,7 +55,7 @@ namespace BadAppleHotel.Tests
                     Assert.IsTrue(room.FloorSet.Contains(room.DoorInside), where + " door inside");
                     Assert.IsTrue(room.FloorSet.Contains(room.BedTile), where + " bed");
                     Assert.GreaterOrEqual(room.BuildTiles.Count, 2, where + " build tiles");
-                    Assert.LessOrEqual(room.BuildTiles.Count, cfg.map.buildTilesMax, where + " build tiles");
+                    Assert.AreEqual(room.Floor.Count - 2, room.BuildTiles.Count, where + " every floor tile but bed and entrance is buildable");
 
                     foreach (var f in room.Floor)
                     {
@@ -64,13 +64,13 @@ namespace BadAppleHotel.Tests
                         owner[f] = room.Index;
                     }
 
-                    // bed reachable from the door even with every build tile occupied
+                    // bed reachable from the door with the default walkway kept clear
                     var open = new HashSet<Vector2Int>(room.Floor);
                     foreach (var b in room.BuildTiles)
                     {
-                        Assert.IsFalse(room.Walkway.Contains(b), where + " build tile on walkway");
                         Assert.AreNotEqual(room.BedTile, b, where + " build tile on bed");
-                        open.Remove(b);
+                        Assert.AreNotEqual(room.DoorInside, b, where + " build tile on entrance");
+                        if (!room.Walkway.Contains(b)) open.Remove(b);
                     }
                     Assert.IsTrue(Flood(open, room.DoorInside).Contains(room.BedTile), where + " bed blocked by buildings");
                 }

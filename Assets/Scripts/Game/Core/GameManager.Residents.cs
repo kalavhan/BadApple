@@ -134,13 +134,15 @@ namespace BadAppleHotel.Game
             var t = r.Sr.transform;
             if (r.Asleep && r.Room != null)
             {
-                var bed = HotelMap.Center(r.Room.Def.BedTile);
-                // beds are drawn head-up, so the sleeper just lies on it: smaller and dimmed
-                t.position = new Vector3(bed.x, bed.y - 0.35f, 0f);
+                // glide onto the bed at normal size (no scaling), then stay put slightly dimmed
+                r.SleepBlend = Mathf.MoveTowards(r.SleepBlend, 1f, Time.deltaTime * 3.5f);
+                float k = r.SleepBlend * r.SleepBlend * (3f - 2f * r.SleepBlend);
+                var p = Vector2.Lerp(r.SleepFrom, r.Pos, k);
+                t.position = new Vector3(p.x, p.y - 0.3f, 0f);
                 t.rotation = Quaternion.identity;
-                t.localScale = new Vector3(0.62f, 0.62f, 1f);
-                r.Sr.color = new Color(0.8f, 0.8f, 0.95f, 1f);
-                r.Sr.sortingOrder = OrderFor(bed.y) + 2;
+                t.localScale = Vector3.one;
+                r.Sr.color = Color.Lerp(Color.white, new Color(0.8f, 0.8f, 0.95f, 1f), k);
+                r.Sr.sortingOrder = OrderFor(p.y - 0.3f) + (r.SleepBlend >= 1f ? 2 : 0);
             }
             else
             {
@@ -188,6 +190,8 @@ namespace BadAppleHotel.Game
             if (r == null || !r.Alive || r.Room == null) return ActionResult.Invalid;
             if (!OnBed(r)) return ActionResult.TooFar;
             r.Asleep = true;
+            r.SleepFrom = r.Pos;
+            r.SleepBlend = 0f;
             r.Pos = HotelMap.Center(r.Room.Def.BedTile);
             AddFloater(r.Pos + Vector2.up, "Zzz", (Color)Palette.Mint);
             return ActionResult.Ok;
@@ -234,10 +238,19 @@ namespace BadAppleHotel.Game
             foreach (var r in Residents)
             {
                 if (!r.Alive || r.Room == null) continue;
-                r.DreamPower += DreamPerSecond(r, now) * dt;
+                r.DreamPower += (DreamPerSecond(r, now) + DreamGenPerSecond(r.Room)) * dt;
                 if (now < r.FaithBlockedUntil) continue;
                 r.Faith += FaithPerSecond(r.Room) * dt;
             }
+        }
+
+        public float DreamGenPerSecond(Room room)
+        {
+            float f = 0f;
+            foreach (var t in room.Slots)
+                if (t != null && t.IsDreamGen)
+                    f += t.Def.dreamPerSecond * Mathf.Pow(Mathf.Max(1f, t.Def.dreamLevelScaling), t.Level - 1);
+            return f;
         }
 
         public float FaithPerSecond(Room room)
@@ -373,9 +386,34 @@ namespace BadAppleHotel.Game
             var def = TowerById(towerId);
             if (def == null || slot < 0 || slot >= room.Slots.Length || room.Slots[slot] != null)
                 return ActionResult.Invalid;
+            if (!CanBuildAt(room, slot)) return ActionResult.Blocked;
             if (!Spend(r, def.costResource, def.buildCost)) return ActionResult.NoMoney;
             PlaceTower(room, slot, def);
             return ActionResult.Ok;
+        }
+
+        /// <summary>A building may go on any free room tile as long as the bed stays reachable from the door.</summary>
+        public bool CanBuildAt(Room room, int slot)
+        {
+            if (slot < 0 || slot >= room.Slots.Length || room.Slots[slot] != null) return false;
+            var def = room.Def;
+            var blocked = new HashSet<Vector2Int> { def.BuildTiles[slot] };
+            for (int i = 0; i < room.Slots.Length; i++) if (room.Slots[i] != null) blocked.Add(def.BuildTiles[i]);
+            var seen = new HashSet<Vector2Int> { def.DoorInside };
+            var q = new Queue<Vector2Int>();
+            q.Enqueue(def.DoorInside);
+            while (q.Count > 0)
+            {
+                var c = q.Dequeue();
+                if (c == def.BedTile) return true;
+                foreach (var d in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
+                {
+                    var n = c + d;
+                    if (!def.FloorSet.Contains(n) || blocked.Contains(n) || !seen.Add(n)) continue;
+                    q.Enqueue(n);
+                }
+            }
+            return false;
         }
 
         void PlaceTower(Room room, int slot, TowerDef def)
