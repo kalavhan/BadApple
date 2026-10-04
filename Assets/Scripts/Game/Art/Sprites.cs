@@ -33,13 +33,31 @@ namespace BadAppleHotel.Game
             if (!cache.TryGetValue(key, out var s) || s == null)
             {
                 // Real art first (Assets/Resources/Art/*.png, made in Autosprite); the code-drawn sprite is the fallback.
-                s = LoadArt(key) ?? make();
+                s = (UseArt ? LoadArt(key) : null) ?? make();
                 cache[key] = s;
             }
             return s;
         }
 
         // ---------- Imported art ----------
+
+        const string UseArtKey = "BadAppleHotel.UseArt";
+
+        /// <summary>
+        /// True (default): load PNGs from Assets/Resources/Art, falling back per sprite to the code-drawn placeholder.
+        /// False: always use the placeholders. Saved in PlayerPrefs; changing it clears the cache, so the new look
+        /// shows up from the next match (or when the sprite is next requested).
+        /// </summary>
+        public static bool UseArt
+        {
+            get => PlayerPrefs.GetInt(UseArtKey, 1) == 1;
+            set
+            {
+                PlayerPrefs.SetInt(UseArtKey, value ? 1 : 0);
+                PlayerPrefs.Save();
+                cache.Clear();
+            }
+        }
 
         struct ArtSpec
         {

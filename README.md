@@ -53,3 +53,4 @@ All sprites are generated in Autosprite (comic style, dark Tim Burton look) and 
 pixel art drawn in code, so any sprite can be swapped by replacing its PNG. `Assets/Editor/ArtImporter.cs` sets the
 import options. `tools/art/process_sprites.py` is the script that cut the sprites out of the raw generations.
 Raw 1024px images stay in `ArtSource/` (not committed).
+Switch art on/off with the menu **Bad Apple Hotel > Use Autosprite Art**. Full details in [docs/SPRITES.md](docs/SPRITES.md).
