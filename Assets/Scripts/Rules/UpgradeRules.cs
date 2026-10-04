@@ -91,6 +91,13 @@ namespace BadAppleHotel.Rules
             return baseRange * UnityEngine.Mathf.Pow(towers.levelScaling.range, level - 1);
         }
 
+        public static bool InRange(TowersConfig config, TowerDef tower, int level, float distance) =>
+            distance >= tower.minimumRange && distance <= TowerRange(config,tower,level);
+        public static float DistanceBonus(TowerDef tower,float distance) =>
+            (tower.bonusBelowRange > 0 && distance <= tower.bonusBelowRange) ||
+            (tower.bonusAboveRange > 0 && distance >= tower.bonusAboveRange)
+                ? UnityEngine.Mathf.Max(1,tower.distanceBonusMultiplier) : 1f;
+
         /// <summary>Total spent on a tower at a level: build cost plus every upgrade so far.</summary>
         public static float TowerTotalSpent(TowersConfig towers, TowerDef tower, int level)
         {

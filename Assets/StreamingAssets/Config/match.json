@@ -18,9 +18,9 @@
   "disguiseMaxBuildings": 4,
   "endless": {
     "freeLevelsPerNight": 1,
-    "healthPerNight": 0.042772277227722776,
+    "healthPerNight": 0.03818953323903819,
     "damagePerNight": 0.04,
-    "healthMultiplier": 0.801980198019802,
+    "healthMultiplier": 0.716053748231966,
     "damageMultiplier": 0.6
   }
 }

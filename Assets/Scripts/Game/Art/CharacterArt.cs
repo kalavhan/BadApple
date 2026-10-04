@@ -35,7 +35,7 @@ namespace BadAppleHotel.Game
         public static CharacterSet Load(string id, float worldHeight)
         {
             string key = id + "@" + worldHeight.ToString("0.##");
-            if (cache.TryGetValue(key, out var hit) && hit != null && hit.Frames != null) return hit;
+            if (cache.TryGetValue(key, out var hit) && hit != null && hit.Frames != null && hit.Frames[0][0][0] != null) return hit;
             var ta = Resources.Load<TextAsset>("Art/Chars/" + id);
             if (ta == null) return null;
             var info = JsonUtility.FromJson<CharInfo>(ta.text);

@@ -21,14 +21,26 @@
   "maxNearestDoorDistance": 32,
   "deadEndCount": 4,
   "loopCount": 2,
-  "roomMinBuildTiles": 24,
+  "roomMinBuildTiles": 20,
   "roomInteriorMin": {
     "x": 6,
     "y": 5
   },
   "roomInteriorMax": {
-    "x": 9,
+    "x": 8,
     "y": 7
   },
-  "roomFeatureChance": 0.85
+  "roomFeatureChance": 1,
+  "roomBuildTiles": [
+    30,
+    26,
+    26,
+    26,
+    23,
+    23,
+    23,
+    20,
+    20,
+    20
+  ]
 }

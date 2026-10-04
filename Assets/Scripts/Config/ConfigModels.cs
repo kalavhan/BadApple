@@ -177,6 +177,9 @@ namespace BadAppleHotel.Config
         public TowerTier[] tiers;
         public string damageType;   // bullet | electric | fire | slow | none
         public string rangeClass;   // short | mid | long (weapons only)
+        public float minimumRange;
+        public float bonusBelowRange, bonusAboveRange;
+        public float distanceBonusMultiplier = 1f;
         public string effect;       // "" | faith | clairvoyance (non-weapons)
         public string costResource; // dreamPower | faith
         public float buildCost;
@@ -304,7 +307,8 @@ namespace BadAppleHotel.Config
         public int lotGapMax;
         public float sideDoorChance;
         public string[] letters; // legacy fixtures only; generation no longer uses letters
-        public int roomMinBuildTiles = 24;
+        public int roomMinBuildTiles = 20;
+        public int[] roomBuildTiles = { 30, 26, 26, 26, 23, 23, 23, 20, 20, 20 };
         public UnityEngine.Vector2Int roomInteriorMin = new UnityEngine.Vector2Int(6, 5);
         public UnityEngine.Vector2Int roomInteriorMax = new UnityEngine.Vector2Int(9, 7);
         public float roomFeatureChance = 0.85f;

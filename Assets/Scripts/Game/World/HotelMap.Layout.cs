@@ -31,10 +31,15 @@ namespace BadAppleHotel.Game
                 if (!overlap) reservedLots.Add(rect);
             }
             if (reservedLots.Count != roomCount) return false;
+            var budgets = (int[])cfg.roomBuildTiles.Clone();
+            for (int i = budgets.Length - 1; i > 0; i--)
+            {
+                int j = R(0, i); int temp = budgets[i]; budgets[i] = budgets[j]; budgets[j] = temp;
+            }
             foreach (var rect in reservedLots)
             {
                 int side = R(0, 3);
-                if (!BuildRoom(new Lot { Rect = rect, Top = side == 0, DoorSide = side })) return false;
+                if (!BuildRoom(new Lot { Rect = rect, Top = side == 0, DoorSide = side }, budgets[Rooms.Count])) return false;
             }
 
             foreach (var a in Rooms)

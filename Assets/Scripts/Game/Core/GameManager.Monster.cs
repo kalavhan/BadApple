@@ -86,7 +86,7 @@ namespace BadAppleHotel.Game
             if (now < m.BurnUntil) DamageMonster(m.BurnDps * dt, m.BurnSource);
             if (m.Dead) return;
 
-            Vector2 move = m.IsHuman ? GameInput.Move : (m.Ai != null ? m.Ai.Tick(dt, now) : Vector2.zero);
+            Vector2 move = m.IsHuman ? HotelView3D.Move(GameInput.Move) : (m.Ai != null ? m.Ai.Tick(dt, now) : Vector2.zero);
             if (now < m.DashUntil)
             {
                 m.Pos = Slide(m.Pos, m.DashVelocity * dt, MonsterWalkable, MonsterRadius);
@@ -107,19 +107,18 @@ namespace BadAppleHotel.Game
 
             if (Simulation) return;
             // visuals
-            m.Sr.transform.position = new Vector3(m.Pos.x, m.Pos.y - 0.3f, 0f);
-            m.Sr.sortingOrder = OrderFor(m.Pos.y - 0.3f);
+            HotelView3D.Billboard(m.Sr, m.Pos);
             if (m.Anim != null)
             {
                 bool moving = move.sqrMagnitude > 0.0001f || now < m.DashUntil;
-                m.Anim.Drive(m.Facing, moving, m.Biting != null || m.AttackingRoom != null);
+                m.Anim.Drive(HotelView3D.Facing(m.Facing), moving, m.Biting != null || m.AttackingRoom != null);
             }
             else m.Sr.flipX = m.Facing.x < 0f;
             m.Sr.enabled = IsVisible(m.Pos);
             Color tint = Color.white;
             var evolution = Evolution(m);
             if (evolution != null) ColorUtility.TryParseHtmlString(evolution.tint, out tint);
-            m.Sr.transform.localScale = Vector3.one * (1 + m.EvolutionStage * 0.1f);
+            m.Sr.transform.localScale = HotelView3D.SpriteScale * (1 + m.EvolutionStage * 0.1f);
             if (now-m.RevealedAt < 0.8f)
             {
                 tint = Color.Lerp(tint,Color.white,0.5f+0.5f*Mathf.Sin(now*40));
@@ -321,7 +320,7 @@ namespace BadAppleHotel.Game
             r.Sr.transform.rotation = Quaternion.identity;
             r.Sr.transform.localScale = Vector3.one;
             r.Sr.color = Color.white;
-            r.Sr.transform.position = new Vector3(r.Pos.x, r.Pos.y - 0.3f, 0f);
+            HotelView3D.Billboard(r.Sr, r.Pos);
             Announce(r.IsHuman ? "You were eaten. Now you haunt the hallway (spectating)." : r.Name + " was eaten by the " + m.Def.name + "!", 4f);
             AddLog(r.Name + " was eaten.");
         }

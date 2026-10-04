@@ -2,101 +2,81 @@ using UnityEngine;
 
 namespace BadAppleHotel.Game
 {
-    /// <summary>
-    /// Fog of war for the human resident at night: you see your own room (walls included), a few tiles around your
-    /// door and around yourself. A Crystal ball in your room lifts the fog everywhere and unlocks the hotel view.
-    /// The monster, ghosts and everyone during setup see the whole hotel.
-    /// </summary>
     public partial class GameManager
     {
         Texture2D fogTex;
-        SpriteRenderer fogSr;
         Color32[] fogPx;
-        bool[] visible;
-
-        const byte FogAlpha = 248;
-
-        public bool FogActive =>
-            Phase == Phase.Night && HumanRole == Role.Resident && Human != null && Human.Alive &&
-            Human.Room != null && !Human.Room.HasClairvoyance();
+        bool[] visible, explored;
+        float nextVisionUpdate;
+        public bool FogActive => InMatch && !(HumanRole == Role.Resident && Human != null &&
+            (!Human.Alive || (Human.Room != null && Human.Room.HasClairvoyance())));
+        public Vector2 ViewOrigin => HumanRole == Role.Monster && Monster != null ? Monster.Pos : Human != null ? Human.Pos : HotelMap.Center(Map.Lobby);
+        public float SightRadius => Cfg.residents.visionRadiusTiles + (HumanRole == Role.Monster && Monster != null ? RevealRadius(Monster) : 0);
 
         void CreateFog()
         {
-            fogTex = new Texture2D(Map.W, Map.H, TextureFormat.RGBA32, false)
-            {
-                filterMode = FilterMode.Bilinear,
-                wrapMode = TextureWrapMode.Clamp,
-            };
-            fogPx = new Color32[Map.W * Map.H];
-            visible = new bool[Map.W * Map.H];
-            var sprite = Sprite.Create(fogTex, new Rect(0, 0, Map.W, Map.H), Vector2.zero, 1f);
-            var go = new GameObject("Fog");
-            go.transform.SetParent(worldRoot, false);
-            go.transform.position = Vector3.zero;
-            fogSr = go.AddComponent<SpriteRenderer>();
-            fogSr.sprite = sprite;
-            fogSr.sortingOrder = 7000;
-            fogSr.enabled = false;
+            if(fogTex!=null)RemoveObject(fogTex);
+            fogTex=new Texture2D(Map.W,Map.H,TextureFormat.RGBA32,false) { filterMode=FilterMode.Point,wrapMode=TextureWrapMode.Clamp };
+            fogPx=new Color32[Map.W*Map.H]; visible=new bool[fogPx.Length];explored=new bool[fogPx.Length];nextVisionUpdate=0;
+            Shader.SetGlobalTexture("_HotelVision",fogTex);
+            Shader.SetGlobalVector("_HotelSize",new Vector4(Map.W,Map.H,0,0));
+            Shader.SetGlobalFloat("_HotelFog",0);
         }
-
         public bool IsVisible(Vector2 world)
         {
-            if (!FogActive || visible == null) return true;
-            int x = Mathf.FloorToInt(world.x), y = Mathf.FloorToInt(world.y);
-            if (!Map.InBounds(x, y)) return false;
-            return visible[y * Map.W + x];
+            if(!FogActive||visible==null)return true;
+            int x=Mathf.FloorToInt(world.x),y=Mathf.FloorToInt(world.y);
+            return Map.InBounds(x,y)&&visible[y*Map.W+x];
         }
-
-        public bool IsTileVisible(Vector2Int t) => IsVisible(HotelMap.Center(t));
-
+        public bool IsTileVisible(Vector2Int t)=>IsVisible(HotelMap.Center(t));
+        bool Opaque(int x,int y)
+        {
+            var tile=Map.Get(x,y);
+            if(tile==Tile.Wall||tile==Tile.Void)return true;
+            if(tile!=Tile.Door)return false;
+            var def=Map.RoomAtDoor(new Vector2Int(x,y));
+            return def!=null&&RoomsByDef.TryGetValue(def,out var room)&&room.DoorBlocks;
+        }
+        public bool CanSee(Vector2 from,Vector2 to,float radius)=>Vector2.Distance(from,to)<=radius&&Sight.Clear(from,to,Opaque);
         void UpdateVision()
         {
-            if (fogSr == null || Map == null) return;
-            bool fog = FogActive;
-            fogSr.enabled = fog;
-            if (!fog)
+            if(Simulation||fogTex==null||Map==null)return;
+            bool fog=FogActive; Shader.SetGlobalFloat("_HotelFog",fog?1:0);
+            if(Time.unscaledTime>=nextVisionUpdate)
             {
-                SetEntityVisibility(false);
-                return;
+                nextVisionUpdate=Time.unscaledTime+0.06f;
+                System.Array.Clear(visible,0,visible.Length);
+                if(fog)
+                {
+                    var origin=ViewOrigin; float radius=SightRadius;
+                    int x0=Mathf.Max(0,Mathf.FloorToInt(origin.x-radius)),x1=Mathf.Min(Map.W-1,Mathf.CeilToInt(origin.x+radius));
+                    int y0=Mathf.Max(0,Mathf.FloorToInt(origin.y-radius)),y1=Mathf.Min(Map.H-1,Mathf.CeilToInt(origin.y+radius));
+                    for(int x=x0;x<=x1;x++)for(int y=y0;y<=y1;y++)
+                    {
+                        var center=HotelMap.Center(new Vector2Int(x,y));
+                        if(Vector2.Distance(center,origin)<=radius&&Sight.Clear(origin,center,Opaque,true))visible[y*Map.W+x]=true;
+                    }
+                    // A visible floor exposes its bordering wall face, including oblique corners.
+                    for(int x=x0;x<=x1;x++)for(int y=y0;y<=y1;y++)
+                        if(visible[y*Map.W+x]&&Map.Get(x,y)!=Tile.Wall)
+                            foreach(var d in new[]{Vector2Int.up,Vector2Int.down,Vector2Int.left,Vector2Int.right})
+                                if(Map.Get(x+d.x,y+d.y)==Tile.Wall)visible[(y+d.y)*Map.W+x+d.x]=true;
+                    for(int i=0;i<visible.Length;i++)
+                    {
+                        explored[i]|=visible[i];byte value=visible[i]?(byte)255:explored[i]?(byte)48:(byte)0;
+                        fogPx[i]=new Color32(value,value,value,255);
+                    }
+                    fogTex.SetPixels32(fogPx);fogTex.Apply(false);
+                }
             }
-
-            System.Array.Clear(visible, 0, visible.Length);
-            var room = Human.Room;
-            foreach (var f in room.Def.Floor)
-                for (int dx = -1; dx <= 1; dx++)
-                    for (int dy = -1; dy <= 1; dy++) Mark(f.x + dx, f.y + dy);
-            float radius = Cfg.residents.visionRadiusTiles;
-            MarkCircle(HotelMap.Center(room.Def.DoorOutside), radius);
-            MarkCircle(Human.Pos, radius);
-
-            for (int i = 0; i < fogPx.Length; i++)
-                fogPx[i] = new Color32(0x0E, 0x0B, 0x13, visible[i] ? (byte)0 : (SleepingCamera ? (byte)180 : FogAlpha));
-            fogTex.SetPixels32(fogPx);
-            fogTex.Apply(false);
-            SetEntityVisibility(true);
-        }
-
-        void Mark(int x, int y)
-        {
-            if (Map.InBounds(x, y)) visible[y * Map.W + x] = true;
-        }
-
-        void MarkCircle(Vector2 c, float r)
-        {
-            int x0 = Mathf.FloorToInt(c.x - r), x1 = Mathf.CeilToInt(c.x + r);
-            int y0 = Mathf.FloorToInt(c.y - r), y1 = Mathf.CeilToInt(c.y + r);
-            for (int x = x0; x <= x1; x++)
-                for (int y = y0; y <= y1; y++)
-                    if (Vector2.Distance(HotelMap.Center(new Vector2Int(x, y)), c) <= r) Mark(x, y);
-        }
-
-        /// <summary>Hides other residents and body parts in the dark (the monster handles its own renderer).</summary>
-        void SetEntityVisibility(bool fog)
-        {
-            foreach (var r in Residents)
-                if (r.Sr != null) r.Sr.enabled = !fog || r == Human || IsVisible(r.Pos);
-            foreach (var p in Parts)
-                if (p.Sr != null) p.Sr.enabled = !fog || IsTileVisible(p.Tile);
+            foreach(var resident in Residents)if(resident.Sr!=null)resident.Sr.enabled=resident==Human||!fog||IsVisible(resident.Pos);
+            foreach(var part in Parts)if(part.Sr!=null)part.Sr.enabled=!fog||IsTileVisible(part.Tile);
+            foreach(var room in RoomsByDef.Values)
+            {
+                bool known=room.Owner==Human||!fog||IsVisible(room.Def.BedCenter);
+                if(room.BedSr!=null)room.BedSr.enabled=known;
+                foreach(var tower in room.Slots)if(tower?.Sr!=null)tower.Sr.enabled=room.Owner==Human||!fog||IsTileVisible(tower.Tile);
+            }
         }
     }
 }

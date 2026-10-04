@@ -20,7 +20,7 @@
     {
       "id": "stitchwork_chef",
       "name": "Stitchwork Chef",
-      "baseHealth": 808,
+      "baseHealth": 905,
       "moveSpeed": 4.4,
       "doorDamagePerSecond": 18.75,
       "residentDamagePerSecond": 30,
@@ -34,7 +34,7 @@
     {
       "id": "moldy_matron",
       "name": "Moldy Matron",
-      "baseHealth": 1212,
+      "baseHealth": 1357,
       "moveSpeed": 4.0,
       "doorDamagePerSecond": 16.5,
       "residentDamagePerSecond": 26,
@@ -48,7 +48,7 @@
     {
       "id": "bellhop_wraith",
       "name": "Bellhop Wraith",
-      "baseHealth": 606,
+      "baseHealth": 679,
       "moveSpeed": 5.0,
       "doorDamagePerSecond": 21.0,
       "residentDamagePerSecond": 34,

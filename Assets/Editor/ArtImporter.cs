@@ -14,6 +14,15 @@ namespace BadAppleHotel.EditorTools
         {
             if (!assetPath.StartsWith("Assets/Resources/Art/")) return;
             var ti = (TextureImporter)assetImporter;
+            if (assetPath.StartsWith("Assets/Resources/Art/Materials/") || assetPath.StartsWith("Assets/Resources/Art/Directions/"))
+            {
+                ti.textureType = TextureImporterType.Default; ti.alphaIsTransparency = true;
+                ti.mipmapEnabled = false; ti.filterMode = FilterMode.Point;
+                ti.wrapMode = assetPath.Contains("/Materials/") ? TextureWrapMode.Repeat : TextureWrapMode.Clamp;
+                ti.textureCompression = TextureImporterCompression.Uncompressed;
+                ti.npotScale = TextureImporterNPOTScale.None; ti.maxTextureSize = 2048;
+                return;
+            }
             if (assetPath.StartsWith("Assets/Resources/Art/Chars/"))
             {
                 // animation atlases: big sheets, so compress them; no mipmaps (frames sit side by side)

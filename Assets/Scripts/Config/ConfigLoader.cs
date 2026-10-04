@@ -124,8 +124,11 @@ namespace BadAppleHotel.Config
             Require(c.map.corridorWidth >= 1 && c.map.corridorWidth <= 5 && c.map.minDoorDistance > 0 &&
                 c.map.maxNearestDoorDistance >= c.map.minDoorDistance, "map.json: invalid corridor width or door spacing");
             Require(c.bodyParts.minSpacingTiles > 0, "bodyparts.json: minSpacingTiles must be positive");
-            Require(c.map.roomMinBuildTiles >= 24 && c.map.roomInteriorMin.x >= 6 && c.map.roomInteriorMin.y >= 5,
-                "map.json: rooms need 24 usable build tiles and at least 6 x 5 interiors");
+            Require(c.map.roomMinBuildTiles >= 20 && c.map.roomInteriorMin.x >= 6 && c.map.roomInteriorMin.y >= 5,
+                "map.json: rooms need at least 20 usable build tiles and at least 6 x 5 interiors");
+            Require(c.map.roomBuildTiles != null && c.map.roomBuildTiles.Length == c.match.roomCount &&
+                Array.TrueForAll(c.map.roomBuildTiles, n => n >= c.map.roomMinBuildTiles && n <= 30),
+                "map.json: supply one build-space budget (20–30) per room");
             Require(c.map.lotWidthMin >= 7 && c.map.lotHeightMin >= 7, "map.json: lots must be at least 7 x 7");
             Require(c.residents != null && c.residents.moveSpeed > 0, "residents.json: moveSpeed must be positive");
             Require(c.monsters.monsters != null && c.monsters.monsters.Length > 0, "monsters.json: no monsters");

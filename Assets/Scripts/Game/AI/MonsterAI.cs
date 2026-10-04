@@ -64,7 +64,7 @@ namespace BadAppleHotel.Game
 
             nextPlan -= dt;
             if (targetRes?.Room != null && targetRes.Room.DoorBroken && GoalIsDoor()) nextPlan = 0;
-            bool targetMoved = targetRes != null && (HotelMap.ToTile(targetRes.Pos) - goal).sqrMagnitude > 4 && !GoalIsDoor();
+            bool targetMoved = targetRes != null && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me)) && (HotelMap.ToTile(targetRes.Pos) - goal).sqrMagnitude > 4 && !GoalIsDoor();
             if (nextPlan <= 0f || stuckTime > 1.2f || path == null || TargetGone() || targetMoved)
             {
                 if (now >= commitUntil || TargetGone() || targetRes?.Room == null || targetRes.Room.DoorBroken) Plan();
@@ -134,7 +134,14 @@ namespace BadAppleHotel.Game
                         float dps = Mathf.Max(1f, me.Def.doorDamagePerSecond * gm.AttackMult(me) * (1f - resist));
                         work += room.DoorHp / dps;
                     }
-                    else g = rTile;
+                    else
+                    {
+                        if(gm.CanSee(me.Pos,r.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me))) g = rTile;
+                        else if(rInside)
+                            // Search a known room after breaking in; don't track an unseen guest's live position.
+                            g = room.Def.ContainsInterior(start) ? room.Def.BedTile : room.Def.DoorInside;
+                        else continue;
+                    }
 
                     var p = Pathfinding.FindPath(start, g, gm.MonsterWalkable);
                     if (p == null) continue;
@@ -199,7 +206,7 @@ namespace BadAppleHotel.Game
 
         Vector2 FollowPath()
         {
-            if (targetRes != null && !GoalIsDoor()) goal = HotelMap.ToTile(targetRes.Pos);
+            if (targetRes != null && !GoalIsDoor() && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me))) goal = HotelMap.ToTile(targetRes.Pos);
             return navigator.Steer(ref me.Pos, goal, gm.MonsterWalkable, 0.3f, tickDt, tickNow);
         }
 

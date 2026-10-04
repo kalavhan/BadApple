@@ -20,7 +20,7 @@ namespace BadAppleHotel.Game
             if (room.Slots.Count(t => t != null) >= Cfg.match.disguiseMaxBuildings) return;
             if (room.BedLevel == 1)
             {
-                room.BedLevel = 2; room.BedSr.sprite = Sprites.Bed(2);
+                room.BedLevel = 2; room.BedSr.sprite = Sprites.Bed(2); room.BedSr.transform.localScale = SleepPose.BedScale(room.BedSr.sprite);
                 AddFloater(guest.Pos, Cfg.beds.levels[1].name, (Color)Palette.Candle);
             }
             else if (room.DoorLevel == 1 && Random.value < 0.25f)

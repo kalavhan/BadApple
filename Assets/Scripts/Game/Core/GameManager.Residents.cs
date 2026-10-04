@@ -101,7 +101,7 @@ namespace BadAppleHotel.Game
                 System.Func<int, int, bool> walk = (x, y) => WalkableFor(r, x, y);
 
                 Vector2 move = Vector2.zero;
-                if (r.IsHuman) move = GameInput.Move;
+                if (r.IsHuman) move = HotelView3D.Move(GameInput.Move);
                 else if (r.Ai != null) move = r.Ai.Tick(dt, now);
 
                 if (r.SleepRequested && !r.Asleep)
@@ -152,21 +152,19 @@ namespace BadAppleHotel.Game
                 var bed = Cfg.beds.levels[r.Room.BedLevel - 1];
                 float angle = r.Room.Def.BedRotation + bed.sleepRotation;
                 var head = r.Anim != null ? r.Anim.RestHead : new Vector2(0f, 1.25f);
-                var target = SleepPose.Position(HotelMap.Center(r.Room.Def.BedTile), r.Room.Def.BedRotation, bed, head);
+                var target = SleepPose.Position(r.Room.Def.BedCenter, r.Room.Def.BedRotation, bed, head, r.Room.BedSr.transform.localScale);
                 var p = Vector2.Lerp(r.SleepFrom + Vector2.down * 0.3f, target, k);
-                t.position = new Vector3(p.x, p.y, 0f);
-                t.rotation = Quaternion.Euler(0f, 0f, Mathf.LerpAngle(0f, angle, k));
-                t.localScale = Vector3.one;
+                t.position = new Vector3(p.x, p.y, -0.06f);
+                t.rotation = Quaternion.Slerp(HotelView3D.SpriteRotation, Quaternion.Euler(0f, 0f, angle), k);
+                t.localScale = Vector3.Lerp(HotelView3D.SpriteScale,Vector3.one,k);
                 r.Sr.color = Color.Lerp(Color.white, new Color(0.8f, 0.8f, 0.95f, 1f), k);
                 r.Sr.sortingOrder = r.Room.BedSr.sortingOrder + 2;
             }
             else
             {
-                t.position = new Vector3(r.Pos.x, r.Pos.y - 0.3f, 0f);
-                t.rotation = Quaternion.identity;
-                t.localScale = Vector3.one;
+                HotelView3D.Billboard(r.Sr, r.Pos);
                 r.Sr.color = Color.white;
-                r.Sr.sortingOrder = OrderFor(r.Pos.y - 0.3f);
+                r.Sr.sortingOrder = 5000 - Mathf.RoundToInt((r.Pos.x+r.Pos.y)*10);
                 if (r.Anim == null) r.Sr.flipX = r.Facing.x < 0f;
             }
             if (r.Anim != null && !r.Asleep)
@@ -174,7 +172,7 @@ namespace BadAppleHotel.Game
                 float dt = Mathf.Max(Time.deltaTime, 1e-4f);
                 bool moving = !r.Asleep && (r.Pos - r.LastPos).magnitude / dt > 0.4f;
                 bool attacking = !r.Asleep && Now < r.AttackUntil;
-                r.Anim.Drive(r.Asleep ? Vector2.down : r.Facing, moving, attacking);
+                r.Anim.Drive(HotelView3D.Facing(r.Facing), moving, attacking);
             }
             r.LastPos = r.Pos;
         }
@@ -260,6 +258,7 @@ namespace BadAppleHotel.Game
         {
             if (room.DoorSr == null) return;
             room.DoorSr.sprite = room.DoorBroken ? Sprites.DoorBroken : room.DoorOpen ? Sprites.DoorOpen : Sprites.Door(room.DoorLevel);
+            PoseDoor(room.DoorSr,room.Def,room.DoorBroken||room.DoorOpen);
         }
 
         // ------------------------------------------------------------------ economy
@@ -366,7 +365,8 @@ namespace BadAppleHotel.Game
             if (!Spend(r, "dreamPower", cost)) return ActionResult.NoMoney;
             room.BedLevel++;
             room.BedSr.sprite = Sprites.Bed(room.BedLevel);
-            AddFloater(HotelMap.Center(room.Def.BedTile) + Vector2.up, Cfg.beds.levels[room.BedLevel - 1].name, (Color)Palette.Candle);
+            room.BedSr.transform.localScale = SleepPose.BedScale(room.BedSr.sprite);
+            AddFloater(room.Def.BedCenter + Vector2.up, Cfg.beds.levels[room.BedLevel - 1].name, (Color)Palette.Candle);
             return ActionResult.Ok;
         }
 
@@ -456,7 +456,8 @@ namespace BadAppleHotel.Game
             var tile = room.Def.BuildTiles[slot];
             var pos = HotelMap.Center(tile);
             var t = new TowerInstance { Def = def, Level = 1, SlotIndex = slot, Tile = tile };
-            t.Sr = MakeSprite(def.name, Sprites.Tower(def, 1), pos, OrderFor(pos.y), matchRoot);
+            t.Sr = MakeSprite(def.name, TowerDirections.Get(def.id,1,Vector2.down) ?? Sprites.Tower(def, 1), pos, OrderFor(pos.y), matchRoot);
+            if (!Simulation) HotelView3D.Billboard(t.Sr, pos);
             room.Slots[slot] = t;
 
             // anyone standing on the plate gets nudged off it
@@ -488,8 +489,8 @@ namespace BadAppleHotel.Game
             if (cost < 0f) return ActionResult.MaxLevel;
             if (!Spend(r, t.Def.costResource, cost)) return ActionResult.NoMoney;
             t.Level++;
-            t.Sr.sprite = Sprites.Tower(t.Def, t.Level);
-            t.Sr.transform.localScale = Vector3.one;
+            t.Sr.sprite = TowerDirections.Get(t.Def.id,t.Level,Vector2.down) ?? Sprites.Tower(t.Def, t.Level);
+            if(!Simulation)HotelView3D.Billboard(t.Sr,HotelMap.Center(t.Tile));
             AddFloater(HotelMap.Center(t.Tile) + Vector2.up * 0.8f, "Lv " + t.Level, (Color)Palette.Bone);
             return ActionResult.Ok;
         }

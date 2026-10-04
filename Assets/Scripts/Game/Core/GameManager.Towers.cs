@@ -29,9 +29,15 @@ namespace BadAppleHotel.Game
                 {
                     if (t == null || t.Decoy || !t.IsWeapon) continue;
                     t.Cooldown = Mathf.Max(0f, t.Cooldown - dt);
-                    if (!active || cloaked || t.Cooldown > 0f || now < t.DisabledUntil) continue;
+                    if (!active || cloaked || now < t.DisabledUntil) continue;
                     var tpos = HotelMap.Center(t.Tile);
-                    if (Vector2.Distance(tpos, m.Pos) > TowerRange(t)) continue;
+                    if (!UpgradeRules.InRange(Cfg.towers,t.Def,t.Level,Vector2.Distance(tpos,m.Pos))) continue;
+                    if (!Simulation && t.Sr != null)
+                    {
+                        var facing = TowerDirections.Get(t.Def.id,t.Level,m.Pos-tpos);
+                        if(facing!=null)t.Sr.sprite=facing;
+                    }
+                    if(t.Cooldown>0f)continue;
                     Fire(t, room, tpos, m, now, mult);
                     if (m.Dead) return;
                 }
@@ -45,7 +51,7 @@ namespace BadAppleHotel.Game
             float rate = UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level);
             t.Cooldown = rate > 0f ? 1f / rate : 1f;
             int type = DamageTypes.Index(t.Def.damageType);
-            float mult = DamageTaken(m, type);
+            float mult = DamageTaken(m, type) * UpgradeRules.DistanceBonus(t.Def,Vector2.Distance(tpos,m.Pos));
             SpawnProjectile(tpos, m.Pos + Vector2.up * 0.5f, t.Def.damageType);
             var owner = room.Owner;
             if (owner != null && owner.Alive && !owner.Asleep)
@@ -92,9 +98,10 @@ namespace BadAppleHotel.Game
                 foreach (var t in room.Slots)
                 {
                     if (t == null || t.Decoy || !t.IsWeapon || t.Def.damageType == "slow") continue;
-                    if (Vector2.Distance(HotelMap.Center(t.Tile), pos) > TowerRange(t)) continue;
+                    float distance=Vector2.Distance(HotelMap.Center(t.Tile),pos);
+                    if (!UpgradeRules.InRange(Cfg.towers,t.Def,t.Level,distance)) continue;
                     int lv = t.Level - 1;
-                    float mult = DamageTaken(m, DamageTypes.Index(t.Def.damageType)) * own;
+                    float mult = DamageTaken(m, DamageTypes.Index(t.Def.damageType)) * own * UpgradeRules.DistanceBonus(t.Def,distance);
                     dps += UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level) * mult;
                     dps += UpgradeRules.BurnDamage(Cfg.towers, t.Def, t.Level) * mult * 0.5f;
                 }
