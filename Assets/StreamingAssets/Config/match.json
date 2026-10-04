@@ -1,0 +1,14 @@
+{
+  "playersPerMatch": 7,
+  "monsterCount": 1,
+  "residentCount": 6,
+  "setupSeconds": 60,
+  "nightCount": 6,
+  "nightSeconds": 90,
+  "nightBreakSeconds": 0,
+  "roomCount": 10,
+  "residentHealth": 100,
+  "monsterRespawnSeconds": 10,
+  "bodyPartsPerNight": 6,
+  "deadResidentsSpectate": true
+}

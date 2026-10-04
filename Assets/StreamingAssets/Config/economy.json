@@ -1,0 +1,31 @@
+{
+  "startingResources": { "dreamPower": 50, "faith": 0 },
+  "monsterKillsResident": {
+    "monsterGainsResourcesPct": 0.9,
+    "monsterGainsXpPct": 0.9
+  },
+  "monsterDies": {
+    "killerResidentGainsResourcesPct": 1.2
+  },
+  "monsterIncome": {
+    "dreamPowerPerDoorDamage": 0.1,
+    "dreamPowerPerResidentKill": 40,
+    "faithPerBodyPart": 10
+  },
+  "accountXp": {
+    "monsterPerResidentKilled": 100,
+    "residentPerNightSurvived": 60,
+    "residentSurvivedAllNightsBonus": 150
+  },
+  "residentXpValueByLevel": { "base": 50, "growth": 1.15 },
+  "levelCurve": {
+    "monster": { "baseXp": 200, "growth": 1.25, "maxLevel": 50 },
+    "resident": { "baseXp": 200, "growth": 1.25, "maxLevel": 50 }
+  },
+  "sharing": {
+    "enabled": true,
+    "refundable": false,
+    "lostIfRecipientDies": true,
+    "minTransfer": 5
+  }
+}

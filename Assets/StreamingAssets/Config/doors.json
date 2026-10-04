@@ -1,0 +1,17 @@
+{
+  "maxLevelGapOverLowestWeapon": 4,
+  "blockedBlinkSeconds": 3,
+  "emptyWeaponSlotCountsAsLevel": 0,
+  "levels": [
+    { "level": 1,  "health": 200,  "damageResistancePct": 0.00, "upgradeCost": 40 },
+    { "level": 2,  "health": 350,  "damageResistancePct": 0.05, "upgradeCost": 80 },
+    { "level": 3,  "health": 550,  "damageResistancePct": 0.10, "upgradeCost": 130 },
+    { "level": 4,  "health": 800,  "damageResistancePct": 0.15, "upgradeCost": 190 },
+    { "level": 5,  "health": 1100, "damageResistancePct": 0.20, "upgradeCost": 260 },
+    { "level": 6,  "health": 1450, "damageResistancePct": 0.25, "upgradeCost": 340 },
+    { "level": 7,  "health": 1850, "damageResistancePct": 0.30, "upgradeCost": 430 },
+    { "level": 8,  "health": 2300, "damageResistancePct": 0.35, "upgradeCost": 540 },
+    { "level": 9,  "health": 2800, "damageResistancePct": 0.40, "upgradeCost": 660 },
+    { "level": 10, "health": 3400, "damageResistancePct": 0.45, "upgradeCost": 0 }
+  ]
+}

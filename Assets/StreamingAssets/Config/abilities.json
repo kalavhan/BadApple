@@ -1,0 +1,38 @@
+{
+  "loadoutSize": 3,
+  "starterLoadout": ["jam", "rampage", "blackout"],
+  "abilities": [
+    {
+      "id": "jam", "name": "Jam", "unlockMonsterLevel": 1, "cooldownSeconds": 45, "durationSeconds": 20,
+      "effect": "towerDamageMultiplier", "damageType": "bullet", "value": 0.6, "radius": 10
+    },
+    {
+      "id": "rampage", "name": "Rampage", "unlockMonsterLevel": 1, "cooldownSeconds": 40, "durationSeconds": 20,
+      "effect": "doorDamageMultiplier", "value": 1.2
+    },
+    {
+      "id": "blackout", "name": "Blackout", "unlockMonsterLevel": 1, "cooldownSeconds": 60, "durationSeconds": 20,
+      "effect": "faithIncomeMultiplier", "value": 0.0, "radius": 12
+    },
+    {
+      "id": "lunge", "name": "Lunge", "unlockMonsterLevel": 3, "cooldownSeconds": 25, "durationSeconds": 1.0,
+      "effect": "dash", "value": 8
+    },
+    {
+      "id": "cloak", "name": "Cloak", "unlockMonsterLevel": 5, "cooldownSeconds": 50, "durationSeconds": 5,
+      "effect": "towerUntargetable", "value": 1
+    },
+    {
+      "id": "sticky_slime", "name": "Sticky Slime", "unlockMonsterLevel": 8, "cooldownSeconds": 35, "durationSeconds": 8,
+      "effect": "residentSlowZone", "value": 0.5, "radius": 2
+    },
+    {
+      "id": "vent_hop", "name": "Vent Hop", "unlockMonsterLevel": 10, "cooldownSeconds": 40, "durationSeconds": 0,
+      "effect": "teleportBetweenMarks", "value": 2
+    },
+    {
+      "id": "nightmare_gaze", "name": "Nightmare Gaze", "unlockMonsterLevel": 12, "cooldownSeconds": 60, "durationSeconds": 15,
+      "effect": "bedIncomeMultiplier", "value": 0.5, "radius": 10
+    }
+  ]
+}
