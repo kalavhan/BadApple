@@ -70,7 +70,7 @@ namespace BadAppleHotel.Game
             MarkCircle(Human.Pos, radius);
 
             for (int i = 0; i < fogPx.Length; i++)
-                fogPx[i] = new Color32(0x0E, 0x0B, 0x13, visible[i] ? (byte)0 : FogAlpha);
+                fogPx[i] = new Color32(0x0E, 0x0B, 0x13, visible[i] ? (byte)0 : (SleepingCamera ? (byte)180 : FogAlpha));
             fogTex.SetPixels32(fogPx);
             fogTex.Apply(false);
             SetEntityVisibility(true);

@@ -21,6 +21,7 @@ namespace BadAppleHotel.Game
     /// </summary>
     public class CharacterSet
     {
+        public Vector2 RestHead;
         public string Id;
         public Sprite[][][] Frames;   // [anim][dir][frame]
         public static readonly string[] AnimNames = { "idle", "run", "attack" };
@@ -39,7 +40,7 @@ namespace BadAppleHotel.Game
             if (ta == null) return null;
             var info = JsonUtility.FromJson<CharInfo>(ta.text);
             float ppu = info.heightPx / worldHeight;
-            var set = new CharacterSet { Id = id, Frames = new Sprite[3][][] };
+            var set = new CharacterSet { Id = id, RestHead = new Vector2(0f, worldHeight * 0.83f), Frames = new Sprite[3][][] };
             int[] counts = { info.idleFrames, info.runFrames, info.attackFrames };
             for (int a = 0; a < 3; a++)
             {
@@ -87,6 +88,15 @@ namespace BadAppleHotel.Game
         Color flashColor = Color.white;
 
         public bool Ready => set != null;
+        public Vector2 RestHead => set.RestHead;
+
+        // A static front-facing resting frame prevents attack/idle bobbing from moving the head off the pillow.
+        public void Rest()
+        {
+            if (set == null) return;
+            anim = CharAnim.Idle; dir = 6; t = 0f; attackLeft = 0f;
+            Apply();
+        }
 
         public static CharacterAnimator Attach(SpriteRenderer target, CharacterSet characters, float shirtHue = -1f)
         {
@@ -107,7 +117,11 @@ namespace BadAppleHotel.Game
 
         void OnDestroy()
         {
-            if (mat != null) Destroy(mat);
+            if (mat != null)
+            {
+                if (Application.isPlaying) Destroy(mat);
+                else DestroyImmediate(mat);
+            }
         }
 
         public void SetShirt(float hue, float sat = 1f, float val = 1f)

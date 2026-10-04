@@ -3,9 +3,30 @@
   "maxPartsPerType": 4,
   "keepOnRespawnPct": 0.5,
   "parts": [
-    { "id": "arm",   "name": "Arm",   "effect": "attackMultiplier",   "perPart": 0.10 },
-    { "id": "leg",   "name": "Leg",   "effect": "moveSpeedMultiplier", "perPart": 0.05 },
-    { "id": "torso", "name": "Torso", "effect": "maxHealthFlat",       "perPart": 150 },
-    { "id": "eye",   "name": "Eye",   "effect": "revealRadius",        "perPart": 4 }
-  ]
+    {
+      "id": "arm",
+      "name": "Arm",
+      "effect": "attackMultiplier",
+      "perPart": 0.1
+    },
+    {
+      "id": "leg",
+      "name": "Leg",
+      "effect": "moveSpeedMultiplier",
+      "perPart": 0.05
+    },
+    {
+      "id": "torso",
+      "name": "Torso",
+      "effect": "maxHealthFlat",
+      "perPart": 150
+    },
+    {
+      "id": "eye",
+      "name": "Eye",
+      "effect": "revealRadius",
+      "perPart": 4
+    }
+  ],
+  "minSpacingTiles": 12
 }

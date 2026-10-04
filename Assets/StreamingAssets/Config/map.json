@@ -1,6 +1,6 @@
 {
-  "width": 80,
-  "height": 36,
+  "width": 88,
+  "height": 56,
   "corridorWidth": 3,
   "verticalCorridors": 1,
   "lotWidthMin": 8,
@@ -9,7 +9,24 @@
   "lotHeightMax": 16,
   "lotGapMax": 4,
   "sideDoorChance": 0.35,
-  "letters": ["L", "T", "U", "C", "E", "F", "H", "J", "O", "P", "S", "Z", "I", "Y", "A", "G"],
+  "letters": [
+    "L",
+    "T",
+    "U",
+    "C",
+    "E",
+    "F",
+    "H",
+    "J",
+    "O",
+    "P",
+    "S",
+    "Z",
+    "I",
+    "Y",
+    "A",
+    "G"
+  ],
   "cellSizeMin": 2,
   "cellSizeMax": 4,
   "nibbleMax": 3,
@@ -17,5 +34,9 @@
   "buildTileDensity": 0.22,
   "buildTilesMin": 3,
   "buildTilesMax": 12,
-  "isolatedDoorDistance": 8
+  "isolatedDoorDistance": 8,
+  "minDoorDistance": 7,
+  "maxNearestDoorDistance": 32,
+  "deadEndCount": 4,
+  "loopCount": 2
 }
