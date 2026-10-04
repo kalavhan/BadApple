@@ -81,6 +81,14 @@ namespace BadAppleHotel.Game
         void Start()
         {
             Application.targetFrameRate = 60;
+            Initialize();
+        }
+
+        /// <summary>Loads configs and builds the hotel. Also used to recover after a script reload during Play mode.</summary>
+        void Initialize()
+        {
+            ConfigError = null;
+            Cfg = null;
             try
             {
                 Cfg = ConfigLoader.Load();
@@ -307,6 +315,8 @@ namespace BadAppleHotel.Game
 
         void Update()
         {
+            // A script reload while playing wipes non-serialized state (configs, residents) but keeps the phase.
+            if (Cfg == null && Phase != Phase.ConfigError) { Recover(); return; }
             UpdateProjectiles();
             Floaters.RemoveAll(f => Time.unscaledTime - f.Born > 1.4f);
             if (Phase != Phase.Setup && Phase != Phase.Night) return;
@@ -338,6 +348,27 @@ namespace BadAppleHotel.Game
                 if (Residents.All(r => !r.Alive)) EndMatch();
                 else if (PhaseTimer <= 0f) EndNight();
             }
+        }
+
+        void Recover()
+        {
+            Debug.LogWarning("[Bad Apple Hotel] Scripts reloaded mid-match; the match state was lost. Back to the menu.");
+            foreach (var n in new[] { "World", "Match" })
+            {
+                var go = GameObject.Find(n);
+                if (go != null) Destroy(go);
+            }
+            doorSprites.Clear();
+            projectiles.Clear();
+            Residents.Clear();
+            RoomsByDef.Clear();
+            Parts.Clear();
+            Floaters.Clear();
+            Monster = null;
+            Human = null;
+            PendingHelpFrom = null;
+            Time.timeScale = 1f;
+            Initialize();
         }
 
         void BeginNights()
