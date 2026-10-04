@@ -4,8 +4,9 @@ using UnityEngine;
 namespace BadAppleHotel.Game
 {
     /// <summary>
-    /// Input read from IMGUI events, so it works whichever input backend the project has enabled.
-    /// Keyboard: WASD / arrows to move, 1-2-3 for abilities. Touch/mouse: the on-screen joystick.
+    /// Keyboard state read from IMGUI events (works with either input backend), plus the on-screen joystick vector the
+    /// HUD writes. Keyboard: WASD / arrows to move, E or Space for the action button, M for the hotel view,
+    /// 1-2-3 for monster abilities.
     /// </summary>
     public static class GameInput
     {

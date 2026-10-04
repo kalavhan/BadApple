@@ -54,5 +54,39 @@ namespace BadAppleHotel.Rules
         {
             return tower.baseUpgradeCost * UnityEngine.Mathf.Pow(towers.levelScaling.upgradeCostGrowth, currentLevel - 1);
         }
+
+        /// <summary>A tower's own maxLevel when set (e.g. the crystal ball is 1), otherwise the global towers.maxLevel.</summary>
+        public static int TowerMaxLevel(TowersConfig towers, TowerDef tower)
+        {
+            return tower.maxLevel > 0 ? tower.maxLevel : towers.maxLevel;
+        }
+
+        /// <summary>Range in tiles: rangeTiles[rangeClass] * levelScaling.range^(level - 1). Non-weapons have range 0.</summary>
+        public static float TowerRange(TowersConfig towers, TowerDef tower, int level)
+        {
+            float baseRange;
+            switch (tower.rangeClass)
+            {
+                case "short": baseRange = towers.rangeTiles.@short; break;
+                case "mid": baseRange = towers.rangeTiles.mid; break;
+                case "long": baseRange = towers.rangeTiles.@long; break;
+                default: return 0f;
+            }
+            return baseRange * UnityEngine.Mathf.Pow(towers.levelScaling.range, level - 1);
+        }
+
+        /// <summary>Total spent on a tower at a level: build cost plus every upgrade so far.</summary>
+        public static float TowerTotalSpent(TowersConfig towers, TowerDef tower, int level)
+        {
+            float total = tower.buildCost;
+            for (int l = 1; l < level; l++) total += TowerUpgradeCost(towers, tower, l);
+            return total;
+        }
+
+        /// <summary>What selling gives back: sellRefundPct of everything spent on the tower.</summary>
+        public static float TowerSellValue(TowersConfig towers, TowerDef tower, int level)
+        {
+            return UnityEngine.Mathf.Floor(TowerTotalSpent(towers, tower, level) * towers.sellRefundPct);
+        }
     }
 }

@@ -32,6 +32,8 @@ namespace BadAppleHotel.Config
                 monsters = Parse<MonstersConfig>(readText, "monsters"),
                 bodyParts = Parse<BodyPartsConfig>(readText, "bodyparts"),
                 abilities = Parse<AbilitiesConfig>(readText, "abilities"),
+                map = Parse<MapConfig>(readText, "map"),
+                residents = Parse<ResidentsConfig>(readText, "residents"),
             };
             Validate(cfg);
             return cfg;
@@ -56,6 +58,18 @@ namespace BadAppleHotel.Config
             Require(c.beds.levels != null && c.beds.levels.Length > 0, "beds.json: no levels");
             Require(c.doors.levels != null && c.doors.levels.Length > 0, "doors.json: no levels");
             Require(c.towers.towers != null && c.towers.towers.Length > 0, "towers.json: no towers");
+            Require(c.towers.rangeTiles != null && c.towers.rangeTiles.@short > 0 && c.towers.rangeTiles.mid > 0 && c.towers.rangeTiles.@long > 0,
+                "towers.json: rangeTiles needs short, mid and long");
+            foreach (var t in c.towers.towers)
+            {
+                if (t.damageType == "none") continue;
+                Require(t.rangeClass == "short" || t.rangeClass == "mid" || t.rangeClass == "long",
+                    $"towers.json: weapon '{t.id}' needs rangeClass short, mid or long");
+            }
+            Require(c.map != null && c.map.width >= 32 && c.map.height >= 24, "map.json: map must be at least 32 x 24");
+            Require(c.map.letters != null && c.map.letters.Length > 0, "map.json: no letters");
+            Require(c.map.lotWidthMin >= 7 && c.map.lotHeightMin >= 7, "map.json: lots must be at least 7 x 7");
+            Require(c.residents != null && c.residents.moveSpeed > 0, "residents.json: moveSpeed must be positive");
             Require(c.monsters.monsters != null && c.monsters.monsters.Length > 0, "monsters.json: no monsters");
             Require(c.abilities.starterLoadout != null && c.abilities.starterLoadout.Length == c.abilities.loadoutSize,
                 "abilities.json: starterLoadout length must equal loadoutSize");

@@ -145,17 +145,27 @@ namespace BadAppleHotel.Config
     }
 
     [Serializable]
+    public class RangeTiles
+    {
+        public float @short;
+        public float mid;
+        public float @long;
+    }
+
+    [Serializable]
     public class TowerDef
     {
         public string id;
         public string name;
         public string damageType;   // bullet | electric | fire | slow | none
+        public string rangeClass;   // short | mid | long (weapons only)
+        public string effect;       // "" | faith | clairvoyance (non-weapons)
         public string costResource; // dreamPower | faith
         public float buildCost;
         public float baseUpgradeCost;
+        public int maxLevel;        // 0 = use towers.maxLevel
         public float damage;
         public float shotsPerSecond;
-        public float range;
         public float areaRadius;
         public int chainTargets;
         public float stunSeconds;
@@ -171,8 +181,9 @@ namespace BadAppleHotel.Config
     [Serializable]
     public class TowersConfig
     {
-        public int slotsPerRoom;
         public int maxLevel;
+        public float sellRefundPct;
+        public RangeTiles rangeTiles;
         public TowerLevelScaling levelScaling;
         public TowerDef[] towers;
     }
@@ -210,6 +221,7 @@ namespace BadAppleHotel.Config
     [Serializable]
     public class MonstersConfig
     {
+        public float attackReachTiles;
         public ResistanceTracks resistanceTracks;
         public MonsterDef[] monsters;
     }
@@ -254,6 +266,42 @@ namespace BadAppleHotel.Config
         public AbilityDef[] abilities;
     }
 
+    [Serializable]
+    public class MapConfig
+    {
+        public int width;
+        public int height;
+        public int corridorWidth;
+        public int verticalCorridors;
+        public int lotWidthMin;
+        public int lotWidthMax;
+        public int lotHeightMin;
+        public int lotHeightMax;
+        public int lotGapMax;
+        public float sideDoorChance;
+        public string[] letters;
+        public int cellSizeMin;
+        public int cellSizeMax;
+        public int nibbleMax;
+        public int bulgeMax;
+        public float buildTileDensity;
+        public int buildTilesMin;
+        public int buildTilesMax;
+        public int isolatedDoorDistance;
+    }
+
+    [Serializable]
+    public class ResidentsConfig
+    {
+        public float moveSpeed;
+        public float awakeWeaponDamageMultiplier;
+        public float awakeDreamPowerMultiplier;
+        public float doorReachTiles;
+        public float bedReachTiles;
+        public float visionRadiusTiles;
+        public float botWakeRadiusTiles;
+    }
+
     // Everything the game reads, loaded once at startup.
     public class GameConfig
     {
@@ -265,5 +313,7 @@ namespace BadAppleHotel.Config
         public MonstersConfig monsters;
         public BodyPartsConfig bodyParts;
         public AbilitiesConfig abilities;
+        public MapConfig map;
+        public ResidentsConfig residents;
     }
 }

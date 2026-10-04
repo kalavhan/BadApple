@@ -1,5 +1,5 @@
 {
-  "startingResources": { "dreamPower": 50, "faith": 0 },
+  "startingResources": { "dreamPower": 100, "faith": 0 },
   "monsterKillsResident": {
     "monsterGainsResourcesPct": 0.9,
     "monsterGainsXpPct": 0.9

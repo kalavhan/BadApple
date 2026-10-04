@@ -5,10 +5,11 @@ using UnityEngine;
 namespace BadAppleHotel.Game
 {
     /// <summary>
-    /// Bot resident. Every ~1 s it picks one thing to spend on: bed, door, a new tower or an upgrade.
-    /// It respects the 4-level gap rule (upgrading the lowest weapon when the door is blocked), saves up
-    /// when it cannot afford its pick, prefers towers the monster is weak to, and begs a neighbour for help
-    /// when its door is failing.
+    /// Bot resident. During setup it walks to a free room, shuts the door and goes to bed. It sleeps for Dream Power
+    /// and wakes up (towers hit harder) when the monster comes close. About once a second it picks one thing to spend
+    /// on: bed, door, a new tower placed where its range covers the door, or an upgrade. It respects the 4-level gap
+    /// rule, saves up when it cannot afford its pick, prefers towers the monster is weak to, and begs a neighbour for
+    /// help when its door is failing.
     /// </summary>
     public class ResidentAI
     {
@@ -19,6 +20,14 @@ namespace BadAppleHotel.Game
         readonly float eco;      // personality: how much it likes economy upgrades
         readonly float turtle;   // personality: how much it likes the door
 
+        RoomDef targetRoom;
+        List<Vector2Int> path;
+        int pathIdx;
+        Vector2Int pathGoal;
+        float repath;
+        Vector2 lastPos;
+        float stuck;
+
         public ResidentAI(GameManager gm, Resident me)
         {
             this.gm = gm;
@@ -28,13 +37,99 @@ namespace BadAppleHotel.Game
             nextThink = Random.Range(0.5f, 1.5f);
         }
 
-        public void Tick(float dt, float now)
+        /// <summary>Returns the direction to walk this frame (zero to stand still).</summary>
+        public Vector2 Tick(float dt, float now)
         {
             nextThink -= dt;
-            if (nextThink > 0f) return;
-            nextThink = Random.Range(0.7f, 1.3f);
-            Think(now);
+            if (nextThink <= 0f)
+            {
+                nextThink = Random.Range(0.7f, 1.3f);
+                Think(now);
+            }
+            var move = Steer(dt, now);
+            if (move.sqrMagnitude > 0.01f && (me.Pos - lastPos).sqrMagnitude < 0.0002f) stuck += dt; else stuck = 0f;
+            lastPos = me.Pos;
+            return move;
         }
+
+        // ------------------------------------------------------------ walking & routine
+
+        Vector2 Steer(float dt, float now)
+        {
+            repath -= dt;
+            var room = me.Room;
+
+            if (room == null)
+            {
+                if (gm.Phase == Phase.Setup && gm.Cfg.match.setupSeconds - gm.PhaseTimer < me.ClaimAt) return Vector2.zero;
+                if (targetRoom == null || !gm.IsRoomFree(targetRoom)) targetRoom = PickRoom();
+                return targetRoom == null ? Vector2.zero : WalkTo(targetRoom.DoorInside);
+            }
+
+            var tile = HotelMap.ToTile(me.Pos);
+            bool inside = room.Def.ContainsInterior(tile);
+            if (!inside)
+            {
+                // somehow outside: go back in through our own door
+                if (room.DoorBlocks)
+                {
+                    if (gm.NearDoor(me)) gm.TryToggleDoor(me);
+                    return WalkTo(room.Def.DoorOutside);
+                }
+                return WalkTo(room.Def.DoorInside);
+            }
+
+            if (room.DoorOpen && !room.DoorBroken)
+            {
+                if (gm.NearDoor(me))
+                {
+                    if (gm.TryToggleDoor(me) != ActionResult.Ok) return WalkTo(room.Def.BedTile);
+                }
+                else return WalkTo(room.Def.DoorInside);
+            }
+
+            if (!gm.OnBed(me)) return WalkTo(room.Def.BedTile);
+
+            bool danger = room.UnderAttack(now) || room.DoorBroken;
+            var m = gm.Monster;
+            if (gm.Phase == Phase.Night && m != null && !m.Dead &&
+                Vector2.Distance(m.Pos, HotelMap.Center(room.Def.DoorOutside)) <= gm.Cfg.residents.botWakeRadiusTiles)
+                danger = true;
+            if (danger && me.Asleep) gm.Wake(me);
+            else if (!danger && !me.Asleep) gm.TrySleep(me);
+            return Vector2.zero;
+        }
+
+        RoomDef PickRoom()
+        {
+            var free = gm.Map.Rooms.Where(gm.IsRoomFree).ToList();
+            if (free.Count == 0) return null;
+            free.Sort((a, b) => Vector2.Distance(a.Center, me.Pos).CompareTo(Vector2.Distance(b.Center, me.Pos)));
+            int pick = Random.Range(0, Mathf.Min(4, free.Count));
+            return free[pick];
+        }
+
+        Vector2 WalkTo(Vector2Int goal)
+        {
+            var start = HotelMap.ToTile(me.Pos);
+            if (path == null || goal != pathGoal || repath <= 0f || stuck > 0.8f)
+            {
+                path = Pathfinding.FindPath(start, goal, (x, y) => gm.WalkableFor(me, x, y));
+                pathIdx = 0;
+                pathGoal = goal;
+                repath = 1.2f;
+                stuck = 0f;
+            }
+            if (path != null)
+            {
+                while (pathIdx < path.Count && Vector2.Distance(me.Pos, HotelMap.Center(path[pathIdx])) < 0.2f) pathIdx++;
+                if (pathIdx < path.Count) return (HotelMap.Center(path[pathIdx]) - me.Pos).normalized;
+            }
+            var d = HotelMap.Center(goal) - me.Pos;
+            return d.magnitude > 0.08f ? Vector2.ClampMagnitude(d * 3f, 1f) : Vector2.zero;
+        }
+
+        // ------------------------------------------------------------ spending
 
         void Think(float now)
         {
@@ -53,7 +148,6 @@ namespace BadAppleHotel.Game
                     nextHelp = now + 20f;
                     gm.AskForHelp(me);
                 }
-                // while attacked, more firepower helps as well
                 if (UpgradeLowestWeapon() == ActionResult.Ok) return;
             }
 
@@ -73,7 +167,7 @@ namespace BadAppleHotel.Game
 
             // 4) weighted choice; if the pick is unaffordable we simply wait (that is how bots save up)
             var options = new List<(float w, System.Func<ActionResult> act)>();
-            int emptySlot = room.EmptySlot();
+            bool hasEmpty = room.EmptySlot() >= 0;
 
             if (room.BedLevel < gm.Cfg.beds.levels.Length)
                 options.Add((eco * (6 - room.BedLevel) * 0.8f, () => gm.TryUpgradeBed(me)));
@@ -86,18 +180,18 @@ namespace BadAppleHotel.Game
                     return res == ActionResult.Blocked ? UpgradeLowestWeapon() : res;
                 }));
 
-            if (emptySlot >= 0)
+            if (hasEmpty)
             {
-                int faithTowers = room.CountTowers("faith_tower");
+                int faithTowers = room.Slots.Count(t => t != null && t.IsFaith);
                 if (faithTowers < 2)
-                    options.Add((faithTowers == 0 ? 4f * eco : 1.5f * eco, () => gm.TryBuildTower(me, emptySlot, "faith_tower")));
+                    options.Add((faithTowers == 0 ? 4f * eco : 1.5f * eco, () => BuildFaith(room)));
                 options.Add((4f, () => BuildBestWeapon(room)));
             }
 
             if (room.WeaponCount() > 0)
                 options.Add((3f, () => UpgradeLowestWeapon()));
 
-            var faithTower = room.Slots.FirstOrDefault(t => t != null && t.Def.id == "faith_tower");
+            var faithTower = room.Slots.FirstOrDefault(t => t != null && t.IsFaith);
             if (faithTower != null)
                 options.Add((1.2f * eco, () => gm.TryUpgradeTower(me, faithTower.SlotIndex)));
 
@@ -119,34 +213,68 @@ namespace BadAppleHotel.Game
             return gm.TryUpgradeTower(me, lowest.SlotIndex);
         }
 
-        /// <summary>Builds the weapon the monster is weakest to, among the ones we can pay for now.</summary>
+        ActionResult BuildFaith(Room room)
+        {
+            var def = gm.Cfg.towers.towers.FirstOrDefault(t => t.effect == "faith" || t.faithPerSecond > 0f);
+            if (def == null) return ActionResult.Invalid;
+            int slot = -1;
+            float far = -1f;
+            var door = HotelMap.Center(room.Def.DoorOutside);
+            for (int i = 0; i < room.Slots.Length; i++)
+            {
+                if (room.Slots[i] != null) continue;
+                float d = Vector2.Distance(HotelMap.Center(room.Def.BuildTiles[i]), door);
+                if (d > far) { far = d; slot = i; }
+            }
+            return slot < 0 ? ActionResult.Invalid : gm.TryBuildTower(me, slot, def.id);
+        }
+
+        /// <summary>Builds the weapon the monster is weakest to (among the affordable ones) on the plate where its range best covers the door.</summary>
         ActionResult BuildBestWeapon(Room room)
         {
-            int slot = room.EmptySlot();
-            if (slot < 0) return UpgradeLowestWeaponIfAny(room);
+            if (room.EmptySlot() < 0) return UpgradeLowestWeaponIfAny(room);
             var m = gm.Monster;
+            var door = HotelMap.Center(room.Def.DoorOutside);
             var weapons = gm.Cfg.towers.towers.Where(t => t.damageType != "none").ToList();
             var affordable = weapons.Where(t => gm.Wallet(me, t.costResource) >= t.buildCost).ToList();
             if (affordable.Count == 0) return ActionResult.NoMoney;
 
-            float total = 0f;
-            var weights = new List<float>();
+            var choices = new List<(Config.TowerDef def, int slot, float w)>();
             foreach (var t in affordable)
             {
+                int slot = BestSlotFor(room, t, door, out float coverage);
+                if (slot < 0) continue;
                 float mult = m != null ? gm.DamageTaken(m, DamageTypes.Index(t.damageType)) : 1f;
-                float w = Mathf.Pow(mult, 3f);
+                float w = Mathf.Pow(mult, 3f) * coverage;
                 if (t.damageType == "slow" && room.CountTowers(t.id) > 0) w *= 0.3f; // one slow totem is plenty
                 if (t.id == "gun_turret") w *= 1.3f; // cheap, reliable
-                weights.Add(w);
-                total += w;
+                choices.Add((t, slot, w));
             }
+            if (choices.Count == 0) return ActionResult.Invalid;
+            float total = choices.Sum(c => c.w);
             float pick = Random.Range(0f, total);
-            for (int i = 0; i < affordable.Count; i++)
+            foreach (var c in choices)
             {
-                pick -= weights[i];
-                if (pick <= 0f) return gm.TryBuildTower(me, slot, affordable[i].id);
+                pick -= c.w;
+                if (pick <= 0f) return gm.TryBuildTower(me, c.slot, c.def.id);
             }
-            return gm.TryBuildTower(me, slot, affordable[affordable.Count - 1].id);
+            var last = choices[choices.Count - 1];
+            return gm.TryBuildTower(me, last.slot, last.def.id);
+        }
+
+        int BestSlotFor(Room room, Config.TowerDef def, Vector2 door, out float coverage)
+        {
+            float range = gm.RangeOf(def, 1);
+            int best = -1;
+            coverage = 0f;
+            for (int i = 0; i < room.Slots.Length; i++)
+            {
+                if (room.Slots[i] != null) continue;
+                float d = Vector2.Distance(HotelMap.Center(room.Def.BuildTiles[i]), door);
+                float score = d <= range ? 1f + (range - d) / range : 0.15f / (1f + d - range);
+                if (score > coverage) { coverage = score; best = i; }
+            }
+            return best;
         }
 
         ActionResult UpgradeLowestWeaponIfAny(Room room)

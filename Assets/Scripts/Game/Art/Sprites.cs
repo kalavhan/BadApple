@@ -118,6 +118,52 @@ namespace BadAppleHotel.Game
             return c.ToSprite(Center);
         });
 
+        /// <summary>A bolted floor plate: the only tiles where buildings can be attached.</summary>
+        public static Sprite BuildTile => Cached("buildtile", () =>
+        {
+            var c = new PixelCanvas(16, 16);
+            c.Fill(Palette.Shade(Palette.Rust, 0.55f));
+            c.Rect(1, 1, 14, 14, Palette.Shade(Palette.Plum, 0.9f));
+            c.Rect(2, 2, 12, 12, Palette.Shade(Palette.Teal, 0.7f));
+            c.Rect(3, 3, 10, 10, Palette.Shade(Palette.Teal, 0.85f));
+            for (int i = 4; i < 12; i += 3) { c.Set(i, 8, Palette.Shade(Palette.Teal, 0.65f)); c.Set(8, i, Palette.Shade(Palette.Teal, 0.65f)); }
+            var bolt = Palette.Shade(Palette.Bone, 0.85f);
+            c.Set(2, 2, bolt); c.Set(13, 2, bolt); c.Set(2, 13, bolt); c.Set(13, 13, bolt);
+            return c.ToSprite(Center);
+        });
+
+        public static Sprite DoorOpen => Cached("dooropen", () =>
+        {
+            var c = new PixelCanvas(16, 16);
+            c.Fill(Palette.Rust);
+            c.Rect(2, 0, 12, 15, Palette.Shade(Palette.Ink, 1.2f));
+            c.Rect(2, 0, 3, 15, Palette.Teal);           // door leaf swung against the frame
+            c.Rect(3, 1, 1, 13, Palette.Shade(Palette.Teal, 1.2f));
+            c.Set(4, 7, Palette.Candle);
+            c.Rect(0, 15, 16, 1, Palette.Ink);
+            return c.ToSprite(Center);
+        });
+
+        /// <summary>Unit circle outline (diameter = 1 world unit), scaled to show tower ranges.</summary>
+        public static Sprite Ring => Cached("ring", () =>
+        {
+            const int size = 256;
+            var t = new Texture2D(size, size, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+            var px = new Color32[size * size];
+            float r = size / 2f;
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    float d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), new Vector2(r, r));
+                    float edge = Mathf.Clamp01(1.5f - Mathf.Abs(d - (r - 3f)));
+                    float fill = d < r - 3f ? 0.10f : 0f;
+                    px[y * size + x] = new Color(1f, 1f, 1f, Mathf.Max(edge, fill));
+                }
+            t.SetPixels32(px);
+            t.Apply();
+            return Sprite.Create(t, new Rect(0, 0, size, size), Center, size);
+        });
+
         // ---------- Beds (5 levels) ----------
 
         public static Sprite Bed(int level) => Cached("bed" + level, () =>
@@ -312,6 +358,14 @@ namespace BadAppleHotel.Game
                     c.Set(6, 5, Palette.Shade(Palette.Mint, 0.8f)); c.Set(9, 5, Palette.Shade(Palette.Mint, 0.8f));
                     c.Rect(7, 3, 2, 1, Palette.Ink);
                     c.Rect(4, 13, 8, 2, Palette.Teal);
+                    break;
+                case "crystal_ball":
+                    c.Rect(4, 1, 8, 3, Palette.Shade(Palette.Plum, 1.4f));
+                    c.Rect(5, 4, 6, 1, Palette.Rust);
+                    c.Ellipse(8, 9, 4, 4, Palette.Shade(Palette.Mint, 0.85f));
+                    c.Ellipse(8, 9, 2, 2, Palette.Mint);
+                    c.Set(6, 11, Palette.Bone); c.Set(7, 12, Palette.Bone);
+                    c.Set(9, 8, Palette.Ink);
                     break;
                 case "faith_tower":
                     c.Rect(4, 1, 8, 7, Palette.Shade(Palette.Bone, 0.8f));
