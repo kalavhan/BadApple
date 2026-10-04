@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace BadAppleHotel.Game
@@ -472,43 +473,89 @@ namespace BadAppleHotel.Game
 
             GUI.DrawTexture(new Rect(vw / 2 - 32, 180, 64, 64), Sprites.Apple.texture);
 
-            float y = 265;
+            float y = 244;
             GUI.Label(new Rect(0, y, vw, 24), "Your monster pick (played if you end up as the Monster)", center);
-            y += 30;
+            y += 26;
             var defs = cfg.monsters.monsters;
             float w = 250, gap = 16, total = defs.Length * w + (defs.Length - 1) * gap;
             var cardStyle = new GUIStyle(bigButton) { fontSize = 14, fontStyle = FontStyle.Normal, alignment = TextAnchor.MiddleCenter };
             for (int i = 0; i < defs.Length; i++)
             {
                 var d = defs[i];
-                var r = new Rect(vw / 2 - total / 2 + i * (w + gap), y, w, 96);
+                var r = new Rect(vw / 2 - total / 2 + i * (w + gap), y, w, 84);
                 bool picked = d.id == monsterPick;
                 var old = GUI.backgroundColor;
                 GUI.backgroundColor = picked ? Candle : Color.white;
                 if (GUI.Button(r, "<b>" + d.name + "</b>\nHP " + d.baseHealth + "  Speed " + d.moveSpeed + "\nWeak to " + WeakestTo(d), cardStyle))
                     monsterPick = d.id;
                 GUI.backgroundColor = old;
-                GUI.DrawTexture(new Rect(r.x + 8, r.y + 20, 36, 48), Sprites.Monster(d.id).texture, ScaleMode.ScaleToFit);
+                DrawSpriteFit(MenuSprite(d.id, 2.1f), new Rect(r.x + 6, r.y + 6, 50, r.height - 12));
             }
 
-            y += 120;
+            y += 96;
+            GUI.Label(new Rect(0, y, vw, 24), "Your resident (played if you end up as a Resident)", center);
+            y += 26;
+            var roster = cfg.residents.roster;
+            int n = roster.Length + 1;
+            float cw = 112, cg = 8, ctotal = n * cw + (n - 1) * cg;
+            var rcard = new GUIStyle(cardStyle) { fontSize = 12, alignment = TextAnchor.LowerCenter };
+            for (int i = 0; i < n; i++)
+            {
+                var r = new Rect(vw / 2 - ctotal / 2 + i * (cw + cg), y, cw, 112);
+                bool random = i == 0;
+                var c = random ? null : roster[i - 1];
+                bool picked = random ? string.IsNullOrEmpty(gm.PickedCharacter) : gm.PickedCharacter == c.id;
+                var old = GUI.backgroundColor;
+                GUI.backgroundColor = picked ? Candle : Color.white;
+                if (GUI.Button(r, random ? "<b>Random</b>" : "<b>" + c.name + "</b>", rcard)) gm.PickedCharacter = random ? null : c.id;
+                GUI.backgroundColor = old;
+                if (random) Shadowed(new Rect(r.x, r.y + 20, r.width, 50), "?", Candle, title);
+                else DrawSpriteFit(MenuSprite(c.art, 1.55f, true), new Rect(r.x + 6, r.y + 4, r.width - 12, r.height - 30));
+            }
+            y += 116;
+            var shown = roster.FirstOrDefault(c => c.id == gm.PickedCharacter);
+            GUI.Label(new Rect(vw / 2 - 440, y, 880, 40), shown == null ? "Random seat: you could be any of the seven guests." :
+                "<b>" + shown.fullName + "</b>, " + shown.title + ". " + shown.bio, center);
+
+            y += 46;
             float bw = 260;
-            if (GUI.Button(new Rect(vw / 2 - bw * 1.5f - 20, y, bw, 64), "Play as Resident", bigButton))
+            if (GUI.Button(new Rect(vw / 2 - bw * 1.5f - 20, y, bw, 56), "Play as Resident", bigButton))
                 gm.StartMatch(Role.Resident, monsterPick);
-            if (GUI.Button(new Rect(vw / 2 - bw / 2, y, bw, 64), "Play as Monster", bigButton))
+            if (GUI.Button(new Rect(vw / 2 - bw / 2, y, bw, 56), "Play as Monster", bigButton))
                 gm.StartMatch(Role.Monster, monsterPick);
-            if (GUI.Button(new Rect(vw / 2 + bw / 2 + 20, y, bw, 64), "Random role (like online)", bigButton))
+            if (GUI.Button(new Rect(vw / 2 + bw / 2 + 20, y, bw, 56), "Random role (like online)", bigButton))
                 gm.StartMatch(Random.value < 1f / cfg.match.playersPerMatch ? Role.Monster : Role.Resident, monsterPick);
 
-            y += 90;
+            y += 70;
             AccountProgress.Progress(cfg, Role.Resident, out int rl, out int ri, out int rn);
             AccountProgress.Progress(cfg, Role.Monster, out int ml, out int mi, out int mn);
             GUI.Label(new Rect(0, y, vw, 24), "Resident level " + rl + " (" + ri + "/" + rn + " XP)     Monster level " + ml + " (" + mi + "/" + mn + " XP)", center);
-            y += 40;
-            GUI.Label(new Rect(vw / 2 - 440, y, 880, 80),
-                "Residents: walk into a free room in the first " + cfg.match.setupSeconds + " s, shut the door, sleep for Dream Power and tap the bolted plates to build. " +
+            y += 28;
+            GUI.Label(new Rect(vw / 2 - 440, y, 880, 60),
+                "Residents: walk into a free room in the first " + cfg.match.setupSeconds + " s, shut the door, sleep for Dream Power and tap the floor to build. " +
                 "Stay awake when the monster is near: towers hit x" + cfg.residents.awakeWeaponDamageMultiplier + ".  " +
                 "Monster: joystick / WASD to move, smash doors, eat body parts, 1 / 2 / 3 for abilities.", small);
+        }
+
+        /// <summary>Portrait for menus: the first idle frame facing the camera, else the legacy static sprite.</summary>
+        Sprite MenuSprite(string artId, float height, bool resident = false)
+        {
+            var set = Sprites.UseArt ? CharacterSet.Load(artId, height) : null;
+            if (set != null) return set.Frames[0][6][0];
+            return resident ? Sprites.Resident(0) : Sprites.Monster(artId);
+        }
+
+        void DrawSpriteFit(Sprite sp, Rect box)
+        {
+            if (sp == null) return;
+            var tr = sp.textureRect;
+            var tex = sp.texture;
+            float aspect = tr.width / tr.height;
+            float w = box.width, h = w / aspect;
+            if (h > box.height) { h = box.height; w = h * aspect; }
+            var rect = new Rect(box.x + (box.width - w) / 2f, box.yMax - h, w, h);
+            var uv = new Rect(tr.x / tex.width, tr.y / tex.height, tr.width / tex.width, tr.height / tex.height);
+            GUI.DrawTextureWithTexCoords(rect, tex, uv);
         }
 
         string WeakestTo(Config.MonsterDef d)

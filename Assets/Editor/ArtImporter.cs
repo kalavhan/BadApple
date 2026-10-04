@@ -14,6 +14,19 @@ namespace BadAppleHotel.EditorTools
         {
             if (!assetPath.StartsWith("Assets/Resources/Art/")) return;
             var ti = (TextureImporter)assetImporter;
+            if (assetPath.StartsWith("Assets/Resources/Art/Chars/"))
+            {
+                // animation atlases: big sheets, so compress them; no mipmaps (frames sit side by side)
+                ti.textureType = TextureImporterType.Default;
+                ti.alphaIsTransparency = true;
+                ti.mipmapEnabled = false;
+                ti.filterMode = FilterMode.Bilinear;
+                ti.wrapMode = TextureWrapMode.Clamp;
+                ti.textureCompression = TextureImporterCompression.CompressedHQ;
+                ti.npotScale = TextureImporterNPOTScale.None;
+                ti.maxTextureSize = 2048;
+                return;
+            }
             ti.textureType = TextureImporterType.Default;
             ti.alphaIsTransparency = true;
             ti.mipmapEnabled = true;

@@ -76,7 +76,6 @@ namespace BadAppleHotel.Game
 
         const float MaxStep = 1f / 30f;
 
-        static readonly string[] BotNames ={ "Mortimer", "Edna", "Prudence", "Silas", "Agatha", "Ignatius", "Ophelia" };
 
         // ------------------------------------------------------------------ lifecycle
 
@@ -247,16 +246,20 @@ namespace BadAppleHotel.Game
             Monster.Pos = HotelMap.Center(Map.MonsterSpawn);
             Monster.Hp = MaxHp(Monster);
             Monster.Sr = MakeSprite("Monster", Sprites.Monster(mdef.id), Monster.Pos, OrderFor(Monster.Pos.y), matchRoot);
+            if (Sprites.UseArt)
+                Monster.Anim = CharacterAnimator.Attach(Monster.Sr, CharacterSet.Load(mdef.id, 2.1f));
             if (!Monster.IsHuman) Monster.Ai = new MonsterAI(this, Monster);
 
             int residentLevelForHuman = AccountProgress.Level(Cfg, Role.Resident);
+            var roster = PickRoster(Cfg.match.residentCount);
             for (int i = 0; i < Cfg.match.residentCount; i++)
             {
                 bool human = role == Role.Resident && i == 0;
                 var r = new Resident
                 {
                     Id = i,
-                    Name = human ? "You" : BotNames[i % BotNames.Length],
+                    Name = human ? "You" : roster[i].name,
+                    Char = roster[i],
                     IsHuman = human,
                     ColorIndex = i,
                     Health = Cfg.match.residentHealth,
@@ -266,6 +269,13 @@ namespace BadAppleHotel.Game
                 };
                 r.Pos = LobbySpot(i);
                 r.Sr = MakeSprite(r.Name, Sprites.Resident(i), r.Pos, OrderFor(r.Pos.y), matchRoot);
+                r.LastPos = r.Pos;
+                if (Sprites.UseArt)
+                {
+                    var hues = Cfg.residents.shirtHues;
+                    float hue = hues != null && hues.Length > 0 ? hues[i % hues.Length] : 0.86f;
+                    r.Anim = CharacterAnimator.Attach(r.Sr, CharacterSet.Load(r.Char.art, 1.55f), hue);
+                }
                 if (!human)
                 {
                     r.Ai = new ResidentAI(this, r);
@@ -281,6 +291,27 @@ namespace BadAppleHotel.Game
             Time.timeScale = Speed;
             Announce("Manager: a guest upstairs conjured a " + mdef.name + ", and it escaped! Walk into a free room and shut the door.", 7f);
             AddLog("The " + mdef.name + " is loose in the hotel.");
+        }
+
+        /// <summary>The character the human wants to play (roster id); null = random. Everyone else is shuffled from the rest.</summary>
+        public string PickedCharacter;
+
+        /// <summary>Roster characters for the seats; seat 0 (the human) gets the picked one.</summary>
+        RosterDef[] PickRoster(int seats)
+        {
+            var all = Cfg.residents.roster.ToList();
+            var order = new List<RosterDef>();
+            var pick = all.FirstOrDefault(c => c.id == PickedCharacter);
+            if (pick != null) { order.Add(pick); all.Remove(pick); }
+            while (all.Count > 0)
+            {
+                int k = Random.Range(0, all.Count);
+                order.Add(all[k]);
+                all.RemoveAt(k);
+            }
+            var result = new RosterDef[seats];
+            for (int i = 0; i < seats; i++) result[i] = order[i % order.Count];
+            return result;
         }
 
         Vector2 LobbySpot(int i)

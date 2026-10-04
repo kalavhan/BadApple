@@ -1,0 +1,13 @@
+{
+ "id": "fenwick",
+ "frameW": 156,
+ "frameH": 156,
+ "dirs": 8,
+ "pivotX": 0.4923,
+ "pivotY": 0.0231,
+ "contentH": 154,
+ "heightPx": 146.6,
+ "idleFrames": 8,
+ "runFrames": 8,
+ "attackFrames": 8
+}

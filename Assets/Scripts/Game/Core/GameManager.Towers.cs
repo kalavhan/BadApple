@@ -47,6 +47,13 @@ namespace BadAppleHotel.Game
             int type = DamageTypes.Index(t.Def.damageType);
             float mult = DamageTaken(m, type);
             SpawnProjectile(tpos, m.Pos + Vector2.up * 0.5f, t.Def.damageType);
+            var owner = room.Owner;
+            if (owner != null && owner.Alive && !owner.Asleep)
+            {
+                owner.AttackUntil = Time.time + 0.45f;   // the owner joins in the fight
+                var toMonster = m.Pos - owner.Pos;
+                if (toMonster.sqrMagnitude > 0.01f) owner.Facing = toMonster.normalized;
+            }
 
             if (type == DamageTypes.Slow)
             {

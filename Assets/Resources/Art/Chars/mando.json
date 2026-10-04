@@ -1,0 +1,13 @@
+{
+ "id": "mando",
+ "frameW": 144,
+ "frameH": 152,
+ "dirs": 8,
+ "pivotX": 0.4667,
+ "pivotY": 0.0118,
+ "contentH": 149,
+ "heightPx": 141.5,
+ "idleFrames": 8,
+ "runFrames": 8,
+ "attackFrames": 8
+}

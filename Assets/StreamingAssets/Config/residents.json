@@ -5,5 +5,71 @@
   "doorReachTiles": 1.4,
   "bedReachTiles": 0.7,
   "visionRadiusTiles": 3.5,
-  "botWakeRadiusTiles": 10
+  "botWakeRadiusTiles": 10,
+  "shirtHues": [
+    0.86,
+    0.52,
+    0.3,
+    0.07,
+    0.62,
+    0.14
+  ],
+  "roster": [
+    {
+      "id": "hana",
+      "art": "hana",
+      "name": "Hana",
+      "fullName": "Hana Seo",
+      "title": "Investigative reporter",
+      "bio": "Heard the stories about this hotel. Has a hunch there is a secret, and she is going to find it."
+    },
+    {
+      "id": "dexter",
+      "art": "dexter",
+      "name": "Dexter",
+      "fullName": "Dexter Pruitt",
+      "title": "Armchair occultist",
+      "bio": "Has read every forum thread on the occult and is sure he understands what is happening here better than anyone."
+    },
+    {
+      "id": "fenwick",
+      "art": "fenwick",
+      "name": "Prof. Fenwick",
+      "fullName": "Prof. Fenwick Quill",
+      "title": "Paranormal inventor",
+      "bio": "Every gadget he ever built exists to prove one thing: the paranormal is real."
+    },
+    {
+      "id": "mando",
+      "art": "mando",
+      "name": "Mando",
+      "fullName": "Armando Ruiz",
+      "title": "Reluctant office worker",
+      "bio": "Won a ticket to this hotel. Just wants to go home and finish his spreadsheet."
+    },
+    {
+      "id": "scarlett",
+      "art": "scarlett",
+      "name": "Scarlett",
+      "fullName": "Scarlett Voss",
+      "title": "Slasher-movie addict",
+      "bio": "Has watched far too many horror films and cannot wait to meet something real."
+    },
+    {
+      "id": "stahl",
+      "art": "stahl",
+      "name": "General Stahl",
+      "fullName": "General Viktor Stahl",
+      "title": "Military visionary",
+      "bio": "Plans to weaponize the next paranormal thing he finds and take his country to its next military age."
+    },
+    {
+      "id": "cornelius",
+      "art": "cornelius",
+      "name": "Cornelius",
+      "fullName": "Cornelius Ashgrove",
+      "title": "Victorian occultist",
+      "bio": "A genuine occultist, dressed for the last century, thrilled about tonight's meeting."
+    }
+  ]
 }

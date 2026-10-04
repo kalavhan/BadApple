@@ -103,7 +103,12 @@ namespace BadAppleHotel.Game
             // visuals
             m.Sr.transform.position = new Vector3(m.Pos.x, m.Pos.y - 0.3f, 0f);
             m.Sr.sortingOrder = OrderFor(m.Pos.y - 0.3f);
-            m.Sr.flipX = m.Facing.x < 0f;
+            if (m.Anim != null)
+            {
+                bool moving = move.sqrMagnitude > 0.0001f || now < m.DashUntil;
+                m.Anim.Drive(m.Facing, moving, m.Biting != null || m.AttackingRoom != null);
+            }
+            else m.Sr.flipX = m.Facing.x < 0f;
             m.Sr.enabled = IsVisible(m.Pos);
             Color tint = Color.white;
             if (now < m.StunUntil) tint = (Color)Palette.Mint;

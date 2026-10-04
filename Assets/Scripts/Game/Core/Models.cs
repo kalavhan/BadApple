@@ -126,6 +126,10 @@ namespace BadAppleHotel.Game
         public float SleepBlend = 1f;      // 0..1: how far the sprite has glided onto the bed
         public Vector2 SleepFrom;          // where the glide started
         public SpriteRenderer Sr;
+        public CharacterAnimator Anim;     // 8-direction art; null when only the placeholder sprite exists
+        public RosterDef Char;             // which of the roster characters this seat plays
+        public Vector2 LastPos;
+        public float AttackUntil;          // swinging at the monster (when their weapons fire)
         public ResidentAI Ai;
         public float ClaimAt;   // bots: when they start walking to a room during setup
     }
@@ -164,6 +168,7 @@ namespace BadAppleHotel.Game
         public Vector2 DashVelocity;
 
         public SpriteRenderer Sr;
+        public CharacterAnimator Anim;
         public MonsterAI Ai;
     }
 

@@ -1,0 +1,13 @@
+{
+ "id": "hana",
+ "frameW": 148,
+ "frameH": 156,
+ "dirs": 8,
+ "pivotX": 0.4946,
+ "pivotY": 0.0231,
+ "contentH": 154,
+ "heightPx": 144.2,
+ "idleFrames": 8,
+ "runFrames": 8,
+ "attackFrames": 8
+}

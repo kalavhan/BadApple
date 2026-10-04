@@ -151,8 +151,16 @@ namespace BadAppleHotel.Game
                 t.localScale = Vector3.one;
                 r.Sr.color = Color.white;
                 r.Sr.sortingOrder = OrderFor(r.Pos.y - 0.3f);
-                r.Sr.flipX = r.Facing.x < 0f;
+                if (r.Anim == null) r.Sr.flipX = r.Facing.x < 0f;
             }
+            if (r.Anim != null)
+            {
+                float dt = Mathf.Max(Time.deltaTime, 1e-4f);
+                bool moving = !r.Asleep && (r.Pos - r.LastPos).magnitude / dt > 0.4f;
+                bool attacking = !r.Asleep && Time.time < r.AttackUntil;
+                r.Anim.Drive(r.Asleep ? Vector2.down : r.Facing, moving, attacking);
+            }
+            r.LastPos = r.Pos;
         }
 
         // ------------------------------------------------------------------ sleep & doors

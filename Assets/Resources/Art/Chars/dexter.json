@@ -1,0 +1,13 @@
+{
+ "id": "dexter",
+ "frameW": 128,
+ "frameH": 152,
+ "dirs": 8,
+ "pivotX": 0.4922,
+ "pivotY": 0.0197,
+ "contentH": 150,
+ "heightPx": 144.8,
+ "idleFrames": 8,
+ "runFrames": 8,
+ "attackFrames": 8
+}

@@ -1,0 +1,13 @@
+{
+ "id": "stitchwork_chef",
+ "frameW": 180,
+ "frameH": 180,
+ "dirs": 8,
+ "pivotX": 0.4978,
+ "pivotY": 0.0233,
+ "contentH": 179,
+ "heightPx": 172.6,
+ "idleFrames": 8,
+ "runFrames": 8,
+ "attackFrames": 8
+}

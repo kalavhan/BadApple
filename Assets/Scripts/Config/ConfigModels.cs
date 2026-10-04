@@ -295,8 +295,21 @@ namespace BadAppleHotel.Config
     }
 
     [Serializable]
+    public class RosterDef
+    {
+        public string id;
+        public string art;       // animation set under Resources/Art/Chars
+        public string name;      // short name shown in game
+        public string fullName;
+        public string title;
+        public string bio;
+    }
+
+    [Serializable]
     public class ResidentsConfig
     {
+        public RosterDef[] roster;
+        public float[] shirtHues;
         public float moveSpeed;
         public float awakeWeaponDamageMultiplier;
         public float awakeDreamPowerMultiplier;

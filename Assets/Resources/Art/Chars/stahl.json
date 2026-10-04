@@ -1,0 +1,13 @@
+{
+ "id": "stahl",
+ "frameW": 148,
+ "frameH": 156,
+ "dirs": 8,
+ "pivotX": 0.5027,
+ "pivotY": 0.0231,
+ "contentH": 154,
+ "heightPx": 139.2,
+ "idleFrames": 8,
+ "runFrames": 8,
+ "attackFrames": 8
+}
