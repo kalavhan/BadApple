@@ -16,13 +16,26 @@ Seven players spend six nights in a hotel hosting a reunion of occultists. One i
 ## Balance lives in JSON
 Every number is in `Assets/StreamingAssets/Config/` (`match`, `economy`, `beds`, `doors`, `towers`, `monsters`, `bodyparts`, `abilities`). All values are placeholders to tune by playtesting. `ConfigLoader` loads and validates them at startup.
 
-## Code
-- `Assets/Scripts/Config/` models and loader (Unity `JsonUtility`).
-- `Assets/Scripts/Rules/` pure rules: the door/weapon gap rule and the 90%/120% rewards and XP curve.
-- `Assets/Tests/EditMode/` NUnit tests for those rules (run in Unity's Test Runner).
+## Play the local demo (milestone 1)
+1. Clone this repo, then in Unity Hub choose **Add > Add project from disk** and pick the folder. It targets **Unity 6000.3.24f1**.
+2. On first open, Unity creates `Assets/Scenes/Main.unity` and adds it to the build (menu: *Bad Apple Hotel > Run Project Setup*). Open it and press **Play**. The game also boots in any empty scene.
+3. Pick a monster, then **Play as Resident**, **Play as Monster**, or **Random role**. Every other seat is a bot.
 
-## Setup
-This repo holds Assets only. In Unity Hub create a **2D (URP)** project in this folder (or copy `Assets/` into one), add the Pixel Perfect Camera, set 16 pixels per unit, and open Window > General > Test Runner to run the EditMode tests.
+**Resident:** tap a free room during the 60 s setup. Upgrade the bed (Dream Power), door and towers from the right panel. A door upgrade is blocked if it would be more than 4 levels above your weakest weapon, and that weapon blinks. Faith towers make Faith (the Bad Apple) for magic towers. Ask a neighbour for Dream Power when you are short.
+
+**Monster:** WASD / arrows or the on-screen joystick to move. Stand next to a door to smash it, then eat whoever is inside. Stand on body parts to eat them (arm = damage, leg = speed, torso = health, eye = spot parts). Abilities on 1 / 2 / 3 (Jam, Rampage, Blackout). Buy resistances in the left panel.
+
+Use the 1x / 2x / 4x buttons to fast-forward. Results award Monster or Resident XP (saved locally).
+
+Placeholder art is drawn in code from the bible palette (`Assets/Scripts/Game/Art/Sprites.cs`), so nothing needs importing yet.
+
+## Code
+- `Assets/StreamingAssets/Config/*.json`: every balance number.
+- `Assets/Scripts/Config/`: models and loader (Unity `JsonUtility`).
+- `Assets/Scripts/Rules/`: pure rules (door gap, 90% / 120% rewards, XP curve).
+- `Assets/Scripts/Game/`: the demo. `Core/GameManager.cs` runs the match, `AI/` holds the resident and monster bots, `UI/GameHUD.cs` is the IMGUI HUD, `World/HotelMap.cs` is the 10-room layout.
+- `Assets/Tests/EditMode/`: NUnit tests for the rules (Window > General > Test Runner).
+- `Packages/manifest.json` includes the MCP for Unity bridge so Claude can read the console and run tests in your editor.
 
 ## Art direction
 See [`docs/art-style.md`](docs/art-style.md). Dark and funny: Tim Burton crookedness, Don't Starve charm, a 9-color palette where red is reserved for Faith.
