@@ -135,14 +135,19 @@ namespace BadAppleHotel.Game
             if (r.Asleep && r.Room != null)
             {
                 var bed = HotelMap.Center(r.Room.Def.BedTile);
-                t.position = new Vector3(bed.x - 0.55f, bed.y + 0.05f, 0f);
-                t.rotation = Quaternion.Euler(0f, 0f, -90f);
+                // beds are drawn head-up, so the sleeper just lies on it: smaller and dimmed
+                t.position = new Vector3(bed.x, bed.y - 0.35f, 0f);
+                t.rotation = Quaternion.identity;
+                t.localScale = new Vector3(0.62f, 0.62f, 1f);
+                r.Sr.color = new Color(0.8f, 0.8f, 0.95f, 1f);
                 r.Sr.sortingOrder = OrderFor(bed.y) + 2;
             }
             else
             {
                 t.position = new Vector3(r.Pos.x, r.Pos.y - 0.3f, 0f);
                 t.rotation = Quaternion.identity;
+                t.localScale = Vector3.one;
+                r.Sr.color = Color.white;
                 r.Sr.sortingOrder = OrderFor(r.Pos.y - 0.3f);
                 r.Sr.flipX = r.Facing.x < 0f;
             }

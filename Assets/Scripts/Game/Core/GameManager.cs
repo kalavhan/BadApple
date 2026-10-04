@@ -214,7 +214,8 @@ namespace BadAppleHotel.Game
                     {
                         case Tile.Corridor: MakeSprite("c", Sprites.CorridorFloor, pos, -3000, floorRoot); break;
                         case Tile.RoomFloor:
-                            MakeSprite(buildTiles.Contains(v) ? "b" : "f", buildTiles.Contains(v) ? Sprites.BuildTile : Sprites.RoomFloor, pos, -3000, floorRoot);
+                            MakeSprite("f", Sprites.RoomFloor, pos, -3000, floorRoot);
+                            if (buildTiles.Contains(v)) MakeSprite("b", Sprites.BuildTile, pos, -2990, floorRoot);
                             break;
                         case Tile.Wall: MakeSprite("w", Sprites.Wall, pos, -2900, floorRoot); break;
                         case Tile.Door: MakeSprite("f", Sprites.RoomFloor, pos, -3000, floorRoot); break;

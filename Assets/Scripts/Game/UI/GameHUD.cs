@@ -488,7 +488,7 @@ namespace BadAppleHotel.Game
                 if (GUI.Button(r, "<b>" + d.name + "</b>\nHP " + d.baseHealth + "  Speed " + d.moveSpeed + "\nWeak to " + WeakestTo(d), cardStyle))
                     monsterPick = d.id;
                 GUI.backgroundColor = old;
-                GUI.DrawTexture(new Rect(r.x + 8, r.y + 20, 36, 48), Sprites.Monster(d.id).texture);
+                GUI.DrawTexture(new Rect(r.x + 8, r.y + 20, 36, 48), Sprites.Monster(d.id).texture, ScaleMode.ScaleToFit);
             }
 
             y += 120;
@@ -851,7 +851,7 @@ namespace BadAppleHotel.Game
                 else tag = t.effect == "clairvoyance" ? "<color=#9FE3C8>see the whole hotel</color>" : "<color=#D7263D>+Faith</color>";
 
                 bool afford = gm.Wallet(me, t.costResource) >= t.buildCost;
-                GUI.DrawTexture(new Rect(r.x + 10, yy + 6, 28, 28), Sprites.Tower(t.id).texture);
+                GUI.DrawTexture(new Rect(r.x + 10, yy + 6, 28, 28), Sprites.Tower(t.id).texture, ScaleMode.ScaleToFit);
                 var old = GUI.color;
                 if (!afford) GUI.color = new Color(1f, 1f, 1f, 0.55f);
                 if (GUI.Button(new Rect(r.x + 44, yy, r.width - 54, 40),
@@ -873,7 +873,7 @@ namespace BadAppleHotel.Game
 
             var r = PopupRect(wpos, 300, 168);
             Panel(r);
-            GUI.DrawTexture(new Rect(r.x + 10, r.y + 10, 32, 32), Sprites.Tower(t.Def.id).texture);
+            GUI.DrawTexture(new Rect(r.x + 10, r.y + 10, 32, 32), Sprites.Tower(t.Def.id).texture, ScaleMode.ScaleToFit);
             int max = gm.TowerMaxLevel(t);
             GUI.Label(new Rect(r.x + 50, r.y + 8, r.width - 90, 22), "<b>" + t.Def.name + "</b>  Lv " + t.Level + "/" + max, label);
             if (CloseButton(r)) { ClearSelection(); return; }

@@ -44,3 +44,12 @@ Placeholder art is drawn in code from the bible palette (`Assets/Scripts/Game/Ar
 See [`docs/art-style.md`](docs/art-style.md). Dark and funny: Tim Burton crookedness, Don't Starve charm, a 9-color palette where red is reserved for Faith.
 
 The full game bible (match flow, systems, research, assumptions, roadmap) is kept as a doc and can be exported into `docs/`.
+
+## Art
+
+All sprites are generated in Autosprite (comic style, dark Tim Burton look) and live in `Assets/Resources/Art/`
+(beds 1-6, 7 towers, doors by tier, floor/wall tiles, build plate, residents in 6 pajama colors, 3 monsters, ghost, body parts).
+`Sprites.cs` loads a file by name and sizes it in world units; if a file is missing it falls back to the placeholder
+pixel art drawn in code, so any sprite can be swapped by replacing its PNG. `Assets/Editor/ArtImporter.cs` sets the
+import options. `tools/art/process_sprites.py` is the script that cut the sprites out of the raw generations.
+Raw 1024px images stay in `ArtSource/` (not committed).

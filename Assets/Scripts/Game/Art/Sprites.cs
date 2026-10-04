@@ -4,8 +4,8 @@ using UnityEngine;
 namespace BadAppleHotel.Game
 {
     /// <summary>
-    /// Placeholder pixel art drawn in code with the bible palette, so the demo runs with zero imported assets.
-    /// Swap these for PixelLab sprites later; every getter is cached.
+    /// Sprites for everything on screen. Real art (Autosprite, comic + dark Tim Burton style) is loaded from
+    /// Assets/Resources/Art when present; otherwise the placeholder pixel art drawn in code is used. Every getter is cached.
     /// </summary>
     public static class Sprites
     {
@@ -32,10 +32,71 @@ namespace BadAppleHotel.Game
         {
             if (!cache.TryGetValue(key, out var s) || s == null)
             {
-                s = make();
+                // Real art first (Assets/Resources/Art/*.png, made in Autosprite); the code-drawn sprite is the fallback.
+                s = LoadArt(key) ?? make();
                 cache[key] = s;
             }
             return s;
+        }
+
+        // ---------- Imported art ----------
+
+        struct ArtSpec
+        {
+            public string File;
+            public float Size;     // world units for the longest side (tiles: ignored, always exactly 1 tile)
+            public Vector2 Pivot;
+            public bool Tile;
+        }
+
+        static readonly Vector2 FeetPivot = new Vector2(0.5f, 0.04f);
+
+        static readonly Dictionary<string, float> TowerSize = new Dictionary<string, float>
+        {
+            { "gun_turret", 1.1f }, { "missile_launcher", 1.1f }, { "electric_tower", 1.35f }, { "dragon_statue", 1.1f },
+            { "slow_totem", 1.4f }, { "faith_tower", 1.2f }, { "crystal_ball", 1.1f }
+        };
+
+        static bool ArtFor(string key, out ArtSpec a)
+        {
+            a = new ArtSpec { Size = 1f, Pivot = Center };
+            if (key == "corridor") { a.File = "floor_corridor"; a.Tile = true; return true; }
+            if (key == "roomfloor") { a.File = "floor_room"; a.Tile = true; return true; }
+            if (key == "wall") { a.File = "wall"; a.Tile = true; return true; }
+            if (key == "buildtile") { a.File = "build_plate"; a.Size = 0.96f; return true; }
+            if (key == "dooropen") { a.File = "door_open"; return true; }
+            if (key == "doorbroken") { a.File = "door_broken"; return true; }
+            if (key == "ghost") { a.File = "ghost"; a.Size = 1.2f; return true; }
+            if (key.StartsWith("door") && int.TryParse(key.Substring(4), out int dl))
+            {
+                a.File = dl <= 3 ? "door_wood" : dl <= 6 ? "door_reinforced" : "door_iron";
+                return true;
+            }
+            if (key.StartsWith("bed") && int.TryParse(key.Substring(3), out int bl)) { a.File = "bed_" + bl; a.Size = 1.45f; return true; }
+            if (key.StartsWith("resident") && int.TryParse(key.Substring(8), out int ri))
+            {
+                a.File = "resident_" + (Mathf.Abs(ri) % 6); a.Size = 1.5f; a.Pivot = FeetPivot; return true;
+            }
+            if (key.StartsWith("monster_")) { a.File = key; a.Size = 2f; a.Pivot = FeetPivot; return true; }
+            if (key.StartsWith("tower_"))
+            {
+                a.File = key;
+                a.Size = TowerSize.TryGetValue(key.Substring(6), out var ts) ? ts : 1.15f;
+                return true;
+            }
+            if (key.StartsWith("part_")) { a.File = key; a.Size = 0.75f; return true; }
+            return false;
+        }
+
+        static Sprite LoadArt(string key)
+        {
+            if (!ArtFor(key, out var a)) return null;
+            var tex = Resources.Load<Texture2D>("Art/" + a.File);
+            if (tex == null) return null;
+            tex.filterMode = FilterMode.Bilinear;
+            tex.wrapMode = TextureWrapMode.Clamp;
+            float ppu = a.Tile ? tex.width : Mathf.Max(tex.width, tex.height) / a.Size;
+            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), a.Pivot, ppu, 0, SpriteMeshType.FullRect);
         }
 
         // ---------- Tiles ----------
@@ -164,7 +225,7 @@ namespace BadAppleHotel.Game
             return Sprite.Create(t, new Rect(0, 0, size, size), Center, size);
         });
 
-        // ---------- Beds (5 levels) ----------
+        // ---------- Beds (6 levels; the code-drawn fallback only has 5 looks) ----------
 
         public static Sprite Bed(int level) => Cached("bed" + level, () =>
         {

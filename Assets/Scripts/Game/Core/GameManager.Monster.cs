@@ -280,6 +280,8 @@ namespace BadAppleHotel.Game
             r.Faith = 0f;
             r.Sr.sprite = Sprites.Ghost;
             r.Sr.transform.rotation = Quaternion.identity;
+            r.Sr.transform.localScale = Vector3.one;
+            r.Sr.color = Color.white;
             r.Sr.transform.position = new Vector3(r.Pos.x, r.Pos.y - 0.3f, 0f);
             Announce(r.IsHuman ? "You were eaten. Now you haunt the hallway (spectating)." : r.Name + " was eaten by the " + m.Def.name + "!", 4f);
             AddLog(r.Name + " was eaten.");

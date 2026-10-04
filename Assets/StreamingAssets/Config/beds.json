@@ -1,9 +1,10 @@
 {
   "levels": [
-    { "level": 1, "name": "Paper on the floor",   "dreamPowerPerSecond": 1.0, "upgradeCost": 60 },
-    { "level": 2, "name": "Cardboard box",        "dreamPowerPerSecond": 2.0, "upgradeCost": 140 },
-    { "level": 3, "name": "Pile of clothes",      "dreamPowerPerSecond": 3.5, "upgradeCost": 260 },
-    { "level": 4, "name": "Very basic bed",       "dreamPowerPerSecond": 5.5, "upgradeCost": 450 },
-    { "level": 5, "name": "Comfy detailed bed",   "dreamPowerPerSecond": 8.0, "upgradeCost": 0 }
+    { "level": 1, "name": "The Liability Waiver", "dreamPowerPerSecond": 1.0,  "upgradeCost": 60 },
+    { "level": 2, "name": "Cardboard Deluxe",     "dreamPowerPerSecond": 2.0,  "upgradeCost": 140 },
+    { "level": 3, "name": "The Straw Suite",      "dreamPowerPerSecond": 3.5,  "upgradeCost": 260 },
+    { "level": 4, "name": "The Spring Trap",      "dreamPowerPerSecond": 5.5,  "upgradeCost": 450 },
+    { "level": 5, "name": "The Raised Standard",  "dreamPowerPerSecond": 8.0,  "upgradeCost": 700 },
+    { "level": 6, "name": "The Haunted Standard", "dreamPowerPerSecond": 11.0, "upgradeCost": 0 }
   ]
 }

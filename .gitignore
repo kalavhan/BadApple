@@ -27,3 +27,7 @@ MemoryCaptures/
 # OS
 .DS_Store
 Thumbs.db
+
+# Art source images (1024px generations, not imported)
+/ArtSource/
+/Assets/Art/Source/
