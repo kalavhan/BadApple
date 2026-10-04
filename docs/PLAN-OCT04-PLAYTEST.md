@@ -79,6 +79,7 @@ This plan answers the 12 points from the playtest. It is based on the code at `0
 
 - The match has **7 guests**, all using roster characters (exactly the 7 we have). One of them is secretly the monster. A human who picks Play as Monster is that guest; otherwise a random bot is.
 - Setup phase: the monster guest walks, claims a room and shuts its door like everyone else. Its UI looks like a resident's, but the build menu shows "You are hiding. Wait for lights out." Bots and the HUD treat it as a normal guest.
+- **Disguise filling:** the monster's room fills itself automatically and sporadically, so it looks like a normal guest's room. Every 6–14 s (random) a decoy building appears on a free tile (cheap first-tier towers, a bed upgrade, sometimes a door upgrade), roughly matching the pace of the bot residents. Decoys look real (same sprites, same build floater) but do nothing: no damage, no income. They vanish in a puff when the monster transforms. Config: `match.json` → `disguiseBuildEverySeconds: [6, 14]`, `disguiseMaxBuildings`.
 - Lights out (start of night 1): a transformation. The guest's sprite flashes, shakes and swaps to the monster art, with a short banner such as "Mando was the Stitchwork Chef!" The monster bursts out of its own room, which becomes its **lair**: it respawns there instead of at `MonsterSpawn`.
 - Which monster type it becomes is still the monster pick (human) or random (bot), so residents also can't plan resistances in advance.
 - Hide information until the reveal: the monster-intel panel shows "???", the opening announcement no longer names the monster, and the log hides it.
@@ -102,7 +103,7 @@ This plan answers the 12 points from the playtest. It is based on the code at `0
   - Moldy Matron: **Spore Mother** (slowing area spores) or **Rot Queen** (damage over time to towers).
   - Bellhop Wraith: **Phantom** (walks through one closed door per night) or **Poltergeist** (throws furniture, stuns towers).
 - **Infinite tail:** after level 20, every 5 levels gives an **Ascension**, a random choice of 3 perks from a generic pool (+HP, +speed, shorter cooldowns, tower-jam aura, bigger reveal radius…). Perks stack, so there is always another level to reach.
-- Art: each evolution swaps to a new Autosprite form (idle, run, attack in 8 directions). 3 monsters × 2 forms × 3 packs × 15 credits = 270 credits. Until the art exists, use a tint plus 10% scale-up.
+- Art: **no new sprites for now** (no Autosprite credits spent). In game, an evolution uses the current art with a tint per branch plus a 10% scale-up. The code supports an optional art id per evolution (`monster_progression.json` → `evolutions[].art`), so new forms can be dropped in later without code changes. The art briefs for the future forms are in the appendix "Evolution form descriptions".
 - Account level (meta): remove the 50 cap from `levelCurve`, use the same open-ended formula, and use the account level to unlock which abilities and branches appear in the in-match pool.
 
 ### 5.3 Smarter monster AI
@@ -116,7 +117,7 @@ This plan answers the 12 points from the playtest. It is based on the code at `0
 - **Night escalation:** each night the monster gains +1 free level and the time between auto-spawned body parts drops.
 - **Hunger meter:** if the monster hasn't damaged a resident or a door for 45 s at night, it enters Frenzy (+30% speed and door damage until it hits something).
 - **Diminishing resident income:** bed and faith income above about 8/s per room is reduced by 25%, so turtling 6 rooms can't outscale the monster indefinitely.
-- **Endless mode:** `match.json` `nightCount: 0` means unlimited nights; the score is nights survived. The standard mode stays at 6 nights.
+- **Endless mode (its own mode):** a separate **Endless** button on the main menu, next to Play as Resident / Monster / Random. The standard match stays at 6 nights. Endless uses `match.json` → `endless` settings (unlimited nights, escalation per night) and the score is nights survived, with a personal best saved per role. Results screen shows the night reached and the monster level.
 
 ### 5.5 Balance by simulation, not feel
 - Add a headless bot-match runner (EditMode test or editor menu: Bad Apple > Simulate 50 matches) at 16× speed. It reports: attacks per night, first attack time, door breaks, kills, monster level per night and resident win rate.
@@ -133,8 +134,46 @@ This plan answers the 12 points from the playtest. It is based on the code at `0
 
 Each phase ends with: EditMode tests passing, a play-test on Android at 19.5:9, and a commit to `main` with a short note in `docs/`.
 
-## Open questions
+## Decisions (from Josue)
 
-1. During setup, should the hidden monster be able to fake-build (decoys that do nothing) so other players can't spot it by its empty room? This only matters online.
-2. Should endless mode be its own menu button, or the default after night 6 if residents are still alive?
-3. Is spending about 270 Autosprite credits on evolution forms OK now, or should we use tint and scale until the branches are balanced?
+1. The hidden monster's room fills itself sporadically with decoy buildings during setup (Phase 4, "Disguise filling").
+2. Endless is its own mode with its own menu button (Phase 5.4).
+3. No Autosprite credits on evolution sprites for now. Evolutions use tint and scale in game; the forms are documented below for later.
+
+## Appendix: evolution form descriptions
+
+Art briefs for later. All forms keep the shared style: dark Tim Burton look, comic ink outlines, desaturated palette with one sickly accent colour, 8 directions, idle / run / attack. Each evolution should still read as the same monster at a glance (same silhouette core, same signature prop), only bigger, nastier and more detailed. The in-game tint is the accent colour listed.
+
+### Stitchwork Chef
+
+| Level | Form | Description | In-game tint |
+|---|---|---|---|
+| 5 | **Butcher** (door smasher) | Taller and broader, stitched apron now soaked dark, a meat cleaver in each hand. Iron meat hooks dangle from a chain belt. Toque replaced by a dented steel pot worn as a helmet. Attack: overhead double cleaver chop. | Rust red |
+| 5 | **Glutton** (eater) | Bloated, belly split open along a giant zipper of stitches with a second mouth. Carries a huge ladle and a pot on his back with bubbling parts. Attack: belly-mouth lunge. | Bile green |
+| 10 | Butcher → **Head Butcher** | Chainmail apron, a cleaver as big as a door, hooks pierced through his shoulders. Steam vents from neck stitches. | Deep red |
+| 10 | Glutton → **Banquet Horror** | Four arms holding cutlery, a serving tray fused to his head with a cloche that opens like jaws. Trail of gravy. | Toxic green |
+| 15 / 20 | Final forms | Head Butcher becomes **The Abattoir** (body made of stitched-together kitchen doors, carries a cleaver-headed meat hook). Banquet Horror becomes **The Feast** (a walking banquet table of mouths). | Darker accent + ember glow |
+
+### Moldy Matron
+
+| Level | Form | Description | In-game tint |
+|---|---|---|---|
+| 5 | **Spore Mother** (area slow) | Her moss dress grows into a wide hoop skirt of mushrooms that puff spores. Veil of hanging fungus threads, glowing gills on her back. Attack: spore burst from the skirt. | Pale cyan glow |
+| 5 | **Rot Queen** (tower decay) | Crown of rotten antlers and dripping black mould, long rotted fingers like roots. Wood and metal near her blackens. Attack: root claws that grab and decay. | Bruise purple |
+| 10 | Spore Mother → **Mycelium Matriarch** | Mushroom caps the size of umbrellas on her shoulders; fungal tendrils drag behind her like a bridal train. | Brighter cyan |
+| 10 | Rot Queen → **Blight Empress** | Throne-like back of rotting furniture fused to her, crown now a ring of dead candles. | Deep purple |
+| 15 / 20 | Final forms | **The Bloom** (a towering fungus cathedral with her face in the centre) and **The Decay** (a mass of black roots wearing her dress, half sunk in the floor). | Darker accent + spore particles |
+
+### Bellhop Wraith
+
+| Level | Form | Description | In-game tint |
+|---|---|---|---|
+| 5 | **Phantom** (walks through a door per night) | More transparent, uniform frayed into mist below the waist, key ring of skeleton keys glowing at his belt, hollow lantern eyes. Attack: ghostly key stab. | Ice blue |
+| 5 | **Poltergeist** (throws furniture) | Luggage, a bell cart and room-service trays orbit around him. Hat tilted, grin stretched too wide. Attack: hurls a suitcase. | Electric yellow |
+| 10 | Phantom → **Night Porter** | Tall and thin, long coat of fog, a ring of floating room keys around his head like a halo. | Pale white-blue |
+| 10 | Poltergeist → **Room Service** | A whirlwind of hotel furniture with only his hat and gloves visible in the middle. | Strong yellow |
+| 15 / 20 | Final forms | **The Concierge** (a giant floating bellhop torso with a reception desk bell for a head) and **The Checkout** (a swirling vortex of luggage and doors). | Darker accent + flicker |
+
+### Generic Ascension perks (after level 20)
+
+No new art: each Ascension adds a small aura or particle on the current form (embers, orbiting eyes, dripping ink, faint shadow trail), stacked as levels rise.
