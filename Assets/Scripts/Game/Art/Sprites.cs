@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using BadAppleHotel.Config;
+using BadAppleHotel.Rules;
 
 namespace BadAppleHotel.Game
 {
@@ -91,7 +93,7 @@ namespace BadAppleHotel.Game
                 a.File = dl <= 3 ? "door_wood" : dl <= 6 ? "door_reinforced" : "door_iron";
                 return true;
             }
-            if (key.StartsWith("bed") && int.TryParse(key.Substring(3), out int bl)) { a.File = "bed_" + bl; a.Size = 1.45f; return true; }
+            if (key.StartsWith("bed") && int.TryParse(key.Substring(3), out int bl)) { a.File = "bed_" + bl; a.Size = 1.85f; return true; }
             if (key.StartsWith("resident") && int.TryParse(key.Substring(8), out int ri))
             {
                 a.File = "resident_" + (Mathf.Abs(ri) % 6); a.Size = 1.5f; a.Pivot = FeetPivot; return true;
@@ -400,6 +402,21 @@ namespace BadAppleHotel.Game
         });
 
         // ---------- Towers ----------
+
+        public static Sprite Tower(TowerDef def, int level)
+        {
+            var tier = UpgradeRules.Tier(def, level);
+            if (!UseArt || tier == null || string.IsNullOrEmpty(tier.sprite)) return Tower(def.id);
+            string key = "tier:" + tier.sprite;
+            if (cache.TryGetValue(key, out var hit) && hit != null) return hit;
+            var tex = Resources.Load<Texture2D>("Art/" + tier.sprite);
+            if (tex == null) return Tower(def.id);
+            // All designs in a family occupy the same canvas and world footprint.
+            float size = TowerSize.TryGetValue(def.id, out var value) ? value : 1.2f;
+            var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Center, Mathf.Max(tex.width, tex.height) / size);
+            cache[key] = sprite;
+            return sprite;
+        }
 
         public static Sprite Tower(string id) => Cached("tower_" + id, () =>
         {

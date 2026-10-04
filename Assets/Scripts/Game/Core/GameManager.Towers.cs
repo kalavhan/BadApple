@@ -42,7 +42,7 @@ namespace BadAppleHotel.Game
         {
             var sc = Cfg.towers.levelScaling;
             int lv = t.Level - 1;
-            float rate = t.Def.shotsPerSecond * Mathf.Pow(sc.fireRate, lv);
+            float rate = UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level);
             t.Cooldown = rate > 0f ? 1f / rate : 1f;
             int type = DamageTypes.Index(t.Def.damageType);
             float mult = DamageTaken(m, type);
@@ -57,20 +57,20 @@ namespace BadAppleHotel.Game
 
             if (type == DamageTypes.Slow)
             {
-                m.SlowPct = Mathf.Clamp(t.Def.slowPct * (1f + 0.05f * lv) * mult, 0f, 0.75f);
-                m.SlowUntil = now + t.Def.slowSeconds;
+                m.SlowPct = Mathf.Clamp((UpgradeRules.Tier(t.Def, t.Level)?.slowPct ?? t.Def.slowPct * (1f + 0.05f * lv)) * mult, 0f, 0.75f);
+                m.SlowUntil = now + (UpgradeRules.Tier(t.Def, t.Level)?.slowSeconds ?? t.Def.slowSeconds);
                 return;
             }
 
-            float dmg = t.Def.damage * Mathf.Pow(sc.damage, lv) * mult * ownerMult;
+            float dmg = UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * mult * ownerMult;
             if (type == DamageTypes.Bullet && now < m.JamUntil && Vector2.Distance(tpos, m.Pos) <= m.JamRadius)
                 dmg *= m.JamValue;
-            if (type == DamageTypes.Electric && t.Def.stunSeconds > 0f)
-                m.StunUntil = Mathf.Max(m.StunUntil, now + t.Def.stunSeconds);
-            if (type == DamageTypes.Fire && t.Def.burnSeconds > 0f)
+            if (type == DamageTypes.Electric && (UpgradeRules.Tier(t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds) > 0f)
+                m.StunUntil = Mathf.Max(m.StunUntil, now + (UpgradeRules.Tier(t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds));
+            if (type == DamageTypes.Fire && (UpgradeRules.Tier(t.Def, t.Level)?.burnSeconds ?? t.Def.burnSeconds) > 0f)
             {
-                m.BurnDps = t.Def.burnDamagePerSecond * Mathf.Pow(sc.damage, lv) * mult * ownerMult;
-                m.BurnUntil = now + t.Def.burnSeconds;
+                m.BurnDps = UpgradeRules.BurnDamage(Cfg.towers, t.Def, t.Level) * mult * ownerMult;
+                m.BurnUntil = now + (UpgradeRules.Tier(t.Def, t.Level)?.burnSeconds ?? t.Def.burnSeconds);
                 m.BurnSource = room.Owner;
             }
             DamageMonster(dmg, room.Owner);
@@ -91,8 +91,8 @@ namespace BadAppleHotel.Game
                     if (Vector2.Distance(HotelMap.Center(t.Tile), pos) > TowerRange(t) + 0.5f) continue;
                     int lv = t.Level - 1;
                     float mult = DamageTaken(m, DamageTypes.Index(t.Def.damageType)) * own;
-                    dps += t.Def.damage * Mathf.Pow(sc.damage, lv) * t.Def.shotsPerSecond * Mathf.Pow(sc.fireRate, lv) * mult;
-                    dps += t.Def.burnDamagePerSecond * mult * 0.5f;
+                    dps += UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level) * mult;
+                    dps += UpgradeRules.BurnDamage(Cfg.towers, t.Def, t.Level) * mult * 0.5f;
                 }
             }
             return dps;

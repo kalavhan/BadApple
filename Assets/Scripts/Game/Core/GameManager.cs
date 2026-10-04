@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using BadAppleHotel.Config;
 using BadAppleHotel.Rules;
@@ -84,31 +85,30 @@ namespace BadAppleHotel.Game
             Instance = this;
         }
 
-        void Start()
+        bool loadingConfig;
+
+        IEnumerator Start()
         {
             Application.targetFrameRate = 60;
-            Initialize();
+            yield return Initialize();
         }
 
-        /// <summary>Loads configs and builds a hotel for the menu backdrop. Also used to recover after a script reload during Play mode.</summary>
-        void Initialize()
+        /// <summary>Loads config asynchronously on Android before constructing the menu backdrop.</summary>
+        IEnumerator Initialize()
         {
+            loadingConfig = true;
             ConfigError = null;
             Cfg = null;
-            try
+            yield return ConfigLoader.LoadForPlayer(config => Cfg = config, error =>
             {
-                Cfg = ConfigLoader.Load();
-            }
-            catch (System.Exception e)
-            {
-                ConfigError = e.Message;
+                ConfigError = error.Message;
                 Phase = Phase.ConfigError;
-                Debug.LogError("[Bad Apple Hotel] Config failed: " + e.Message);
-                return;
-            }
-
+                Debug.LogError("[Bad Apple Hotel] Config failed: " + error.Message);
+            });
+            loadingConfig = false;
+            if (Cfg == null) yield break;
             SetupCamera();
-            if (!BuildWorld(Random.Range(1, 1 << 30))) return;
+            if (!BuildWorld(Random.Range(1, 1 << 30))) yield break;
             Phase = Phase.RoleSelect;
         }
 
@@ -149,33 +149,66 @@ namespace BadAppleHotel.Game
             Cam.transform.rotation = Quaternion.identity;
         }
 
+        bool sleepCameraActive;
+        bool recenterCamera;
+        Vector2 sleepCameraPosition;
+        public bool SleepingCamera => InMatch && HumanRole == Role.Resident && Human != null && Human.Alive && Human.Asleep;
+
+        public void RecenterCamera()
+        {
+            HotelView = false;
+            recenterCamera = true;
+        }
+
+        public static Vector2 ClampCamera(Vector2 target, float size, float aspect, int width, int height)
+        {
+            float hw = size * aspect;
+            return new Vector2(width <= hw * 2 ? width / 2f : Mathf.Clamp(target.x, hw, width - hw),
+                height <= size * 2 ? height / 2f : Mathf.Clamp(target.y, size, height - size));
+        }
+
         void LateUpdate()
         {
             if (Cam == null || Map == null) return;
             float aspect = Mathf.Max(0.5f, Cam.aspect);
-
+            if (HotelView && !HotelViewAvailable) HotelView = false;
             Vector2? follow = null;
             if (InMatch && !HotelView)
             {
                 if (HumanRole == Role.Monster && Monster != null) follow = Monster.Pos;
                 else if (HumanRole == Role.Resident && Human != null && Human.Alive) follow = Human.Pos;
             }
-            if (HotelView && !HotelViewAvailable) HotelView = false;
-
             if (follow.HasValue)
             {
-                float size = 7.5f;
+                const float size = 7.5f;
+                var target = ClampCamera(follow.Value, size, aspect, Map.W, Map.H);
+                if (SleepingCamera)
+                {
+                    if (!sleepCameraActive) sleepCameraPosition = target;
+                    sleepCameraActive = true;
+                    if (recenterCamera)
+                    {
+                        sleepCameraPosition = Vector2.Lerp(sleepCameraPosition, target, 1f - Mathf.Exp(-8f * Time.unscaledDeltaTime));
+                        if ((sleepCameraPosition - target).sqrMagnitude < 0.01f) recenterCamera = false;
+                    }
+                    else sleepCameraPosition += GameInput.Move * (14f * Time.unscaledDeltaTime);
+                    sleepCameraPosition = ClampCamera(sleepCameraPosition, size, aspect, Map.W, Map.H);
+                    target = sleepCameraPosition;
+                }
+                else if (sleepCameraActive)
+                {
+                    sleepCameraPosition = Vector2.Lerp(sleepCameraPosition, target, 1f - Mathf.Exp(-8f * Time.unscaledDeltaTime));
+                    if ((sleepCameraPosition - target).sqrMagnitude < 0.01f) { sleepCameraActive = false; recenterCamera = false; }
+                    target = sleepCameraPosition;
+                }
                 Cam.orthographicSize = size;
-                float hw = size * aspect;
-                float x = Map.W <= hw * 2f - 2f ? Map.W / 2f : Mathf.Clamp(follow.Value.x, hw - 1f, Map.W - hw + 1f);
-                float y = Map.H <= size * 2f - 2f ? Map.H / 2f : Mathf.Clamp(follow.Value.y, size - 1f, Map.H - size + 1f);
-                Cam.transform.position = new Vector3(x, y, -10f);
+                var p = ClampCamera(target, size, aspect, Map.W, Map.H);
+                Cam.transform.position = new Vector3(p.x, p.y, -10f);
             }
             else
             {
-                float size = Mathf.Max(Map.H / 2f + 1.5f, (Map.W / 2f + 1f) / aspect);
-                Cam.orthographicSize = size;
-                Cam.transform.position = new Vector3(Map.W / 2f, Map.H / 2f - 0.5f, -10f);
+                Cam.orthographicSize = Mathf.Max(Map.H / 2f + 1.5f, (Map.W / 2f + 1f) / aspect);
+                Cam.transform.position = new Vector3(Map.W / 2f, Map.H / 2f, -10f);
             }
         }
 
@@ -209,16 +242,31 @@ namespace BadAppleHotel.Game
                     var pos = HotelMap.Center(v);
                     switch (Map.Tiles[x, y])
                     {
-                        case Tile.Corridor: MakeSprite("c", Sprites.CorridorFloor, pos, -3000, floorRoot); break;
+                        case Tile.Corridor:
+                            var floor = MakeSprite("hall floor", HotelArt.Get("floor_corridor", Sprites.CorridorFloor), pos, -3000, floorRoot);
+                            // Rotation varies the worn tile without introducing seams.
+                            floor.transform.rotation = Quaternion.Euler(0, 0, HotelArt.Variant(x, y) * 90f);
+                            break;
                         case Tile.RoomFloor:
                             MakeSprite("f", Sprites.RoomFloor, pos, -3000, floorRoot);
                             break;
-                        case Tile.Wall: MakeSprite("w", Sprites.Wall, pos, -2900, floorRoot); break;
+                        case Tile.Wall: DrawHotelWall(v, floorRoot); break;
                         case Tile.Door: MakeSprite("f", Sprites.RoomFloor, pos, -3000, floorRoot); break;
                     }
                 }
             foreach (var def in Map.Rooms)
-                doorSprites[def] = MakeSprite("Door " + (def.Index + 1), Sprites.DoorOpen, HotelMap.Center(def.DoorTile), -2800, worldRoot);
+            {
+                var door = MakeSprite("Door " + (def.Index + 1), Sprites.DoorOpen, HotelMap.Center(def.DoorTile), -2800, worldRoot);
+                door.transform.rotation = Quaternion.Euler(0, 0, def.BedRotation);
+                doorSprites[def] = door;
+                var frameArt = HotelArt.Get("doorway", null);
+                if (frameArt != null)
+                {
+                    var frame = MakeSprite("Doorway frame", frameArt, HotelMap.Center(def.DoorTile), -2790, worldRoot);
+                    frame.transform.rotation = door.transform.rotation;
+                    frame.transform.localScale = Vector3.one * 1.25f;
+                }
+            }
         }
 
         // ------------------------------------------------------------------ match setup
@@ -354,6 +402,8 @@ namespace BadAppleHotel.Game
             Human = null;
             PendingHelpFrom = null;
             HotelView = false;
+            sleepCameraActive = false;
+            GameInput.ClearAll();
             foreach (var kv in doorSprites) if (kv.Value != null) kv.Value.sprite = Sprites.DoorOpen;
         }
 
@@ -376,6 +426,7 @@ namespace BadAppleHotel.Game
             };
             var bedPos = HotelMap.Center(def.BedTile);
             room.BedSr = MakeSprite("Bed", Sprites.Bed(1), bedPos, OrderFor(bedPos.y + 0.4f), matchRoot);
+            room.BedSr.transform.rotation = Quaternion.Euler(0f, 0f, def.BedRotation);
             RoomsByDef[def] = room;
             r.Room = room;
             RefreshDoor(room);
@@ -394,7 +445,8 @@ namespace BadAppleHotel.Game
 
         void GiveLonelyBonus(Room room)
         {
-            int slot = room.EmptySlot();
+            int slot = -1;
+            for (int i = 0; i < room.Slots.Length; i++) if (CanBuildAt(room, i)) { slot = i; break; }
             if (slot < 0) return;
             var options = Cfg.towers.towers;
             var def = options[Random.Range(0, options.Length)];
@@ -417,6 +469,7 @@ namespace BadAppleHotel.Game
         {
             // A script reload while playing wipes non-serialized state (configs, residents) but keeps the phase.
             if (Instance == null) Instance = this;
+            if (loadingConfig) return;
             if (Cfg == null && Phase != Phase.ConfigError) { Recover(); return; }
             UpdateProjectiles();
             Floaters.RemoveAll(f => Time.unscaledTime - f.Born > 1.4f);
@@ -437,6 +490,7 @@ namespace BadAppleHotel.Game
                 UpdateMonster(dt, now);
                 UpdateTowers(dt, now);
             }
+            foreach (var r in Residents) if (r.Alive) PlaceResidentSprite(r);
             UpdateTowerBlink(Time.time);
 
             if (PendingHelpFrom != null && Time.time > PendingHelpUntil) PendingHelpFrom = null;
@@ -468,7 +522,7 @@ namespace BadAppleHotel.Game
             PendingHelpFrom = null;
             Time.timeScale = 1f;
             Phase = Phase.RoleSelect;
-            Initialize();
+            StartCoroutine(Initialize());
         }
 
         void BeginNights()
@@ -520,16 +574,10 @@ namespace BadAppleHotel.Game
         {
             foreach (var p in Parts) if (p.Sr != null) Destroy(p.Sr.gameObject);
             Parts.Clear();
-            var tiles = Map.CorridorTiles();
-            var doorFronts = new HashSet<Vector2Int>(Map.Rooms.Select(r => r.DoorOutside));
-            int want = Cfg.match.bodyPartsPerNight;
-            int guard = 0;
-            while (Parts.Count < want && guard++ < 500)
+            var tiles = Map.BodyPartSpawns(Cfg.match.bodyPartsPerNight, Cfg.bodyParts.minSpacingTiles,
+                unchecked(Map.Seed + Night * 7919), Map.Rooms.Where(IsRoomFree));
+            foreach (var t in tiles)
             {
-                var t = tiles[Random.Range(0, tiles.Count)];
-                if (doorFronts.Contains(t)) continue;
-                if ((t - Map.MonsterSpawn).sqrMagnitude < 16) continue;
-                if (Parts.Any(p => p.Tile == t)) continue;
                 int typeIndex = Random.Range(0, Cfg.bodyParts.parts.Length);
                 var def = Cfg.bodyParts.parts[typeIndex];
                 var pos = HotelMap.Center(t);

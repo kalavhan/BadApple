@@ -1,6 +1,6 @@
 # Bad Apple Hotel
 
-Working title. A 7-player online 2.5D pixel-art game: **1 Monster vs 6 Residents**, a mix of tower defense and asymmetric horror (think Dead by Daylight chases with Haunted Dorm-style room defense). Built in Unity with PixelLab art.
+Working title. A local prototype of a 7-player 2.5D game: **1 Monster vs 6 Residents**, a mix of tower defense and asymmetric horror (think Dead by Daylight chases with Haunted Dorm-style room defense). Built in Unity with AutoSprite comic art. Online play is still planned.
 
 Seven players spend six nights in a hotel hosting a reunion of occultists. One is secretly a monster a guest conjured; the other six fortify their rooms and survive.
 
@@ -24,13 +24,13 @@ Every number is in `Assets/StreamingAssets/Config/` (`match`, `economy`, `beds`,
 2. On first open, Unity creates `Assets/Scenes/Main.unity` and adds it to the build (menu: *Bad Apple Hotel > Run Project Setup*). Open it and press **Play**. The game also boots in any empty scene.
 3. Pick a monster, then **Play as Resident**, **Play as Monster**, or **Random role**. Every other seat is a bot.
 
-**Resident:** drag on the left half of the screen (or WASD) to walk. During the 60 s setup, walk into any free room (its door is open) to claim it. The big round **action button** (or E / Space) does what fits where you stand: close or open the door, sleep in bed, wake up. Tap a bolted plate to build (rings show short / mid / long range), tap a building to upgrade or sell it, tap the bed or door to upgrade them. A door upgrade is blocked if it would be more than 4 levels above your weakest weapon, and that weapon blinks. Leave your door open at night and the monster just walks in; step into the hallway and it can bite you there. With a crystal ball, **Hotel view** (or M) zooms out over the whole hotel.
+**Resident:** use the fixed bottom-left joystick (or WASD) to walk. While sleeping, the same input pans the camera; Recenter / R returns to your room, and E / Space wakes you. During the 60 s setup, walk into any free room (its door is open) to claim it. The big round **action button** (or E / Space) does what fits where you stand: close or open the door, sleep in bed, wake up. Tap a bolted plate to build (rings show short / mid / long range), tap a building to upgrade or sell it, tap the bed or door to upgrade them. A door upgrade is blocked if it would be more than 4 levels above your weakest weapon, and that weapon blinks. Leave your door open at night and the monster just walks in; step into the hallway and it can bite you there. With a crystal ball, **Hotel view** (or M) zooms out over the whole hotel.
 
 **Monster:** WASD / arrows or the on-screen joystick to move. Stand next to a shut door to smash it (open doors you just walk through), then eat whoever is inside. Stand on body parts to eat them (arm = damage, leg = speed, torso = health, eye = spot parts). Abilities on 1 / 2 / 3 (Jam, Rampage, Blackout). Buy resistances in the left panel.
 
 Use the 1x / 2x / 4x buttons to fast-forward. Results award Monster or Resident XP (saved locally).
 
-Placeholder art is drawn in code from the bible palette (`Assets/Scripts/Game/Art/Sprites.cs`), so nothing needs importing yet.
+Art loads from `Assets/Resources/Art/`, with code-drawn placeholders as a fallback.
 
 ## Code
 - `Assets/StreamingAssets/Config/*.json`: every balance number.
@@ -54,3 +54,12 @@ pixel art drawn in code, so any sprite can be swapped by replacing its PNG. `Ass
 import options. `tools/art/process_sprites.py` is the script that cut the sprites out of the raw generations.
 Raw 1024px images stay in `ArtSource/` (not committed).
 Switch art on/off with the menu **Bad Apple Hotel > Use Autosprite Art**. Full details in [docs/SPRITES.md](docs/SPRITES.md).
+
+
+## October 4 update
+
+The hotel keeps **10 rooms**, with four spare rooms after the six residents claim theirs.
+Seeded crooked corridors, loops and dead ends replace the cross; body parts keep at least 12 tiles apart.
+Beds use pillow anchors, sleeping input pans the camera, and touch controls are fixed and translucent.
+Ten tower families have four static themed upgrades each. Tower animations are deferred to conserve credits.
+See [the implementation notes](docs/PLAN-OCT04.md) for data, art, and verification details.

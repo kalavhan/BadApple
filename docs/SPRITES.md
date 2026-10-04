@@ -20,7 +20,7 @@ So art and placeholders live side by side, per sprite.
 |---|---|---|
 | Floors, wall | `floor_room`, `floor_corridor`, `wall` | exactly 1 tile, tileable |
 | Build plate | `build_plate` | 0.96 |
-| Beds | `bed_1` ... `bed_6` | 1.45 tall |
+| Beds | `bed_1` ... `bed_6` | 1.85 tall; per-level pillow anchors in `beds.json` |
 | Doors | `door_wood` (levels 1-3), `door_reinforced` (4-6), `door_iron` (7+), `door_open`, `door_broken` | 1 |
 | Towers | `tower_<towerId>` e.g. `tower_gun_turret` | 1.1 to 1.4 (table in `Sprites.cs`) |
 | Residents | `resident_0` ... `resident_5` (one per pajama color) | 1.5 tall, pivot at feet |
@@ -41,3 +41,15 @@ Autosprite, style "comic", prompts asking for a dark Tim Burton look (gothic, wo
 white background. `tools/art/process_sprites.py` removes the white background (keeping whites inside objects),
 crops, resizes, recolors the resident's pajamas into 6 colors and makes the floor textures tile.
 Raw 1024 px generations are kept outside `Assets` in `ArtSource/` (gitignored).
+
+## October 4 static tiers and hotel kit
+
+`Tiers/<towerId>_1` through `_4` provide four static upgrade designs per upgradeable family.
+`towers.json` chooses the sprite and stats for each tier; the crystal ball remains single-level.
+The designs use one fixed world size per family. Tower animations are deferred.
+
+`Hotel/` holds the hallway floor, wall top/face/corner/baseboard, doorway frame, and four decorations.
+`HotelArt` selects these separately from the room textures; layout neighbors determine wall edges.
+
+`tools/art/prepare_static_tiers.py` rebuilds the imported images from the locally retained static sheets.
+See [the implementation and credit ledger](PLAN-OCT04.md) for controls, configuration, and validation.

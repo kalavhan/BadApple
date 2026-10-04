@@ -104,11 +104,8 @@ namespace BadAppleHotel.Game
                 if (r.IsHuman) move = GameInput.Move;
                 else if (r.Ai != null) move = r.Ai.Tick(dt, now);
 
-                if (r.Asleep && move.sqrMagnitude > 0.04f)
-                {
-                    if (r.IsHuman) Wake(r); // walking away wakes you up
-                    else move = Vector2.zero;
-                }
+                // Sleeping movement belongs to the camera. Only the Wake action ends sleep.
+                if (r.Asleep) move = Vector2.zero;
                 if (!r.Asleep && move.sqrMagnitude > 0.0001f)
                 {
                     move = Vector2.ClampMagnitude(move, 1f);
@@ -124,7 +121,7 @@ namespace BadAppleHotel.Game
                     if (def != null && IsRoomFree(def)) Claim(r, def, false);
                 }
 
-                PlaceResidentSprite(r);
+
             }
         }
 
@@ -134,15 +131,20 @@ namespace BadAppleHotel.Game
             var t = r.Sr.transform;
             if (r.Asleep && r.Room != null)
             {
-                // glide onto the bed at normal size (no scaling), then stay put slightly dimmed
+                r.Anim?.Rest();
+                r.Sr.flipX = false;
                 r.SleepBlend = Mathf.MoveTowards(r.SleepBlend, 1f, Time.deltaTime * 3.5f);
-                float k = r.SleepBlend * r.SleepBlend * (3f - 2f * r.SleepBlend);
-                var p = Vector2.Lerp(r.SleepFrom, r.Pos, k);
-                t.position = new Vector3(p.x, p.y - 0.3f, 0f);
-                t.rotation = Quaternion.identity;
+                float k = Mathf.SmoothStep(0f, 1f, r.SleepBlend);
+                var bed = Cfg.beds.levels[r.Room.BedLevel - 1];
+                float angle = r.Room.Def.BedRotation + bed.sleepRotation;
+                var head = r.Anim != null ? r.Anim.RestHead : new Vector2(0f, 1.25f);
+                var target = SleepPose.Position(HotelMap.Center(r.Room.Def.BedTile), r.Room.Def.BedRotation, bed, head);
+                var p = Vector2.Lerp(r.SleepFrom + Vector2.down * 0.3f, target, k);
+                t.position = new Vector3(p.x, p.y, 0f);
+                t.rotation = Quaternion.Euler(0f, 0f, Mathf.LerpAngle(0f, angle, k));
                 t.localScale = Vector3.one;
                 r.Sr.color = Color.Lerp(Color.white, new Color(0.8f, 0.8f, 0.95f, 1f), k);
-                r.Sr.sortingOrder = OrderFor(p.y - 0.3f) + (r.SleepBlend >= 1f ? 2 : 0);
+                r.Sr.sortingOrder = r.Room.BedSr.sortingOrder + 2;
             }
             else
             {
@@ -153,7 +155,7 @@ namespace BadAppleHotel.Game
                 r.Sr.sortingOrder = OrderFor(r.Pos.y - 0.3f);
                 if (r.Anim == null) r.Sr.flipX = r.Facing.x < 0f;
             }
-            if (r.Anim != null)
+            if (r.Anim != null && !r.Asleep)
             {
                 float dt = Mathf.Max(Time.deltaTime, 1e-4f);
                 bool moving = !r.Asleep && (r.Pos - r.LastPos).magnitude / dt > 0.4f;
@@ -257,7 +259,7 @@ namespace BadAppleHotel.Game
             float f = 0f;
             foreach (var t in room.Slots)
                 if (t != null && t.IsDreamGen)
-                    f += t.Def.dreamPerSecond * Mathf.Pow(Mathf.Max(1f, t.Def.dreamLevelScaling), t.Level - 1);
+                    f += UpgradeRules.DreamRate(t.Def, t.Level);
             return f;
         }
 
@@ -266,7 +268,7 @@ namespace BadAppleHotel.Game
             float f = 0f;
             foreach (var t in room.Slots)
                 if (t != null && t.IsFaith)
-                    f += t.Def.faithPerSecond * Mathf.Pow(t.Def.faithLevelScaling, t.Level - 1);
+                    f += UpgradeRules.FaithRate(t.Def, t.Level);
             return f;
         }
 
@@ -323,7 +325,7 @@ namespace BadAppleHotel.Game
 
         public DoorUpgradeResult CheckDoor(Room room)
         {
-            var levels = Weapons(room).Select(w => w.Level).ToArray();
+            var levels = Weapons(room).Select(w => UpgradeRules.DoorSupportLevel(w.Def, w.Level)).ToArray();
             return UpgradeRules.CanUpgradeDoor(Cfg.doors, room.DoorLevel, levels);
         }
 
@@ -349,7 +351,7 @@ namespace BadAppleHotel.Game
             if (!CanAct(r)) return ActionResult.Invalid;
             var room = r.Room;
             var weapons = Weapons(room);
-            var check = UpgradeRules.CanUpgradeDoor(Cfg.doors, room.DoorLevel, weapons.Select(w => w.Level).ToArray());
+            var check = UpgradeRules.CanUpgradeDoor(Cfg.doors, room.DoorLevel, weapons.Select(w => UpgradeRules.DoorSupportLevel(w.Def, w.Level)).ToArray());
 
             if (check.AtMaxLevel)
             {
@@ -429,7 +431,7 @@ namespace BadAppleHotel.Game
             var tile = room.Def.BuildTiles[slot];
             var pos = HotelMap.Center(tile);
             var t = new TowerInstance { Def = def, Level = 1, SlotIndex = slot, Tile = tile };
-            t.Sr = MakeSprite(def.name, Sprites.Tower(def.id), pos, OrderFor(pos.y), matchRoot);
+            t.Sr = MakeSprite(def.name, Sprites.Tower(def, 1), pos, OrderFor(pos.y), matchRoot);
             room.Slots[slot] = t;
 
             // anyone standing on the plate gets nudged off it
@@ -461,6 +463,8 @@ namespace BadAppleHotel.Game
             if (cost < 0f) return ActionResult.MaxLevel;
             if (!Spend(r, t.Def.costResource, cost)) return ActionResult.NoMoney;
             t.Level++;
+            t.Sr.sprite = Sprites.Tower(t.Def, t.Level);
+            t.Sr.transform.localScale = Vector3.one;
             AddFloater(HotelMap.Center(t.Tile) + Vector2.up * 0.8f, "Lv " + t.Level, (Color)Palette.Bone);
             return ActionResult.Ok;
         }

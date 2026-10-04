@@ -49,21 +49,37 @@ namespace BadAppleHotel.Rules
             };
         }
 
+        public static TowerTier Tier(TowerDef tower, int level) =>
+            tower.tiers != null && tower.tiers.Length > 0 ? tower.tiers[UnityEngine.Mathf.Clamp(level - 1, 0, tower.tiers.Length - 1)] : null;
+
+        public static string TowerName(TowerDef tower, int level) => Tier(tower, level)?.name ?? tower.name;
+        public static int DoorSupportLevel(TowerDef tower, int level) => Tier(tower, level)?.doorSupportLevel ?? level;
+        public static float Damage(TowersConfig cfg, TowerDef t, int lv) => Tier(t, lv)?.damage ?? t.damage * UnityEngine.Mathf.Pow(cfg.levelScaling.damage, lv - 1);
+        public static float FireRate(TowersConfig cfg, TowerDef t, int lv) => Tier(t, lv)?.shotsPerSecond ?? t.shotsPerSecond * UnityEngine.Mathf.Pow(cfg.levelScaling.fireRate, lv - 1);
+        public static float BurnDamage(TowersConfig cfg, TowerDef t, int lv) => Tier(t, lv)?.burnDamagePerSecond ?? t.burnDamagePerSecond * UnityEngine.Mathf.Pow(cfg.levelScaling.damage, lv - 1);
+        public static float FaithRate(TowerDef t, int lv) => Tier(t, lv)?.faithPerSecond ?? t.faithPerSecond * UnityEngine.Mathf.Pow(t.faithLevelScaling, lv - 1);
+        public static float DreamRate(TowerDef t, int lv) => Tier(t, lv)?.dreamPerSecond ?? t.dreamPerSecond * UnityEngine.Mathf.Pow(UnityEngine.Mathf.Max(1f, t.dreamLevelScaling), lv - 1);
+
         /// <summary>Tower upgrade cost: baseUpgradeCost * upgradeCostGrowth^(currentLevel - 1).</summary>
         public static float TowerUpgradeCost(TowersConfig towers, TowerDef tower, int currentLevel)
         {
+            var tier = Tier(tower, currentLevel);
+            if (tier != null) return tier.upgradeCost;
             return tower.baseUpgradeCost * UnityEngine.Mathf.Pow(towers.levelScaling.upgradeCostGrowth, currentLevel - 1);
         }
 
         /// <summary>A tower's own maxLevel when set (e.g. the crystal ball is 1), otherwise the global towers.maxLevel.</summary>
         public static int TowerMaxLevel(TowersConfig towers, TowerDef tower)
         {
+            if (tower.tiers != null && tower.tiers.Length > 0) return tower.tiers.Length;
             return tower.maxLevel > 0 ? tower.maxLevel : towers.maxLevel;
         }
 
         /// <summary>Range in tiles: rangeTiles[rangeClass] * levelScaling.range^(level - 1). Non-weapons have range 0.</summary>
         public static float TowerRange(TowersConfig towers, TowerDef tower, int level)
         {
+            var tier = Tier(tower, level);
+            if (tier != null) return tier.range;
             float baseRange;
             switch (tower.rangeClass)
             {

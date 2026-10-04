@@ -107,6 +107,8 @@ namespace BadAppleHotel.Config
     {
         public int level;
         public string name;
+        public UnityEngine.Vector2 sleepAnchor;
+        public float sleepRotation;
         public float dreamPowerPerSecond;
         public float upgradeCost;
     }
@@ -153,10 +155,23 @@ namespace BadAppleHotel.Config
     }
 
     [Serializable]
+    public class TowerTier
+    {
+        public string name;
+        public string sprite;
+        public int doorSupportLevel;
+        public float upgradeCost;
+        public float damage, shotsPerSecond, range;
+        public float burnDamagePerSecond, burnSeconds, stunSeconds, slowPct, slowSeconds;
+        public float faithPerSecond, dreamPerSecond;
+    }
+
+    [Serializable]
     public class TowerDef
     {
         public string id;
         public string name;
+        public TowerTier[] tiers;
         public string damageType;   // bullet | electric | fire | slow | none
         public string rangeClass;   // short | mid | long (weapons only)
         public string effect;       // "" | faith | clairvoyance (non-weapons)
@@ -242,6 +257,7 @@ namespace BadAppleHotel.Config
     [Serializable]
     public class BodyPartsConfig
     {
+        public float minSpacingTiles = 12f;
         public float eatSeconds;
         public int maxPartsPerType;
         public float keepOnRespawnPct;
@@ -292,6 +308,10 @@ namespace BadAppleHotel.Config
         public int buildTilesMin;
         public int buildTilesMax;
         public int isolatedDoorDistance;
+        public int minDoorDistance = 7;
+        public int maxNearestDoorDistance = 32;
+        public int deadEndCount = 4;
+        public int loopCount = 2;
     }
 
     [Serializable]

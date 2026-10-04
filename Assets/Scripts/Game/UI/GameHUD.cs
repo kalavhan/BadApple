@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using BadAppleHotel.Rules;
 
 namespace BadAppleHotel.Game
 {
     /// <summary>
     /// Mobile-first HUD drawn with IMGUI on a virtual 720 px tall canvas (scales to any landscape screen).
-    /// Touch handling runs in Update so several fingers work at once: a floating joystick on the left half,
+    /// Touch handling runs in Update so several fingers work at once: a fixed translucent joystick at bottom left,
     /// round action buttons on the right, and short taps on the world to select build plates, the bed or the door.
     /// Popups for build / upgrade / sell are regular IMGUI panels. Mouse and keyboard work the same way in the editor.
     /// </summary>
@@ -27,6 +28,7 @@ namespace BadAppleHotel.Game
         class Pointer
         {
             public Vector2 Start;
+            public Vector2 Current;
             public float StartTime;
             public bool Moved;
             public bool Ignore;
@@ -206,11 +208,19 @@ namespace BadAppleHotel.Game
         /// <summary>A round touch button (fires on finger down, so it works while the joystick is held).</summary>
         void RoundButton(Vector2 c, float d, string text, Color col, bool enabled, System.Action press, GUIStyle style = null)
         {
-            Circle(c + new Vector2(0f, 3f), d, new Color(0f, 0f, 0f, 0.45f));
-            Circle(c, d, enabled ? col : new Color(col.r * 0.45f, col.g * 0.45f, col.b * 0.45f, 0.75f));
+            bool down = pointers.Values.Any(p => (p.Current - c).sqrMagnitude < d * d * 0.25f);
+            float opacity = enabled ? (down ? 0.82f : 0.35f) : 0.2f;
+            Circle(c, d, new Color(InkC.r, InkC.g, InkC.b, opacity * 0.32f));
+            var saved = GUI.color;
+            GUI.color = new Color(col.r, col.g, col.b, opacity);
+            GUI.DrawTexture(new Rect(c.x - d / 2f, c.y - d / 2f, d, d), ringTex);
+            // Four iron rivets keep the thin frame legible against the floor.
+            foreach (var v in new[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right })
+                Circle(c + v * (d * 0.47f), 5f, new Color(Bone.r, Bone.g, Bone.b, opacity));
+            GUI.color = saved;
             var lab = style ?? roundLabel;
             var oldC = lab.normal.textColor;
-            if (!enabled) lab.normal.textColor = new Color(0.1f, 0.08f, 0.12f, 0.7f);
+            lab.normal.textColor = new Color(Bone.r, Bone.g, Bone.b, enabled ? (down ? 1f : 0.75f) : 0.3f);
             GUI.Label(new Rect(c.x - d / 2f + 6f, c.y - d / 2f, d - 12f, d), text, lab);
             lab.normal.textColor = oldC;
             var r = new Rect(c.x - d / 2f, c.y - d / 2f, d, d);
@@ -223,7 +233,7 @@ namespace BadAppleHotel.Game
             switch (r)
             {
                 case ActionResult.NoMoney: gm.Toast("Not enough " + resource + "."); break;
-                case ActionResult.Blocked: gm.Toast("Blocked: your door can't be more than " + gm.Cfg.doors.maxLevelGapOverLowestWeapon + " levels above your weakest weapon."); break;
+                case ActionResult.Blocked: gm.Toast("Your weakest weapon limits this door upgrade. Upgrade the blinking weapon first."); break;
                 case ActionResult.MaxLevel: gm.Toast("Already at max level."); break;
                 case ActionResult.Invalid: gm.Toast("Can't do that right now."); break;
                 case ActionResult.TooFar: gm.Toast("Get closer."); break;
@@ -300,6 +310,7 @@ namespace BadAppleHotel.Game
                 if (GameInput.ConsumePressed(KeyCode.E) || GameInput.ConsumePressed(KeyCode.Space)) DoResidentAction();
             }
             if (GameInput.ConsumePressed(KeyCode.M) && gm.HotelViewAvailable) gm.HotelView = !gm.HotelView;
+            if (GameInput.ConsumePressed(KeyCode.R)) gm.RecenterCamera();
             if (GameInput.ConsumePressed(KeyCode.Escape)) ClearSelection();
         }
 
@@ -307,7 +318,9 @@ namespace BadAppleHotel.Game
             (gm.HumanRole == Role.Monster && gm.Monster != null) ||
             (gm.HumanRole == Role.Resident && gm.Human != null && gm.Human.Alive);
 
-        bool InJoystickArea(Vector2 g) => g.x < vw * 0.45f && g.y > VH * 0.3f;
+        Vector2 JoystickCenter => new Vector2(100f + Screen.safeArea.xMin / scale,
+            VH - 100f - Screen.safeArea.yMin / scale);
+        bool InJoystickArea(Vector2 g) => (g - JoystickCenter).sqrMagnitude <= (JoyRadius + 20f) * (JoyRadius + 20f);
 
         bool OverUi(Vector2 g)
         {
@@ -322,7 +335,7 @@ namespace BadAppleHotel.Game
             {
                 case TouchPhase.Began:
                 {
-                    var p = new Pointer { Start = g, StartTime = Time.unscaledTime };
+                    var p = new Pointer { Start = g, Current = g, StartTime = Time.unscaledTime };
                     pointers[id] = p;
                     foreach (var z in zones)
                         if (z.R.Contains(g)) { p.Ignore = true; z.Press?.Invoke(); return; }
@@ -330,8 +343,11 @@ namespace BadAppleHotel.Game
                     if (joyId == NoPointer && JoystickAllowed && InJoystickArea(g))
                     {
                         joyId = id;
-                        joyOrigin = g;
-                        joyKnob = g;
+                        p.Moved = true; // joystick touches never fall through to world selection
+                        joyOrigin = JoystickCenter;
+                        joyKnob = joyOrigin + Vector2.ClampMagnitude(g - joyOrigin, JoyRadius);
+                        var v = (joyKnob - joyOrigin) / JoyRadius;
+                        GameInput.Joystick = new Vector2(v.x, -v.y);
                     }
                     break;
                 }
@@ -339,12 +355,12 @@ namespace BadAppleHotel.Game
                 case TouchPhase.Stationary:
                 {
                     if (!pointers.TryGetValue(id, out var p)) return;
+                    p.Current = g;
                     if ((g - p.Start).magnitude > 14f) p.Moved = true;
                     if (id == joyId)
                     {
                         var d = g - joyOrigin;
-                        if (d.magnitude > JoyRadius) joyOrigin = g - d.normalized * JoyRadius; // base follows the thumb
-                        joyKnob = g;
+                        joyKnob = joyOrigin + Vector2.ClampMagnitude(d, JoyRadius);
                         var v = (joyKnob - joyOrigin) / JoyRadius;
                         GameInput.Joystick = p.Moved ? Vector2.ClampMagnitude(new Vector2(v.x, -v.y), 1f) : Vector2.zero;
                     }
@@ -428,6 +444,7 @@ namespace BadAppleHotel.Game
             }
 
             if (gm.Phase == Phase.ConfigError) DrawError();
+            else if (gm.Cfg == null) GUI.Label(new Rect(0, VH / 2 - 25, vw, 50), "Opening the hotel…", subtitle);
             else if (gm.Phase == Phase.RoleSelect) DrawMenu();
             else if (gm.Cam != null && gm.Map != null)
             {
@@ -730,11 +747,14 @@ namespace BadAppleHotel.Game
         void DrawJoystick()
         {
             bool active = joyId != NoPointer;
-            var origin = active ? joyOrigin : new Vector2(130f, VH - 130f);
-            Circle(origin, JoyRadius * 2.3f, new Color(1f, 1f, 1f, active ? 0.16f : 0.07f));
-            var knob = active ? joyKnob : origin;
-            Circle(knob, 56f, new Color(Candle.r, Candle.g, Candle.b, active ? 0.65f : 0.25f));
-            if (!active) Shadowed(new Rect(origin.x - 80, origin.y + 70, 160, 20), "drag here to walk", new Color(Bone.r, Bone.g, Bone.b, 0.5f));
+            var origin = JoystickCenter;
+            float opacity = active ? 0.8f : 0.35f;
+            var old = GUI.color;
+            GUI.color = new Color(Bone.r, Bone.g, Bone.b, opacity);
+            GUI.DrawTexture(new Rect(origin.x - JoyRadius, origin.y - JoyRadius, JoyRadius * 2, JoyRadius * 2), ringTex);
+            GUI.color = old;
+            Circle(active ? joyKnob : origin, 28f, new Color(Candle.r, Candle.g, Candle.b, opacity));
+            Shadowed(new Rect(origin.x - 85, origin.y + 66, 170, 20), gm.SleepingCamera ? "look around" : "move", new Color(Bone.r, Bone.g, Bone.b, 0.5f));
         }
 
         // ------------------------------------------------------------ resident
@@ -771,9 +791,11 @@ namespace BadAppleHotel.Game
                 case ResidentAction.DoorBroken: text = "Door\nbroken"; col = Red; break;
                 default: text = me.Room == null ? "Find a\nroom" : "Go to bed\nor door"; break;
             }
-            var ac = new Vector2(vw - 105f, VH - 110f);
-            RoundButton(ac, 150f, text, col, action != ResidentAction.None, DoResidentAction);
+            var ac = new Vector2(vw - 90f - (Screen.width - Screen.safeArea.xMax) / scale, VH - 95f - Screen.safeArea.yMin / scale);
+            RoundButton(ac, 116f, text, col, action != ResidentAction.None, DoResidentAction);
 
+            if (me.Asleep)
+                RoundButton(new Vector2(vw - 90f, VH - 225f), 76f, "Recenter", Bone, true, gm.RecenterCamera, roundSmall);
             if (me.Room != null)
                 RoundButton(new Vector2(vw - 245f, VH - 62f), 78f, "Ask\nhelp", Bone, true, () =>
                 {
@@ -934,7 +956,7 @@ namespace BadAppleHotel.Game
                     DrawRing(wpos, rng, new Color(tabCol.r, tabCol.g, tabCol.b, 0.85f));
                 }
                 if (sel2.areaRadius > 0f) DrawRing(wpos, sel2.areaRadius, new Color(1f, 1f, 1f, 0.4f));
-                DrawSpriteAt(Sprites.Tower(sel2.id), wpos, new Color(1f, 1f, 1f, placeable ? 0.78f : 0.4f));
+                DrawSpriteAt(Sprites.Tower(sel2, 1), wpos, new Color(1f, 1f, 1f, placeable ? 0.78f : 0.4f));
             }
 
             // ---- dock (moves to the top when the tile is down there)
@@ -970,7 +992,7 @@ namespace BadAppleHotel.Game
                 GUI.color = chosen ? new Color(tabCol.r, tabCol.g, tabCol.b, 1f) : (afford ? Color.white : new Color(1f, 1f, 1f, 0.55f));
                 if (GUI.Button(cr, GUIContent.none, centerButton)) previewId = t.id;
                 GUI.color = oc;
-                var ico = Sprites.Tower(t.id);
+                var ico = Sprites.Tower(t, 1);
                 GUI.DrawTexture(new Rect(cr.x + 10f, cr.y + 6f, cr.width - 20f, 78f), ico.texture, ScaleMode.ScaleToFit);
                 GUI.Label(new Rect(cr.x + 4f, cr.y + 86f, cr.width - 8f, 40f), "<b>" + t.name + "</b>", center);
                 GUI.Label(new Rect(cr.x + 4f, cr.y + 126f, cr.width - 8f, 22f), (afford ? "" : "<color=#D7263D>") + t.buildCost + "</color> " + ResShort(t.costResource), center);
@@ -1028,11 +1050,11 @@ namespace BadAppleHotel.Game
             if (t.IsWeapon) DrawRing(wpos, gm.TowerRange(t), new Color(Candle.r, Candle.g, Candle.b, 0.55f));
             HighlightTile(t.Tile);
 
-            var r = PopupRect(wpos, 300, 168);
+            var r = PopupRect(wpos, 330, 222);
             Panel(r);
-            GUI.DrawTexture(new Rect(r.x + 10, r.y + 10, 32, 32), Sprites.Tower(t.Def.id).texture, ScaleMode.ScaleToFit);
+            GUI.DrawTexture(new Rect(r.x + 10, r.y + 10, 32, 32), Sprites.Tower(t.Def, t.Level).texture, ScaleMode.ScaleToFit);
             int max = gm.TowerMaxLevel(t);
-            GUI.Label(new Rect(r.x + 50, r.y + 8, r.width - 90, 22), "<b>" + t.Def.name + "</b>  Lv " + t.Level + "/" + max, label);
+            GUI.Label(new Rect(r.x + 50, r.y + 8, r.width - 90, 22), "<b>" + UpgradeRules.TowerName(t.Def, t.Level) + "</b>  Lv " + t.Level + "/" + max, label);
             if (CloseButton(r)) { ClearSelection(); return; }
 
             string info;
@@ -1040,23 +1062,30 @@ namespace BadAppleHotel.Game
             {
                 var sc = gm.Cfg.towers.levelScaling;
                 int lv = t.Level - 1;
-                float dmg = t.Def.damage * Mathf.Pow(sc.damage, lv) * gm.OwnerDamageMult(room);
-                float rate = t.Def.shotsPerSecond * Mathf.Pow(sc.fireRate, lv);
+                float dmg = UpgradeRules.Damage(gm.Cfg.towers, t.Def, t.Level) * gm.OwnerDamageMult(room);
+                float rate = UpgradeRules.FireRate(gm.Cfg.towers, t.Def, t.Level);
                 info = RangeLabel(t.Def.rangeClass) + " (" + gm.TowerRange(t).ToString("0.#") + " tiles)  ·  " +
-                       (t.Def.damageType == "slow" ? "slows " + Mathf.RoundToInt(t.Def.slowPct * 100) + "%" : Mathf.RoundToInt(dmg * rate) + " dmg/s");
+                       (t.Def.damageType == "slow" ? "slows " + Mathf.RoundToInt((UpgradeRules.Tier(t.Def, t.Level)?.slowPct ?? t.Def.slowPct) * 100) + "%" : Mathf.RoundToInt(dmg * rate) + " dmg/s");
             }
             else if (t.IsClairvoyance) info = "You can see the whole hotel. Use Hotel view to look around.";
-            else info = "+" + (t.Def.faithPerSecond * Mathf.Pow(t.Def.faithLevelScaling, t.Level - 1)).ToString("0.#") + " Faith/s";
+            else info = t.IsDreamGen ? "+" + UpgradeRules.DreamRate(t.Def, t.Level).ToString("0.#") + " DP/s" :
+                "+" + UpgradeRules.FaithRate(t.Def, t.Level).ToString("0.#") + " Faith/s";
+            if (t.IsWeapon) info += "  ·  door support " + UpgradeRules.DoorSupportLevel(t.Def, t.Level);
             GUI.Label(new Rect(r.x + 50, r.y + 30, r.width - 60, 40), info, small);
 
             float cost = gm.TowerUpgradeCost(t);
-            var ub = new Rect(r.x + 10, r.y + 74, r.width - 20, 38);
+            if (cost >= 0f)
+            {
+                GUI.DrawTexture(new Rect(r.x + 10, r.y + 74, 44, 44), Sprites.Tower(t.Def, t.Level + 1).texture, ScaleMode.ScaleToFit);
+                GUI.Label(new Rect(r.x + 62, r.y + 74, r.width - 72, 44), "Next: " + UpgradeRules.TowerName(t.Def, t.Level + 1), small);
+            }
+            var ub = new Rect(r.x + 10, r.y + 124, r.width - 20, 38);
             if (cost < 0f) GUI.Label(ub, "Max level", center);
             else if (GUI.Button(ub, "<b>Upgrade</b>  " + Mathf.CeilToInt(cost) + " " + ResShort(t.Def.costResource), button))
                 Report(gm.TryUpgradeTower(me, t.SlotIndex), ResName(t.Def.costResource));
 
             float refund = gm.TowerSellValue(t);
-            if (GUI.Button(new Rect(r.x + 10, r.y + 118, r.width - 20, 38), "<b>Sell</b>  +" + Mathf.FloorToInt(refund) + " " + ResShort(t.Def.costResource) +
+            if (GUI.Button(new Rect(r.x + 10, r.y + 172, r.width - 20, 38), "<b>Sell</b>  +" + Mathf.FloorToInt(refund) + " " + ResShort(t.Def.costResource) +
                                                                       "  <size=11>(" + Mathf.RoundToInt(gm.Cfg.towers.sellRefundPct * 100) + "% back)</size>", button))
             {
                 Report(gm.TrySellTower(me, t.SlotIndex));

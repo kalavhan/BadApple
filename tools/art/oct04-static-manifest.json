@@ -1,0 +1,87 @@
+[
+  {
+    "id": "gun_turret",
+    "description": "2x2 sheet, 4 separate zombie soldiers: pistol, rifle, shotgun, heavy gunner. Same size. Burton gothic ink comic, muted plum/ivory, top-down RPG. White background, wide blank gutters, no labels.",
+    "assetId": "cmuu29gxt000er3uln8ki0pli",
+    "downloaded": true,
+    "backgroundRemovalCredits": 1
+  },
+  {
+    "id": "faith_tower",
+    "description": "2x2 sheet: votive candle, twin candles, skull altar, grand candle shrine. Four same-size tiers. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2k6du00019d39mzdjnr9w",
+    "downloaded": true
+  },
+  {
+    "id": "missile_launcher",
+    "description": "2x2 sheet: skull mortar urn, bone rocket reliquary, gargoyle bomb shrine, siege idol. Four same-size tiers. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2ksz5000c9d39wycbnepa",
+    "downloaded": true
+  },
+  {
+    "id": "electric_tower",
+    "description": "2x2 sheet: static rag doll, copper coil doll, lightning altar, thunder idol. Four same-size tiers. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2lc86000ar929b07rr6u4",
+    "downloaded": true
+  },
+  {
+    "id": "dragon_statue",
+    "description": "2x2 sheet: dragon candle, wyrm incense burner, dragon brazier, cursed dragon furnace. Four same-size tiers. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2lwa2000gr929dshgtvte",
+    "downloaded": true
+  },
+  {
+    "id": "slow_totem",
+    "description": "2x2 sheet: frost hourglass, chained clock, icy pendulum shrine, frozen time idol. Four same-size tiers. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2mher000j6j1nvk20oazt",
+    "downloaded": true
+  },
+  {
+    "id": "dream_lamp",
+    "description": "2x2 sheet: sleepy lantern, moon jar, dream moth lantern, nightmare chandelier. Four same-size tiers. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2n3fn00016axptjg1fo68",
+    "downloaded": true
+  },
+  {
+    "id": "flame_brazier",
+    "description": "2x2 sheet: cursed flame, coal brazier, haunted furnace, infernal hearth. Four same-size tiers. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2nlc7000810qcop7w8p2m",
+    "downloaded": true
+  },
+  {
+    "id": "sniper_nest",
+    "description": "2x2 sheet: ghost with pistol, skeletal scoped rifle sentry, long rifle revenant, elite sniper phantom. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2o7rz000gx6j8kigce65l",
+    "downloaded": true
+  },
+  {
+    "id": "tesla_coil",
+    "description": "2x2 sheet: charged porcelain doll, copper coil, lightning idol, storm reliquary. Four same-size tiers. Burton gothic ink, plum ivory, top-down RPG. White background, wide gutters, no text.",
+    "assetId": "cmuu2ou4c000g6gfemvhyxckj",
+    "downloaded": true
+  },
+  {
+    "id": "hall_walls",
+    "description": "2x2 tile textures: plum crooked wall cap; gothic wood wall face; stone corner; brass iron baseboard. Burton ink comic, top-down RPG. Fill each quadrant edge to edge, no gutters, no text.",
+    "assetId": "cmuu2pmr6000u6gfek8iotcnc",
+    "downloaded": true
+  },
+  {
+    "id": "hall_props",
+    "description": "2x2 sheet: crooked portrait; wall candle; wall cracks; cobweb corner. Burton gothic ink, muted plum ivory. Front view. White background, wide blank gutters, no labels.",
+    "assetId": "cmuu2q6r8001m6gfey2gz28cl",
+    "downloaded": true
+  },
+  {
+    "id": "hall_doorway",
+    "description": "Gothic hotel doorway frame, empty opening, crooked iron bone arch, candle sconces. Burton ink comic, muted plum ivory gold, top-down RPG. Isolated white background, no door, no text.",
+    "assetId": "cmuu2qyzs000161v4pbqy6513",
+    "downloaded": true
+  },
+  {
+    "id": "hall_floor",
+    "description": "Seamless square top-down hotel corridor floor, crooked plum charcoal checkerboard stone, thin brass lines, worn edges. Burton gothic ink comic, muted colors, flat lighting, no objects.",
+    "assetId": "cmuu2rnx80001bo79ul9pzxvr",
+    "downloaded": true
+  }
+]
