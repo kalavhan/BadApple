@@ -1,0 +1,5 @@
+Measured baked geometry using triangle rays across 39 x 39 points per mesh.
+Maximum front skin depth: wall_straight 0.075045 tile; wall_cutaway_cap 0.050498; rotated wall_corner 0.150462.
+Current core inset 0.004 tile covers these recessed skins. Proposed exposed-side inset 0.17 tile (scaled by thickness/0.3), canonical top height 1.60 instead of 1.70.
+Only inset sides facing walkable space; keep solid-neighbour edges at their original cell boundaries to preserve a continuous filled separator.
+Controlled before/after previews use the real baked kit at the fixed game camera angle. The bare right end is a deliberately unskinned solid-neighbour edge in this isolated fixture.

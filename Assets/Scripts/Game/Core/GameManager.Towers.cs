@@ -54,9 +54,9 @@ namespace BadAppleHotel.Game
             float mult = DamageTaken(m, type) * UpgradeRules.DistanceBonus(t.Def,Vector2.Distance(tpos,m.Pos));
             SpawnProjectile(tpos, m.Pos + Vector2.up * 0.5f, t.Def.damageType);
             var owner = room.Owner;
-            if (owner != null && owner.Alive && !owner.Asleep)
+            if (owner != null && owner.Alive && !owner.Asleep && !owner.IsHuman)
             {
-                owner.AttackUntil = Now + 0.45f;   // the owner joins in the fight
+                owner.AttackUntil = Now + 0.45f;   // bots join in; the player's attack is an explicit action
                 var toMonster = m.Pos - owner.Pos;
                 if (toMonster.sqrMagnitude > 0.01f) owner.Facing = toMonster.normalized;
             }

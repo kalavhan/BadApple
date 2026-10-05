@@ -16,15 +16,18 @@ Shader "BadApple/HotelWall"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "HotelLighting.cginc"
             sampler2D _MainTex, _HotelVision;
             sampler2D_float _WallStates; // Heights and timestamps require full precision on mobile GPUs.
             float4 _HotelSize;
             float _HotelFog, _WallClock;
+            float4 _WallPeekBounds;
+            float _WallPeekEnabled;
             UNITY_INSTANCING_BUFFER_START(WallProps)
                 UNITY_DEFINE_INSTANCED_PROP(float4, _WallInstance)
             UNITY_INSTANCING_BUFFER_END(WallProps)
             struct appdata { UNITY_VERTEX_INPUT_INSTANCE_ID float4 vertex:POSITION; float3 normal:NORMAL; float2 uv:TEXCOORD0; float2 state:TEXCOORD1; float2 mode:TEXCOORD2; fixed4 color:COLOR; };
-            struct v2f { float4 pos:SV_POSITION; float2 uv:TEXCOORD0; float2 world:TEXCOORD1; float4 rule:TEXCOORD2; float light:TEXCOORD3; fixed4 color:COLOR; };
+            struct v2f { float4 pos:SV_POSITION; float2 uv:TEXCOORD0; float2 world:TEXCOORD1; float4 rule:TEXCOORD2; float light:TEXCOORD3; float2 normal:TEXCOORD4; fixed4 color:COLOR; };
             v2f vert(appdata v)
             {
                 UNITY_SETUP_INSTANCE_ID(v);
@@ -44,11 +47,19 @@ Shader "BadApple/HotelWall"
                 o.pos=mul(UNITY_MATRIX_VP,world);o.world=world.xy;
                 o.uv=v.uv;o.color=v.color;o.rule=float4(height,fade,mode,originalHeight);
                 float3 normal=UnityObjectToWorldNormal(v.normal);
+                o.normal=normal.xy;
                 o.light=.72+.28*saturate(dot(normal,normalize(float3(-.3,-.5,-1))));
                 return o;
             }
             fixed4 frag(v2f i):SV_Target
             {
+                // Sight opens at most the monster's adjacent wall cell and its two neighbours.
+                // Per-pixel clipping keeps all remaining sections of a merged run intact.
+                if(_WallPeekEnabled>.5)
+                {
+                    float2 edge=min(i.world-_WallPeekBounds.xy,_WallPeekBounds.zw-i.world);
+                    clip(-min(edge.x,edge.y)-.0001);
+                }
                 float threshold=frac(dot(floor(i.pos.xy),float2(.75487766,.56984029)));
                 clip(i.rule.y-threshold);
                 if(i.rule.z>.5 && i.rule.z<1.5) clip(i.rule.x-.46);
@@ -57,8 +68,10 @@ Shader "BadApple/HotelWall"
                 float sight=tex2D(_HotelVision,(floor(i.world)+.5)/_HotelSize.xy).r;
                 float fog=lerp(1,lerp(.06,1,sight),_HotelFog);
                 fixed3 albedo=i.rule.z>3.5?i.color.rgb:tex2D(_MainTex,i.uv).rgb*i.color.rgb;
+                float ambient=lerp(1,.45,saturate(_HotelLightingEnabled));
+                fixed3 lamp=HotelLampLight(i.world,i.normal,lerp(1,step(.9,sight),_HotelFog));
                 // Emission still obeys fog: hidden sconces cannot reveal unexplored rooms.
-                return fixed4((albedo*i.light+fixed3(.25,.12,.035)*i.color.a)*fog,1);
+                return fixed4((albedo*i.light*(ambient+lamp)+fixed3(.55,.28,.08)*i.color.a)*fog,1);
             }
             ENDCG
         }

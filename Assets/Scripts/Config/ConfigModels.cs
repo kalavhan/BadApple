@@ -345,6 +345,9 @@ namespace BadAppleHotel.Config
         public float moveSpeed;
         public float awakeWeaponDamageMultiplier;
         public float awakeDreamPowerMultiplier;
+        public float personalShotDamage = 8f;
+        public float personalShotRangeTiles = 4f;
+        public float personalShotCooldownSeconds = 0.6f;
         public float doorReachTiles;
         public float bedReachTiles;
         public float visionRadiusTiles;

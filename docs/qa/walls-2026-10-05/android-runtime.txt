@@ -1,0 +1,47 @@
+--------- beginning of main
+--------- beginning of system
+--------- beginning of kernel
+10-05 11:16:19.270  2732  2732 V Unity   : Context Type: GameActivity
+10-05 11:16:19.399  2732  2753 I Unity   : UnityApplication::CreateInstance
+10-05 11:16:19.399  2732  2753 I Unity   : GameActivity Package Version '4.4.0'
+10-05 11:16:19.424  2732  2753 I Unity   : Starting Game Loop
+10-05 11:16:19.496  2732  2753 I Unity   : Handle cmd APP_CMD_START(11)
+10-05 11:16:19.536  2732  2753 I Unity   : Handle cmd APP_CMD_RESUME(12)
+10-05 11:16:19.707  2732  2753 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 11:16:19.840  2732  2753 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 11:16:19.843  2732  2753 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+10-05 11:16:19.935  2732  2753 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+10-05 11:16:20.407  2732  2753 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+10-05 11:16:21.724  2732  2753 I Unity   : SystemInfo CPU = x86-64, Cores = 2, Memory = 1981mb
+10-05 11:16:21.728  2732  2753 I Unity   : ApplicationInfo 'com.kalavhan.badapplehotel', Version '1.4-wall-sight', Min API Level '25', Target API Level '36'
+10-05 11:16:21.731  2732  2753 I Unity   : Built from '6000.3/staging' branch, Version '6000.3.24f1 (4e7b9b5b6244)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'x86_64', Stripping 'Disabled'
+10-05 11:16:21.732  2732  2753 I Unity   : Device Model 'unknown Android SDK built for x86_64', OS 'Android OS 11 (API 30)'
+10-05 11:16:22.435  2732  2753 I Unity   : Company Name: kalavhan
+10-05 11:16:22.435  2732  2753 I Unity   : Product Name: Bad Apple Hotel
+10-05 11:16:24.135  2732  2753 I Unity   :     HasWindow = 1, HasFocus = 0
+10-05 11:16:24.135  2732  2753 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+10-05 11:16:24.142  2732  2753 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+10-05 11:16:24.142  2732  2753 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 11:16:24.144  2732  2753 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+10-05 11:16:24.144  2732  2753 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 11:16:24.154  2732  2753 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 11:18:33.658  2805  2805 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 11:18:33.817  2805  2805 I AndroidRuntime: Using default boot image
+10-05 11:18:33.833  2805  2805 I AndroidRuntime: Leaving lock profiling enabled
+10-05 11:18:38.049  2805  2805 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 11:18:38.414  2805  2805 D AndroidRuntime: Shutting down VM
+10-05 11:19:36.734  2822  2822 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 11:19:36.819  2822  2822 I AndroidRuntime: Using default boot image
+10-05 11:19:36.820  2822  2822 I AndroidRuntime: Leaving lock profiling enabled
+10-05 11:19:40.476  2822  2822 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 11:19:41.493  2822  2822 D AndroidRuntime: Shutting down VM
+10-05 11:19:51.576  2835  2835 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 11:19:51.634  2835  2835 I AndroidRuntime: Using default boot image
+10-05 11:19:51.635  2835  2835 I AndroidRuntime: Leaving lock profiling enabled
+10-05 11:19:57.696  2835  2835 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 11:19:58.135  2835  2835 D AndroidRuntime: Shutting down VM
+10-05 11:19:59.416  2837  2837 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 11:19:59.636  2837  2837 I AndroidRuntime: Using default boot image
+10-05 11:19:59.657  2837  2837 I AndroidRuntime: Leaving lock profiling enabled
+10-05 11:20:03.635  2837  2837 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 11:20:03.929  2837  2837 D AndroidRuntime: Shutting down VM

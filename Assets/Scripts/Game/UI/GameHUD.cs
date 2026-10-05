@@ -313,10 +313,20 @@ namespace BadAppleHotel.Game
             if (gm.Human != null)
             {
                 if (GameInput.ConsumePressed(KeyCode.E) || GameInput.ConsumePressed(KeyCode.Space)) DoResidentAction();
+                if (GameInput.ConsumePressed(KeyCode.F)) ShootResident();
             }
             if (GameInput.ConsumePressed(KeyCode.M) && gm.HotelViewAvailable) gm.HotelView = !gm.HotelView;
             if (GameInput.ConsumePressed(KeyCode.R)) gm.RecenterCamera();
             if (GameInput.ConsumePressed(KeyCode.Escape)) ClearSelection();
+        }
+
+        void ShootResident()
+        {
+            var me = gm.Human;
+            var result = gm.TryResidentShoot(me);
+            if (result == ActionResult.TooFar) gm.Toast("No monster in sight within " + gm.Cfg.residents.personalShotRangeTiles + " tiles.");
+            else if (result == ActionResult.Blocked && me != null)
+                gm.Toast(me.Asleep ? "Wake up before shooting." : "Your shot is recharging.");
         }
 
         bool JoystickAllowed =>
@@ -832,6 +842,14 @@ namespace BadAppleHotel.Game
             }
             var ac = new Vector2(vw - 90f - (Screen.width - Screen.safeArea.xMax) / scale, VH - 95f - Screen.safeArea.yMin / scale);
             RoundButton(ac, 116f, text, col, action != ResidentAction.None, DoResidentAction);
+
+            if (gm.Phase == Phase.Night)
+            {
+                float cooldown = gm.PersonalShotCooldown(me);
+                string shootText = me.Asleep ? "Wake to\nshoot" : cooldown > 0f ? "Shoot\n" + cooldown.ToString("0.0") + "s" : "Shoot\n[F]";
+                RoundButton(ac + new Vector2(0, -250), 84f, shootText, Candle,
+                    gm.ResidentShotAvailability(me) == ActionResult.Ok, ShootResident, roundSmall);
+            }
 
             if (gm.NearDoor(me) && !me.Asleep)
                 RoundButton(new Vector2(vw - 190f, VH - 280f), 64f, me.Room.DoorOpen ? "Close\ndoor" : "Open\ndoor", Bone, !me.Room.DoorBroken,

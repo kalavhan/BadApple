@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:02Z" duration="0.8290402">
+  <test-suite type="TestSuite" id="1000" name="Bad Apple Hotel" fullname="Bad Apple Hotel" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:02Z" duration="0.829040" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1070" name="BadAppleHotel.Tests.dll" fullname="/tmp/badapple-kit-qa/Library/ScriptAssemblies/BadAppleHotel.Tests.dll" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:02Z" duration="0.822199" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2509072" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1071" name="BadAppleHotel" fullname="BadAppleHotel" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:02Z" duration="0.821883" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1072" name="Tests" fullname="BadAppleHotel.Tests" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:02Z" duration="0.821724" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="CoreBackingTests" fullname="BadAppleHotel.Tests.CoreBackingTests" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:02Z" duration="0.820591" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1005" name="Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps" fullname="BadAppleHotel.Tests.CoreBackingTests.Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:02Z" duration="0.817817" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1002" name="Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps(11)" fullname="BadAppleHotel.Tests.CoreBackingTests.Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps(11)" methodname="Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" seed="687641728" result="Passed" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:01Z" duration="0.333341" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1003" name="Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps(41)" fullname="BadAppleHotel.Tests.CoreBackingTests.Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps(41)" methodname="Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" seed="79367998" result="Passed" start-time="2026-10-05 16:06:01Z" end-time="2026-10-05 16:06:02Z" duration="0.324988" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1004" name="Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps(83)" fullname="BadAppleHotel.Tests.CoreBackingTests.Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps(83)" methodname="Actual_separator_backings_stay_behind_decorative_skins_and_meet_solid_neighbours_without_top_gaps" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" seed="1870959620" result="Passed" start-time="2026-10-05 16:06:02Z" end-time="2026-10-05 16:06:02Z" duration="0.152180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: /tmp/core-backing-tests.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

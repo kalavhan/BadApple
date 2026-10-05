@@ -28,6 +28,24 @@ namespace BadAppleHotel.Tests
             }
         }
 
+        [Test] public void Outer_pilaster_broad_faces_turn_diagonally_without_widening_the_wall()
+        {
+            var piece=WallKit.Load().Get("wall_corner");var vertices=piece.Mesh.vertices;var triangles=piece.Mesh.triangles;
+            float diagonalArea=0,verticalArea=0;
+            for(int i=0;i<triangles.Length;i+=3)
+            {
+                var a=vertices[triangles[i]];var b=vertices[triangles[i+1]];var c=vertices[triangles[i+2]];
+                float y=(a.y+b.y+c.y)/3;var cross=Vector3.Cross(b-a,c-a);var normal=cross.normalized;
+                if(y<.2f||y>1.5f||Mathf.Abs(normal.y)>.1f)continue;
+                verticalArea+=cross.magnitude;
+                if(Mathf.Abs(normal.x)>.55f&&Mathf.Abs(normal.z)>.55f)diagonalArea+=cross.magnitude;
+            }
+            Assert.Greater(verticalArea,.1f);
+            Assert.Greater(diagonalArea/verticalArea,.7f,"The outer pilaster should present its rotated broad faces, not its old axis-aligned orientation.");
+            Assert.Less(Vector3.Distance(piece.Mesh.bounds.min,Vector3.zero),.001f);
+            Assert.Less(Vector3.Distance(piece.Mesh.bounds.size,new Vector3(.3f,1.7f,.3f)),.001f);
+        }
+
         [Test] public void Door_frame_leaves_one_tile_of_clear_passage_between_physical_posts()
         {
             var piece=WallKit.Load().Get("door_frame");var vertices=piece.Mesh.vertices;var triangles=piece.Mesh.triangles;

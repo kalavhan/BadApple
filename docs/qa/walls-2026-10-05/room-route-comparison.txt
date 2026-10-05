@@ -1,0 +1,1 @@
+ROUTE COMPARISON 20 identical seed inputs, 45 unique room pairs each (900 routes per map size), 4-neighbor shortest paths over corridor tiles between DoorOutside centers; same 10 room build budgets. OLD104x64 mean=65.9178 tiles NEW88x54 mean=56.1422 tiles reduction=14.8299%. Mean nearest-room route OLD=26.9500 NEW=23.5050 reduction=12.7829%.

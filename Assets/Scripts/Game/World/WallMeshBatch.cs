@@ -14,10 +14,11 @@ namespace BadAppleHotel.Game
         readonly List<int> triangles = new List<int>();
         public int VertexCount => vertices.Count;
 
-        public void Box(Rect rect, int stateIndex, int textureWidth, Color tint, float inset = 0)
+        public void Box(Rect rect, int stateIndex, int textureWidth, Color tint, float inset = 0, float height = 1.7f)
         {
             float x0 = rect.xMin + inset, x1 = rect.xMax - inset, y0 = rect.yMin + inset, y1 = rect.yMax - inset;
-            const float top = -1.66f, bottom = .04f;
+            const float bottom = .04f;
+            float top = bottom-height;
             Face(new Vector3(x0,y0,bottom),new Vector3(x1,y0,bottom),new Vector3(x1,y0,top),new Vector3(x0,y0,top),Vector3.down,tint,stateIndex,textureWidth);
             Face(new Vector3(x1,y1,bottom),new Vector3(x0,y1,bottom),new Vector3(x0,y1,top),new Vector3(x1,y1,top),Vector3.up,tint,stateIndex,textureWidth);
             Face(new Vector3(x0,y1,bottom),new Vector3(x0,y0,bottom),new Vector3(x0,y0,top),new Vector3(x0,y1,top),Vector3.left,tint,stateIndex,textureWidth);

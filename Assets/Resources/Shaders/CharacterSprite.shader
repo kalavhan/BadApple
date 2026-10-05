@@ -29,9 +29,10 @@ Shader "BadApple/CharacterSprite"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "HotelLighting.cginc"
 
             struct appdata { float4 vertex : POSITION; float4 color : COLOR; float2 uv : TEXCOORD0; };
-            struct v2f { float4 pos : SV_POSITION; fixed4 color : COLOR; float2 uv : TEXCOORD0; };
+            struct v2f { float4 pos : SV_POSITION; fixed4 color : COLOR; float2 uv : TEXCOORD0; float2 ground : TEXCOORD1; };
 
             sampler2D _MainTex;
             fixed4 _Color;
@@ -44,6 +45,7 @@ Shader "BadApple/CharacterSprite"
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
                 o.color = v.color * _Color;
+                o.ground = mul(unity_ObjectToWorld,float4(0,0,0,1)).xy;
                 return o;
             }
 
@@ -83,6 +85,7 @@ Shader "BadApple/CharacterSprite"
                 }
                 rgb = lerp(rgb, _FlashColor.rgb, _Flash);
                 fixed4 c = fixed4(rgb, t.a) * i.color;
+                c.rgb *= lerp(1,.65,saturate(_HotelLightingEnabled))+HotelLampLight(i.ground,float2(0,0),1)*.7;
                 c.rgb *= c.a;
                 return c;
             }
