@@ -1,0 +1,92 @@
+--------- beginning of main
+--------- beginning of system
+--------- beginning of kernel
+10-04 17:49:06.850  2666  2666 V Unity   : Context Type: GameActivity
+10-04 17:49:06.904  2666  2687 I Unity   : UnityApplication::CreateInstance
+10-04 17:49:06.904  2666  2687 I Unity   : GameActivity Package Version '4.4.0'
+10-04 17:49:06.908  2666  2687 I Unity   : Starting Game Loop
+10-04 17:49:06.964  2666  2687 I Unity   : Handle cmd APP_CMD_START(11)
+10-04 17:49:06.993  2666  2687 I Unity   : Handle cmd APP_CMD_RESUME(12)
+10-04 17:49:07.070  2666  2687 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:49:07.124  2666  2687 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:49:07.124  2666  2687 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+10-04 17:49:07.235  2666  2687 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+10-04 17:49:07.473  2666  2687 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+10-04 17:49:08.828  2666  2687 I Unity   : SystemInfo CPU = x86-64 SSE3 SSE4.1 SSE4.2, Cores = 2, Memory = 1981mb
+10-04 17:49:08.834  2666  2687 I Unity   : ApplicationInfo 'com.kalavhan.badapplehotel', Version '1.2-isometric', Min API Level '25', Target API Level '36'
+10-04 17:49:08.836  2666  2687 I Unity   : Built from '6000.3/staging' branch, Version '6000.3.24f1 (4e7b9b5b6244)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'x86_64', Stripping 'Enabled'
+10-04 17:49:08.837  2666  2687 I Unity   : Device Model 'unknown Android SDK built for x86_64', OS 'Android OS 11 (API 30)'
+10-04 17:49:09.232  2666  2687 I Unity   : Company Name: kalavhan
+10-04 17:49:09.232  2666  2687 I Unity   : Product Name: Bad Apple Hotel
+10-04 17:49:10.510  2666  2687 E Unity   : Could not produce class with ID 115.
+10-04 17:49:10.510  2666  2687 E Unity   : This could be caused by a class being stripped from the build even though it is needed. Try disabling 'Strip Engine Code' in Player Settings.
+10-04 17:49:10.641  2666  2687 E Unity   : Could not produce class with ID 115.
+10-04 17:49:10.641  2666  2687 E Unity   : This could be caused by a class being stripped from the build even though it is needed. Try disabling 'Strip Engine Code' in Player Settings.
+10-04 17:49:10.782  2666  2687 I Unity   :     HasWindow = 1, HasFocus = 0
+10-04 17:49:10.785  2666  2687 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+10-04 17:49:10.796  2666  2687 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+10-04 17:49:10.796  2666  2687 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:49:10.799  2666  2687 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+10-04 17:49:10.800  2666  2687 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:49:10.804  2666  2687 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:49:13.152  2666  2687 E Unity   : Could not produce class with ID 115.
+10-04 17:49:13.152  2666  2687 E Unity   : This could be caused by a class being stripped from the build even though it is needed. Try disabling 'Strip Engine Code' in Player Settings.
+10-04 17:49:13.152  2666  2687 E Unity   : UnityEngine.GameObject:Internal_AddComponentWithType(Type)
+10-04 17:49:13.152  2666  2687 E Unity   : UnityEngine.GameObject:AddComponent()
+10-04 17:49:13.152  2666  2687 E Unity   : BadAppleHotel.Game.GameBootstrap:Boot()
+10-04 17:49:13.152  2666  2687 E Unity   :
+10-04 17:49:13.152  2666  2687 E Unity   : [ line -1240395696]
+10-04 17:49:13.152  2666  2687 E Unity   :
+10-04 17:49:13.999  2666  2687 E Unity   : Could not produce class with ID 115.
+10-04 17:49:13.999  2666  2687 E Unity   : This could be caused by a class being stripped from the build even though it is needed. Try disabling 'Strip Engine Code' in Player Settings.
+10-04 17:49:13.999  2666  2687 E Unity   : UnityEngine.GameObject:Internal_AddComponentWithType(Type)
+10-04 17:49:13.999  2666  2687 E Unity   : UnityEngine.GameObject:AddComponent()
+10-04 17:49:13.999  2666  2687 E Unity   : BadAppleHotel.Game.GameBootstrap:Boot()
+10-04 17:49:13.999  2666  2687 E Unity   :
+10-04 17:49:13.999  2666  2687 E Unity   : [ line -1240395696]
+10-04 17:49:13.999  2666  2687 E Unity   :
+10-04 17:49:14.108  2666  2687 E Unity   : Could not produce class with ID 115.
+10-04 17:49:14.108  2666  2687 E Unity   : This could be caused by a class being stripped from the build even though it is needed. Try disabling 'Strip Engine Code' in Player Settings.
+10-04 17:49:14.108  2666  2687 E Unity   : UnityEngine.GameObject:Internal_AddComponentWithType(Type)
+10-04 17:49:14.108  2666  2687 E Unity   : UnityEngine.GameObject:AddComponent()
+10-04 17:49:14.108  2666  2687 E Unity   :
+10-04 17:49:14.108  2666  2687 E Unity   : [ line -1240395680]
+10-04 17:49:14.108  2666  2687 E Unity   :
+10-04 17:49:15.112  2666  2687 E Unity   : Could not produce class with ID 115.
+10-04 17:49:15.112  2666  2687 E Unity   : This could be caused by a class being stripped from the build even though it is needed. Try disabling 'Strip Engine Code' in Player Settings.
+10-04 17:49:15.112  2666  2687 E Unity   : UnityEngine.GameObject:Internal_AddComponentWithType(Type)
+10-04 17:49:15.112  2666  2687 E Unity   : UnityEngine.GameObject:AddComponent()
+10-04 17:49:15.112  2666  2687 E Unity   :
+10-04 17:49:15.112  2666  2687 E Unity   : [ line -1240395680]
+10-04 17:49:15.112  2666  2687 E Unity   :
+10-04 17:49:18.239  2666  2687 W Unity   : The referenced script (Unknown) on this Behaviour is missing!
+10-04 17:49:18.239  2666  2687 W Unity   : UnityEngine.GUIUtility:GetDefaultSkin()
+10-04 17:49:18.239  2666  2687 W Unity   : UnityEngine.GUI:DoSetSkin(GUISkin)
+10-04 17:49:18.239  2666  2687 W Unity   : UnityEngine.GUIUtility:ResetGlobalState()
+10-04 17:49:18.239  2666  2687 W Unity   : UnityEngine.GUIUtility:BeginGUI(Int32, Int32, Int32)
+10-04 17:49:18.239  2666  2687 W Unity   :
+10-04 17:49:18.239  2666  2687 W Unity   : [ line -1240397808]
+10-04 17:49:18.239  2666  2687 W Unity   :
+10-04 17:49:18.260  2666  2687 W Unity   : The referenced script on this Behaviour (Game Object '<null>') is missing!
+10-04 17:49:18.260  2666  2687 W Unity   : UnityEngine.GUIUtility:GetDefaultSkin()
+10-04 17:49:18.260  2666  2687 W Unity   : UnityEngine.GUI:DoSetSkin(GUISkin)
+10-04 17:49:18.260  2666  2687 W Unity   : UnityEngine.GUIUtility:ResetGlobalState()
+10-04 17:49:18.260  2666  2687 W Unity   : UnityEngine.GUIUtility:BeginGUI(Int32, Int32, Int32)
+10-04 17:49:18.260  2666  2687 W Unity   :
+10-04 17:49:18.260  2666  2687 W Unity   : [ line -1240397968]
+10-04 17:49:18.260  2666  2687 W Unity   :
+10-04 17:49:18.269  2666  2687 E Unity   : A scripted object (script unknown or not yet loaded) has a different serialization layout when loading. (Read 40 bytes but expected 8488 bytes)
+10-04 17:49:18.269  2666  2687 E Unity   : Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+10-04 17:49:18.269  2666  2687 E Unity   : UnityEngine.GUIUtility:GetDefaultSkin()
+10-04 17:49:18.269  2666  2687 E Unity   : UnityEngine.GUI:DoSetSkin(GUISkin)
+10-04 17:49:18.269  2666  2687 E Unity   : UnityEngine.GUIUtility:ResetGlobalState()
+10-04 17:49:18.269  2666  2687 E Unity   : UnityEngine.GUIUtility:BeginGUI(Int32, Int32, Int32)
+10-04 17:49:18.269  2666  2687 E Unity   :
+10-04 17:49:18.269  2666  2687 E Unity   : [ line -1240397872]
+10-04 17:49:18.269  2666  2687 E Unity   :
+10-04 17:49:18.307  2666  2687 E Unity   : NullReferenceException: Object reference not set to an instance of an object.
+10-04 17:49:18.307  2666  2687 E Unity   :   at UnityEngine.GUI.DoSetSkin (UnityEngine.GUISkin newSkin) [0x00000] in <00000000000000000000000000000000>:0
+10-04 17:49:18.307  2666  2687 E Unity   :   at UnityEngine.GUIUtility.ResetGlobalState () [0x00000] in <00000000000000000000000000000000>:0
+10-04 17:49:18.307  2666  2687 E Unity   :   at UnityEngine.GUIUtility.BeginGUI (System.Int32 skinMode, System.Int32 instanceID, System.Int32 useGUILayout) [0x00000] in <00000000000000000000000000000000>:0
+10-04 17:49:18.307  2666  2687 E Unity   :
+10-04 17:49:19.184  2666  2687 E Unity   : NullReferenceException: Object reference not set to an instance of an object.

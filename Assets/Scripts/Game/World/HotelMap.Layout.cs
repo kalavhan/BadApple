@@ -22,7 +22,8 @@ namespace BadAppleHotel.Game
             // Irregular plots, separated by enough space for a full-width corridor and walls.
             for (int tries = 0; reservedLots.Count < roomCount && tries < 1600; tries++)
             {
-                int w = R(cfg.lotWidthMin, cfg.lotWidthMax), h = R(cfg.lotHeightMin, cfg.lotHeightMax);
+                int w = R(cfg.roomInteriorMin.x + 2, cfg.roomInteriorMax.x + 2), h = R(cfg.roomInteriorMin.y + 2, cfg.roomInteriorMax.y + 2);
+                if ((w-2)*(h-2)-(w+h-5) < cfg.roomMinBuildTiles) continue;
                 var rect = new RectInt(R(4, W - w - 4), R(4, H - h - 4), w, h);
                 var padded = new RectInt(rect.x - 3, rect.y - 3, w + 6, h + 6);
                 bool overlap = false;
@@ -30,10 +31,15 @@ namespace BadAppleHotel.Game
                 if (!overlap) reservedLots.Add(rect);
             }
             if (reservedLots.Count != roomCount) return false;
+            var budgets = (int[])cfg.roomBuildTiles.Clone();
+            for (int i = budgets.Length - 1; i > 0; i--)
+            {
+                int j = R(0, i); int temp = budgets[i]; budgets[i] = budgets[j]; budgets[j] = temp;
+            }
             foreach (var rect in reservedLots)
             {
                 int side = R(0, 3);
-                if (!BuildRoom(new Lot { Rect = rect, Top = side == 0, DoorSide = side })) return false;
+                if (!BuildRoom(new Lot { Rect = rect, Top = side == 0, DoorSide = side }, budgets[Rooms.Count])) return false;
             }
 
             foreach (var a in Rooms)

@@ -16,16 +16,24 @@ namespace BadAppleHotel.EditorTools
             EditorSetup.Run();
             PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.kalavhan.badapplehotel");
             PlayerSettings.SetScriptingBackend(UnityEditor.Build.NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
-            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            // Unity's stripped Android player loses the built-in GUISkin/MonoScript data:
+            // GUI.BeginGUI then throws before our HUD can draw. Keep native engine types.
+            PlayerSettings.stripEngineCode = false;
+            // Include x86_64 so the exact same APK can be smoke-tested in the Android emulator.
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64 | AndroidArchitecture.X86_64;
+            PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.Android, false);
+            PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
             PlayerSettings.Android.useCustomKeystore = false;
+            PlayerSettings.bundleVersion = "1.2-isometric";
+            PlayerSettings.Android.bundleVersionCode = 3;
             EditorUserBuildSettings.buildAppBundle = false;
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
                 scenes = new[] { "Assets/Scenes/Main.unity" },
                 locationPathName = output,
                 target = BuildTarget.Android,
-                options = BuildOptions.Development,
+                options = BuildOptions.None,
             });
             if (report.summary.result != BuildResult.Succeeded)
                 throw new Exception("Android build failed: " + report.summary.result + ", errors: " + report.summary.totalErrors);

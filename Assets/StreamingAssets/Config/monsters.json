@@ -2,25 +2,65 @@
   "attackReachTiles": 1.1,
   "resistanceTracks": {
     "maxLevel": 3,
-    "damageTakenMultiplierByLevel": [1.0, 0.85, 0.70, 0.55],
-    "upgradeCostByLevel": [0, 60, 120, 200],
+    "damageTakenMultiplierByLevel": [
+      1.0,
+      0.85,
+      0.7,
+      0.55
+    ],
+    "upgradeCostByLevel": [
+      0,
+      60,
+      120,
+      200
+    ],
     "costResource": "dreamPower"
   },
   "monsters": [
     {
-      "id": "stitchwork_chef", "name": "Stitchwork Chef",
-      "baseHealth": 1200, "moveSpeed": 3.2, "doorDamagePerSecond": 25, "residentDamagePerSecond": 30,
-      "damageTakenMultiplier": { "bullet": 0.9, "electric": 1.0, "fire": 1.2, "slow": 1.0 }
+      "id": "stitchwork_chef",
+      "name": "Stitchwork Chef",
+      "baseHealth": 905,
+      "moveSpeed": 4.4,
+      "doorDamagePerSecond": 18.75,
+      "residentDamagePerSecond": 30,
+      "damageTakenMultiplier": {
+        "bullet": 0.9,
+        "electric": 1.0,
+        "fire": 1.2,
+        "slow": 1.0
+      }
     },
     {
-      "id": "moldy_matron", "name": "Moldy Matron",
-      "baseHealth": 1800, "moveSpeed": 2.6, "doorDamagePerSecond": 22, "residentDamagePerSecond": 26,
-      "damageTakenMultiplier": { "bullet": 1.0, "electric": 0.9, "fire": 1.3, "slow": 0.8 }
+      "id": "moldy_matron",
+      "name": "Moldy Matron",
+      "baseHealth": 1357,
+      "moveSpeed": 4.0,
+      "doorDamagePerSecond": 16.5,
+      "residentDamagePerSecond": 26,
+      "damageTakenMultiplier": {
+        "bullet": 1.0,
+        "electric": 0.9,
+        "fire": 1.3,
+        "slow": 0.8
+      }
     },
     {
-      "id": "bellhop_wraith", "name": "Bellhop Wraith",
-      "baseHealth": 900, "moveSpeed": 4.0, "doorDamagePerSecond": 28, "residentDamagePerSecond": 34,
-      "damageTakenMultiplier": { "bullet": 1.2, "electric": 1.3, "fire": 1.0, "slow": 1.1 }
+      "id": "bellhop_wraith",
+      "name": "Bellhop Wraith",
+      "baseHealth": 679,
+      "moveSpeed": 5.0,
+      "doorDamagePerSecond": 21.0,
+      "residentDamagePerSecond": 34,
+      "damageTakenMultiplier": {
+        "bullet": 1.2,
+        "electric": 1.3,
+        "fire": 1.0,
+        "slow": 1.1
+      }
     }
-  ]
+  ],
+  "sprintMultiplier": 1.25,
+  "sprintSeconds": 2,
+  "sprintCooldown": 8
 }

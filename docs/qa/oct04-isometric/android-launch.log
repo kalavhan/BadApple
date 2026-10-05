@@ -1,0 +1,27 @@
+--------- beginning of main
+--------- beginning of system
+--------- beginning of kernel
+10-04 17:53:00.815  2774  2774 V Unity   : Context Type: GameActivity
+10-04 17:53:00.865  2774  2795 I Unity   : UnityApplication::CreateInstance
+10-04 17:53:00.866  2774  2795 I Unity   : GameActivity Package Version '4.4.0'
+10-04 17:53:00.880  2774  2795 I Unity   : Starting Game Loop
+10-04 17:53:00.929  2774  2795 I Unity   : Handle cmd APP_CMD_START(11)
+10-04 17:53:00.953  2774  2795 I Unity   : Handle cmd APP_CMD_RESUME(12)
+10-04 17:53:01.014  2774  2795 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:53:01.085  2774  2795 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:53:01.092  2774  2795 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+10-04 17:53:01.198  2774  2795 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+10-04 17:53:01.352  2774  2795 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+10-04 17:53:03.017  2774  2795 I Unity   : SystemInfo CPU = x86-64, Cores = 2, Memory = 1981mb
+10-04 17:53:03.024  2774  2795 I Unity   : ApplicationInfo 'com.kalavhan.badapplehotel', Version '1.2-isometric', Min API Level '25', Target API Level '36'
+10-04 17:53:03.025  2774  2795 I Unity   : Built from '6000.3/staging' branch, Version '6000.3.24f1 (4e7b9b5b6244)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'x86_64', Stripping 'Disabled'
+10-04 17:53:03.036  2774  2795 I Unity   : Device Model 'unknown Android SDK built for x86_64', OS 'Android OS 11 (API 30)'
+10-04 17:53:04.504  2774  2795 I Unity   : Company Name: kalavhan
+10-04 17:53:04.505  2774  2795 I Unity   : Product Name: Bad Apple Hotel
+10-04 17:53:06.847  2774  2795 I Unity   :     HasWindow = 1, HasFocus = 0
+10-04 17:53:06.847  2774  2795 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+10-04 17:53:06.855  2774  2795 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+10-04 17:53:06.855  2774  2795 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:53:06.857  2774  2795 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+10-04 17:53:06.858  2774  2795 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-04 17:53:06.859  2774  2795 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)

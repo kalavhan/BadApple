@@ -36,11 +36,11 @@ namespace BadAppleHotel.Tests
             Assert.IsTrue(gm.Claim(me, room, true));
             Assert.AreEqual(ActionResult.Ok, gm.TrySleep(me));
             var resting = me.Pos;
-            var expectedCenter = GameManager.ClampCamera(me.Pos, 7.5f, gm.Cam.aspect, gm.Map.W, gm.Map.H);
+            var expectedCenter = HotelView3D.Clamp(me.Pos, HotelView3D.FollowSize, gm.Cam.aspect, gm.Map.W, gm.Map.H);
             float settle = Time.realtimeSinceStartup + 1f;
-            while (Vector2.Distance(gm.Cam.transform.position, expectedCenter) > 0.01f && Time.realtimeSinceStartup < settle) yield return null;
+            while (Vector2.Distance(HotelView3D.GroundPoint(gm.Cam,new Vector2(Screen.width/2f,Screen.height/2f)), expectedCenter) > 0.01f && Time.realtimeSinceStartup < settle) yield return null;
             var camera = gm.Cam.transform.position;
-            GameInput.Joystick = Vector2.right;
+            gm.DragCamera(new Vector2(-150, 0));
             for (int i = 0; i < 15; i++) yield return null;
             Assert.IsTrue(me.Asleep);
             Assert.AreEqual(resting, me.Pos);
@@ -49,7 +49,7 @@ namespace BadAppleHotel.Tests
             gm.RecenterCamera();
             float until = Time.realtimeSinceStartup + 1f;
             while (Time.realtimeSinceStartup < until) yield return null;
-            Assert.Less(Vector2.Distance(gm.Cam.transform.position, expectedCenter), 0.5f);
+            Assert.Less(Vector2.Distance(HotelView3D.GroundPoint(gm.Cam,new Vector2(Screen.width/2f,Screen.height/2f)), expectedCenter), 0.5f);
             Assert.Greater(me.Sr.sortingOrder, me.Room.BedSr.sortingOrder);
 
             // Existing build path protection must still work on the new layouts.
@@ -61,7 +61,7 @@ namespace BadAppleHotel.Tests
             for (int i = 0; i < 3; i++) Assert.AreEqual(ActionResult.Ok, gm.TryUpgradeTower(me, slot));
             Assert.AreEqual(4, tower.Level);
             Assert.AreNotSame(firstSprite, tower.Sr.sprite);
-            Assert.AreEqual(Vector3.one, tower.Sr.transform.localScale);
+            Assert.AreEqual(HotelView3D.SpriteScale, tower.Sr.transform.localScale);
             Assert.AreEqual(ActionResult.MaxLevel, gm.TryUpgradeTower(me, slot));
             Assert.IsTrue(gm.CheckDoor(me.Room).Allowed);
 
@@ -75,7 +75,7 @@ namespace BadAppleHotel.Tests
             Assert.IsFalse(me.Asleep);
             typeof(GameManager).GetMethod("BeginNights", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(gm, null);
             var empty = gm.Map.Rooms.Where(gm.IsRoomFree).ToArray();
-            Assert.AreEqual(4, empty.Length);
+            Assert.AreEqual(3, empty.Length);
             foreach (var spare in empty)
             {
                 Assert.IsTrue(gm.MonsterWalkable(spare.DoorTile.x, spare.DoorTile.y));

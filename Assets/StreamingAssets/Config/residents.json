@@ -4,7 +4,7 @@
   "awakeDreamPowerMultiplier": 0.0,
   "doorReachTiles": 1.4,
   "bedReachTiles": 0.7,
-  "visionRadiusTiles": 3.5,
+  "visionRadiusTiles": 7,
   "botWakeRadiusTiles": 10,
   "shirtHues": [
     0.86,

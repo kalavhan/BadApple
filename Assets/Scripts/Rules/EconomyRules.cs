@@ -34,9 +34,9 @@ namespace BadAppleHotel.Rules
         }
 
         /// <summary>XP needed to go from level-1 to level: baseXp * growth^(level-1). Level 1 needs baseXp.</summary>
-        public static int XpForLevel(GrowthCurve curve, int level)
+        public static double XpForLevel(GrowthCurve curve, int level)
         {
-            return UnityEngine.Mathf.RoundToInt(curve.baseXp * UnityEngine.Mathf.Pow(curve.growth, level - 1));
+            return System.Math.Round(curve.baseXp * System.Math.Pow(curve.growth, level - 1));
         }
 
         public static int MonsterAccountXp(EconomyConfig e, int residentsKilled)

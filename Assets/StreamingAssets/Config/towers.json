@@ -24,7 +24,7 @@
       "damage": 8,
       "shotsPerSecond": 2.0,
       "category": "bullets",
-      "description": "Fast, cheap bullets. Reliable at mid range.",
+      "description": "Budget mid-range guard. Fast repeat shots and no blind spot; reliable from the door to mid-room.",
       "tiers": [
         {
           "name": "Pistol Revenant",
@@ -98,13 +98,13 @@
       "damageType": "bullet",
       "rangeClass": "long",
       "costResource": "dreamPower",
-      "buildCost": 70,
+      "buildCost": 45,
       "baseUpgradeCost": 55,
       "damage": 40,
       "shotsPerSecond": 0.5,
       "areaRadius": 1.5,
       "category": "bullets",
-      "description": "Slow, heavy rockets that splash. Longest reach.",
+      "description": "Budget long-range coverage. +30% damage beyond 6 tiles, but cannot fire inside 2 tiles. Slow reload.",
       "tiers": [
         {
           "name": "Skull Mortar",
@@ -170,7 +170,10 @@
           "faithPerSecond": 0,
           "dreamPerSecond": 0
         }
-      ]
+      ],
+      "minimumRange": 2,
+      "bonusAboveRange": 6,
+      "distanceBonusMultiplier": 1.3
     },
     {
       "id": "electric_tower",
@@ -178,14 +181,14 @@
       "damageType": "electric",
       "rangeClass": "mid",
       "costResource": "faith",
-      "buildCost": 40,
+      "buildCost": 65,
       "baseUpgradeCost": 30,
       "damage": 12,
       "shotsPerSecond": 1.2,
       "chainTargets": 2,
       "stunSeconds": 0.3,
       "category": "electric",
-      "description": "Shocks the monster and stuns it briefly.",
+      "description": "Premium mid-range control. Repeated jolts interrupt attacks, with no close-range blind spot.",
       "tiers": [
         {
           "name": "Static Doll",
@@ -267,7 +270,7 @@
       "burnDamagePerSecond": 6,
       "burnSeconds": 3,
       "category": "fire",
-      "description": "Breathes fire in a short cone and sets the monster ablaze.",
+      "description": "Premium short-range damage. Rapid fire and burn; +35% damage within 2 tiles. Build beside the door.",
       "tiers": [
         {
           "name": "Dragon Candle",
@@ -333,7 +336,9 @@
           "faithPerSecond": 0,
           "dreamPerSecond": 0
         }
-      ]
+      ],
+      "bonusBelowRange": 2,
+      "distanceBonusMultiplier": 1.35
     },
     {
       "id": "slow_totem",
@@ -348,7 +353,7 @@
       "slowPct": 0.3,
       "slowSeconds": 2.0,
       "category": "effects",
-      "description": "Chills the monster so everything else hits more often.",
+      "description": "Budget mid-range support. Slows pursuit so guests can reach a door; pair with damage towers.",
       "tiers": [
         {
           "name": "Frost Hourglass",
@@ -592,7 +597,7 @@
       "damageType": "fire",
       "rangeClass": "short",
       "category": "fire",
-      "description": "Cheap cauldron of cursed coals. Scorches anything that wanders close.",
+      "description": "Budget short-range burn. +35% damage within 2 tiles; cheap door defense, limited reach.",
       "costResource": "faith",
       "buildCost": 35,
       "baseUpgradeCost": 28,
@@ -666,7 +671,9 @@
           "faithPerSecond": 0,
           "dreamPerSecond": 0
         }
-      ]
+      ],
+      "bonusBelowRange": 2,
+      "distanceBonusMultiplier": 1.35
     },
     {
       "id": "sniper_nest",
@@ -674,11 +681,11 @@
       "damageType": "bullet",
       "rangeClass": "long",
       "category": "bullets",
-      "description": "One slow, brutal shot from across the room.",
+      "description": "Premium long-range burst. +30% damage beyond 6 tiles. Big opening hit; 2-tile blind spot, slow reload.",
       "costResource": "dreamPower",
-      "buildCost": 60,
+      "buildCost": 95,
       "baseUpgradeCost": 45,
-      "damage": 55,
+      "damage": 75,
       "shotsPerSecond": 0.35,
       "tiers": [
         {
@@ -686,7 +693,7 @@
           "sprite": "Tiers/sniper_nest_1",
           "doorSupportLevel": 1,
           "upgradeCost": 213.75,
-          "damage": 55.0,
+          "damage": 75.0,
           "shotsPerSecond": 0.35,
           "burnDamagePerSecond": 0.0,
           "range": 8.0,
@@ -702,7 +709,7 @@
           "sprite": "Tiers/sniper_nest_2",
           "doorSupportLevel": 4,
           "upgradeCost": 721.41,
-          "damage": 107.422,
+          "damage": 146.485,
           "shotsPerSecond": 0.394,
           "burnDamagePerSecond": 0.0,
           "range": 8.49,
@@ -718,7 +725,7 @@
           "sprite": "Tiers/sniper_nest_3",
           "doorSupportLevel": 7,
           "upgradeCost": 2434.75,
-          "damage": 209.808,
+          "damage": 286.102,
           "shotsPerSecond": 0.443,
           "burnDamagePerSecond": 0.0,
           "range": 9.009,
@@ -734,7 +741,7 @@
           "sprite": "Tiers/sniper_nest_4",
           "doorSupportLevel": 10,
           "upgradeCost": 0,
-          "damage": 409.782,
+          "damage": 558.794,
           "shotsPerSecond": 0.498,
           "burnDamagePerSecond": 0.0,
           "range": 9.561,
@@ -745,7 +752,10 @@
           "faithPerSecond": 0,
           "dreamPerSecond": 0
         }
-      ]
+      ],
+      "minimumRange": 2,
+      "bonusAboveRange": 6,
+      "distanceBonusMultiplier": 1.3
     },
     {
       "id": "tesla_coil",
@@ -753,7 +763,7 @@
       "damageType": "electric",
       "rangeClass": "short",
       "category": "electric",
-      "description": "Short-range lightning that hits hard and stuns for longer.",
+      "description": "Short-range burst and stun. +35% damage within 2 tiles; catches enemies at the doorway.",
       "costResource": "faith",
       "buildCost": 60,
       "baseUpgradeCost": 45,
@@ -825,7 +835,9 @@
           "faithPerSecond": 0,
           "dreamPerSecond": 0
         }
-      ]
+      ],
+      "bonusBelowRange": 2,
+      "distanceBonusMultiplier": 1.35
     }
   ]
 }

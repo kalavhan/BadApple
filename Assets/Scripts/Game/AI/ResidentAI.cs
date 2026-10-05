@@ -16,17 +16,12 @@ namespace BadAppleHotel.Game
         readonly GameManager gm;
         readonly Resident me;
         float nextThink;
+        float tickDt, tickNow;
         float nextHelp;
         readonly float eco;      // personality: how much it likes economy upgrades
         readonly float turtle;   // personality: how much it likes the door
 
         RoomDef targetRoom;
-        List<Vector2Int> path;
-        int pathIdx;
-        Vector2Int pathGoal;
-        float repath;
-        Vector2 lastPos;
-        float stuck;
 
         public ResidentAI(GameManager gm, Resident me)
         {
@@ -40,6 +35,7 @@ namespace BadAppleHotel.Game
         /// <summary>Returns the direction to walk this frame (zero to stand still).</summary>
         public Vector2 Tick(float dt, float now)
         {
+            tickDt = dt; tickNow = now;
             nextThink -= dt;
             if (nextThink <= 0f)
             {
@@ -47,8 +43,6 @@ namespace BadAppleHotel.Game
                 Think(now);
             }
             var move = Steer(dt, now);
-            if (move.sqrMagnitude > 0.01f && (me.Pos - lastPos).sqrMagnitude < 0.0002f) stuck += dt; else stuck = 0f;
-            lastPos = me.Pos;
             return move;
         }
 
@@ -56,7 +50,6 @@ namespace BadAppleHotel.Game
 
         Vector2 Steer(float dt, float now)
         {
-            repath -= dt;
             var room = me.Room;
 
             if (room == null)
@@ -79,16 +72,11 @@ namespace BadAppleHotel.Game
                 return WalkTo(room.Def.DoorInside);
             }
 
-            if (room.DoorOpen && !room.DoorBroken)
+            if (!gm.OnBed(me))
             {
-                if (gm.NearDoor(me))
-                {
-                    if (gm.TryToggleDoor(me) != ActionResult.Ok) return WalkTo(room.Def.BedTile);
-                }
-                else return WalkTo(room.Def.DoorInside);
+                gm.TrySleep(me);
+                return Vector2.zero;
             }
-
-            if (!gm.OnBed(me)) return WalkTo(room.Def.BedTile);
 
             bool danger = room.UnderAttack(now) || room.DoorBroken;
             var m = gm.Monster;
@@ -111,22 +99,7 @@ namespace BadAppleHotel.Game
 
         Vector2 WalkTo(Vector2Int goal)
         {
-            var start = HotelMap.ToTile(me.Pos);
-            if (path == null || goal != pathGoal || repath <= 0f || stuck > 0.8f)
-            {
-                path = Pathfinding.FindPath(start, goal, (x, y) => gm.WalkableFor(me, x, y));
-                pathIdx = 0;
-                pathGoal = goal;
-                repath = 1.2f;
-                stuck = 0f;
-            }
-            if (path != null)
-            {
-                while (pathIdx < path.Count && Vector2.Distance(me.Pos, HotelMap.Center(path[pathIdx])) < 0.2f) pathIdx++;
-                if (pathIdx < path.Count) return (HotelMap.Center(path[pathIdx]) - me.Pos).normalized;
-            }
-            var d = HotelMap.Center(goal) - me.Pos;
-            return d.magnitude > 0.08f ? Vector2.ClampMagnitude(d * 3f, 1f) : Vector2.zero;
+            return me.Navigator.Steer(ref me.Pos, goal, (x, y) => gm.WalkableFor(me, x, y), 0.25f, tickDt, tickNow);
         }
 
         // ------------------------------------------------------------ spending
@@ -134,7 +107,7 @@ namespace BadAppleHotel.Game
         void Think(float now)
         {
             var room = me.Room;
-            if (room == null || !me.Alive) return;
+            if (room == null || !me.Alive || me.IsMonster) return;
             bool attacked = room.UnderAttack(now);
 
             // 1) emergency: door failing

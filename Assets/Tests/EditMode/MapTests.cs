@@ -24,7 +24,7 @@ namespace BadAppleHotel.Tests
         [Test]
         public void Every_letter_shape_is_connected()
         {
-            foreach (var letter in cfg.map.letters)
+            foreach (var letter in new[] { "L", "T", "U", "C", "E", "F", "H", "J", "O", "P", "S", "Z", "I", "Y", "A", "G" })
             {
                 var b = LetterShapes.Get(letter);
                 Assert.IsNotNull(b, "unknown letter " + letter);
@@ -55,7 +55,7 @@ namespace BadAppleHotel.Tests
                     Assert.IsTrue(room.FloorSet.Contains(room.DoorInside), where + " door inside");
                     Assert.IsTrue(room.FloorSet.Contains(room.BedTile), where + " bed");
                     Assert.GreaterOrEqual(room.BuildTiles.Count, 2, where + " build tiles");
-                    Assert.AreEqual(room.Floor.Count - 2, room.BuildTiles.Count, where + " every floor tile but bed and entrance is buildable");
+                    Assert.AreEqual(room.Floor.Count - 2 - room.Walkway.Count, room.BuildTiles.Count, where + " bed and its access path are reserved");
 
                     foreach (var f in room.Floor)
                     {

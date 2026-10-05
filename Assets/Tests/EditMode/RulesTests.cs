@@ -78,8 +78,8 @@ namespace BadAppleHotel.Tests
         [Test]
         public void Level_curve_starts_at_base_and_grows()
         {
-            Assert.AreEqual(200, EconomyRules.XpForLevel(cfg.economy.levelCurve.monster, 1));
-            Assert.AreEqual(250, EconomyRules.XpForLevel(cfg.economy.levelCurve.monster, 2));
+            Assert.AreEqual(60, EconomyRules.XpForLevel(cfg.economy.levelCurve.monster, 1));
+            Assert.AreEqual(69, EconomyRules.XpForLevel(cfg.economy.levelCurve.monster, 2));
         }
     }
 }

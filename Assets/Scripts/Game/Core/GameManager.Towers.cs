@@ -27,11 +27,17 @@ namespace BadAppleHotel.Game
                 float mult = OwnerDamageMult(room);
                 foreach (var t in room.Slots)
                 {
-                    if (t == null || !t.IsWeapon) continue;
+                    if (t == null || t.Decoy || !t.IsWeapon) continue;
                     t.Cooldown = Mathf.Max(0f, t.Cooldown - dt);
-                    if (!active || cloaked || t.Cooldown > 0f) continue;
+                    if (!active || cloaked || now < t.DisabledUntil) continue;
                     var tpos = HotelMap.Center(t.Tile);
-                    if (Vector2.Distance(tpos, m.Pos) > TowerRange(t)) continue;
+                    if (!UpgradeRules.InRange(Cfg.towers,t.Def,t.Level,Vector2.Distance(tpos,m.Pos))) continue;
+                    if (!Simulation && t.Sr != null)
+                    {
+                        var facing = TowerDirections.Get(t.Def.id,t.Level,m.Pos-tpos);
+                        if(facing!=null)t.Sr.sprite=facing;
+                    }
+                    if(t.Cooldown>0f)continue;
                     Fire(t, room, tpos, m, now, mult);
                     if (m.Dead) return;
                 }
@@ -45,12 +51,12 @@ namespace BadAppleHotel.Game
             float rate = UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level);
             t.Cooldown = rate > 0f ? 1f / rate : 1f;
             int type = DamageTypes.Index(t.Def.damageType);
-            float mult = DamageTaken(m, type);
+            float mult = DamageTaken(m, type) * UpgradeRules.DistanceBonus(t.Def,Vector2.Distance(tpos,m.Pos));
             SpawnProjectile(tpos, m.Pos + Vector2.up * 0.5f, t.Def.damageType);
             var owner = room.Owner;
             if (owner != null && owner.Alive && !owner.Asleep)
             {
-                owner.AttackUntil = Time.time + 0.45f;   // the owner joins in the fight
+                owner.AttackUntil = Now + 0.45f;   // the owner joins in the fight
                 var toMonster = m.Pos - owner.Pos;
                 if (toMonster.sqrMagnitude > 0.01f) owner.Facing = toMonster.normalized;
             }
@@ -63,10 +69,14 @@ namespace BadAppleHotel.Game
             }
 
             float dmg = UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * mult * ownerMult;
+            if (m.JamAura > 0 && Vector2.Distance(tpos,m.Pos)<5) dmg *= 1f/(1+m.JamAura);
             if (type == DamageTypes.Bullet && now < m.JamUntil && Vector2.Distance(tpos, m.Pos) <= m.JamRadius)
                 dmg *= m.JamValue;
-            if (type == DamageTypes.Electric && (UpgradeRules.Tier(t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds) > 0f)
-                m.StunUntil = Mathf.Max(m.StunUntil, now + (UpgradeRules.Tier(t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds));
+            if (type == DamageTypes.Electric && now >= m.StunImmuneUntil && (UpgradeRules.Tier(t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds) > 0f)
+            {
+                m.StunUntil = now + Mathf.Min(Cfg.progression.maxStunSeconds, UpgradeRules.Tier(t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds);
+                m.StunImmuneUntil = m.StunUntil + Cfg.progression.stunRecoverySeconds;
+            }
             if (type == DamageTypes.Fire && (UpgradeRules.Tier(t.Def, t.Level)?.burnSeconds ?? t.Def.burnSeconds) > 0f)
             {
                 m.BurnDps = UpgradeRules.BurnDamage(Cfg.towers, t.Def, t.Level) * mult * ownerMult;
@@ -87,10 +97,11 @@ namespace BadAppleHotel.Game
                 float own = OwnerDamageMult(room);
                 foreach (var t in room.Slots)
                 {
-                    if (t == null || !t.IsWeapon || t.Def.damageType == "slow") continue;
-                    if (Vector2.Distance(HotelMap.Center(t.Tile), pos) > TowerRange(t) + 0.5f) continue;
+                    if (t == null || t.Decoy || !t.IsWeapon || t.Def.damageType == "slow") continue;
+                    float distance=Vector2.Distance(HotelMap.Center(t.Tile),pos);
+                    if (!UpgradeRules.InRange(Cfg.towers,t.Def,t.Level,distance)) continue;
                     int lv = t.Level - 1;
-                    float mult = DamageTaken(m, DamageTypes.Index(t.Def.damageType)) * own;
+                    float mult = DamageTaken(m, DamageTypes.Index(t.Def.damageType)) * own * UpgradeRules.DistanceBonus(t.Def,distance);
                     dps += UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level) * mult;
                     dps += UpgradeRules.BurnDamage(Cfg.towers, t.Def, t.Level) * mult * 0.5f;
                 }
@@ -112,9 +123,9 @@ namespace BadAppleHotel.Game
 
         void SpawnProjectile(Vector2 from, Vector2 to, string type)
         {
-            if (matchRoot == null) return;
+            if (Simulation || matchRoot == null) return;
             var sr = MakeSprite("shot", Sprites.Projectile(type), from, 6000, matchRoot);
-            projectiles.Add(new Projectile { T = sr.transform, From = from, To = to, Born = Time.time, Duration = 0.15f });
+            projectiles.Add(new Projectile { T = sr.transform, From = from, To = to, Born = Now, Duration = 0.15f });
         }
 
         void UpdateProjectiles()
@@ -123,8 +134,8 @@ namespace BadAppleHotel.Game
             {
                 var p = projectiles[i];
                 if (p.T == null) { projectiles.RemoveAt(i); continue; }
-                float k = (Time.time - p.Born) / p.Duration;
-                if (k >= 1f) { Destroy(p.T.gameObject); projectiles.RemoveAt(i); continue; }
+                float k = (Now - p.Born) / p.Duration;
+                if (k >= 1f) { RemoveObject(p.T.gameObject); projectiles.RemoveAt(i); continue; }
                 var pos = Vector2.Lerp(p.From, p.To, k);
                 p.T.position = new Vector3(pos.x, pos.y, 0f);
             }

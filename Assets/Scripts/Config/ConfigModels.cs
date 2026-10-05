@@ -19,7 +19,10 @@ namespace BadAppleHotel.Config
         public float residentHealth;
         public float monsterRespawnSeconds;
         public int bodyPartsPerNight;
+        public EndlessConfig endless = new EndlessConfig();
         public bool deadResidentsSpectate;
+        public float[] disguiseBuildEverySeconds = { 6f, 14f };
+        public int disguiseMaxBuildings = 4;
     }
 
     [Serializable]
@@ -174,6 +177,9 @@ namespace BadAppleHotel.Config
         public TowerTier[] tiers;
         public string damageType;   // bullet | electric | fire | slow | none
         public string rangeClass;   // short | mid | long (weapons only)
+        public float minimumRange;
+        public float bonusBelowRange, bonusAboveRange;
+        public float distanceBonusMultiplier = 1f;
         public string effect;       // "" | faith | clairvoyance (non-weapons)
         public string costResource; // dreamPower | faith
         public float buildCost;
@@ -240,6 +246,7 @@ namespace BadAppleHotel.Config
     [Serializable]
     public class MonstersConfig
     {
+        public float sprintMultiplier = 1.25f, sprintSeconds = 2f, sprintCooldown = 8f;
         public float attackReachTiles;
         public ResistanceTracks resistanceTracks;
         public MonsterDef[] monsters;
@@ -299,7 +306,12 @@ namespace BadAppleHotel.Config
         public int lotHeightMax;
         public int lotGapMax;
         public float sideDoorChance;
-        public string[] letters;
+        public string[] letters; // legacy fixtures only; generation no longer uses letters
+        public int roomMinBuildTiles = 20;
+        public int[] roomBuildTiles = { 30, 26, 26, 26, 23, 23, 23, 20, 20, 20 };
+        public UnityEngine.Vector2Int roomInteriorMin = new UnityEngine.Vector2Int(6, 5);
+        public UnityEngine.Vector2Int roomInteriorMax = new UnityEngine.Vector2Int(9, 7);
+        public float roomFeatureChance = 0.85f;
         public int cellSizeMin;
         public int cellSizeMax;
         public int nibbleMax;
@@ -352,5 +364,6 @@ namespace BadAppleHotel.Config
         public AbilitiesConfig abilities;
         public MapConfig map;
         public ResidentsConfig residents;
+        public MonsterProgressionConfig progression;
     }
 }

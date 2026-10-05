@@ -34,7 +34,7 @@ namespace BadAppleHotel.Config
                 yield break;
             }
             var texts = new Dictionary<string, string>();
-            foreach (var name in new[] { "match", "economy", "beds", "doors", "towers", "monsters", "bodyparts", "abilities", "map", "residents" })
+            foreach (var name in new[] { "match", "economy", "beds", "doors", "towers", "monsters", "bodyparts", "abilities", "map", "residents", "monster_progression" })
             {
                 string url = Application.streamingAssetsPath + "/" + Folder + "/" + name + ".json";
                 using (var request = UnityWebRequest.Get(url))
@@ -69,6 +69,7 @@ namespace BadAppleHotel.Config
                 abilities = Parse<AbilitiesConfig>(readText, "abilities"),
                 map = Parse<MapConfig>(readText, "map"),
                 residents = Parse<ResidentsConfig>(readText, "residents"),
+                progression = Parse<MonsterProgressionConfig>(readText, "monster_progression"),
             };
             Validate(cfg);
             return cfg;
@@ -123,7 +124,11 @@ namespace BadAppleHotel.Config
             Require(c.map.corridorWidth >= 1 && c.map.corridorWidth <= 5 && c.map.minDoorDistance > 0 &&
                 c.map.maxNearestDoorDistance >= c.map.minDoorDistance, "map.json: invalid corridor width or door spacing");
             Require(c.bodyParts.minSpacingTiles > 0, "bodyparts.json: minSpacingTiles must be positive");
-            Require(c.map.letters != null && c.map.letters.Length > 0, "map.json: no letters");
+            Require(c.map.roomMinBuildTiles >= 20 && c.map.roomInteriorMin.x >= 6 && c.map.roomInteriorMin.y >= 5,
+                "map.json: rooms need at least 20 usable build tiles and at least 6 x 5 interiors");
+            Require(c.map.roomBuildTiles != null && c.map.roomBuildTiles.Length == c.match.roomCount &&
+                Array.TrueForAll(c.map.roomBuildTiles, n => n >= c.map.roomMinBuildTiles && n <= 30),
+                "map.json: supply one build-space budget (20–30) per room");
             Require(c.map.lotWidthMin >= 7 && c.map.lotHeightMin >= 7, "map.json: lots must be at least 7 x 7");
             Require(c.residents != null && c.residents.moveSpeed > 0, "residents.json: moveSpeed must be positive");
             Require(c.monsters.monsters != null && c.monsters.monsters.Length > 0, "monsters.json: no monsters");
@@ -133,6 +138,16 @@ namespace BadAppleHotel.Config
             foreach (var id in c.abilities.starterLoadout)
                 Require(Array.Exists(c.abilities.abilities, a => a.id == id),
                     $"abilities.json: starterLoadout references unknown ability '{id}'");
+
+            Require(c.progression != null && c.progression.baseXp > 0 && c.progression.growth > 1 &&
+                c.progression.slotLevels.Length == 5 && c.progression.ascensionEvery > 0,
+                "monster_progression.json: invalid level curve or milestones");
+            Require(c.progression.pools.Length == c.monsters.monsters.Length && c.progression.evolutions.Length > 0,
+                "monster_progression.json: missing ability pools or evolutions");
+            foreach (var m in c.monsters.monsters)
+                Require(m.moveSpeed >= c.residents.moveSpeed * 1.1f, "monsters.json: every monster must outrun residents by at least 10%");
+            Require(c.match.disguiseBuildEverySeconds.Length == 2 && c.match.disguiseBuildEverySeconds[0] > 0 &&
+                c.match.disguiseBuildEverySeconds[1] >= c.match.disguiseBuildEverySeconds[0], "match.json: invalid disguise build interval");
 
             Require(c.monsters.resistanceTracks.damageTakenMultiplierByLevel.Length == c.monsters.resistanceTracks.maxLevel + 1,
                 "monsters.json: damageTakenMultiplierByLevel needs maxLevel + 1 entries");

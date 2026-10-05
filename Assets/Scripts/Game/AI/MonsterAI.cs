@@ -25,6 +25,9 @@ namespace BadAppleHotel.Game
         Vector2 lastPos;
         float stuckTime;
 
+        readonly Navigator navigator = new Navigator();
+        float tickDt, tickNow;
+        float commitUntil;
         const float KillDesire = 12f; // how much more the bot wants a resident than a body part
 
         public MonsterAI(GameManager gm, Monster me)
@@ -35,6 +38,21 @@ namespace BadAppleHotel.Game
 
         public Vector2 Tick(float dt, float now)
         {
+            tickDt = dt; tickNow = now;
+            bool assaulted = gm.Metrics.DoorAssaultsPerNight.ContainsKey(gm.Night);
+            if (!assaulted) me.Retreating = false;
+            else if (me.Hp < gm.MaxHp(me) * gm.Cfg.progression.retreatHealth) me.Retreating = true;
+            if (me.Retreating && me.Lair != null)
+            {
+                if (me.Hp >= gm.MaxHp(me) * 0.85f) { me.Retreating = false; nextPlan = 0; }
+                else
+                {
+                    var current = gm.Map.RoomContainingWorld(me.Pos);
+                    var escape = current != null && gm.RoomsByDef.TryGetValue(current, out var room) && room.DoorBlocks
+                        ? room.Def.DoorInside : me.Lair.Def.BedTile;
+                    return navigator.Steer(ref me.Pos, escape, gm.MonsterWalkable, 0.3f, dt, now);
+                }
+            }
             ThinkAbilities();
             nextUpgrade -= dt;
             if (nextUpgrade <= 0f) { nextUpgrade = 2f; ThinkUpgrades(); }
@@ -45,15 +63,34 @@ namespace BadAppleHotel.Game
             lastPos = me.Pos;
 
             nextPlan -= dt;
-            bool targetMoved = targetRes != null && (HotelMap.ToTile(targetRes.Pos) - goal).sqrMagnitude > 4 && !GoalIsDoor();
+            if (targetRes?.Room != null && targetRes.Room.DoorBroken && GoalIsDoor()) nextPlan = 0;
+            bool targetMoved = targetRes != null && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me)) && (HotelMap.ToTile(targetRes.Pos) - goal).sqrMagnitude > 4 && !GoalIsDoor();
             if (nextPlan <= 0f || stuckTime > 1.2f || path == null || TargetGone() || targetMoved)
             {
-                Plan();
+                if (now >= commitUntil || TargetGone() || targetRes?.Room == null || targetRes.Room.DoorBroken) Plan();
                 nextPlan = 1.5f;
                 stuckTime = 0f;
             }
 
-            if (busy) return Vector2.zero;
+            if (busy)
+            {
+                if (me.AttackingRoom != null && me.AttackingRoom.DoorBlocks)
+                {
+                    var room = me.AttackingRoom;
+                    var center = HotelMap.Center(room.Def.DoorOutside);
+                    var normal = (Vector2)(room.Def.DoorInside-room.Def.DoorTile);
+                    var tangent = new Vector2(normal.y,-normal.x);
+                    var best = center; float threat=gm.ThreatAt(center,me);
+                    foreach (float side in new[] {-0.45f,0.45f})
+                    {
+                        var candidate=center+tangent*side;
+                        float score=gm.ThreatAt(candidate,me);
+                        if (score<threat && TileMovement.Clear(me.Pos,candidate,gm.MonsterWalkable,0.3f)) { best=candidate; threat=score; }
+                    }
+                    return Vector2.ClampMagnitude((best-me.Pos)*5,1);
+                }
+                return Vector2.zero;
+            }
             return FollowPath();
         }
 
@@ -71,7 +108,7 @@ namespace BadAppleHotel.Game
         void Plan()
         {
             var start = HotelMap.ToTile(me.Pos);
-            float speed = Mathf.Max(0.5f, gm.MonsterSpeed(me, Time.time));
+            float speed = Mathf.Max(0.5f, gm.MonsterSpeed(me, gm.Now));
             float bite = Mathf.Max(1f, me.Def.residentDamagePerSecond * gm.AttackMult(me));
             float bestCost = float.MaxValue;
             Resident bestRes = null;
@@ -97,14 +134,25 @@ namespace BadAppleHotel.Game
                         float dps = Mathf.Max(1f, me.Def.doorDamagePerSecond * gm.AttackMult(me) * (1f - resist));
                         work += room.DoorHp / dps;
                     }
-                    else g = rTile;
+                    else
+                    {
+                        if(gm.CanSee(me.Pos,r.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me))) g = rTile;
+                        else if(rInside)
+                            // Search a known room after breaking in; don't track an unseen guest's live position.
+                            g = room.Def.ContainsInterior(start) ? room.Def.BedTile : room.Def.DoorInside;
+                        else continue;
+                    }
 
                     var p = Pathfinding.FindPath(start, g, gm.MonsterWalkable);
                     if (p == null) continue;
                     float travel = p.Count / speed;
                     float threat = gm.ThreatAt(HotelMap.Center(g), me);
                     float cost = travel + work * (1f + threat / 60f) - KillDesire;
-                    if (work > me.Hp / Mathf.Max(1f, threat) * 0.9f) cost += 30f; // would probably die first
+                    float risk = 1 + gm.Night * gm.Cfg.progression.riskPerNight + (gm.Now-me.LastKillAt)/60 * gm.Cfg.progression.riskPerMinuteWithoutKill;
+                    cost += Mathf.Max(0, work - me.Hp/Mathf.Max(1,threat)) / risk;
+                    if (room != null) cost += room.WeaponCount() * 0.25f - (room.Def.Isolated ? 2f : 0f);
+                    if (!gm.Metrics.DoorAssaultsPerNight.ContainsKey(gm.Night) && rInside && room.DoorBlocks)
+                        cost = travel*3f + work*0.15f + threat*0.02f;
                     if (!rInside) cost -= 6f;                                     // a resident in the hallway is a gift
                     if (r == targetRes) { keepCost = cost; keepGoal = g; }
                     if (cost < bestCost) { bestCost = cost; bestRes = r; bestPart = null; bestGoal = g; }
@@ -114,7 +162,8 @@ namespace BadAppleHotel.Game
             int maxParts = gm.Cfg.bodyParts.maxPartsPerType;
             foreach (var part in gm.Parts)
             {
-                if (me.Parts[part.TypeIndex] >= maxParts) continue;
+                bool mustAssault = !gm.Metrics.DoorAssaultsPerNight.ContainsKey(gm.Night) && gm.Cfg.match.nightSeconds-gm.PhaseTimer >= gm.Cfg.progression.commitAfterSeconds;
+                if (mustAssault || me.Parts[part.TypeIndex] >= maxParts) continue;
                 var p = Pathfinding.FindPath(start, part.Tile, gm.MonsterWalkable);
                 if (p == null) continue;
                 float eat = gm.Cfg.bodyParts.eatSeconds;
@@ -136,6 +185,7 @@ namespace BadAppleHotel.Game
             }
 
             targetRes = bestRes;
+            if (bestRes != null && bestRes.Room != null && bestRes.Room.DoorBlocks) commitUntil = gm.Now + 14f;
             targetPart = bestPart;
             if (bestRes == null && bestPart == null)
             {
@@ -156,27 +206,8 @@ namespace BadAppleHotel.Game
 
         Vector2 FollowPath()
         {
-            if (path != null)
-            {
-                while (pathIdx < path.Count && Vector2.Distance(me.Pos, HotelMap.Center(path[pathIdx])) < 0.2f) pathIdx++;
-                if (pathIdx < path.Count)
-                {
-                    var next = path[pathIdx];
-                    if (!gm.MonsterWalkable(next.x, next.y)) return TowardGoal();
-                    return (HotelMap.Center(next) - me.Pos).normalized;
-                }
-            }
-            return TowardGoal();
-        }
-
-        Vector2 TowardGoal()
-        {
-            Vector2 aim;
-            if (targetRes != null) aim = GoalIsDoor() ? HotelMap.Center(goal) : targetRes.Pos;
-            else if (targetPart != null) aim = HotelMap.Center(targetPart.Tile);
-            else return Vector2.zero;
-            var d = aim - me.Pos;
-            return d.magnitude > 0.4f ? d.normalized : Vector2.zero;
+            if (targetRes != null && !GoalIsDoor() && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me))) goal = HotelMap.ToTile(targetRes.Pos);
+            return navigator.Steer(ref me.Pos, goal, gm.MonsterWalkable, 0.3f, tickDt, tickNow);
         }
 
         // ------------------------------------------------------------ abilities & upgrades
@@ -214,8 +245,9 @@ namespace BadAppleHotel.Game
                     case "towerUntargetable":
                         use = gm.ThreatAt(me.Pos, me) > 30f;
                         break;
+                    case "residentSlowZone": use = me.Biting != null; break;
                     case "dash":
-                        use = path != null && path.Count - pathIdx > 8;
+                        use = targetRes != null && !GoalIsDoor() && gm.ClearLine(me.Pos, targetRes.Pos) && Vector2.Distance(me.Pos,targetRes.Pos)>4;
                         break;
                 }
                 if (use) gm.UseAbility(i);

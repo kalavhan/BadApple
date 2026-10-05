@@ -17,20 +17,23 @@ namespace BadAppleHotel.Game
         public Vector2Int DoorTile;         // in the wall
         public Vector2Int DoorOutside;      // corridor tile in front of the door
         public Vector2Int DoorInside;       // first floor tile inside
-        public Vector2Int BedTile;          // farthest walkable tile from the door
+        public Vector2Int BedTile;          // foot square, also the navigation target
+        public Vector2Int BedHeadTile;      // adjacent square, always inside the room
+        public Vector2 BedCenter => (HotelMap.Center(BedTile) + HotelMap.Center(BedHeadTile)) * 0.5f;
+        public bool IsBedTile(Vector2Int tile) => tile == BedTile || tile == BedHeadTile;
         public readonly HashSet<Vector2Int> Walkway = new HashSet<Vector2Int>(); // default door -> bed path (used by bots)
-        public readonly List<Vector2Int> BuildTiles = new List<Vector2Int>();     // every floor tile except bed and door-inside
+        public readonly List<Vector2Int> BuildTiles = new List<Vector2Int>();     // floor squares excluding the two-square bed and reserved access path
         public bool Isolated;               // no other door nearby: gets a free building when claimed
         public int NearestDoorDistance;
         public Vector2 Center;
-        // Bed art faces into the room; all four doorway orientations are supported.
-        public float BedRotation => DoorInside.x > DoorTile.x ? -90f : DoorInside.x < DoorTile.x ? 90f : DoorInside.y < DoorTile.y ? 180f : 0f;
+        public float BedRotation => Mathf.Atan2(BedHeadTile.y - BedTile.y, BedHeadTile.x - BedTile.x) * Mathf.Rad2Deg - 90f;
+        public float DoorRotation => DoorInside.x > DoorTile.x ? -90f : DoorInside.x < DoorTile.x ? 90f : DoorInside.y < DoorTile.y ? 180f : 0f;
 
         public bool ContainsInterior(Vector2Int t) => FloorSet.Contains(t);
         public int BuildIndex(Vector2Int t) => BuildTiles.IndexOf(t);
     }
 
-    /// <summary>Seeded corridor graph with crooked branches, loops, dead ends and deformed letter rooms.</summary>
+    /// <summary>Seeded corridor graph with crooked branches, loops, dead ends and natural guest rooms.</summary>
     public partial class HotelMap
     {
         public readonly int W;
@@ -77,123 +80,74 @@ namespace BadAppleHotel.Game
 
         // ------------------------------------------------------------------ generation
 
-        bool BuildRoom(Lot lot)
+        bool BuildRoom(Lot lot, int buildBudget)
         {
             var rect = lot.Rect;
             var interior = new RectInt(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2);
-            for (int tries = 0; tries < 16; tries++)
+            for (int tries = 0; tries < 64; tries++)
             {
-                string letter = cfg.letters[rng.Next(cfg.letters.Length)];
-                var bmp = LetterShapes.Get(letter);
-                if (bmp == null) continue;
-                if (rng.Next(2) == 0) bmp = LetterShapes.Transpose(bmp);
-                if (rng.Next(2) == 0) bmp = LetterShapes.FlipX(bmp);
-                if (rng.Next(2) == 0) bmp = LetterShapes.FlipY(bmp);
-                int cols = bmp.GetLength(0), rows = bmp.GetLength(1);
-
-                var colW = Sizes(cols, interior.width);
-                var rowH = Sizes(rows, interior.height);
-                if (colW == null || rowH == null) continue;
-                int sumW = 0, sumH = 0;
-                foreach (int v in colW) sumW += v;
-                foreach (int v in rowH) sumH += v;
-
-                int ox = interior.x + R(0, interior.width - sumW);
-                int slackY = interior.height - sumH;
-                int oy = lot.Top ? interior.y + R(0, Mathf.Min(1, slackY)) : interior.yMax - sumH - R(0, Mathf.Min(1, slackY));
-
                 var floor = new HashSet<Vector2Int>();
-                int cx = ox;
-                for (int c = 0; c < cols; c++)
-                {
-                    int cy = oy;
-                    for (int r = 0; r < rows; r++)
-                    {
-                        if (bmp[c, r])
-                            for (int x = cx; x < cx + colW[c]; x++)
-                                for (int y = cy; y < cy + rowH[r]; y++) floor.Add(new Vector2Int(x, y));
-                        cy += rowH[r];
-                    }
-                    cx += colW[c];
-                }
-                if (floor.Count < 10) continue;
-
-                Deform(floor, interior);
-                if (!Connected(floor)) continue;
+                for (int x = interior.xMin; x < interior.xMax; x++)
+                    for (int y = interior.yMin; y < interior.yMax; y++) floor.Add(new Vector2Int(x, y));
                 if (!CarveDoor(lot, floor, out var door, out var inside, out var outside)) continue;
 
-                var def = new RoomDef
+                // Peel corners into alcoves, stepped walls and L-shaped bays. Every remaining
+                // square belongs to a 2x2 patch, so the outline never sprouts a one-wide arm.
+                while (floor.Count >= buildBudget + 3)
                 {
-                    Index = Rooms.Count,
-                    Letter = letter[0],
-                    Lot = rect,
-                    DoorTile = door,
-                    DoorInside = inside,
-                    DoorOutside = outside,
-                };
-                foreach (var f in floor) { def.Floor.Add(f); def.FloorSet.Add(f); }
-                def.Floor.Sort((a, b) => a.y != b.y ? b.y.CompareTo(a.y) : a.x.CompareTo(b.x));
-                if (!FurnishRoom(def)) continue;
-
-                Vector2 sum = Vector2.zero;
-                foreach (var f in def.Floor)
-                {
-                    Tiles[f.x, f.y] = Tile.RoomFloor;
-                    roomId[f.x, f.y] = def.Index;
-                    sum += Center(f);
+                    var def = new RoomDef { Index = Rooms.Count, Letter = ' ', Lot = rect,
+                        DoorTile = door, DoorInside = inside, DoorOutside = outside };
+                    foreach (var f in floor) { def.Floor.Add(f); def.FloorSet.Add(f); }
+                    def.Floor.Sort((a, b) => a.y != b.y ? b.y.CompareTo(a.y) : a.x.CompareTo(b.x));
+                    if (!FurnishRoom(def) || def.BuildTiles.Count < buildBudget) break;
+                    int xmin = int.MaxValue, ymin = int.MaxValue, xmax = 0, ymax = 0;
+                    foreach (var f in floor) { xmin = Mathf.Min(xmin, f.x); ymin = Mathf.Min(ymin, f.y); xmax = Mathf.Max(xmax, f.x); ymax = Mathf.Max(ymax, f.y); }
+                    int boxArea = (xmax - xmin + 1) * (ymax - ymin + 1);
+                    if (def.BuildTiles.Count == buildBudget && floor.Count < boxArea && floor.Count >= boxArea * 0.6f)
+                    {
+                        Vector2 sum = Vector2.zero;
+                        foreach (var f in def.Floor)
+                        {
+                            Tiles[f.x, f.y] = Tile.RoomFloor; roomId[f.x, f.y] = def.Index; sum += Center(f);
+                        }
+                        def.Center = sum / def.Floor.Count;
+                        Rooms.Add(def);
+                        return true;
+                    }
+                    var corners = new List<Vector2Int>();
+                    foreach (var f in def.Floor)
+                    {
+                        if (f == inside) continue;
+                        bool verticalEdge = !floor.Contains(f + Vector2Int.up) || !floor.Contains(f + Vector2Int.down);
+                        bool horizontalEdge = !floor.Contains(f + Vector2Int.left) || !floor.Contains(f + Vector2Int.right);
+                        if (verticalEdge && horizontalEdge) corners.Add(f);
+                    }
+                    bool trimmed = false;
+                    while (corners.Count > 0)
+                    {
+                        int i = rng.Next(corners.Count); var cut = corners[i]; corners.RemoveAt(i);
+                        floor.Remove(cut);
+                        if (WideFloor(floor) && Connected(floor)) { trimmed = true; break; }
+                        floor.Add(cut);
+                    }
+                    if (!trimmed) break;
                 }
-                def.Center = sum / def.Floor.Count;
-                Rooms.Add(def);
-                return true;
             }
             return false;
         }
 
-        /// <summary>Random cell sizes for a letter, shrunk until they fit the space (cells may end up 1 tile wide).</summary>
-        int[] Sizes(int n, int avail)
+        static bool WideFloor(HashSet<Vector2Int> floor)
         {
-            var a = new int[n];
-            int sum = 0;
-            for (int i = 0; i < n; i++) { a[i] = R(cfg.cellSizeMin, cfg.cellSizeMax); sum += a[i]; }
-            while (sum > avail)
+            foreach (var f in floor)
             {
-                int bi = -1;
-                for (int i = 0; i < n; i++) if (a[i] > 1 && (bi < 0 || a[i] > a[bi])) bi = i;
-                if (bi < 0) return null;
-                a[bi]--;
-                sum--;
+                bool wide = false;
+                for (int dx = -1; dx <= 1; dx += 2)
+                    for (int dy = -1; dy <= 1; dy += 2)
+                        if (floor.Contains(f + new Vector2Int(dx, 0)) && floor.Contains(f + new Vector2Int(0, dy)) &&
+                            floor.Contains(f + new Vector2Int(dx, dy))) wide = true;
+                if (!wide) return false;
             }
-            return a;
-        }
-
-        /// <summary>Nibbles a few corners and pushes out a few bulges so no two rooms look machine-made.</summary>
-        void Deform(HashSet<Vector2Int> floor, RectInt interior)
-        {
-            int nibbles = R(0, cfg.nibbleMax);
-            for (int n = 0; n < nibbles; n++)
-            {
-                var list = new List<Vector2Int>(floor);
-                var t = list[rng.Next(list.Count)];
-                bool openX = !floor.Contains(t + Vector2Int.left) || !floor.Contains(t + Vector2Int.right);
-                bool openY = !floor.Contains(t + Vector2Int.up) || !floor.Contains(t + Vector2Int.down);
-                if (!openX || !openY || floor.Count <= 12) continue;
-                floor.Remove(t);
-                if (!Connected(floor)) floor.Add(t);
-            }
-
-            int bulges = R(0, cfg.bulgeMax);
-            for (int n = 0; n < bulges; n++)
-            {
-                var list = new List<Vector2Int>(floor);
-                var t = list[rng.Next(list.Count)];
-                var d = Dirs4[rng.Next(4)];
-                var a = t + d;
-                if (floor.Contains(a) || !interior.Contains(a)) continue;
-                floor.Add(a);
-                var perp = new Vector2Int(d.y, d.x);
-                var b = a + perp;
-                if (interior.Contains(b) && floor.Contains(t + perp)) floor.Add(b);
-            }
+            return true;
         }
 
         static bool Connected(HashSet<Vector2Int> floor)
@@ -247,6 +201,8 @@ namespace BadAppleHotel.Game
             if (candidates.Count == 0) return false;
             candidates.Sort((a, b) => a.x != b.x ? a.x.CompareTo(b.x) : a.y.CompareTo(b.y));
 
+            candidates.RemoveAll(c => !floor.Contains(c + inward));
+            if (candidates.Count == 0) return false;
             door = candidates[rng.Next(candidates.Count)];
             outside = door - inward;
             inside = door + inward;
@@ -287,21 +243,26 @@ namespace BadAppleHotel.Game
             if (dist.Count != def.Floor.Count) return false;
 
             int far = -1;
-            foreach (var f in def.Floor)
-                if (dist[f] > far || (dist[f] == far && rng.Next(3) == 0)) { far = dist[f]; def.BedTile = f; }
-
+            foreach (var foot in def.Floor)
+                foreach (var axis in Dirs4)
+                {
+                    var head = foot + axis;
+                    if (foot == def.DoorInside || head == def.DoorInside || !def.FloorSet.Contains(head) ||
+                        def.FloorSet.Contains(head + axis) || dist[head] <= dist[foot]) continue;
+                    if (dist[foot] > far)
+                    {
+                        far = dist[foot]; def.BedTile = foot; def.BedHeadTile = head;
+                    }
+                }
+            if (far < 0) return false;
             var step = def.BedTile;
             while (step != def.DoorInside)
             {
-                step = prev[step];
-                def.Walkway.Add(step);
+                step = prev[step]; def.Walkway.Add(step);
             }
             def.Walkway.Add(def.DoorInside);
-
-            // every floor tile can hold a building, except the bed and the tile right inside the door.
-            // (GameManager.CanBuildAt refuses placements that would wall the bed off.)
             foreach (var f in def.Floor)
-                if (f != def.BedTile && f != def.DoorInside) def.BuildTiles.Add(f);
+                if (!def.IsBedTile(f) && !def.Walkway.Contains(f)) def.BuildTiles.Add(f);
             if (def.BuildTiles.Count < 2) return false;
             def.BuildTiles.Sort((a, b) => a.y != b.y ? b.y.CompareTo(a.y) : a.x.CompareTo(b.x));
             return true;
