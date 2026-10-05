@@ -31,3 +31,6 @@ Thumbs.db
 # Art source images (1024px generations, not imported)
 /ArtSource/
 /Assets/Art/Source/
+
+# Local dev tool (Tripo Unity Bridge), installed per machine from Tripo, not redistributed
+/Packages/com.tripo3d.unitybridge/
