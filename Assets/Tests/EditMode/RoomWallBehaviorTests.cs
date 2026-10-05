@@ -126,10 +126,8 @@ namespace BadAppleHotel.Tests
         public void Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor(int seed)
         {
             Build(seed);
-            var registeredRooms = Field<HashSet<RoomDef>>("roomsWithLamps");
             var lamps = Field<List<HotelLighting.Lamp>>("wallLamps");
             var lighting = Field<HotelLighting>("hotelLighting");
-            CollectionAssert.AreEquivalent(game.Map.Rooms, registeredRooms);
             Assert.AreEqual(instances.Records.Count(record => record.Piece.Id == "wall_lamp"), lamps.Count);
             Assert.AreEqual(lamps.Count, lighting.LampCount, "Every placed lamp must reach a usable side of its wall.");
             game.SetWallMode(WallDisplayMode.Cutaway);
@@ -188,19 +186,18 @@ namespace BadAppleHotel.Tests
         }
 
         [Test]
-        public void Captured_entry_notch_lowers_when_it_projects_over_room_floor_but_preserves_the_far_backdrop()
+        public void Concave_returns_lower_over_room_floor_but_preserve_the_far_backdrop()
         {
             Build(40102026);
-            var room = game.Map.Rooms[0];
-            Assert.AreEqual(580023594, game.Map.Seed);
-            game.Human.Pos = new Vector2(28.5f, 25.5f);
+            var room = game.Map.Rooms.First(r => game.Walls.Runs.Any(run =>
+                run.EdgeIds.Any(id => r.ContainsInterior(game.Walls.Edges[id].WalkableCell)) &&
+                HeightForRoomFace(run.Normal) == WallGraph.FullHeight && ProjectsOverRoomFloor(run, r)));
+            game.Human.Pos = HotelMap.Center(room.BedTile);
             game.SetWallMode(WallDisplayMode.Cutaway); UpdateTargets();
-            var notch = game.Walls.Runs.Single(run => run.Normal == Vector2.left &&
-                run.EdgeIds.Any(id => game.Walls.Edges[id].WalkableCell == new Vector2Int(26, 22)));
-            Assert.AreEqual(WallGraph.FullHeight, HeightForRoomFace(notch.Normal), "This is the far-facing concave return from visual QA.");
-            Assert.IsTrue(ProjectsOverRoomFloor(notch, room), "The tall notch must cover a positive area of room floor.");
-            AssertTarget(notch.Id, WallGraph.DownHeight, "Captured entry notch");
-            Assert.IsTrue(instances.Records.Any(record => record.StateId == notch.Id && record.Mode == 1));
+            var notch = game.Walls.Runs.First(run =>
+                run.EdgeIds.Any(id => room.ContainsInterior(game.Walls.Edges[id].WalkableCell)) &&
+                HeightForRoomFace(run.Normal) == WallGraph.FullHeight && ProjectsOverRoomFloor(run, room));
+            AssertTarget(notch.Id, WallGraph.DownHeight, "Far-facing foreground return");
             int backdrops = 0;
             foreach (var run in game.Walls.Runs)
                 if (run.EdgeIds.Any(id => room.FloorSet.Contains(game.Walls.Edges[id].WalkableCell)) &&
@@ -209,8 +206,8 @@ namespace BadAppleHotel.Tests
                     AssertTarget(run.Id, WallGraph.FullHeight, "Unobstructing far backdrop"); backdrops++;
                 }
             Assert.Greater(backdrops, 0);
-            var corridor = game.Walls.Runs.Single(run => run.Normal == Vector2.left &&
-                run.EdgeIds.Any(id => game.Walls.Edges[id].WalkableCell == new Vector2Int(26, 20)));
+            var corridor = game.Walls.Runs.First(run => run.EdgeIds.All(id =>
+                game.Map.Get(game.Walls.Edges[id].WalkableCell.x,game.Walls.Edges[id].WalkableCell.y)==Tile.Corridor));
             Assert.IsFalse(WallVisibility.BordersRoom(game.Walls, corridor, room));
             AssertTarget(corridor.Id, corridor.DefaultHeight, "Separate corridor boundary");
         }

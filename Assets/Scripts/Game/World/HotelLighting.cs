@@ -52,9 +52,7 @@ namespace BadAppleHotel.Game
                 if (lamp.Strength <= 0 || lamp.Radius <= 0 || lamp.Normal.sqrMagnitude < .5f) continue;
                 // The detailed face may sit slightly inside the .3-wide wall footprint. Start
                 // the ray just outside the slab, never inside the opaque source cell.
-                Vector2 origin = lamp.Position + lamp.Normal * .035f;
-                for (int step = 0; step < 7 && Opaque(Mathf.FloorToInt(origin.x), Mathf.FloorToInt(origin.y)); step++)
-                    origin += lamp.Normal * .05f;
+                Vector2 origin = LampOrigin(lamp, Opaque);
                 if (Opaque(Mathf.FloorToInt(origin.x), Mathf.FloorToInt(origin.y))) continue;
                 count++;
                 int x0 = Mathf.Max(0, Mathf.FloorToInt((lamp.Position.x - lamp.Radius) * SamplesPerTile));
@@ -65,16 +63,9 @@ namespace BadAppleHotel.Game
                 {
                     if (Opaque(x / SamplesPerTile, y / SamplesPerTile)) continue;
                     var point = new Vector2((x + .5f) / SamplesPerTile, (y + .5f) / SamplesPerTile);
-                    var delta = point - lamp.Position;
-                    float distance = delta.magnitude;
-                    if (distance >= lamp.Radius || Vector2.Dot(delta, lamp.Normal) < -.015f) continue;
-                    if (!Sight.Clear(origin, point, Opaque)) continue;
-                    float radial = 1 - distance / lamp.Radius;
-                    radial = radial * radial * (3 - 2 * radial);
-                    // Broad forward pool, with soft tangential spill along the mounting wall.
-                    float direction = .65f + .35f * Mathf.Clamp01(Vector2.Dot(delta / Mathf.Max(.001f, distance), lamp.Normal));
+                    float value = Contribution(lamp, origin, point, Opaque);
                     int index = y * width + x;
-                    intensity[index] = Mathf.Min(1, intensity[index] + radial * direction * lamp.Strength);
+                    intensity[index] = Mathf.Min(1, intensity[index] + value);
                 }
             }
             var pixels = new Color32[intensity.Length];
@@ -91,11 +82,30 @@ namespace BadAppleHotel.Game
             return new HotelLighting { LightMap = texture, MapSize = new Vector4(map.W, map.H, width, height), LampCount = count };
         }
 
+        public static Vector2 LampOrigin(Lamp lamp, Func<int,int,bool> opaque)
+        {
+            Vector2 origin=lamp.Position+lamp.Normal*.035f;
+            for(int step=0;step<7&&opaque(Mathf.FloorToInt(origin.x),Mathf.FloorToInt(origin.y));step++)origin+=lamp.Normal*.05f;
+            return origin;
+        }
+
+        public static float Contribution(Lamp lamp,Vector2 origin,Vector2 point,Func<int,int,bool> opaque)
+        {
+            var delta=point-lamp.Position;float distance=delta.magnitude;
+            if(distance>=lamp.Radius||Vector2.Dot(delta,lamp.Normal)<-.015f||!Sight.Clear(origin,point,opaque))return 0;
+            float radial=1-distance/lamp.Radius;radial=radial*radial*(3-2*radial);
+            float direction=.65f+.35f*Mathf.Clamp01(Vector2.Dot(delta/Mathf.Max(.001f,distance),lamp.Normal));
+            return radial*direction*lamp.Strength;
+        }
+
         /// <summary>Diagnostic CPU sample of the same bilinear field sampled by the world shaders.</summary>
         public float Sample(Vector2 position)
         {
             if (LightMap == null || position.x < 0 || position.y < 0 || position.x >= MapSize.x || position.y >= MapSize.y) return 0;
-            return LightMap.GetPixelBilinear(position.x / MapSize.x, position.y / MapSize.y).r;
+            // Unity's CPU sampler places texel centers at i/size; GPU tex2D places them
+            // at (i+.5)/size. Apply the half-texel offset so coverage measures rendered light.
+            return LightMap.GetPixelBilinear((position.x * SamplesPerTile - .5f) / LightMap.width,
+                (position.y * SamplesPerTile - .5f) / LightMap.height).r;
         }
 
         public void Bind()

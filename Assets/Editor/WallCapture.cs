@@ -21,7 +21,7 @@ namespace BadAppleHotel.EditorTools
     {
         const string Session = "BadApple.WallCapture";
         const BindingFlags Private = BindingFlags.NonPublic | BindingFlags.Instance;
-        static readonly string[] Names = { "l-shaped-room", "corridor-corner", "door", "solid-separator", "walk-along-wall", "walls-up", "walls-down", "aligned-east-west-run", "aligned-north-south-run" };
+        static readonly string[] Names = { "l-shaped-room", "corridor-corner", "door", "solid-separator", "walk-along-wall", "walls-up", "walls-down", "aligned-east-west-run", "aligned-north-south-run", "glowing-sconce" };
 
         [Serializable]
         sealed class PieceCount
@@ -237,6 +237,14 @@ namespace BadAppleHotel.EditorTools
             else if (scenario == 4)
             {
                 actor = walkStart; focus = (walkStart + walkEnd) * .5f; cameraSize = 3.8f; walking = true;
+            }
+            else if (scenario == 9)
+            {
+                var pieces=(WallInstances)typeof(GameManager).GetField("wallInstances",Private).GetValue(game);
+                var lamp=pieces.Records.Where(piece=>piece.Piece.Id=="wall_lamp"&&
+                    (piece.Normal==Vector2.down||piece.Normal==Vector2.left))
+                    .OrderBy(piece=>Vector2.Distance(piece.Footprint.center,room.Center)).First();
+                focus=lamp.Footprint.center+lamp.Normal*.8f;cameraSize=1.8f;
             }
             else if (scenario >= 7)
             {

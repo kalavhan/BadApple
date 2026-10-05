@@ -1,0 +1,601 @@
+{
+    "unityVersion": "6000.3.24f1",
+    "platform": "LinuxEditor",
+    "measurementScope": "Unity Editor Game View under the host graphics driver; draw calls and frame times are diagnostic samples, not Android phone performance. Repeated kit pieces share GPU-instanced source meshes. wallBatches and wallTriangles include all registered full and low variants, including inactive ones; they are not per-frame submitted counts. visibleWallTriangles counts active triangles submitted after camera culling; actualWallDrawCalls counts wall draw API submissions including visible core batches (the driver may split instance batches). Geometry shots use a clairvoyance fixture; hallway shots use normal gameplay fog.",
+    "generatedUtc": "2026-10-05T17:41:42.7603020Z",
+    "randomSeed": 40102026,
+    "success": true,
+    "shots": [
+        {
+            "scenario": "l-shaped-room",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-l-shaped-room.png",
+            "wallMode": "Cutaway",
+            "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 202922,
+            "actualWallDrawCalls": 10,
+            "editorDrawCalls": 109,
+            "editorBatches": 109,
+            "sampledFrames": 8,
+            "editorAverageFrameMs": 625.9347534179688,
+            "walkedDistance": 0.0,
+            "cameraSize": 4.3583760261535648,
+            "cameraGroundFocus": {
+                "x": 56.0,
+                "y": 35.5
+            },
+            "actorPosition": {
+                "x": 56.5,
+                "y": 35.5
+            },
+            "fogEnabled": false,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "corridor-corner",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-corridor-corner.png",
+            "wallMode": "Cutaway",
+            "visibility": "Normal resident sight radius and line-of-sight fog",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 122044,
+            "actualWallDrawCalls": 10,
+            "editorDrawCalls": 78,
+            "editorBatches": 78,
+            "sampledFrames": 10,
+            "editorAverageFrameMs": 180.6475830078125,
+            "walkedDistance": 0.0,
+            "cameraSize": 3.799999952316284,
+            "cameraGroundFocus": {
+                "x": 62.82500076293945,
+                "y": 27.174999237060548
+            },
+            "actorPosition": {
+                "x": 62.5,
+                "y": 27.5
+            },
+            "fogEnabled": true,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "door",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-door.png",
+            "wallMode": "Cutaway",
+            "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 157024,
+            "actualWallDrawCalls": 8,
+            "editorDrawCalls": 114,
+            "editorBatches": 114,
+            "sampledFrames": 11,
+            "editorAverageFrameMs": 133.67030334472657,
+            "walkedDistance": 0.0,
+            "cameraSize": 3.5,
+            "cameraGroundFocus": {
+                "x": 57.5,
+                "y": 31.5
+            },
+            "actorPosition": {
+                "x": 57.5,
+                "y": 30.5
+            },
+            "fogEnabled": false,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "solid-separator",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-solid-separator.png",
+            "wallMode": "Cutaway",
+            "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 151324,
+            "actualWallDrawCalls": 7,
+            "editorDrawCalls": 106,
+            "editorBatches": 106,
+            "sampledFrames": 11,
+            "editorAverageFrameMs": 144.9258270263672,
+            "walkedDistance": 0.0,
+            "cameraSize": 3.5999999046325685,
+            "cameraGroundFocus": {
+                "x": 56.5,
+                "y": 31.5
+            },
+            "actorPosition": {
+                "x": 56.5,
+                "y": 30.5
+            },
+            "fogEnabled": false,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "walk-along-wall",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-walk-along-wall.png",
+            "wallMode": "Cutaway",
+            "visibility": "Normal resident sight radius and line-of-sight fog",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 36114,
+            "actualWallDrawCalls": 3,
+            "editorDrawCalls": 68,
+            "editorBatches": 68,
+            "sampledFrames": 41,
+            "editorAverageFrameMs": 57.40449523925781,
+            "walkedDistance": 2.8281784057617189,
+            "cameraSize": 3.799999952316284,
+            "cameraGroundFocus": {
+                "x": 2.3350000381469728,
+                "y": 4.650000095367432
+            },
+            "actorPosition": {
+                "x": 2.3350000381469728,
+                "y": 5.47817850112915
+            },
+            "fogEnabled": true,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "walls-up",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-walls-up.png",
+            "wallMode": "Up",
+            "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 183719,
+            "actualWallDrawCalls": 9,
+            "editorDrawCalls": 108,
+            "editorBatches": 108,
+            "sampledFrames": 8,
+            "editorAverageFrameMs": 176.99264526367188,
+            "walkedDistance": 0.0,
+            "cameraSize": 4.3583760261535648,
+            "cameraGroundFocus": {
+                "x": 56.0,
+                "y": 35.5
+            },
+            "actorPosition": {
+                "x": 56.5,
+                "y": 35.5
+            },
+            "fogEnabled": false,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "walls-down",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-walls-down.png",
+            "wallMode": "Down",
+            "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 211324,
+            "actualWallDrawCalls": 8,
+            "editorDrawCalls": 107,
+            "editorBatches": 107,
+            "sampledFrames": 6,
+            "editorAverageFrameMs": 273.38653564453127,
+            "walkedDistance": 0.0,
+            "cameraSize": 4.3583760261535648,
+            "cameraGroundFocus": {
+                "x": 56.0,
+                "y": 35.5
+            },
+            "actorPosition": {
+                "x": 56.5,
+                "y": 35.5
+            },
+            "fogEnabled": false,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "aligned-east-west-run",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-aligned-east-west-run.png",
+            "wallMode": "Up",
+            "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 26514,
+            "actualWallDrawCalls": 2,
+            "editorDrawCalls": 97,
+            "editorBatches": 97,
+            "sampledFrames": 21,
+            "editorAverageFrameMs": 78.97552490234375,
+            "walkedDistance": 0.0,
+            "cameraSize": 2.5,
+            "cameraGroundFocus": {
+                "x": 71.5,
+                "y": 5.150000095367432
+            },
+            "actorPosition": {
+                "x": 56.5,
+                "y": 35.5
+            },
+            "fogEnabled": false,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "aligned-north-south-run",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-aligned-north-south-run.png",
+            "wallMode": "Up",
+            "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 25613,
+            "actualWallDrawCalls": 3,
+            "editorDrawCalls": 98,
+            "editorBatches": 98,
+            "sampledFrames": 20,
+            "editorAverageFrameMs": 76.02644348144531,
+            "walkedDistance": 0.0,
+            "cameraSize": 2.5,
+            "cameraGroundFocus": {
+                "x": 83.1500015258789,
+                "y": 35.0
+            },
+            "actorPosition": {
+                "x": 56.5,
+                "y": 35.5
+            },
+            "fogEnabled": false,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        },
+        {
+            "scenario": "glowing-sconce",
+            "file": "/tmp/badapple-central-reviewed/walls-1560-glowing-sconce.png",
+            "wallMode": "Up",
+            "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+            "width": 1560,
+            "height": 720,
+            "mapSeed": 580023594,
+            "roomIndex": 3,
+            "wallBatches": 32,
+            "wallTriangles": 3641827,
+            "visibleWallTriangles": 76023,
+            "actualWallDrawCalls": 8,
+            "editorDrawCalls": 106,
+            "editorBatches": 106,
+            "sampledFrames": 7,
+            "editorAverageFrameMs": 206.62265014648438,
+            "walkedDistance": 0.0,
+            "cameraSize": 1.7999999523162842,
+            "cameraGroundFocus": {
+                "x": 58.35000228881836,
+                "y": 36.5
+            },
+            "actorPosition": {
+                "x": 56.5,
+                "y": 35.5
+            },
+            "fogEnabled": false,
+            "wallPieces": [
+                {
+                    "id": "door_frame",
+                    "placed": 10
+                },
+                {
+                    "id": "wall_corner",
+                    "placed": 265
+                },
+                {
+                    "id": "wall_cutaway_cap",
+                    "placed": 1134
+                },
+                {
+                    "id": "wall_end_cap",
+                    "placed": 31
+                },
+                {
+                    "id": "wall_inner_corner",
+                    "placed": 68
+                },
+                {
+                    "id": "wall_lamp",
+                    "placed": 57
+                },
+                {
+                    "id": "wall_straight",
+                    "placed": 1077
+                }
+            ]
+        }
+    ],
+    "errors": []
+}

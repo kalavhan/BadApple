@@ -68,10 +68,10 @@ Shader "BadApple/HotelWall"
                 float sight=tex2D(_HotelVision,(floor(i.world)+.5)/_HotelSize.xy).r;
                 float fog=lerp(1,lerp(.06,1,sight),_HotelFog);
                 fixed3 albedo=i.rule.z>3.5?i.color.rgb:tex2D(_MainTex,i.uv).rgb*i.color.rgb;
-                float ambient=lerp(1,.45,saturate(_HotelLightingEnabled));
+                float ambient=lerp(1,.30,saturate(_HotelLightingEnabled));
                 fixed3 lamp=HotelLampLight(i.world,i.normal,lerp(1,step(.9,sight),_HotelFog));
                 // Emission still obeys fog: hidden sconces cannot reveal unexplored rooms.
-                return fixed4((albedo*i.light*(ambient+lamp)+fixed3(.55,.28,.08)*i.color.a)*fog,1);
+                return fixed4((albedo*i.light*(ambient+lamp)+fixed3(1.9,1.15,.35)*i.color.a)*fog,1);
             }
             ENDCG
         }

@@ -1,5 +1,7 @@
 # Wall sight and player control playtest — October 5, 2026
 
+Historical snapshot: the [central-room and lamp-coverage iteration](../central-lamps-2026-10-05/README.md) supersedes this layout, APK and current validation results. Route measurements below apply to this earlier generator.
+
 This update starts from merged PR #3. It keeps ten rooms and the build-space distribution of 30, 26×3, 23×3 and 20×3.
 
 ## Behavior

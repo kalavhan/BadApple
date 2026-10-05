@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:34Z" duration="19.5456759">
+  <test-suite type="TestSuite" id="1000" name="Bad Apple Hotel" fullname="Bad Apple Hotel" runstate="Runnable" testcasecount="110" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:34Z" duration="19.545676" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1144" name="BadAppleHotel.Tests.dll" fullname="/tmp/badapple-playtest-qa/Library/ScriptAssemblies/BadAppleHotel.Tests.dll" runstate="Runnable" testcasecount="110" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:34Z" duration="19.538672" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2722293" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1145" name="BadAppleHotel" fullname="BadAppleHotel" runstate="Runnable" testcasecount="110" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:34Z" duration="19.534741" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1146" name="Tests" fullname="BadAppleHotel.Tests" runstate="Runnable" testcasecount="110" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:34Z" duration="19.533961" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1022" name="LampGlowTests" fullname="BadAppleHotel.Tests.LampGlowTests" classname="BadAppleHotel.Tests.LampGlowTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:15Z" duration="0.048824" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1023" name="Visible_bulbs_glow_but_lowered_hidden_and_peeked_away_lamps_do_not" fullname="BadAppleHotel.Tests.LampGlowTests.Visible_bulbs_glow_but_lowered_hidden_and_peeked_away_lamps_do_not" methodname="Visible_bulbs_glow_but_lowered_hidden_and_peeked_away_lamps_do_not" classname="BadAppleHotel.Tests.LampGlowTests" runstate="Runnable" seed="1993570606" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:15Z" duration="0.039939" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1107" name="WallRenderingTests" fullname="BadAppleHotel.Tests.WallRenderingTests" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:34Z" duration="19.478672" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1112" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:15Z" duration="0.022183" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1108" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(0,-1,1,0)" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(0,-1,1,0)" methodname="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="488261707" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:15Z" duration="0.021153" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1109" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(0,1,-1,0)" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(0,1,-1,0)" methodname="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="2037562099" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:15Z" duration="0.000204" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1110" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(-1,0,0,-1)" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(-1,0,0,-1)" methodname="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="480949105" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:15Z" duration="0.000135" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1111" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(1,0,0,1)" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(1,0,0,1)" methodname="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="704420865" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:15Z" duration="0.000132" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1113" name="Twenty_hotels_use_the_complete_baked_kit_in_bounded_batches_and_release_owned_resources" fullname="BadAppleHotel.Tests.WallRenderingTests.Twenty_hotels_use_the_complete_baked_kit_in_bounded_batches_and_release_owned_resources" methodname="Twenty_hotels_use_the_complete_baked_kit_in_bounded_batches_and_release_owned_resources" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="1604536728" result="Passed" start-time="2026-10-05 17:45:15Z" end-time="2026-10-05 17:45:34Z" duration="19.455274" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[LAMP COVERAGE seed=469759406 lamps=70 roomMin=0.9191176 corridor=0.8946797
+128-instance full hotel: seed=1 mode=Up submissions=24
+128-instance full hotel: seed=1 mode=Cutaway submissions=25
+128-instance full hotel: seed=1 mode=Down submissions=24
+LAMP COVERAGE seed=112532159 lamps=66 roomMin=0.9193549 corridor=0.899458
+128-instance full hotel: seed=2 mode=Up submissions=24
+128-instance full hotel: seed=2 mode=Cutaway submissions=25
+128-instance full hotel: seed=2 mode=Down submissions=24
+LAMP COVERAGE seed=829034531 lamps=55 roomMin=0.9044118 corridor=0.8885946
+128-instance full hotel: seed=3 mode=Up submissions=22
+128-instance full hotel: seed=3 mode=Cutaway submissions=23
+128-instance full hotel: seed=3 mode=Down submissions=22
+LAMP COVERAGE seed=471800341 lamps=65 roomMin=0.9032258 corridor=0.8852872
+128-instance full hotel: seed=4 mode=Up submissions=23
+128-instance full hotel: seed=4 mode=Cutaway submissions=24
+128-instance full hotel: seed=4 mode=Down submissions=23
+LAMP COVERAGE seed=114585002 lamps=57 roomMin=0.9090909 corridor=0.8944005
+128-instance full hotel: seed=5 mode=Up submissions=22
+128-instance full hotel: seed=5 mode=Cutaway submissions=22
+128-instance full hotel: seed=5 mode=Down submissions=21
+LAMP COVERAGE seed=831086318 lamps=60 roomMin=0.9051724 corridor=0.8953345
+128-instance full hotel: seed=6 mode=Up submissions=24
+128-instance full hotel: seed=6 mode=Cutaway submissions=25
+128-instance full hotel: seed=6 mode=Down submissions=23
+LAMP COVERAGE seed=473874228 lamps=66 roomMin=0.9032258 corridor=0.8918096
+128-instance full hotel: seed=7 mode=Up submissions=24
+128-instance full hotel: seed=7 mode=Cutaway submissions=25
+128-instance full hotel: seed=7 mode=Down submissions=24
+LAMP COVERAGE seed=116650165 lamps=60 roomMin=0.9071429 corridor=0.8982803
+128-instance full hotel: seed=8 mode=Up submissions=23
+128-instance full hotel: seed=8 mode=Cutaway submissions=24
+128-instance full hotel: seed=8 mode=Down submissions=23
+LAMP COVERAGE seed=833129905 lamps=64 roomMin=0.9196429 corridor=0.8809823
+128-instance full hotel: seed=9 mode=Up submissions=22
+128-instance full hotel: seed=9 mode=Cutaway submissions=23
+128-instance full hotel: seed=9 mode=Down submissions=21
+LAMP COVERAGE seed=475897011 lamps=59 roomMin=0.9032258 corridor=0.8945126
+128-instance full hotel: seed=10 mode=Up submissions=23
+128-instance full hotel: seed=10 mode=Cutaway submissions=24
+128-instance full hotel: seed=10 mode=Down submissions=23
+LAMP COVERAGE seed=118661712 lamps=64 roomMin=0.9107143 corridor=0.8976676
+128-instance full hotel: seed=11 mode=Up submissions=22
+128-instance full hotel: seed=11 mode=Cutaway submissions=24
+128-instance full hotel: seed=11 mode=Down submissions=22
+LAMP COVERAGE seed=835221712 lamps=59 roomMin=0.9032258 corridor=0.9005925
+128-instance full hotel: seed=12 mode=Up submissions=22
+128-instance full hotel: seed=12 mode=Cutaway submissions=23
+128-instance full hotel: seed=12 mode=Down submissions=21
+LAMP COVERAGE seed=477970902 lamps=68 roomMin=0.9305556 corridor=0.8922388
+128-instance full hotel: seed=13 mode=Up submissions=24
+128-instance full hotel: seed=13 mode=Cutaway submissions=25
+128-instance full hotel: seed=13 mode=Down submissions=24
+LAMP COVERAGE seed=120730959 lamps=62 roomMin=0.9338235 corridor=0.8882008
+128-instance full hotel: seed=14 mode=Up submissions=22
+128-instance full hotel: seed=14 mode=Cutaway submissions=23
+128-instance full hotel: seed=14 mode=Down submissions=22
+LAMP COVERAGE seed=837224252 lamps=62 roomMin=0.9166667 corridor=0.9008804
+128-instance full hotel: seed=15 mode=Up submissions=22
+128-instance full hotel: seed=15 mode=Cutaway submissions=23
+128-instance full hotel: seed=15 mode=Down submissions=22
+LAMP COVERAGE seed=479987213 lamps=59 roomMin=0.9142857 corridor=0.8896064
+128-instance full hotel: seed=16 mode=Up submissions=22
+128-instance full hotel: seed=16 mode=Cutaway submissions=23
+128-instance full hotel: seed=16 mode=Down submissions=22
+LAMP COVERAGE seed=122763490 lamps=63 roomMin=0.90625 corridor=0.9033853
+128-instance full hotel: seed=17 mode=Up submissions=23
+128-instance full hotel: seed=17 mode=Cutaway submissions=24
+128-instance full hotel: seed=17 mode=Down submissions=23
+LAMP COVERAGE seed=839266959 lamps=62 roomMin=0.95 corridor=0.8934275
+128-instance full hotel: seed=18 mode=Up submissions=24
+128-instance full hotel: seed=18 mode=Cutaway submissions=24
+128-instance full hotel: seed=18 mode=Down submissions=23
+LAMP COVERAGE seed=482034940 lamps=64 roomMin=0.9015151 corridor=0.8971462
+128-instance full hotel: seed=19 mode=Up submissions=24
+128-instance full hotel: seed=19 mode=Cutaway submissions=25
+128-instance full hotel: seed=19 mode=Down submissions=24
+LAMP COVERAGE seed=124799965 lamps=61 roomMin=0.9 corridor=0.8897524
+128-instance full hotel: seed=20 mode=Up submissions=23
+128-instance full hotel: seed=20 mode=Cutaway submissions=24
+128-instance full hotel: seed=20 mode=Down submissions=22
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: /tmp/badapple-final-render-guard.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -116,7 +116,7 @@ namespace BadAppleHotel.Tests
                         Assert.IsNotNull(instances);
                         Assert.AreEqual(game.WallPieceCounts.Values.Sum(), instances.InstanceCount);
                         Assert.AreEqual(PieceIds.Length, instances.GroupCount, "The seven reusable source meshes must remain shared.");
-                        Assert.AreEqual(game.WallBatchCount, wallFilters.Length + instances.MaxDrawCalls);
+                        Assert.AreEqual(game.WallBatchCount, wallFilters.Length + instances.MaxDrawCalls + 1);
                         int triangles = 0;
                         int generatedVertices = 0;
                         Material shared = null;
@@ -147,7 +147,9 @@ namespace BadAppleHotel.Tests
                             Assert.GreaterOrEqual(mesh.bounds.min.y, -.01f);
                         }
                         Assert.Less(generatedVertices, 5000, "Only small separator core meshes may be duplicated per hotel; decorative kit meshes must remain shared.");
-                        Assert.AreEqual(game.WallTriangleCount, triangles + instances.TotalTriangles);
+                        var glow = filters.Single(filter=>filter.sharedMesh.name=="Wall sconce glow halos");
+                        Assert.AreEqual(game.WallTriangleCount, triangles + instances.TotalTriangles + glow.sharedMesh.GetIndexCount(0)/3);
+                        LampDistributionTests.AssertCoverage(game);
                         Assert.AreEqual(instances.TotalTriangles, instances.Records.Sum(record => record.TriangleCount));
                         var stateTexture = shared.GetTexture("_WallStates") as Texture2D;
                         Assert.IsNotNull(stateTexture);
@@ -180,7 +182,7 @@ namespace BadAppleHotel.Tests
                         {
                             game.SetWallMode(mode);
                             updateStates.Invoke(game, new object[] { true });
-                            int submissions = FullHotelSubmissions(instances, stateTexture, WallInstances.MaxBatchCapacity, wallFilters.Length);
+                            int submissions = FullHotelSubmissions(instances, stateTexture, WallInstances.MaxBatchCapacity, wallFilters.Length + 1);
                             TestContext.WriteLine("128-instance full hotel: seed=" + seed + " mode=" + mode + " submissions=" + submissions);
                             Assert.Less(submissions, 30, "Active full-map wall submissions at capacity128, seed " + seed + ", mode " + mode);
                         }

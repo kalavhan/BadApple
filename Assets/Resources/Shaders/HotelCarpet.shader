@@ -34,7 +34,7 @@ Shader "BadApple/HotelCarpet"
                 }
                 float weave=.91+.09*frac(dot(floor(p*80),float2(.7549,.5698)));
                 float sight=tex2D(_HotelVision,(floor(i.world)+.5)/_HotelSize.xy).r;
-                float ambient=lerp(1,.45,saturate(_HotelLightingEnabled));
+                float ambient=lerp(1,.25,saturate(_HotelLightingEnabled));
                 fixed3 lamp=HotelLampLight(i.world,float2(0,0),lerp(1,step(.9,sight),_HotelFog));
                 return fixed4(c*weave*(ambient+lamp)*lerp(1,lerp(.06,1,sight),_HotelFog),1);
             }

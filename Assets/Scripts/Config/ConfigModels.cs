@@ -299,6 +299,8 @@ namespace BadAppleHotel.Config
         public int width;
         public int height;
         public int corridorWidth;
+        public int centralRoomCount = 4;
+        public float conjoinedPairChance = .12f;
         public int verticalCorridors;
         public int lotWidthMin;
         public int lotWidthMax;

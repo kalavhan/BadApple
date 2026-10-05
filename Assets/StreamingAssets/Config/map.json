@@ -2,6 +2,8 @@
   "width": 88,
   "height": 54,
   "corridorWidth": 3,
+  "centralRoomCount": 4,
+  "conjoinedPairChance": 0.12,
   "verticalCorridors": 1,
   "lotWidthMin": 8,
   "lotWidthMax": 11,

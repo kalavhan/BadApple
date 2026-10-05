@@ -33,6 +33,19 @@ namespace BadAppleHotel.Tests
             }
         }
 
+        [Test] public void Diagnostic_samples_use_the_same_texel_centers_and_interpolation_as_gpu_sampling()
+        {
+            using(var lighting=HotelLighting.Build(map,null))
+            {
+                var texture=lighting.LightMap;
+                texture.SetPixel(20,20,new Color(.2f,0,0));texture.SetPixel(21,20,new Color(.8f,0,0));
+                texture.SetPixel(20,21,new Color(.4f,0,0));texture.SetPixel(21,21,new Color(.6f,0,0));texture.Apply();
+                foreach(int x in new[]{20,21})foreach(int y in new[]{20,21})
+                    Assert.AreEqual(texture.GetPixel(x,y).r,lighting.Sample(new Vector2((x+.5f)/4,(y+.5f)/4)),.0001f);
+                Assert.AreEqual(.5f,lighting.Sample(new Vector2(21f/4,21f/4)),.005f);
+            }
+        }
+
         [TestCase(Tile.Wall)] [TestCase(Tile.Door)]
         public void Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius(Tile blocker)
         {

@@ -26,7 +26,7 @@ Shader "BadApple/HotelSurface"
                 float sight=tex2D(_HotelVision,(floor(i.world)+0.5)/_HotelSize.xy).r;
                 float light=lerp(1,lerp(0.06,1,sight),_HotelFog);
                 fixed4 c=tex2D(_MainTex,i.uv)*_Color*i.color;
-                float ambient=lerp(1,.45,saturate(_HotelLightingEnabled));
+                float ambient=lerp(1,.30,saturate(_HotelLightingEnabled));
                 fixed3 lamp=HotelLampLight(i.world,float2(0,0),lerp(1,step(.9,sight),_HotelFog));
                 return fixed4(c.rgb*(ambient+lamp)*light,1);
             }

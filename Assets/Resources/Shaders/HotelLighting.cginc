@@ -16,6 +16,6 @@ inline fixed3 HotelLampLight(float2 worldXY, float2 outwardNormalXY, float visib
     float2 uv = samplePosition / max(_HotelLightSize.xy, float2(1, 1));
     float inside = step(0, uv.x) * step(0, uv.y) * step(uv.x, 1) * step(uv.y, 1);
     float light = tex2D(_HotelLightMap, uv).r;
-    return _HotelLampColor.rgb * light * inside * saturate(visible) * saturate(_HotelLightingEnabled);
+    return lerp(fixed3(.72,.67,.60), _HotelLampColor.rgb, .3) * light * .65 * inside * saturate(visible) * saturate(_HotelLightingEnabled);
 }
 #endif
