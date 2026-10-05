@@ -37,8 +37,21 @@ namespace BadAppleHotel.Tests
             {
                 var map=new HotelMap(cfg.map,10,seed);
                 Func<int,int,bool> walk=(x,y)=>{var t=map.Get(x,y);return t==Tile.Corridor||t==Tile.RoomFloor||t==Tile.Door;};
+                var walls=WallGraph.Build(map);
+                // Independent oracle: cache every footprint within .5 of a tile. Both radii
+                // are smaller than .5, so an omitted footprint cannot violate clearance.
+                var candidates=new System.Collections.Generic.List<Rect>[map.W,map.H];
+                foreach(var rect in walls.CollisionFootprints)
+                    for(int x=Mathf.Max(0,Mathf.FloorToInt(rect.xMin-.5f));x<=Mathf.Min(map.W-1,Mathf.FloorToInt(rect.xMax+.5f));x++)
+                        for(int y=Mathf.Max(0,Mathf.FloorToInt(rect.yMin-.5f));y<=Mathf.Min(map.H-1,Mathf.FloorToInt(rect.yMax+.5f));y++)
+                        {
+                            if(candidates[x,y]==null)candidates[x,y]=new System.Collections.Generic.List<Rect>();
+                            candidates[x,y].Add(rect);
+                        }
                 for(int route=0;route<15;route++)
                 {
+                    float radius=route%2==0?GameManager.ResidentRadius:GameManager.MonsterRadius;
+                    string context=$"visible wall clearance seed {seed} route {route}";
                     var a=map.Rooms[rng.Next(10)].BedTile; var b=map.Rooms[rng.Next(10)].BedTile;
                     var p=HotelMap.Center(a);var nav=new Navigator();var sample=p;float sampleAt=0,now=0;
                     while(Vector2.Distance(p,HotelMap.Center(b))>.15f && now<100)
@@ -46,9 +59,18 @@ namespace BadAppleHotel.Tests
                         for(int frame=0;frame<8;frame++)
                         {
                             const float dt=1f/30;now+=dt;
-                            var move=nav.Steer(ref p,b,walk,.3f,dt,now);
-                            p=TileMovement.Slide(p,move*5*dt,walk,.3f);
-                            Assert.IsTrue(TileMovement.CanStand(p,walk,.3f));
+                            var move=nav.Steer(ref p,b,walk,radius,dt,now,walls);
+                            p=TileMovement.Slide(p,move*5*dt,walk,radius,walls);
+                            Assert.IsTrue(TileMovement.CanStand(p,walk,radius,walls));
+                            var tile=HotelMap.ToTile(p);Assert.IsTrue(walk(tile.x,tile.y),"center entered a wall/void cell");
+                            float nearest=float.MaxValue;
+                            var nearby=candidates[tile.x,tile.y];
+                            if(nearby!=null)foreach(var rect in nearby)
+                            {
+                                var face=new Vector2(Mathf.Clamp(p.x,rect.xMin,rect.xMax),Mathf.Clamp(p.y,rect.yMin,rect.yMax));
+                                nearest=Mathf.Min(nearest,(face-p).sqrMagnitude);
+                            }
+                            Assert.GreaterOrEqual(nearest,radius*radius-.00002f,context);
                         }
                         if(now-sampleAt>=1 && Vector2.Distance(p,HotelMap.Center(b))>.15f)
                         { Assert.Greater(Vector2.Distance(p,sample),.1f,$"stalled seed {seed} route {route}");sample=p;sampleAt=now; }

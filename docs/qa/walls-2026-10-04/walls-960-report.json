@@ -1,0 +1,542 @@
+{
+  "unityVersion": "6000.3.24f1",
+  "platform": "LinuxEditor",
+  "measurementScope": "Unity Editor Game View under the host graphics driver; draw calls and frame times are diagnostic samples, not Android phone performance. Repeated kit pieces share GPU-instanced source meshes. wallBatches and wallTriangles include all registered full and low variants, including inactive ones; they are not per-frame submitted counts. visibleWallTriangles counts active triangles submitted after camera culling; actualWallDrawCalls counts wall draw API submissions including visible core batches (the driver may split instance batches). Geometry shots use a clairvoyance fixture; hallway shots use normal gameplay fog.",
+  "generatedUtc": "2026-10-05T04:13:06.2050080Z",
+  "randomSeed": 40102026,
+  "success": true,
+  "shots": [
+    {
+      "scenario": "l-shaped-room",
+      "file": "walls-960-l-shaped-room.png",
+      "wallMode": "Cutaway",
+      "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 87210,
+      "actualWallDrawCalls": 5,
+      "editorDrawCalls": 106,
+      "editorBatches": 106,
+      "sampledFrames": 18,
+      "editorAverageFrameMs": 168.53036499023438,
+      "walkedDistance": 0.0,
+      "cameraSize": 4.3583760261535645,
+      "cameraGroundFocus": {
+        "x": 69.0,
+        "y": 8.5
+      },
+      "actorPosition": {
+        "x": 69.5,
+        "y": 8.5
+      },
+      "fogEnabled": false,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    },
+    {
+      "scenario": "corridor-corner",
+      "file": "walls-960-corridor-corner.png",
+      "wallMode": "Cutaway",
+      "visibility": "Normal resident sight radius and line-of-sight fog",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 86909,
+      "actualWallDrawCalls": 7,
+      "editorDrawCalls": 77,
+      "editorBatches": 77,
+      "sampledFrames": 22,
+      "editorAverageFrameMs": 71.02980041503906,
+      "walkedDistance": 0.0,
+      "cameraSize": 3.799999952316284,
+      "cameraGroundFocus": {
+        "x": 74.17500305175781,
+        "y": 10.175000190734863
+      },
+      "actorPosition": {
+        "x": 74.5,
+        "y": 10.5
+      },
+      "fogEnabled": true,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    },
+    {
+      "scenario": "door",
+      "file": "walls-960-door.png",
+      "wallMode": "Cutaway",
+      "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 92909,
+      "actualWallDrawCalls": 7,
+      "editorDrawCalls": 115,
+      "editorBatches": 115,
+      "sampledFrames": 19,
+      "editorAverageFrameMs": 79.79374694824219,
+      "walkedDistance": 0.0,
+      "cameraSize": 3.5,
+      "cameraGroundFocus": {
+        "x": 73.5,
+        "y": 11.5
+      },
+      "actorPosition": {
+        "x": 74.5,
+        "y": 11.5
+      },
+      "fogEnabled": false,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    },
+    {
+      "scenario": "solid-separator",
+      "file": "walls-960-solid-separator.png",
+      "wallMode": "Cutaway",
+      "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 85409,
+      "actualWallDrawCalls": 7,
+      "editorDrawCalls": 107,
+      "editorBatches": 107,
+      "sampledFrames": 20,
+      "editorAverageFrameMs": 76.1811752319336,
+      "walkedDistance": 0.0,
+      "cameraSize": 3.5999999046325684,
+      "cameraGroundFocus": {
+        "x": 73.5,
+        "y": 10.5
+      },
+      "actorPosition": {
+        "x": 74.5,
+        "y": 10.5
+      },
+      "fogEnabled": false,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    },
+    {
+      "scenario": "walk-along-wall",
+      "file": "walls-960-walk-along-wall.png",
+      "wallMode": "Cutaway",
+      "visibility": "Normal resident sight radius and line-of-sight fog",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 34500,
+      "actualWallDrawCalls": 2,
+      "editorDrawCalls": 70,
+      "editorBatches": 70,
+      "sampledFrames": 55,
+      "editorAverageFrameMs": 40.74909591674805,
+      "walkedDistance": 3.1009984016418457,
+      "cameraSize": 3.799999952316284,
+      "cameraGroundFocus": {
+        "x": 53.665000915527344,
+        "y": 4.650000095367432
+      },
+      "actorPosition": {
+        "x": 53.665000915527344,
+        "y": 5.750998497009277
+      },
+      "fogEnabled": true,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    },
+    {
+      "scenario": "walls-up",
+      "file": "walls-960-walls-up.png",
+      "wallMode": "Up",
+      "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 76109,
+      "actualWallDrawCalls": 6,
+      "editorDrawCalls": 107,
+      "editorBatches": 107,
+      "sampledFrames": 19,
+      "editorAverageFrameMs": 79.47156524658203,
+      "walkedDistance": 0.0,
+      "cameraSize": 4.3583760261535645,
+      "cameraGroundFocus": {
+        "x": 69.0,
+        "y": 8.5
+      },
+      "actorPosition": {
+        "x": 69.5,
+        "y": 8.5
+      },
+      "fogEnabled": false,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    },
+    {
+      "scenario": "walls-down",
+      "file": "walls-960-walls-down.png",
+      "wallMode": "Down",
+      "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 87210,
+      "actualWallDrawCalls": 5,
+      "editorDrawCalls": 106,
+      "editorBatches": 106,
+      "sampledFrames": 23,
+      "editorAverageFrameMs": 66.70101165771484,
+      "walkedDistance": 0.0,
+      "cameraSize": 4.3583760261535645,
+      "cameraGroundFocus": {
+        "x": 69.0,
+        "y": 8.5
+      },
+      "actorPosition": {
+        "x": 69.5,
+        "y": 8.5
+      },
+      "fogEnabled": false,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    },
+    {
+      "scenario": "aligned-east-west-run",
+      "file": "walls-960-aligned-east-west-run.png",
+      "wallMode": "Up",
+      "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 31797,
+      "actualWallDrawCalls": 4,
+      "editorDrawCalls": 100,
+      "editorBatches": 100,
+      "sampledFrames": 28,
+      "editorAverageFrameMs": 54.92009353637695,
+      "walkedDistance": 0.0,
+      "cameraSize": 2.5,
+      "cameraGroundFocus": {
+        "x": 39.5,
+        "y": 32.150001525878906
+      },
+      "actorPosition": {
+        "x": 69.5,
+        "y": 8.5
+      },
+      "fogEnabled": false,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    },
+    {
+      "scenario": "aligned-north-south-run",
+      "file": "walls-960-aligned-north-south-run.png",
+      "wallMode": "Up",
+      "visibility": "Clairvoyance fixture for unobstructed geometry inspection",
+      "width": 960,
+      "height": 720,
+      "mapSeed": 580023594,
+      "roomIndex": 2,
+      "wallBatches": 30,
+      "wallTriangles": 3722824,
+      "visibleWallTriangles": 21596,
+      "actualWallDrawCalls": 2,
+      "editorDrawCalls": 98,
+      "editorBatches": 98,
+      "sampledFrames": 35,
+      "editorAverageFrameMs": 44.1889533996582,
+      "walkedDistance": 0.0,
+      "cameraSize": 2.5,
+      "cameraGroundFocus": {
+        "x": 54.150001525878906,
+        "y": 15.5
+      },
+      "actorPosition": {
+        "x": 69.5,
+        "y": 8.5
+      },
+      "fogEnabled": false,
+      "wallPieces": [
+        {
+          "id": "door_frame",
+          "placed": 10
+        },
+        {
+          "id": "wall_corner",
+          "placed": 133
+        },
+        {
+          "id": "wall_cutaway_cap",
+          "placed": 1208
+        },
+        {
+          "id": "wall_end_cap",
+          "placed": 6
+        },
+        {
+          "id": "wall_inner_corner",
+          "placed": 127
+        },
+        {
+          "id": "wall_lamp",
+          "placed": 156
+        },
+        {
+          "id": "wall_straight",
+          "placed": 1052
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

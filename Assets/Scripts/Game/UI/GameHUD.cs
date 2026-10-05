@@ -280,6 +280,7 @@ namespace BadAppleHotel.Game
                 return;
             }
 
+            gm.WallFocusRoom = sel != Sel.None ? gm.Human?.Room?.Def : null;
             HandleKeys();
             if (pointerInputBroken) return;
             try
@@ -628,6 +629,10 @@ namespace BadAppleHotel.Game
             var menu = new Rect(10, 10, 64, 30);
             Ui(menu);
             if (GUI.Button(menu, "Menu", centerButton)) { gm.ReturnToMenu(); return; }
+            var walls = new Rect(206, 10, 140, 30);
+            Ui(walls);
+            if (GUI.Button(walls, "Walls: " + gm.WallMode, centerButton))
+                gm.SetWallMode((WallDisplayMode)(((int)gm.WallMode + 1) % 3));
             float[] speeds = { 1f, 2f, 4f };
             for (int i = 0; i < speeds.Length; i++)
             {

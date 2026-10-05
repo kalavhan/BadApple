@@ -217,14 +217,25 @@ namespace BadAppleHotel.Game
 
         public static int OrderFor(float y) => 5000 - Mathf.RoundToInt(y * 10f);
 
+        Material worldSpriteMaterial;
+
         SpriteRenderer MakeSprite(string name, Sprite sprite, Vector2 pos, int order, Transform parent)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
-            go.transform.position = new Vector3(pos.x, pos.y, 0f);
+            go.transform.position = new Vector3(pos.x, pos.y, -0.025f);
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
             sr.sortingOrder = order;
+            if (!Simulation)
+            {
+                if (worldSpriteMaterial == null)
+                {
+                    var shader = Resources.Load<Shader>("Shaders/CharacterSprite");
+                    if (shader != null) worldSpriteMaterial = new Material(shader) { name = "World sprites (depth)" };
+                }
+                if (worldSpriteMaterial != null) sr.sharedMaterial = worldSpriteMaterial;
+            }
             return sr;
         }
 
@@ -271,6 +282,7 @@ namespace BadAppleHotel.Game
                 };
                 r.Pos = LobbySpot(i);
                 r.Sr = MakeSprite(r.Name, Sprites.Resident(i), r.Pos, OrderFor(r.Pos.y), matchRoot);
+                if (!Simulation) ContactShadow.Attach(r.Sr, r.Pos, new Vector2(.65f, .45f));
                 r.LastPos = r.Pos;
                 if (Sprites.UseArt)
                 {

@@ -182,7 +182,7 @@ namespace BadAppleHotel.Game
                         if (t!=null && Vector2.Distance(HotelMap.Center(t.Tile),m.Pos)<8) t.DisabledUntil=Now+6;
                     break;
                 case "phantom":
-                    if (room==null || m.PhasedNight==Night || !TileMovement.CanStand(HotelMap.Center(room.Def.DoorInside),MonsterWalkable,MonsterRadius)) return;
+                    if (room==null || m.PhasedNight==Night || !TileMovement.CanStand(HotelMap.Center(room.Def.DoorInside),MonsterWalkable,MonsterRadius,Walls)) return;
                     m.Pos=HotelMap.Center(room.Def.DoorInside); m.PhasedNight=Night; break;
             }
             m.EvolutionUntil=Now+25*(1-m.CooldownReduction);

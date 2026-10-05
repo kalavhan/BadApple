@@ -30,6 +30,7 @@ namespace BadAppleHotel.Tests
             Assert.IsNotNull(gm.Cfg, gm.ConfigError);
             Assert.IsNotNull(gm.Map, gm.ConfigError);
             gm.StartMatch(Role.Resident, "stitchwork_chef");
+            gm.SetSpeed(0);
             var me = gm.Human;
             // Use a central room so camera movement has room in both directions.
             var room = gm.Map.Rooms.OrderBy(r => Vector2.Distance(r.Center, new Vector2(gm.Map.W / 2, gm.Map.H / 2))).First();
@@ -41,7 +42,8 @@ namespace BadAppleHotel.Tests
             while (Vector2.Distance(HotelView3D.GroundPoint(gm.Cam,new Vector2(Screen.width/2f,Screen.height/2f)), expectedCenter) > 0.01f && Time.realtimeSinceStartup < settle) yield return null;
             var camera = gm.Cam.transform.position;
             gm.DragCamera(new Vector2(-150, 0));
-            for (int i = 0; i < 15; i++) yield return null;
+            float panUntil = Time.realtimeSinceStartup + 2f;
+            while (gm.Cam.transform.position.x <= camera.x + .01f && Time.realtimeSinceStartup < panUntil) yield return null;
             Assert.IsTrue(me.Asleep);
             Assert.AreEqual(resting, me.Pos);
             Assert.Greater(gm.Cam.transform.position.x, camera.x);

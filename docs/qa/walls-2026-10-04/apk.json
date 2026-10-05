@@ -1,0 +1,16 @@
+{
+  "file": "BadAppleHotel-walls.apk",
+  "version": "1.3-hotel-walls",
+  "versionCode": 4,
+  "bytes": 72191019,
+  "sha256": "875e1f889aedcdc06b3a5dee67faa801b048af852f135f2f11b470ca1f99e41b",
+  "unity": "6000.3.24f1",
+  "architectures": [
+    "ARM64",
+    "x86_64"
+  ],
+  "graphics": "OpenGL ES 3",
+  "developmentBuild": false,
+  "signing": "Android debug key",
+  "nativeEngineStripping": false
+}

@@ -14,6 +14,12 @@ namespace BadAppleHotel.EditorTools
         {
             if (!assetPath.StartsWith("Assets/Resources/Art/")) return;
             var ti = (TextureImporter)assetImporter;
+            if (assetPath.StartsWith("Assets/Resources/Art/Walls/"))
+            {
+                // WallKitImporter owns the preview sprite's pivot, size and alpha settings.
+                // Unlike the older art, these are actual imported Sprite assets.
+                return;
+            }
             if (assetPath.StartsWith("Assets/Resources/Art/Materials/") || assetPath.StartsWith("Assets/Resources/Art/Directions/"))
             {
                 ti.textureType = TextureImporterType.Default; ti.alphaIsTransparency = true;

@@ -85,6 +85,11 @@ namespace BadAppleHotel.Game
         {
             if (matchRoot != null) DestroyImmediate(matchRoot.gameObject);
             if (worldRoot != null) DestroyImmediate(worldRoot.gameObject);
+            // A simulation can be created and disabled in EditMode without ever receiving
+            // Awake. Unity does not guarantee OnDestroy for that lifecycle, so explicitly
+            // release the native meshes/materials/textures as well as the scene objects.
+            // The cleanup is idempotent if Unity also sends OnDestroy during destruction.
+            OnDestroy();
             Sprites.ArtOverride = null;
             DestroyImmediate(gameObject);
         }

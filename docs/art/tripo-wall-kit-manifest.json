@@ -1,0 +1,128 @@
+{
+  "date_local": "2026-10-04",
+  "artist": "Josue, manual Tripo image-to-3D generation from original gothic comic wall references",
+  "tripo_job_ids": null,
+  "tripo_generation_settings": null,
+  "job_note": "Job IDs and generation presets were not supplied in the imported exports; no credits or remote generation were used for this bake.",
+  "normalization": {
+    "axes": "X width, Y up, Z depth; front at Z=0; minimum-bounds pivot",
+    "simplifier": "UnityMeshSimplifier 53fdb3122645bcd3ad2c258235200dff3dfbaa9b, MIT, editor only",
+    "method": "Area-weighted broad-face yaw alignment of the master straight panel before bounds fitting; square its short end shoulders before atlas rendering; 1e-5 tile position weld, remove degenerate triangles, quadric simplification; six-view original-albedo reprojection",
+    "atlas": "2048 x 2048 sRGB, 42 cells of 256 x 256 with 4-pixel edge extrusion, mipmaps, Point filter",
+    "door_opening": "1.0 tile between .1-wide posts, clear at floor including base moulding",
+    "preview": "512 x 512 transparent PNG; orthographic 45 degree azimuth, 50 degree elevation",
+    "triangle_budget_per_piece": 1500,
+    "straight_panel": "Correct source yaw by +3.8504 degrees in Y before anisotropic normalization, then square the .055-tile end shoulders into a shared continuous profile; 1200 triangles",
+    "lamp_panel": "Reuse the exact master straight mesh and atlas regions, add the imported sconce clipped from its source wall at Z=.142, simplified to 299 triangles and fitted in depth to the shared panel front recess; 1499 triangles total",
+    "continuity_validation": "Area-weighted broad-face yaw under 1 degree; triangle-ray cross sections at 39 heights reach both ends and differ by less than .02 tile; lamp and plain panel end profiles match within .001 tile; five-module game-angle and top-down previews"
+  },
+  "pieces": [
+    {
+      "id": "wall_straight",
+      "source": "Assets/TripoModels/ornate_wooden_cabinet_3d_model/ornate_wooden_cabinet_3d_model.fbx",
+      "source_sha256": "b80f514494160b179966fc361750c8eeb859e99fa90492cb4173762b63d148f6",
+      "source_albedo": "Assets/TripoModels/ornate_wooden_cabinet_3d_model/ornate_wooden_cabinet_3d_model.fbm/ornate_wooden_cabinet_3d_model_BaseColor.JPEG",
+      "source_albedo_sha256": "0e131b10517944b8bc4360d4662799fd33e191579b9e2c4bc6d59825cd40b372",
+      "source_triangles": 10404,
+      "baked_triangles": 1200,
+      "size_width_depth_height": [
+        1,
+        0.3,
+        1.7
+      ],
+      "reference_png_sha256": "ee0f120e67ebe9e3ccd3e369572314b2a95af17083fcc762359167e6b9694fbe"
+    },
+    {
+      "id": "wall_lamp",
+      "source": "Assets/TripoModels/decorative_wall_panel_3d_model/decorative_wall_panel_3d_model.fbx",
+      "source_sha256": "fc72ffa275efc8ea39f9f681e1715e674364c6397e714bcff54adb8adc8c59e6",
+      "source_albedo": "Assets/TripoModels/decorative_wall_panel_3d_model/decorative_wall_panel_3d_model.fbm/decorative_wall_panel_3d_model_BaseColor.JPEG",
+      "source_albedo_sha256": "61bdfdd56255d0ae1122ee0e3260c59f0e7c1a90a109cbdf155be59451dadc41",
+      "source_triangles": 1932011,
+      "baked_triangles": 1499,
+      "size_width_depth_height": [
+        1,
+        0.3,
+        1.7
+      ],
+      "reference_png_sha256": "b2f2b3edf96d1bf5a205b7f6d772355310316ca6639c80b16bbfbb2a860834f1",
+      "shared_panel_source": "wall_straight",
+      "source_usage": "Imported sconce geometry and albedo; panel, crown, and base use the continuous master straight mesh."
+    },
+    {
+      "id": "wall_corner",
+      "source": "Assets/TripoModels/ornate_wooden_pedestal_3d_model/ornate_wooden_pedestal_3d_model.fbx",
+      "source_sha256": "ea096e5baca197e3db3540b190158c1966a89544f96a7cf83a68868a78dc3839",
+      "source_albedo": "Assets/TripoModels/ornate_wooden_pedestal_3d_model/ornate_wooden_pedestal_3d_model.fbm/ornate_wooden_pedestal_3d_model_BaseColor.JPEG",
+      "source_albedo_sha256": "81df8f03573046693bec630808d6ff513422cee68e04e92d707b80855bf238ed",
+      "source_triangles": 1916892,
+      "baked_triangles": 1500,
+      "size_width_depth_height": [
+        0.3,
+        0.3,
+        1.7
+      ],
+      "reference_png_sha256": "082433654c980d9f7153be95a20b7dcd0996d38345196f99f5369c5567514948"
+    },
+    {
+      "id": "wall_inner_corner",
+      "source": "Assets/TripoModels/ornate_column_3d_model/ornate_column_3d_model.fbx",
+      "source_sha256": "8898f2bdd49b3ccfe7ad48e29ad2e60c6cdc1a19d09225df88443696f82aa969",
+      "source_albedo": "Assets/TripoModels/ornate_column_3d_model/ornate_column_3d_model.fbm/ornate_column_3d_model_BaseColor.JPEG",
+      "source_albedo_sha256": "c7f6904386d4093f78dc2049f109952fa6a1c422ba9535fdadb2ff8763461950",
+      "source_triangles": 1970974,
+      "baked_triangles": 1500,
+      "size_width_depth_height": [
+        0.3,
+        0.3,
+        1.7
+      ],
+      "reference_png_sha256": "3fbc88da9dc7adea25643f012ef443f22021bdcde1ccb9e568de4c6ebd22a598"
+    },
+    {
+      "id": "wall_end_cap",
+      "source": "Assets/TripoModels/ornate_wooden_pedestal_3d_model_1/ornate_wooden_pedestal_3d_model_1.fbx",
+      "source_sha256": "2c33cbbdc4d0d3e515a94cc6e2d4635c5842a37bcd96c5105e6440e2647e786f",
+      "source_albedo": "Assets/TripoModels/ornate_wooden_pedestal_3d_model_1/ornate_wooden_pedestal_3d_model_1.fbm/ornate_wooden_pedestal_3d_model_1_BaseColor.JPEG",
+      "source_albedo_sha256": "529d39016a3b9dad318eb70a92ebf758b203bfa3045ba5e14743814c150b3581",
+      "source_triangles": 1894644,
+      "baked_triangles": 1500,
+      "size_width_depth_height": [
+        0.3,
+        0.3,
+        1.7
+      ],
+      "reference_png_sha256": "a86f5bc01320f09dce11a3258269d08c9e7f1be453f028b98be96dfe4ff28738"
+    },
+    {
+      "id": "door_frame",
+      "source": "Assets/TripoModels/wooden_console_table_3d_model/wooden_console_table_3d_model.fbx",
+      "source_sha256": "c57cfc0d530a8fffb1e0ca0eb180dfa7d79ad6005380fc18cb51e41ced78a378",
+      "source_albedo": "Assets/TripoModels/wooden_console_table_3d_model/wooden_console_table_3d_model.fbm/wooden_console_table_3d_model_BaseColor.JPEG",
+      "source_albedo_sha256": "efab15c90f5e8e1c7833e415b83ee308b148df2973b811b3499913626420898c",
+      "source_triangles": 1974345,
+      "baked_triangles": 1500,
+      "size_width_depth_height": [
+        1.2,
+        0.3,
+        1.7
+      ],
+      "reference_png_sha256": "d4347aebdc3c62d82d4a1793c011d1ff49bd01c0c8b926fe22e967d073a2103b"
+    },
+    {
+      "id": "wall_cutaway_cap",
+      "source": "Assets/TripoModels/wooden_cabinet_3d_model/wooden_cabinet_3d_model.fbx",
+      "source_sha256": "f7d3e6945c2216d616e7eebd6c402404646b4a0f8b37d35d577ba73d7ad5c813",
+      "source_albedo": "Assets/TripoModels/wooden_cabinet_3d_model/wooden_cabinet_3d_model.fbm/wooden_cabinet_3d_model_BaseColor.JPEG",
+      "source_albedo_sha256": "89293ba33d0827dbb443c5e176fd483d63c827187077b4a7151ab17cfdff2db4",
+      "source_triangles": 1971466,
+      "baked_triangles": 1500,
+      "size_width_depth_height": [
+        1,
+        0.3,
+        0.45
+      ],
+      "reference_png_sha256": "84f05fe4bfe2313fcc7983f9868d77c6c9fe733c810d1279c4044ddd93342f75"
+    }
+  ]
+}

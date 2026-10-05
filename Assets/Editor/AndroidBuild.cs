@@ -14,6 +14,7 @@ namespace BadAppleHotel.EditorTools
             if (string.IsNullOrEmpty(output)) output = Path.GetFullPath("Builds/BadAppleHotel-test.apk");
             Directory.CreateDirectory(Path.GetDirectoryName(output));
             EditorSetup.Run();
+            WallShaderBuildGuard.PreserveRuntimeInstancing();
             PlayerSettings.SetApplicationIdentifier(UnityEditor.Build.NamedBuildTarget.Android, "com.kalavhan.badapplehotel");
             PlayerSettings.SetScriptingBackend(UnityEditor.Build.NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             // Unity's stripped Android player loses the built-in GUISkin/MonoScript data:
@@ -25,8 +26,8 @@ namespace BadAppleHotel.EditorTools
             PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
             PlayerSettings.Android.useCustomKeystore = false;
-            PlayerSettings.bundleVersion = "1.2-isometric";
-            PlayerSettings.Android.bundleVersionCode = 3;
+            PlayerSettings.bundleVersion = "1.3-hotel-walls";
+            PlayerSettings.Android.bundleVersionCode = 4;
             EditorUserBuildSettings.buildAppBundle = false;
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
