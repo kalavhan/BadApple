@@ -11,8 +11,26 @@ namespace BadAppleHotel.Game
 
     public partial class GameManager
     {
-        const float ResidentRadius = 0.25f;
-        const float MonsterRadius = 0.3f;
+        public const float ResidentRadius = 0.3f;
+        public const float MonsterRadius = 0.38f;
+
+        [Range(.1f, .45f)] public float WallThickness = .3f;
+        WallGraph movementWalls;
+        float movementWallThickness;
+        public WallGraph Walls
+        {
+            get
+            {
+                if (Map == null) return null;
+                float thickness = Mathf.Clamp(WallThickness, .1f, .45f);
+                if (movementWalls == null || movementWalls.Map != Map || !Mathf.Approximately(thickness, movementWallThickness))
+                {
+                    movementWalls = WallGraph.Build(Map, thickness);
+                    movementWallThickness = thickness;
+                }
+                return movementWalls;
+            }
+        }
 
         // ------------------------------------------------------------------ walking
 
@@ -62,17 +80,17 @@ namespace BadAppleHotel.Game
             }
         }
 
-        static bool CanStand(Vector2 p, System.Func<int, int, bool> walkable, float r)
+        bool CanStand(Vector2 p, System.Func<int, int, bool> walkable, float r)
         {
-            return TileMovement.CanStand(p, walkable, r);
+            return TileMovement.CanStand(p, walkable, r, Walls);
         }
 
-        static Vector2 Slide(Vector2 p, Vector2 delta, System.Func<int, int, bool> walkable, float r)
+        Vector2 Slide(Vector2 p, Vector2 delta, System.Func<int, int, bool> walkable, float r)
         {
-            return TileMovement.Slide(p, delta, walkable, r);
+            return TileMovement.Slide(p, delta, walkable, r, Walls);
         }
 
-        static Vector2 Unstick(Vector2 p, System.Func<int, int, bool> walkable, float r, Vector2 fallback)
+        Vector2 Unstick(Vector2 p, System.Func<int, int, bool> walkable, float r, Vector2 fallback)
         {
             var c = HotelMap.ToTile(p);
             for (int radius = 1; radius <= 5; radius++)
@@ -108,7 +126,7 @@ namespace BadAppleHotel.Game
                 {
                     if (r.IsHuman && move.sqrMagnitude > 0.01f) r.SleepRequested = false;
                     else if (OnBed(r)) TrySleep(r);
-                    else move = r.Navigator.Steer(ref r.Pos, r.Room.Def.BedTile, walk, ResidentRadius, dt, now);
+                    else move = r.Navigator.Steer(ref r.Pos, r.Room.Def.BedTile, walk, ResidentRadius, dt, now, Walls);
                 }
                 // Sleeping guests stay anchored to their bed.
                 if (r.Asleep) move = Vector2.zero;
@@ -174,6 +192,7 @@ namespace BadAppleHotel.Game
                 bool attacking = !r.Asleep && Now < r.AttackUntil;
                 r.Anim.Drive(HotelView3D.Facing(r.Facing), moving, attacking);
             }
+            ContactShadow.Place(r.Sr, r.Pos, !r.Asleep && r.Alive);
             r.LastPos = r.Pos;
         }
 
@@ -457,7 +476,11 @@ namespace BadAppleHotel.Game
             var pos = HotelMap.Center(tile);
             var t = new TowerInstance { Def = def, Level = 1, SlotIndex = slot, Tile = tile };
             t.Sr = MakeSprite(def.name, TowerDirections.Get(def.id,1,Vector2.down) ?? Sprites.Tower(def, 1), pos, OrderFor(pos.y), matchRoot);
-            if (!Simulation) HotelView3D.Billboard(t.Sr, pos);
+            if (!Simulation)
+            {
+                HotelView3D.Billboard(t.Sr, pos);
+                ContactShadow.Attach(t.Sr, pos, new Vector2(.85f, .62f));
+            }
             room.Slots[slot] = t;
 
             // anyone standing on the plate gets nudged off it

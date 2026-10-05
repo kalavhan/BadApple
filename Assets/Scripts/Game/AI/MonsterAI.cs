@@ -50,7 +50,7 @@ namespace BadAppleHotel.Game
                     var current = gm.Map.RoomContainingWorld(me.Pos);
                     var escape = current != null && gm.RoomsByDef.TryGetValue(current, out var room) && room.DoorBlocks
                         ? room.Def.DoorInside : me.Lair.Def.BedTile;
-                    return navigator.Steer(ref me.Pos, escape, gm.MonsterWalkable, 0.3f, dt, now);
+                    return navigator.Steer(ref me.Pos, escape, gm.MonsterWalkable, GameManager.MonsterRadius, dt, now, gm.Walls);
                 }
             }
             ThinkAbilities();
@@ -85,7 +85,7 @@ namespace BadAppleHotel.Game
                     {
                         var candidate=center+tangent*side;
                         float score=gm.ThreatAt(candidate,me);
-                        if (score<threat && TileMovement.Clear(me.Pos,candidate,gm.MonsterWalkable,0.3f)) { best=candidate; threat=score; }
+                        if (score<threat && TileMovement.Clear(me.Pos,candidate,gm.MonsterWalkable,GameManager.MonsterRadius,gm.Walls)) { best=candidate; threat=score; }
                     }
                     return Vector2.ClampMagnitude((best-me.Pos)*5,1);
                 }
@@ -207,7 +207,7 @@ namespace BadAppleHotel.Game
         Vector2 FollowPath()
         {
             if (targetRes != null && !GoalIsDoor() && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me))) goal = HotelMap.ToTile(targetRes.Pos);
-            return navigator.Steer(ref me.Pos, goal, gm.MonsterWalkable, 0.3f, tickDt, tickNow);
+            return navigator.Steer(ref me.Pos, goal, gm.MonsterWalkable, GameManager.MonsterRadius, tickDt, tickNow, gm.Walls);
         }
 
         // ------------------------------------------------------------ abilities & upgrades

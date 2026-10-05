@@ -90,16 +90,28 @@ namespace BadAppleHotel.Game
 
         RoomDef PickRoom()
         {
-            var free = gm.Map.Rooms.Where(gm.IsRoomFree).ToList();
-            if (free.Count == 0) return null;
-            free.Sort((a, b) => Vector2.Distance(a.Center, me.Pos).CompareTo(Vector2.Distance(b.Center, me.Pos)));
-            int pick = Random.Range(0, Mathf.Min(4, free.Count));
-            return free[pick];
+            var routes = new List<(RoomDef room, int distance)>();
+            var start = HotelMap.ToTile(me.Pos);
+            foreach (var room in gm.Map.Rooms)
+            {
+                if (!gm.IsRoomFree(room)) continue;
+                var path = Pathfinding.FindPath(start, room.DoorInside, (x, y) => gm.WalkableFor(me, x, y));
+                if (path != null) routes.Add((room, path.Count));
+            }
+            if (routes.Count == 0) return null;
+            // A room across a wall can be close on screen but a long corridor walk away.
+            // Keep personality in the choice without sending guests on avoidable detours
+            // that leave them unclaimed when lights go out.
+            routes.Sort((a, b) => a.distance != b.distance ? a.distance.CompareTo(b.distance) : a.room.Index.CompareTo(b.room.Index));
+            float limit = routes[0].distance + Mathf.Max(8, routes[0].distance * .35f);
+            int choices = Mathf.Min(4, routes.Count);
+            while (choices > 1 && routes[choices - 1].distance > limit) choices--;
+            return routes[Random.Range(0, choices)].room;
         }
 
         Vector2 WalkTo(Vector2Int goal)
         {
-            return me.Navigator.Steer(ref me.Pos, goal, (x, y) => gm.WalkableFor(me, x, y), 0.25f, tickDt, tickNow);
+            return me.Navigator.Steer(ref me.Pos, goal, (x, y) => gm.WalkableFor(me, x, y), GameManager.ResidentRadius, tickDt, tickNow, gm.Walls);
         }
 
         // ------------------------------------------------------------ spending

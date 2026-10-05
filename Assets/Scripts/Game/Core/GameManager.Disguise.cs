@@ -46,6 +46,7 @@ namespace BadAppleHotel.Game
             InitializeProgression(m);
             m.Hp = MaxHp(m);
             m.Sr = MakeSprite("Monster", Sprites.Monster(m.Def.id), m.Pos, OrderFor(m.Pos.y), matchRoot);
+            if (!Simulation) ContactShadow.Attach(m.Sr, m.Pos, new Vector2(.8f, .56f));
             if (Sprites.UseArt) m.Anim = CharacterAnimator.Attach(m.Sr, CharacterSet.Load(m.Def.id, 2.1f));
             if (!m.IsHuman) m.Ai = new MonsterAI(this, m);
             guest.Alive = false;

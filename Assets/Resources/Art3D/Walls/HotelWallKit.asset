@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5763fd98d84fce8aad2d18218bd51a3, type: 3}
+  m_Name: HotelWallKit
+  m_EditorClassIdentifier: BadAppleHotel::BadAppleHotel.Game.WallKit
+  Atlas: {fileID: 2800000, guid: 15170548476b22786aa4cb6e6a7bbc97, type: 3}
+  Pieces:
+  - Id: wall_straight
+    Mesh: {fileID: 4300000, guid: bf862764aed56900ea05c058480f4261, type: 2}
+    Size: {x: 1, y: 1.7, z: 0.3}
+    Preview: {fileID: 21300000, guid: e368fbedf0a3893c091c1d8d118150f9, type: 3}
+    Source: Assets/TripoModels/ornate_wooden_cabinet_3d_model/ornate_wooden_cabinet_3d_model.fbx
+    SourceTriangles: 10404
+    Triangles: 1200
+  - Id: wall_lamp
+    Mesh: {fileID: 4300000, guid: c0107beb2942dd2d6bc0c00720d68fb5, type: 2}
+    Size: {x: 1, y: 1.7, z: 0.3}
+    Preview: {fileID: 21300000, guid: cbd9f03e91a2576b781a42ea8c04b879, type: 3}
+    Source: Assets/TripoModels/decorative_wall_panel_3d_model/decorative_wall_panel_3d_model.fbx
+    SourceTriangles: 1932011
+    Triangles: 1499
+  - Id: wall_corner
+    Mesh: {fileID: 4300000, guid: a122109c149d48a13a65b0aa781bc38c, type: 2}
+    Size: {x: 0.3, y: 1.7, z: 0.3}
+    Preview: {fileID: 21300000, guid: 8213c22a359e0c14f92fd37dd3b6f4e7, type: 3}
+    Source: Assets/TripoModels/ornate_wooden_pedestal_3d_model/ornate_wooden_pedestal_3d_model.fbx
+    SourceTriangles: 1916892
+    Triangles: 1500
+  - Id: wall_inner_corner
+    Mesh: {fileID: 4300000, guid: e05c90f8bfe74e59ebbe1cd9a6e44bfc, type: 2}
+    Size: {x: 0.3, y: 1.7, z: 0.3}
+    Preview: {fileID: 21300000, guid: 40960faae982a8a7b8e51a712afb877f, type: 3}
+    Source: Assets/TripoModels/ornate_column_3d_model/ornate_column_3d_model.fbx
+    SourceTriangles: 1970974
+    Triangles: 1500
+  - Id: wall_end_cap
+    Mesh: {fileID: 4300000, guid: de874612244d52408acd5033d540280f, type: 2}
+    Size: {x: 0.3, y: 1.7, z: 0.3}
+    Preview: {fileID: 21300000, guid: ca6c12c434fc7f9b89a51dfc0c0ca164, type: 3}
+    Source: Assets/TripoModels/ornate_wooden_pedestal_3d_model_1/ornate_wooden_pedestal_3d_model_1.fbx
+    SourceTriangles: 1894644
+    Triangles: 1500
+  - Id: door_frame
+    Mesh: {fileID: 4300000, guid: 3ef530f9f04166d43aa92ebb65cd21b6, type: 2}
+    Size: {x: 1.2, y: 1.7, z: 0.3}
+    Preview: {fileID: 21300000, guid: 34bd13714c105ac96ba507e2af5703d9, type: 3}
+    Source: Assets/TripoModels/wooden_console_table_3d_model/wooden_console_table_3d_model.fbx
+    SourceTriangles: 1974345
+    Triangles: 1500
+  - Id: wall_cutaway_cap
+    Mesh: {fileID: 4300000, guid: 26632f16364fde030b12e232c0e40269, type: 2}
+    Size: {x: 1, y: 0.45, z: 0.3}
+    Preview: {fileID: 21300000, guid: 760901d025df918b499b874ee1990fb3, type: 3}
+    Source: Assets/TripoModels/wooden_cabinet_3d_model/wooden_cabinet_3d_model.fbx
+    SourceTriangles: 1971466
+    Triangles: 1500

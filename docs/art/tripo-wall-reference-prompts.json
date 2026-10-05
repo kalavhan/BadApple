@@ -1,0 +1,83 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "date": "2026-10-04",
+  "purpose": "Original gothic comic references used by Josue for the manually generated wall models, then baked by WallKitImporter.",
+  "prompts": [
+    {
+      "name": "wall_straight",
+      "prompt": "Use case: stylized-concept. Asset: wall_straight, a single isolated reference sprite for image-to-3D reconstruction of a modular hotel wall. Make an ORIGINAL dark gothic comic game asset, cozy and faintly sinister, late-20th-century grand-hotel furnishings; no movie, filmmaker, character, franchise or recognizable set reference. One physical object only, transparent background, full object uncropped with generous empty margins, no floor, no base platform, no surrounding scene, no text or diagram or cast shadow.\nGeometry: a straight upright rectangular wall slab with exact visual proportions WIDTH 1 : DEPTH 0.3 : HEIGHT 1.7. Front decorated, back flat. Clean perfectly straight flush vertical ends and flat top/bottom allow identical slabs to join seamlessly. No side pillars, no end cap ornament jutting beyond the width. Show a near-front orthographic three-quarter view, about 20 degrees horizontal turn and 10 degrees elevation, so the broad front, narrow right edge, and a little top are visible. No perspective convergence.\nFront design: lower THIRD dark walnut wainscoting with two broad recessed rectangular panels, subtly bevelled rectangular frames and heavy baseboard; a thin continuous aged brass chair rail exactly at one-third wall height; upper two-thirds deep oxblood/burgundy wallpaper with a moderately sized repeating gothic botanical damask motif. Abstract sly smiling curves hidden very subtly in the botanical pattern, not a face or character. Restrained dark walnut stepped crown molding across the top, straight modular seams. Palette oxblood #5A1A1E, walnut #3B2418, brass #B08A3E, subtle amber highlights #F2B35C, ink shadow #1A0E10. Warm, rich but clearly readable.\nStyle: stylized low-poly form translated into a crisp hand-painted comic sprite, strong clean silhouettes, restrained ink outlines, graphic shadow planes and small visible pixel-like texture clusters, no photorealism, no blurry painterly brushwork. Slightly irregular decorative carving inside the panels, while the outer modular dimensions stay rectangular. Even neutral warm illumination sufficient to see geometry, no baked spotlight. This is the master style for a matching wall kit. Output a high-resolution portrait PNG with real transparency."
+    },
+    {
+      "name": "wall_lamp",
+      "prompt": "Use case: stylized-concept. Make one isolated PNG reference sprite for a modular 3D hotel game asset. The supplied wall image is the exact MATERIAL, PALETTE, CARVING, and COMIC-RENDERING reference. Match its walnut grain, restrained ink edges, deep burgundy sly botanical damask, worn brass and clean low-poly forms. Original cozy dark gothic comic design; no movie, filmmaker, franchise, or character reference. Full object visible, generous margin, true transparent background including around the silhouette; NO background glow, halo, ground shadow, floor, stand, text, dimensions, collage or multiple views. Orthographic three-quarter asset view with a little top and right side visible, close to the reference's camera. Keep all construction join edges straight and square. Create the SAME full-height straight wall module as the reference, width 1 depth .3 height 1.7, with exactly the same wallpaper, two lower walnut panels, brass chair rail at the lower third and top crown molding. Add ONE sculptural aged-brass art-deco hotel sconce at two-thirds wall height, centered horizontally. A small angular brass backplate and short slightly jaunty curved arm support a compact tapered amber fabric shade with visible pleats, capped by a tiny brass finial. Warm amber material glow INSIDE the shade only; no bloom or illumination outside the object. The shade reads as a separate physical piece for future emission material, with clearly defined silhouette. The sconce must look mounted and modestly project forward. No electrical cable, no candle, no extra light. Preserve the rectangular wall outline and flat join ends. No other changes to the wall.",
+      "reference": "wall_straight.png"
+    },
+    {
+      "name": "wall_corner",
+      "prompt": "Use case: stylized-concept. Make one isolated PNG reference sprite for a modular 3D hotel game asset. The supplied wall image is the exact MATERIAL, PALETTE, CARVING, and COMIC-RENDERING reference. Match its walnut grain, restrained ink edges, deep burgundy sly botanical damask, worn brass and clean low-poly forms. Original cozy dark gothic comic design; no movie, filmmaker, franchise, or character reference. Full object visible, generous margin, true transparent background including around the silhouette; NO background glow, halo, ground shadow, floor, stand, text, dimensions, collage or multiple views. Orthographic three-quarter asset view with a little top and right side visible, close to the reference's camera. Keep all construction join edges straight and square. Create ONLY one narrow SQUARE OUTER CORNER PILASTER POST, NOT a wall panel. Target dimensions width .3 depth .3 height 1.7: slim tall vertical post, square solid cross-section, two exterior faces visible. Entirely dark walnut with elegant recessed rectangular wood panels, a narrow worn-brass chair-rail band wrapping around at one-third height to match the reference wall, dark stepped crown cap matching the wall top, and understated brass base and top accents. Upper two-thirds are walnut wood, NOT wallpaper. Flat rear joining faces, no protruding wall wings, no platform or pedestal beyond the post footprint. The base, one-third band and crown align to the reference module's respective levels. Graphic carved contours with a gently crooked ornamental line INSIDE an otherwise square straight modular boundary. This is the corner connector for two walls meeting at 90 degrees. Single post alone.",
+      "reference": "wall_straight.png"
+    },
+    {
+      "name": "wall_cutaway_cap",
+      "prompt": "Use case: stylized-concept. Make one isolated PNG reference sprite for a modular 3D hotel game asset. The supplied wall image is the exact MATERIAL, PALETTE, CARVING, and COMIC-RENDERING reference. Match its walnut grain, restrained ink edges, deep burgundy sly botanical damask, worn brass and clean low-poly forms. Original cozy dark gothic comic design; no movie, filmmaker, franchise, or character reference. Full object visible, generous margin, true transparent background including around the silhouette; NO background glow, halo, ground shadow, floor, stand, text, dimensions, collage or multiple views. Orthographic three-quarter asset view with a little top and right side visible, close to the reference's camera. Keep all construction join edges straight and square. Create ONLY the short low wall version of this wall kit. Target dimensions width 1 depth .3 height .45: a wide, low rectangular wainscot module, around twice as wide as tall, NOT a full-height wall and NOT a tower. Two recessed dark walnut panels with the same bevelled frames and wood grain as the reference's lower third, matching substantial bottom baseboard, and a continuous aged brass chair rail capping the top. The top is a clean FLAT walnut coping surface with thin brass edging, finished and solid. No wallpaper, no vertical post above the cap, no tall crown. Decorated front, plain back, square flush joining ends, all trim inside nominal footprint. Preserve the reference style and colors. Show enough top surface that Tripo sees its .3 depth.",
+      "reference": "wall_straight.png"
+    },
+    {
+      "name": "wall_inner_corner",
+      "prompt": "Use case: stylized-concept. One standalone image-to-3D reference sprite for Bad Apple Hotel. The supplied image is the MASTER style/material reference: use the same deep oxblood #5A1A1E sly botanical damask, dark walnut #3B2418 carved paneling, aged brass #B08A3E, warm amber #F2B35C accents and dark comic ink edges. Original dark gothic comic grand-hotel design with cozy, quietly macabre humor. No specific film, filmmaker, character, franchise, recognizable real hotel, or set design. Crisp stylized low-poly forms and textured comic shading, not photoreal. One object only, entire silhouette visible with empty margins, three-quarter orthographic view from slightly above, transparent empty background, NO halo, vignette, ground shadow, floor, stand, labels, text, dimension lines, collage or extra objects. All modular joints straight and square; restrained ornamental crookedness inside structural boundaries only. Asset: a COMPACT CONCAVE INNER CORNER TRIM, .3 wide \u00d7 .3 deep \u00d7 1.7 tall. This is a slim vertical L-shaped connector viewed looking into its inward 90-degree angle; two short narrow decorated faces form a V in the image, visibly CONCAVE, not a convex square post and not two full-width walls. Each of its two short wings extends only .3 tile; total silhouette is slim and tall, about 5 times taller than its width. Lower one-third walnut wainscot, thin brass chair rail wrapping continuously through the inner angle at one-third height, upper two-thirds red damask; dark stepped crown and walnut baseboard turn through the same inside corner. Both wings end in flat clean mating edges. Open inward groove visible from top to base, no protruding central post, no big base platform. The interior corner is structural geometry, not wallpaper depicting a corner. Match the master wall's trim levels and materials.",
+      "reference": "wall_straight.png"
+    },
+    {
+      "name": "wall_end_cap",
+      "prompt": "Use case: stylized-concept. One standalone image-to-3D reference sprite for Bad Apple Hotel. The supplied image is the MASTER style/material reference: use the same deep oxblood #5A1A1E sly botanical damask, dark walnut #3B2418 carved paneling, aged brass #B08A3E, warm amber #F2B35C accents and dark comic ink edges. Original dark gothic comic grand-hotel design with cozy, quietly macabre humor. No specific film, filmmaker, character, franchise, recognizable real hotel, or set design. Crisp stylized low-poly forms and textured comic shading, not photoreal. One object only, entire silhouette visible with empty margins, three-quarter orthographic view from slightly above, transparent empty background, NO halo, vignette, ground shadow, floor, stand, labels, text, dimension lines, collage or extra objects. All modular joints straight and square; restrained ornamental crookedness inside structural boundaries only. Asset: a SLIM WALL END CAP, width .3 depth .3 height 1.7. A single narrow rectangular vertical finishing strip for the exposed end of a hotel wall, viewed primarily from its outward front face with one plain narrow side visible. Entirely DARK WALNUT, no wallpaper or red panels anywhere. The outward face has a slender recessed rectangular upper wood panel and shorter lower wood panel. Thin brass chair rail at exactly one-third height, matching baseboard and stepped crown at base/top. The back is plain and flat to mate with a wall end; side faces are flat and UNDECORATED unlike a corner post. Keep widths of all elements inside a square .3 footprint: no finials, no oversized top or pedestal, no attached wall panels. Elegant end-grain wood and subtle brass accents with the same master carving.",
+      "reference": "wall_straight.png"
+    },
+    {
+      "name": "door_frame",
+      "prompt": "Use case: stylized-concept. One standalone image-to-3D reference sprite for Bad Apple Hotel. The supplied image is the MASTER style/material reference: use the same deep oxblood #5A1A1E sly botanical damask, dark walnut #3B2418 carved paneling, aged brass #B08A3E, warm amber #F2B35C accents and dark comic ink edges. Original dark gothic comic grand-hotel design with cozy, quietly macabre humor. No specific film, filmmaker, character, franchise, recognizable real hotel, or set design. Crisp stylized low-poly forms and textured comic shading, not photoreal. One object only, entire silhouette visible with empty margins, three-quarter orthographic view from slightly above, transparent empty background, NO halo, vignette, ground shadow, floor, stand, labels, text, dimension lines, collage or extra objects. All modular joints straight and square; restrained ornamental crookedness inside structural boundaries only. Asset: a HOTEL ROOM DOOR FRAME ONLY, NOT a whole wall. A freestanding inverted-U walnut surround with two straight jambs joined by a stepped lintel/crown. Clear hollow rectangular passage from floor to lintel, fully TRANSPARENT in the opening. There is NO door leaf, no wall infill, no threshold/floor, no background rectangle. Outer width about 1.2, depth .3, height 1.7; opening about 1 tile wide. Slim .1-tile jambs with carved inset lines, slightly worn brass trim, same walnut stepped base and crown profiles as the reference wall. A small blank horizontal oval brass room-number plaque centered on the lintel, no number or lettering so numbers can be added in-game. No massive pediment increasing height, no arch, no handle. Elegant original gloomy hotel architecture, legible simple silhouette for reconstruction. The frame must be physically connected at the top.",
+      "reference": "wall_straight.png"
+    },
+    {
+      "name": "wall_corner",
+      "revision": 2,
+      "prompt": "Edit this single gothic comic hotel corner-post sprite. Preserve its entire silhouette, square cross-section, height, camera, top walnut crown, brass cap and base, and all existing upper walnut carving EXACTLY. Make one material correction: REPLACE ALL RED WALLPAPER in the two lower recessed faces with DARK WALNUT WOOD matching the upper post. The whole post must be wood with brass accents, with NO red or wallpaper left anywhere. The lower rectangular faces should have the same recessed carved wooden panel frames as the upper faces. Keep the horizontal brass rail at its existing height. Keep image isolated on true transparent background; remove any faint decorative haze outside the object's silhouette. No floor, no text, no new objects.",
+      "reference": "first generated wall_corner"
+    },
+    {
+      "name": "door_frame",
+      "revision": 2,
+      "prompt": "Edit this hotel door-frame reference sprite. Preserve its original dark gothic comic rendering, dark walnut grain, worn brass palette, flat crown, blank oval brass plaque, orthographic camera and open inverted-U construction. Make the two vertical jambs HALF as wide as now, expanding the clear opening inward while retaining the outer frame width. The passage should be about 83 percent of the external front width. Both vertical jambs are slim, equal-width straight wood strips. Replace all red wallpaper on the jambs and lintel with carved walnut wood; this entire frame is walnut with thin brass trim, no wallpaper anywhere. Keep delicate inset carved lines on the wood, not bulky pillar panels. The plaque can remain on a shallow walnut lintel. Completely EMPTY transparent opening, no door leaf, threshold, floor, stand or infill. True transparent background with no halo/haze outside or inside the frame. Keep the full object uncropped and large margins. No text, labels or dimensions.",
+      "reference": "first generated door_frame"
+    }
+  ],
+  "selectedFiles": [
+    {
+      "name": "wall_straight",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-d74c6436-2268-440d-9bbb-584b63f42734.png"
+    },
+    {
+      "name": "wall_lamp",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-c0a12d68-019b-4018-a03c-abc2297b1945.png"
+    },
+    {
+      "name": "wall_corner",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-d40008ee-1512-4923-878e-efabd1628868.png"
+    },
+    {
+      "name": "wall_inner_corner",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-b1947800-99b7-442f-be0d-668c4e705ef4.png"
+    },
+    {
+      "name": "wall_end_cap",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-72b5c403-3d53-4d8e-ae5b-090633cd5adb.png"
+    },
+    {
+      "name": "door_frame",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-f4be44d4-0403-4d9c-bc35-3b0d2ee5a066.png"
+    },
+    {
+      "name": "wall_cutaway_cap",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-6e307543-85eb-45c4-a3dd-195b8658e8c3.png"
+    }
+  ]
+}

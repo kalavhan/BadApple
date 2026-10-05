@@ -129,6 +129,7 @@ namespace BadAppleHotel.Game
             else if (now < m.BurnUntil) tint = new Color(1f, 0.8f, 0.55f);
             if (now < m.CloakUntil) tint.a = 0.35f;
             m.Sr.color = tint;
+            ContactShadow.Place(m.Sr, m.Pos, true);
             DrawAscensionAura(m);
         }
 
@@ -316,6 +317,7 @@ namespace BadAppleHotel.Game
             m.Kills++;
             r.DreamPower = 0f;
             r.Faith = 0f;
+            ContactShadow.Place(r.Sr, r.Pos, false);
             r.Sr.sprite = Sprites.Ghost;
             r.Sr.transform.rotation = Quaternion.identity;
             r.Sr.transform.localScale = Vector3.one;

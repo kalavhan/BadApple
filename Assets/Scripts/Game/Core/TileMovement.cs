@@ -1,59 +1,112 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace BadAppleHotel.Game
 {
     public static class TileMovement
     {
-        public static bool CanStand(Vector2 p, Func<int, int, bool> walk, float radius)
+        // The same footprint rectangles feed visible wall meshes and collision. Index them by
+        // tile so continuous movement only tests nearby faces, including solid separator cores.
+        sealed class WallIndex
         {
+            readonly List<Rect>[] cells;
+            readonly int width, height;
+            public WallIndex(WallGraph graph)
+            {
+                width = graph.Map.W; height = graph.Map.H;
+                cells = new List<Rect>[width * height];
+                foreach (var rect in graph.CollisionFootprints)
+                    for (int x = Mathf.Max(0, Mathf.FloorToInt(rect.xMin)); x <= Mathf.Min(width - 1, Mathf.FloorToInt(rect.xMax)); x++)
+                        for (int y = Mathf.Max(0, Mathf.FloorToInt(rect.yMin)); y <= Mathf.Min(height - 1, Mathf.FloorToInt(rect.yMax)); y++)
+                        {
+                            int cell = y * width + x;
+                            if (cells[cell] == null) cells[cell] = new List<Rect>();
+                            cells[cell].Add(rect);
+                        }
+            }
+            public List<Rect> At(int x, int y) => (uint)x < (uint)width && (uint)y < (uint)height ? cells[y * width + x] : null;
+        }
+        static readonly ConditionalWeakTable<WallGraph, WallIndex> indexes = new ConditionalWeakTable<WallGraph, WallIndex>();
+        static WallIndex Index(WallGraph graph) => indexes.GetValue(graph, g => new WallIndex(g));
+        static bool IsFloor(Tile tile) => tile == Tile.Corridor || tile == Tile.RoomFloor || tile == Tile.Door;
+        static Vector2 Closest(Vector2 p, Rect rect) => new Vector2(Mathf.Clamp(p.x, rect.xMin, rect.xMax), Mathf.Clamp(p.y, rect.yMin, rect.yMax));
+        static bool Touches(Vector2 p, Rect rect, float radius) => (Closest(p, rect) - p).sqrMagnitude < radius * radius - 0.00001f;
+
+        static void Resolve(ref Vector2 p, Rect rect, float radius)
+        {
+            var away = p - Closest(p, rect);
+            float distance = away.magnitude;
+            if (distance > 0.00001f && distance < radius)
+                p += away / distance * (radius - distance + 0.0001f);
+        }
+        public static bool CanStand(Vector2 p, Func<int, int, bool> walk, float radius, WallGraph graph = null)
+        {
+            return CanStand(p, walk, radius, graph, graph == null ? null : Index(graph));
+        }
+
+        static bool CanStand(Vector2 p, Func<int, int, bool> walk, float radius, WallGraph graph, WallIndex walls)
+        {
+            var center = HotelMap.ToTile(p);
+            if (!walk(center.x, center.y) || (graph != null && !IsFloor(graph.Map.Get(center.x, center.y)))) return false;
             for (int x = Mathf.FloorToInt(p.x - radius); x <= Mathf.FloorToInt(p.x + radius); x++)
                 for (int y = Mathf.FloorToInt(p.y - radius); y <= Mathf.FloorToInt(p.y + radius); y++)
                 {
-                    if (walk(x, y)) continue;
-                    var nearest = new Vector2(Mathf.Clamp(p.x, x, x + 1), Mathf.Clamp(p.y, y, y + 1));
-                    if ((nearest - p).sqrMagnitude < radius * radius - 0.00001f) return false;
+                    var nearby = walls?.At(x, y);
+                    if (nearby != null)
+                        foreach (var rect in nearby) if (Touches(p, rect, radius)) return false;
+                    // Only doors, towers and other temporarily blocked floor remain tile-sized.
+                    // Solid wall/void cells use their rendered edge graph instead.
+                    if ((x != center.x || y != center.y) && (graph == null || IsFloor(graph.Map.Get(x, y))) && !walk(x, y) &&
+                        Touches(p, new Rect(x, y, 1, 1), radius)) return false;
                 }
             return true;
         }
 
-        public static bool Clear(Vector2 a, Vector2 b, Func<int, int, bool> walk, float radius)
+        public static bool Clear(Vector2 a, Vector2 b, Func<int, int, bool> walk, float radius, WallGraph graph = null)
         {
+            var walls = graph == null ? null : Index(graph);
             int steps = Mathf.Max(1, Mathf.CeilToInt(Vector2.Distance(a, b) / 0.1f));
             for (int i = 0; i <= steps; i++)
-                if (!CanStand(Vector2.Lerp(a, b, (float)i / steps), walk, radius)) return false;
+                if (!CanStand(Vector2.Lerp(a, b, (float)i / steps), walk, radius, graph, walls)) return false;
             return true;
         }
 
-        public static Vector2 Slide(Vector2 p, Vector2 delta, Func<int, int, bool> walk, float radius)
+        public static Vector2 Slide(Vector2 p, Vector2 delta, Func<int, int, bool> walk, float radius, WallGraph graph = null)
         {
+            if (delta.sqrMagnitude < 1e-12f) return p;
+            var walls = graph == null ? null : Index(graph);
             int steps = Mathf.Max(1, Mathf.CeilToInt(delta.magnitude / 0.1f));
             var step = delta / steps;
             for (int i = 0; i < steps; i++)
             {
                 var q = p + step;
-                // Resolve a circle against tile rectangles; the remaining velocity slides along the contact tangent.
+                // Resolve against the visible wall footprint; the remaining velocity slides
+                // along the contact tangent. Small steps prevent dashes tunnelling through walls.
                 for (int pass = 0; pass < 3; pass++)
+                {
+                    var beforePass = q;
                     for (int x = Mathf.FloorToInt(q.x - radius); x <= Mathf.FloorToInt(q.x + radius); x++)
                         for (int y = Mathf.FloorToInt(q.y - radius); y <= Mathf.FloorToInt(q.y + radius); y++)
                         {
-                            if (walk(x, y)) continue;
-                            var closest = new Vector2(Mathf.Clamp(q.x, x, x + 1), Mathf.Clamp(q.y, y, y + 1));
-                            var away = q - closest;
-                            float d = away.magnitude;
-                            if (d > 0.00001f && d < radius) q += away / d * (radius - d + 0.0001f);
+                            var nearby = walls?.At(x, y);
+                            if (nearby != null) foreach (var rect in nearby) Resolve(ref q, rect, radius);
+                            if ((graph == null || IsFloor(graph.Map.Get(x, y))) && !walk(x, y))
+                                Resolve(ref q, new Rect(x, y, 1, 1), radius);
                         }
+                    if ((q - beforePass).sqrMagnitude < 1e-12f) break;
+                }
                 bool contact = (q - (p + step)).sqrMagnitude > 0.00001f;
-                if (CanStand(q, walk, radius)) p = q;
+                if (CanStand(q, walk, radius, graph, walls)) p = q;
                 // Align an off-center approach with the nearby doorway, never cross a blocked tile.
                 if (contact)
                 {
                     Vector2 assist = Mathf.Abs(step.x) > Mathf.Abs(step.y)
                         ? new Vector2(p.x, Mathf.Floor(p.y) + 0.5f)
                         : new Vector2(Mathf.Floor(p.x) + 0.5f, p.y);
-                    if (Vector2.Distance(p, assist) <= 0.45f && Clear(p, assist, walk, radius) &&
-                        CanStand(assist + step.normalized * 0.55f, walk, radius))
+                    if (Vector2.Distance(p, assist) <= 0.45f && Clear(p, assist, walk, radius, graph) &&
+                        CanStand(assist + step.normalized * 0.55f, walk, radius, graph, walls))
                         p = Vector2.MoveTowards(p, assist, step.magnitude);
                 }
             }
@@ -71,7 +124,7 @@ namespace BadAppleHotel.Game
         float sampleAt, blockedUntil, replanAt;
         public int Recoveries { get; private set; }
 
-        public Vector2 Steer(ref Vector2 pos, Vector2Int target, Func<int, int, bool> walk, float radius, float dt, float now)
+        public Vector2 Steer(ref Vector2 pos, Vector2Int target, Func<int, int, bool> walk, float radius, float dt, float now, WallGraph graph = null)
         {
             bool waiting = Vector2.Distance(pos, HotelMap.Center(target)) < 0.12f;
             if (waiting) { sample = pos; sampleAt = now; failures = 0; return Vector2.zero; }
@@ -88,7 +141,7 @@ namespace BadAppleHotel.Game
                         {
                             var q = HotelMap.Center(tile + new Vector2Int(x, y));
                             float d = Vector2.Distance(pos, q);
-                            if (d < dist && TileMovement.CanStand(q, walk, radius) && TileMovement.Clear(pos, q, walk, radius)) { best = q; dist = d; }
+                            if (d < dist && TileMovement.CanStand(q, walk, radius, graph) && TileMovement.Clear(pos, q, walk, radius, graph)) { best = q; dist = d; }
                         }
                         pos = best; failures = 0;
                     }
@@ -107,7 +160,7 @@ namespace BadAppleHotel.Game
             while (index < path.Count && Vector2.Distance(pos, HotelMap.Center(path[index])) < 0.15f) index++;
             if (index >= path.Count) return Vector2.ClampMagnitude((HotelMap.Center(target) - pos) * 6f, 1f);
             for (int i = Mathf.Min(path.Count - 1, index + 8); i > index; i--)
-                if (TileMovement.Clear(pos, HotelMap.Center(path[i]), walk, radius)) { index = i; break; }
+                if (TileMovement.Clear(pos, HotelMap.Center(path[i]), walk, radius, graph)) { index = i; break; }
             return Vector2.ClampMagnitude((HotelMap.Center(path[index]) - pos) * 6f, 1f);
         }
     }

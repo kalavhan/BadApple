@@ -16,7 +16,10 @@ namespace BadAppleHotel.Tests
             GameManager gm=null;
             for(int i=0;i<90;i++) { yield return null;gm=GameManager.Instance;if(gm?.Map!=null)break; }
             Assert.IsNotNull(gm?.Map);gm.StartMatch(Role.Resident,"stitchwork_chef");gm.SetSpeed(0);
-            var def=gm.Map.Rooms[0];Assert.IsTrue(gm.Claim(gm.Human,def,false));
+            // Isolated-room gifts can intentionally grant clairvoyance. Exercise the normal
+            // sight rules without that optional bonus, even when this map has only lonely rooms.
+            var def=gm.Map.Rooms[0];def.Isolated=false;
+            Assert.IsTrue(gm.Claim(gm.Human,def,false));
             gm.Human.Pos=HotelMap.Center(def.DoorOutside);gm.Human.Room.DoorOpen=false;
             Refresh(gm);Assert.IsTrue(gm.FogActive);Assert.IsFalse(gm.IsTileVisible(def.DoorInside));
             Assert.IsFalse(gm.CanSee(gm.Human.Pos,HotelMap.Center(def.DoorInside),gm.SightRadius));

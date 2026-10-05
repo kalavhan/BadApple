@@ -1,4 +1,4 @@
-// Sprite shader for the 8-direction characters and bosses.
+// Alpha-clipped world sprites share the wall depth buffer, including characters, doors and towers.
 //  * Shirt recolour: pixels in the magenta band (every character wears a magenta shirt) are hue-shifted to _ShirtHue,
 //    so each resident gets their own shirt colour from one set of art. _ShirtHue < 0 turns it off (bosses).
 //  * Hit flash: _Flash blends the sprite toward _FlashColor (damage, healing, spawn).
@@ -16,10 +16,11 @@ Shader "BadApple/CharacterSprite"
     }
     SubShader
     {
-        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "PreviewType"="Plane" "CanUseSpriteAtlas"="True" }
+        Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="TransparentCutout" "PreviewType"="Plane" "CanUseSpriteAtlas"="True" }
         Cull Off
         Lighting Off
-        ZWrite Off
+        ZWrite On
+        ZTest LEqual
         Blend One OneMinusSrcAlpha
 
         Pass
@@ -66,6 +67,9 @@ Shader "BadApple/CharacterSprite"
             fixed4 frag(v2f i) : SV_Target
             {
                 fixed4 t = tex2D(_MainTex, i.uv);
+                // Texture and renderer tint both participate in clipping. A fully faded sprite
+                // must not leave invisible depth behind, while cloak alpha keeps its soft blend.
+                clip(min(t.a - 0.08, t.a * i.color.a - 0.01));
                 float3 rgb = t.rgb;
                 if (_ShirtHue >= 0.0)
                 {
