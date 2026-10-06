@@ -136,7 +136,8 @@ namespace BadAppleHotel.Game
         public CharacterAnimator Anim;     // 8-direction art; null when only the placeholder sprite exists
         public RosterDef Char;             // which of the roster characters this seat plays
         public Vector2 LastPos;
-        public float AttackUntil;          // swinging at the monster (when their weapons fire)
+        public float AttackUntil;          // personal attack animation; bots may join their towers
+        public float NextPersonalShotAt;
         public ResidentAI Ai;
         public float ClaimAt;   // bots: when they start walking to a room during setup
     }

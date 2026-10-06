@@ -1,0 +1,13 @@
+{
+  "file": "BadAppleHotel-central-lamps.apk",
+  "versionName": "1.5-central-lamps",
+  "versionCode": 6,
+  "bytes": 72354445,
+  "sha256": "490c6eb08819f1bb8bee9163267e6e03601bc3d94f987c020115162061118228",
+  "abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "player": "IL2CPP release player, debug signed; OpenGLES3; native stripping disabled",
+  "zipIntegrity": "passed"
+}

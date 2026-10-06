@@ -1,0 +1,52 @@
+--------- beginning of kernel
+--------- beginning of main
+--------- beginning of system
+10-05 12:46:02.846  2261  2261 V Unity   : Context Type: GameActivity
+10-05 12:46:02.896  2261  2282 I Unity   : UnityApplication::CreateInstance
+10-05 12:46:02.896  2261  2282 I Unity   : GameActivity Package Version '4.4.0'
+10-05 12:46:02.920  2261  2282 I Unity   : Starting Game Loop
+10-05 12:46:02.958  2261  2282 I Unity   : Handle cmd APP_CMD_START(11)
+10-05 12:46:02.991  2261  2282 I Unity   : Handle cmd APP_CMD_RESUME(12)
+10-05 12:46:03.070  2261  2282 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 12:46:03.116  2261  2282 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 12:46:03.119  2261  2282 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+10-05 12:46:03.200  2261  2282 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+10-05 12:46:03.297  2261  2282 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+10-05 12:46:04.328  2261  2282 I Unity   : SystemInfo CPU = x86-64, Cores = 2, Memory = 1981mb
+10-05 12:46:04.352  2261  2282 I Unity   : ApplicationInfo 'com.kalavhan.badapplehotel', Version '1.5-central-lamps', Min API Level '25', Target API Level '36'
+10-05 12:46:04.352  2261  2282 I Unity   : Built from '6000.3/staging' branch, Version '6000.3.24f1 (4e7b9b5b6244)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'x86_64', Stripping 'Disabled'
+10-05 12:46:04.375  2261  2282 I Unity   : Device Model 'unknown Android SDK built for x86_64', OS 'Android OS 11 (API 30)'
+10-05 12:46:05.131  2261  2282 I Unity   : Company Name: kalavhan
+10-05 12:46:05.132  2261  2282 I Unity   : Product Name: Bad Apple Hotel
+10-05 12:46:07.152  2261  2282 I Unity   :     HasWindow = 1, HasFocus = 0
+10-05 12:46:07.155  2261  2282 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+10-05 12:46:07.164  2261  2282 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+10-05 12:46:07.165  2261  2282 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 12:46:07.169  2261  2282 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 12:47:24.499  2327  2327 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 12:47:24.553  2327  2327 I AndroidRuntime: Using default boot image
+10-05 12:47:24.558  2327  2327 I AndroidRuntime: Leaving lock profiling enabled
+10-05 12:47:25.796  2327  2327 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 12:47:25.917  2327  2327 D AndroidRuntime: Shutting down VM
+10-05 12:47:28.219  2261  2282 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+10-05 12:47:29.550  2261  2282 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+10-05 12:49:31.084  2382  2382 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 12:49:31.263  2382  2382 I AndroidRuntime: Using default boot image
+10-05 12:49:31.263  2382  2382 I AndroidRuntime: Leaving lock profiling enabled
+10-05 12:49:35.460  2382  2382 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 12:49:35.843  2382  2382 D AndroidRuntime: Shutting down VM
+10-05 12:50:45.752  2399  2399 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 12:50:45.853  2399  2399 I AndroidRuntime: Using default boot image
+10-05 12:50:45.855  2399  2399 I AndroidRuntime: Leaving lock profiling enabled
+10-05 12:50:48.952  2399  2399 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 12:50:49.892  2399  2399 D AndroidRuntime: Shutting down VM
+10-05 12:50:54.797  2412  2412 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 12:50:54.879  2412  2412 I AndroidRuntime: Using default boot image
+10-05 12:50:54.880  2412  2412 I AndroidRuntime: Leaving lock profiling enabled
+10-05 12:50:58.261  2412  2412 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 12:50:58.413  2412  2412 D AndroidRuntime: Shutting down VM
+10-05 12:51:03.791  2425  2425 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-05 12:51:03.859  2425  2425 I AndroidRuntime: Using default boot image
+10-05 12:51:03.860  2425  2425 I AndroidRuntime: Leaving lock profiling enabled
+10-05 12:51:07.320  2425  2425 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-05 12:51:07.573  2425  2425 D AndroidRuntime: Shutting down VM

@@ -173,7 +173,7 @@ namespace BadAppleHotel.Game
                     prey.Room.LastAttackedTime = now;
                     m.AttackingRoom = prey.Room;
                 }
-                if (prey.Asleep) Wake(prey);
+                if (prey.Asleep && !prey.IsHuman) Wake(prey);
                 float biteDamage = Mathf.Min(prey.Health, m.Def.residentDamagePerSecond * AttackMult(m) * dt);
                 prey.Health -= biteDamage;
                 GainMonsterXp(m, biteDamage * Cfg.progression.biteDamageXp);
@@ -199,7 +199,7 @@ namespace BadAppleHotel.Game
             dmg *= (m.Branch == "butcher" ? 1.6f : 1f) * (m.Frenzy ? Cfg.progression.frenzyMultiplier : 1f);
             dmg = Mathf.Min(door.DoorHp, dmg);
             door.DoorHp -= dmg;
-            Wake(door.Owner);
+            if (!door.Owner.IsHuman) Wake(door.Owner);
             RecordAssault(door);
             GainMonsterXp(m, dmg * Cfg.progression.doorDamageXp);
             m.LastDamageAt = now; m.Frenzy = false;

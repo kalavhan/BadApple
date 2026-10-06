@@ -50,7 +50,12 @@ namespace BadAppleHotel.Tests
                 var start = midpoint + (Vector2)edge.Normal * .5f;
                 var stopped = TileMovement.Slide(start, -(Vector2)edge.Normal * 12f, Floor, GameManager.MonsterRadius, graph);
                 Assert.IsTrue(TileMovement.CanStand(stopped, Floor, GameManager.MonsterRadius, graph));
-                Assert.GreaterOrEqual(Vector2.Dot(stopped - midpoint, edge.Normal), GameManager.MonsterRadius - .001f);
+                Assert.GreaterOrEqual(Vector2.Dot(stopped - midpoint, edge.Normal), -.001f,"Dash crossed the logical separator.");
+                foreach(var rect in graph.CollisionFootprints)
+                {
+                    var nearest=new Vector2(Mathf.Clamp(stopped.x,rect.xMin,rect.xMax),Mathf.Clamp(stopped.y,rect.yMin,rect.yMax));
+                    Assert.GreaterOrEqual(Vector2.Distance(stopped,nearest),GameManager.MonsterRadius-.001f,"Dash entered the visible wall.");
+                }
             }
             var target = map.Rooms[0].DoorInside;
             var from = HotelMap.Center(map.Rooms[0].DoorTile);

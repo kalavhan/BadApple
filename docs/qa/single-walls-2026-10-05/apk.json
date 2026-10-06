@@ -1,0 +1,17 @@
+{
+  "file": "BadAppleHotel-single-walls.apk",
+  "version": "1.6-single-walls",
+  "versionCode": 7,
+  "bytes": 72433757,
+  "sha256": "803bab8f61c4d7fd5acede60613402328a38646bd48ee1f92fa17c88273b09a7",
+  "zipIntegrity": "passed",
+  "architectures": [
+    "ARM64",
+    "x86_64"
+  ],
+  "scripting": "IL2CPP",
+  "graphics": "OpenGLES3",
+  "developmentBuild": false,
+  "installedApkSha256": "803bab8f61c4d7fd5acede60613402328a38646bd48ee1f92fa17c88273b09a7",
+  "androidSmoke": "Android 11/API 30 x86_64 software emulator: menu, resident match, Night gameplay, wall toggle and joystick input"
+}

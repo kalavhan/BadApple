@@ -23,6 +23,7 @@ namespace BadAppleHotel.Game
         public bool IsBedTile(Vector2Int tile) => tile == BedTile || tile == BedHeadTile;
         public readonly HashSet<Vector2Int> Walkway = new HashSet<Vector2Int>(); // default door -> bed path (used by bots)
         public readonly List<Vector2Int> BuildTiles = new List<Vector2Int>();     // floor squares excluding the two-square bed and reserved access path
+        public bool IsCentral;              // one of the four corridor-surrounded central islands
         public bool Isolated;               // no other door nearby: gets a free building when claimed
         public int NearestDoorDistance;
         public Vector2 Center;
@@ -60,6 +61,7 @@ namespace BadAppleHotel.Game
             public int DoorSide;
             public bool LeftCorridor;   // a vertical corridor runs along its left side
             public bool RightCorridor;
+            public readonly HashSet<Vector2Int> KeepFloor = new HashSet<Vector2Int>();
         }
 
         public HotelMap(MapConfig cfg, int roomCount, int seed)
@@ -117,7 +119,7 @@ namespace BadAppleHotel.Game
                     var corners = new List<Vector2Int>();
                     foreach (var f in def.Floor)
                     {
-                        if (f == inside) continue;
+                        if (f == inside || lot.KeepFloor.Contains(f)) continue;
                         bool verticalEdge = !floor.Contains(f + Vector2Int.up) || !floor.Contains(f + Vector2Int.down);
                         bool horizontalEdge = !floor.Contains(f + Vector2Int.left) || !floor.Contains(f + Vector2Int.right);
                         if (verticalEdge && horizontalEdge) corners.Add(f);
@@ -203,6 +205,14 @@ namespace BadAppleHotel.Game
 
             candidates.RemoveAll(c => !floor.Contains(c + inward));
             if (candidates.Count == 0) return false;
+            var axis=inward;
+            candidates.RemoveAll(c=>Rooms.Exists(room=>Manhattan(c-axis,room.DoorOutside)<cfg.minDoorDistance));
+            if(candidates.Count==0)return false;
+            if(!HasNearbyRoomPair())
+            {
+                var close=candidates.FindAll(c=>Rooms.Exists(room=>Manhattan(c-axis,room.DoorOutside)<=cfg.isolatedDoorDistance));
+                if(close.Count>0)candidates=close;
+            }
             door = candidates[rng.Next(candidates.Count)];
             outside = door - inward;
             inside = door + inward;

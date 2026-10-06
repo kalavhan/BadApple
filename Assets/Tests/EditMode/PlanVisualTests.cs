@@ -31,7 +31,7 @@ namespace BadAppleHotel.Tests
                         {
                             case Tile.Wall: color = new Color32(64, 49, 71, 255); break;
                             case Tile.Corridor: color = new Color32(128, 111, 138, 255); break;
-                            case Tile.RoomFloor: color = new Color32(76, 113, 109, 255); break;
+                            case Tile.RoomFloor: color = map.RoomContaining(tile).IsCentral ? new Color32(75, 125, 175, 255) : new Color32(76, 113, 109, 255); break;
                             case Tile.Door: color = new Color32(249, 202, 106, 255); break;
                         }
                         if (parts.Contains(tile)) color = Color.red;

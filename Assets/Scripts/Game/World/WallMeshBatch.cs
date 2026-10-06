@@ -14,24 +14,25 @@ namespace BadAppleHotel.Game
         readonly List<int> triangles = new List<int>();
         public int VertexCount => vertices.Count;
 
-        public void Box(Rect rect, int stateIndex, int textureWidth, Color tint, float inset = 0)
+        public void Box(Rect rect, int stateIndex, int textureWidth, Color tint, float inset = 0, float height = 1.7f, int mode = 4)
         {
             float x0 = rect.xMin + inset, x1 = rect.xMax - inset, y0 = rect.yMin + inset, y1 = rect.yMax - inset;
-            const float top = -1.66f, bottom = .04f;
-            Face(new Vector3(x0,y0,bottom),new Vector3(x1,y0,bottom),new Vector3(x1,y0,top),new Vector3(x0,y0,top),Vector3.down,tint,stateIndex,textureWidth);
-            Face(new Vector3(x1,y1,bottom),new Vector3(x0,y1,bottom),new Vector3(x0,y1,top),new Vector3(x1,y1,top),Vector3.up,tint,stateIndex,textureWidth);
-            Face(new Vector3(x0,y1,bottom),new Vector3(x0,y0,bottom),new Vector3(x0,y0,top),new Vector3(x0,y1,top),Vector3.left,tint,stateIndex,textureWidth);
-            Face(new Vector3(x1,y0,bottom),new Vector3(x1,y1,bottom),new Vector3(x1,y1,top),new Vector3(x1,y0,top),Vector3.right,tint,stateIndex,textureWidth);
-            Face(new Vector3(x0,y0,top),new Vector3(x1,y0,top),new Vector3(x1,y1,top),new Vector3(x0,y1,top),Vector3.back,tint,stateIndex,textureWidth);
+            const float bottom = .04f;
+            float top = bottom-height;
+            Face(new Vector3(x0,y0,bottom),new Vector3(x1,y0,bottom),new Vector3(x1,y0,top),new Vector3(x0,y0,top),Vector3.down,tint,stateIndex,textureWidth,mode);
+            Face(new Vector3(x1,y1,bottom),new Vector3(x0,y1,bottom),new Vector3(x0,y1,top),new Vector3(x1,y1,top),Vector3.up,tint,stateIndex,textureWidth,mode);
+            Face(new Vector3(x0,y1,bottom),new Vector3(x0,y0,bottom),new Vector3(x0,y0,top),new Vector3(x0,y1,top),Vector3.left,tint,stateIndex,textureWidth,mode);
+            Face(new Vector3(x1,y0,bottom),new Vector3(x1,y1,bottom),new Vector3(x1,y1,top),new Vector3(x1,y0,top),Vector3.right,tint,stateIndex,textureWidth,mode);
+            Face(new Vector3(x0,y0,top),new Vector3(x1,y0,top),new Vector3(x1,y1,top),new Vector3(x0,y1,top),Vector3.back,tint,stateIndex,textureWidth,mode);
         }
-        void Face(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, Color tint, int index, int width)
+        void Face(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, Color tint, int index, int width,int mode)
         {
             int offset = vertices.Count;
             vertices.AddRange(new[]{a,b,c,d}); normals.AddRange(new[]{normal,normal,normal,normal});
             uv.AddRange(new[]{Vector2.zero,Vector2.right,Vector2.one,Vector2.up});
             for (int i = 0; i < 4; i++)
             {
-                colors.Add(tint); state.Add(new Vector2((index+.5f)/width,1.7f)); modes.Add(new Vector2(4,0));
+                colors.Add(tint); state.Add(new Vector2((index+.5f)/width,1.7f)); modes.Add(new Vector2(mode,0));
             }
             triangles.AddRange(new[]{offset,offset+1,offset+2,offset,offset+2,offset+3});
         }

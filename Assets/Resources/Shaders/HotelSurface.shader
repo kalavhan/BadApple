@@ -11,6 +11,7 @@ Shader "BadApple/HotelSurface"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "HotelLighting.cginc"
             sampler2D _MainTex, _HotelVision;
             float4 _MainTex_ST, _Color, _HotelSize;
             float _Fade, _HotelFog;
@@ -25,7 +26,9 @@ Shader "BadApple/HotelSurface"
                 float sight=tex2D(_HotelVision,(floor(i.world)+0.5)/_HotelSize.xy).r;
                 float light=lerp(1,lerp(0.06,1,sight),_HotelFog);
                 fixed4 c=tex2D(_MainTex,i.uv)*_Color*i.color;
-                return fixed4(c.rgb*light,1);
+                float ambient=lerp(1,.30,saturate(_HotelLightingEnabled));
+                fixed3 lamp=HotelLampLight(i.world,float2(0,0),lerp(1,step(.9,sight),_HotelFog));
+                return fixed4(c.rgb*(ambient+lamp)*light,1);
             }
             ENDCG
         }

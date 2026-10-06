@@ -5,7 +5,7 @@ namespace BadAppleHotel.Game
 {
     /// <summary>
     /// Keyboard state read from IMGUI events (works with either input backend), plus the on-screen joystick vector the
-    /// HUD writes. Keyboard: WASD / arrows to move, E or Space for the action button, M for the hotel view,
+    /// HUD writes. Keyboard: WASD / arrows to move, E or Space for the action button, F for one resident shot, M for the hotel view,
     /// 1-2-3 for monster abilities.
     /// </summary>
     public static class GameInput

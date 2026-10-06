@@ -140,11 +140,15 @@ namespace BadAppleHotel.Game
             shared.SetFloat(ClockProperty, now);
             if (!UsesInstancing) shared.enableInstancing = false;
             bool instancing = UsesInstancing && shared.enableInstancing;
+            bool peek=shared.GetFloat("_WallPeekEnabled")>.5f;
+            var window=shared.GetVector("_WallPeekBounds");
+            var peekBounds=Rect.MinMaxRect(window.x,window.y,window.z,window.w);
             foreach (var group in groups)
             {
                 int count = 0;
                 foreach (var record in group.Items)
                 {
+                    if(record.Mode>=5&&(!peek||!record.Footprint.Overlaps(peekBounds)))continue;
                     float height = heightAt == null ? WallGraph.FullHeight : heightAt(record.StateId);
                     if ((record.Mode == 1 && height <= .46f) || (record.Mode == 2 && height > .46f)) continue;
                     if (!GeometryUtility.TestPlanesAABB(planes, record.Bounds)) continue;

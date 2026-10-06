@@ -14,7 +14,8 @@
     "triangle_budget_per_piece": 1500,
     "straight_panel": "Correct source yaw by +3.8504 degrees in Y before anisotropic normalization, then square the .055-tile end shoulders into a shared continuous profile; 1200 triangles",
     "lamp_panel": "Reuse the exact master straight mesh and atlas regions, add the imported sconce clipped from its source wall at Z=.142, simplified to 299 triangles and fitted in depth to the shared panel front recess; 1499 triangles total",
-    "continuity_validation": "Area-weighted broad-face yaw under 1 degree; triangle-ray cross sections at 39 heights reach both ends and differ by less than .02 tile; lamp and plain panel end profiles match within .001 tile; five-module game-angle and top-down previews"
+    "continuity_validation": "Area-weighted broad-face yaw under 1 degree; triangle-ray cross sections at 39 heights reach both ends and differ by less than .02 tile; lamp and plain panel end profiles match within .001 tile; five-module game-angle and top-down previews",
+    "outer_corner_rotation": "2026-10-05: rotate only the baked outer pilaster +45 degrees around canonical Y (front turns left toward -X), preserving authored UVs; refit .3 x 1.7 x .3 bounds and minimum floor pivot. Applied after atlas projection on every fresh bake, never cumulatively to raw sources."
   },
   "pieces": [
     {

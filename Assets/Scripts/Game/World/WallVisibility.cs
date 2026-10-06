@@ -8,6 +8,46 @@ namespace BadAppleHotel.Game
     {
         static readonly Vector2 TowardCameraPerHeight = -(Vector2)HotelView3D.Forward / HotelView3D.Forward.z;
 
+        /// <summary>In an occupied room, camera-near sides become baseboards; far sides stay full height.</summary>
+        public static float RoomHeight(Vector2 inwardNormal) =>
+            Vector2.Dot(inwardNormal, (Vector2)HotelView3D.Forward) > 0 ? WallGraph.DownHeight : WallGraph.FullHeight;
+
+        /// <summary>Short doorway jambs follow the doorway face, not their perpendicular side faces.</summary>
+        public static float RoomHeight(WallGraph graph, WallRun run, RoomDef room)
+        {
+            if (room == null) return RoomHeight(run.Normal);
+            bool doorway = false;
+            foreach (int edge in run.EdgeIds)
+            {
+                var floor = graph.Edges[edge].WalkableCell;
+                // A merged run may continue into the room's actual perimeter. Preserve
+                // that wall's orientation rather than rotating the entire side to the door.
+                if (room.ContainsInterior(floor))
+                {
+                    float height = RoomHeight(run.Normal);
+                    // An irregular room can have a far-facing return at its entrance.
+                    // Lower that foreground notch when it hides another floor square
+                    // in the same room; the true far backdrop casts outside the room.
+                    if (height == WallGraph.FullHeight && CoversAny(run.Footprint, height, room.Floor, true))
+                        height = WallGraph.DownHeight;
+                    return height;
+                }
+                doorway |= floor == room.DoorTile;
+            }
+            return RoomHeight(doorway ? (Vector2)(room.DoorInside - room.DoorTile) : run.Normal);
+        }
+
+        public static bool BordersRoom(WallGraph graph, WallRun run, RoomDef room)
+        {
+            if (room == null) return false;
+            foreach (int edge in run.EdgeIds)
+            {
+                var floor = graph.Edges[edge].WalkableCell;
+                if (room.ContainsInterior(floor) || floor == room.DoorTile) return true;
+            }
+            return false;
+        }
+
         /// <summary>True when a floor point's ray to the camera passes through the wall's box.</summary>
         public static bool CoversGround(Rect footprint, float height, Vector2 ground)
         {

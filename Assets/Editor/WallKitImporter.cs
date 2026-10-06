@@ -96,6 +96,7 @@ namespace BadAppleHotel.EditorTools
                         var projected=ProjectAtlas(mesh,spec,index,facePixels);Object.DestroyImmediate(mesh);mesh=projected;
                     }
                     Object.DestroyImmediate(original);
+                    if(spec.Id=="wall_corner") RotateOuterCorner(mesh,spec.Size);
                     mesh.name=spec.Id;mesh.RecalculateBounds();mesh.RecalculateNormals();
                     // Keep CPU data readable for geometry validation; the runtime instances these shared meshes.
                     string meshPath=Output+"/"+spec.Id+".asset";
@@ -146,6 +147,14 @@ namespace BadAppleHotel.EditorTools
             var scale=new Vector3(size.x/b.size.x,size.y/b.size.y,size.z/b.size.z);
             for(int i=0;i<v.Length;i++){v[i]=Vector3.Scale(v[i]-b.min,scale);if(n.Length==v.Length)n[i]=new Vector3(n[i].x/scale.x,n[i].y/scale.y,n[i].z/scale.z).normalized;}
             mesh.vertices=v;if(n.Length==v.Length)mesh.normals=n;mesh.RecalculateBounds();
+        }
+        static void RotateOuterCorner(Mesh mesh,Vector3 size)
+        {
+            // Turn the outer pilaster left around its upright axis. Rotate its authored UVs
+            // with the geometry, then refit the original thin square footprint and floor pivot.
+            var vertices=mesh.vertices;var center=mesh.bounds.center;var turn=Quaternion.Euler(0,45,0);
+            for(int i=0;i<vertices.Length;i++)vertices[i]=turn*(vertices[i]-center);
+            mesh.vertices=vertices;Normalize(mesh,size);mesh.RecalculateNormals();
         }
         static void AlignBroadFaces(Mesh mesh)
         {

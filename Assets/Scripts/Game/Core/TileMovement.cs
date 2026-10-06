@@ -97,6 +97,21 @@ namespace BadAppleHotel.Game
                         }
                     if ((q - beforePass).sqrMagnitude < 1e-12f) break;
                 }
+                // Thin walls leave a small floor margin. Keep the logical center on
+                // its permitted floor while preserving tangential motion along the wall.
+                // Rejecting the entire diagonal step here would strand path followers.
+                if(graph!=null&&!walk(HotelMap.ToTile(q).x,HotelMap.ToTile(q).y))
+                {
+                    var tile=HotelMap.ToTile(q);var closest=q;float distance=float.MaxValue;
+                    for(int x=tile.x-1;x<=tile.x+1;x++)for(int y=tile.y-1;y<=tile.y+1;y++)
+                    {
+                        if(!IsFloor(graph.Map.Get(x,y))||!walk(x,y))continue;
+                        var candidate=new Vector2(Mathf.Clamp(q.x,x+.0001f,x+1-.0001f),Mathf.Clamp(q.y,y+.0001f,y+1-.0001f));
+                        float d=(candidate-q).sqrMagnitude;
+                        if(d<distance){distance=d;closest=candidate;}
+                    }
+                    if(distance<.04f)q=closest;
+                }
                 bool contact = (q - (p + step)).sqrMagnitude > 0.00001f;
                 if (CanStand(q, walk, radius, graph, walls)) p = q;
                 // Align an off-center approach with the nearby doorway, never cross a blocked tile.

@@ -1,0 +1,276 @@
+{
+    "generatedUtc": "2026-10-05T16:13:38.1663340Z",
+    "unityVersion": "6000.3.24f1",
+    "scope": "Real Unity Editor Game View, 1560x720, normal gameplay fog, fixed seeded match. AI and time are frozen by the editor fixture; production sight, wall shaders, HUD, sleep and shooting availability are exercised. Success requires all gameplay assertions and no gameplay errors. A known Unity SearchDatabase startup exception, if raised before the fixture exists, is retained separately in editorStartupDiagnostics. This is functional visual QA, not Android performance evidence.",
+    "success": true,
+    "shots": [
+        {
+            "scenario": "resident-near-monster",
+            "file": "/tmp/badapple-wall-behavior-qa/behavior-1560-resident-near-monster.png",
+            "role": "Resident",
+            "primaryAction": "Sleep",
+            "shotAvailability": "TooFar",
+            "width": 1560,
+            "height": 720,
+            "seed": 929336080,
+            "room": 5,
+            "apertureCells": 3,
+            "visibleWallTriangles": 196447,
+            "wallSubmissions": 7,
+            "fog": true,
+            "monsterVisible": true,
+            "monsterSprite": true,
+            "residentSprite": true,
+            "probeRoomVisible": true,
+            "asleep": false,
+            "shaderWindow": true,
+            "residentPosition": {
+                "x": 56.5,
+                "y": 14.5
+            },
+            "monsterPosition": {
+                "x": 56.5,
+                "y": 16.5
+            },
+            "apertureBounds": {
+                "serializedVersion": "2",
+                "x": 55.0,
+                "y": 15.0,
+                "width": 3.0,
+                "height": 1.0
+            },
+            "shaderBounds": {
+                "x": 55.0,
+                "y": 15.0,
+                "z": 58.0,
+                "w": 16.0
+            },
+            "minimumRelatedWallHeight": 1.7000000476837159,
+            "minimumRelatedWallFade": 1.0
+        },
+        {
+            "scenario": "resident-monster-away",
+            "file": "/tmp/badapple-wall-behavior-qa/behavior-1560-resident-monster-away.png",
+            "role": "Resident",
+            "primaryAction": "Sleep",
+            "shotAvailability": "TooFar",
+            "width": 1560,
+            "height": 720,
+            "seed": 929336080,
+            "room": 5,
+            "apertureCells": 0,
+            "visibleWallTriangles": 196447,
+            "wallSubmissions": 7,
+            "fog": true,
+            "monsterVisible": false,
+            "monsterSprite": false,
+            "residentSprite": true,
+            "probeRoomVisible": true,
+            "asleep": false,
+            "shaderWindow": false,
+            "residentPosition": {
+                "x": 56.5,
+                "y": 14.5
+            },
+            "monsterPosition": {
+                "x": 56.5,
+                "y": 17.5
+            },
+            "apertureBounds": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 0.0,
+                "height": 0.0
+            },
+            "shaderBounds": {
+                "x": 55.0,
+                "y": 15.0,
+                "z": 58.0,
+                "w": 16.0
+            },
+            "minimumRelatedWallHeight": 1.7000000476837159,
+            "minimumRelatedWallFade": 1.0
+        },
+        {
+            "scenario": "monster-local-window",
+            "file": "/tmp/badapple-wall-behavior-qa/behavior-1560-monster-local-window.png",
+            "role": "Monster",
+            "primaryAction": "Sleep",
+            "shotAvailability": "Invalid",
+            "width": 1560,
+            "height": 720,
+            "seed": 929336080,
+            "room": 5,
+            "apertureCells": 3,
+            "visibleWallTriangles": 190441,
+            "wallSubmissions": 7,
+            "fog": true,
+            "monsterVisible": true,
+            "monsterSprite": true,
+            "residentSprite": true,
+            "probeRoomVisible": true,
+            "asleep": false,
+            "shaderWindow": true,
+            "residentPosition": {
+                "x": 56.5,
+                "y": 14.5
+            },
+            "monsterPosition": {
+                "x": 56.5,
+                "y": 16.5
+            },
+            "apertureBounds": {
+                "serializedVersion": "2",
+                "x": 55.0,
+                "y": 15.0,
+                "width": 3.0,
+                "height": 1.0
+            },
+            "shaderBounds": {
+                "x": 55.0,
+                "y": 15.0,
+                "z": 58.0,
+                "w": 16.0
+            },
+            "minimumRelatedWallHeight": 1.7000000476837159,
+            "minimumRelatedWallFade": 1.0
+        },
+        {
+            "scenario": "monster-away-room-hidden",
+            "file": "/tmp/badapple-wall-behavior-qa/behavior-1560-monster-away-room-hidden.png",
+            "role": "Monster",
+            "primaryAction": "Sleep",
+            "shotAvailability": "Invalid",
+            "width": 1560,
+            "height": 720,
+            "seed": 929336080,
+            "room": 5,
+            "apertureCells": 0,
+            "visibleWallTriangles": 190441,
+            "wallSubmissions": 7,
+            "fog": true,
+            "monsterVisible": true,
+            "monsterSprite": true,
+            "residentSprite": false,
+            "probeRoomVisible": false,
+            "asleep": false,
+            "shaderWindow": false,
+            "residentPosition": {
+                "x": 56.5,
+                "y": 14.5
+            },
+            "monsterPosition": {
+                "x": 56.5,
+                "y": 17.5
+            },
+            "apertureBounds": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 0.0,
+                "height": 0.0
+            },
+            "shaderBounds": {
+                "x": 55.0,
+                "y": 15.0,
+                "z": 58.0,
+                "w": 16.0
+            },
+            "minimumRelatedWallHeight": 1.7000000476837159,
+            "minimumRelatedWallFade": 1.0
+        },
+        {
+            "scenario": "sleeping-monster-inside",
+            "file": "/tmp/badapple-wall-behavior-qa/behavior-1560-sleeping-monster-inside.png",
+            "role": "Resident",
+            "primaryAction": "Wake",
+            "shotAvailability": "Blocked",
+            "width": 1560,
+            "height": 720,
+            "seed": 929336080,
+            "room": 5,
+            "apertureCells": 0,
+            "visibleWallTriangles": 196447,
+            "wallSubmissions": 7,
+            "fog": true,
+            "monsterVisible": true,
+            "monsterSprite": true,
+            "residentSprite": true,
+            "probeRoomVisible": true,
+            "asleep": true,
+            "shaderWindow": false,
+            "residentPosition": {
+                "x": 55.5,
+                "y": 10.5
+            },
+            "monsterPosition": {
+                "x": 55.5,
+                "y": 11.5
+            },
+            "apertureBounds": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 0.0,
+                "height": 0.0
+            },
+            "shaderBounds": {
+                "x": 55.0,
+                "y": 15.0,
+                "z": 58.0,
+                "w": 16.0
+            },
+            "minimumRelatedWallHeight": 1.7000000476837159,
+            "minimumRelatedWallFade": 1.0
+        },
+        {
+            "scenario": "awake-shoot-ready",
+            "file": "/tmp/badapple-wall-behavior-qa/behavior-1560-awake-shoot-ready.png",
+            "role": "Resident",
+            "primaryAction": "Sleep",
+            "shotAvailability": "Ok",
+            "width": 1560,
+            "height": 720,
+            "seed": 929336080,
+            "room": 5,
+            "apertureCells": 0,
+            "visibleWallTriangles": 196447,
+            "wallSubmissions": 7,
+            "fog": true,
+            "monsterVisible": true,
+            "monsterSprite": true,
+            "residentSprite": true,
+            "probeRoomVisible": true,
+            "asleep": false,
+            "shaderWindow": false,
+            "residentPosition": {
+                "x": 55.5,
+                "y": 10.5
+            },
+            "monsterPosition": {
+                "x": 55.5,
+                "y": 11.5
+            },
+            "apertureBounds": {
+                "serializedVersion": "2",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 0.0,
+                "height": 0.0
+            },
+            "shaderBounds": {
+                "x": 55.0,
+                "y": 15.0,
+                "z": 58.0,
+                "w": 16.0
+            },
+            "minimumRelatedWallHeight": 1.7000000476837159,
+            "minimumRelatedWallFade": 1.0
+        }
+    ],
+    "errors": [],
+    "editorStartupDiagnostics": [
+        "ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.\nParameter name: index\nSystem.Collections.Generic.List`1[T].get_Item (System.Int32 index) (at <1d26c8856bcb48938402e0be7f5cc174>:0)\nUnityEditor.Search.SearchDatabase+<EnumerateAll>d__83.MoveNext () (at /home/bokken/build/output/unity/unity/Modules/QuickSearch/Editor/Indexing/SearchDatabase.cs:453)\nSystem.Linq.Enumerable.TryGetFirst[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Boolean& found) (at <33953ffc026d46eb8cea4e584475e250>:0)\nSystem.Linq.Enumerable.First[TSource] (System.Collections.Generic.IEnumerable`1[T] source) (at <33953ffc026d46eb8cea4e584475e250>:0)\nUnityEditor.Search.SearchDatabase.GetDefaultSearchDatabase () (at /home/bokken/build/output/unity/unity/Modules/QuickSearch/Editor/Indexing/SearchDatabase.cs:428)\nUnityEditor.Search.SearchInit.IndexationOnStartup () (at /home/bokken/build/output/unity/unity/Modules/QuickSearch/Editor/SearchInit.cs:109)\nUnityEditor.EditorApplication.Internal_CallDelayFunctions () (at /home/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:407)\n"
+    ]
+}
