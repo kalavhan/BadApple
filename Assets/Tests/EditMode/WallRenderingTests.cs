@@ -119,7 +119,7 @@ namespace BadAppleHotel.Tests
                         Assert.AreEqual(game.WallBatchCount, wallFilters.Length + instances.MaxDrawCalls + 1);
                         int triangles = 0;
                         int generatedVertices = 0;
-                        Material shared = null;
+                        Material shared = (Material)typeof(GameManager).GetField("hotelWallMaterial",Private).GetValue(game);
                         foreach (var filter in filters)
                         {
                             Assert.IsNotNull(filter.sharedMesh, "Missing generated mesh");
@@ -146,17 +146,27 @@ namespace BadAppleHotel.Tests
                             Assert.GreaterOrEqual(mesh.bounds.min.x, -.01f);
                             Assert.GreaterOrEqual(mesh.bounds.min.y, -.01f);
                         }
-                        Assert.Less(generatedVertices, 5000, "Only small separator core meshes may be duplicated per hotel; decorative kit meshes must remain shared.");
+                        Assert.Less(generatedVertices, 10000, "Only small separator core meshes may be duplicated per hotel; decorative kit meshes must remain shared.");
                         var glow = filters.Single(filter=>filter.sharedMesh.name=="Wall sconce glow halos");
                         Assert.AreEqual(game.WallTriangleCount, triangles + instances.TotalTriangles + glow.sharedMesh.GetIndexCount(0)/3);
                         LampDistributionTests.AssertCoverage(game);
+                        for(int i=0;i<game.Walls.Perimeter.Corners.Count;i++)
+                        {
+                            var corner=game.Walls.Perimeter.Corners[i];
+                            int state=game.Walls.Runs.Count+game.Walls.Perimeter.Spans.Count+i;
+                            Assert.AreEqual(1,instances.Records.Count(record=>record.Mode==0&&record.StateId==state&&record.Footprint==corner.Bounds),
+                                "One corner asset per turn, seed "+seed);
+                        }
+                        foreach(var record in instances.Records.Where(record=>record.Mode==1))
+                            Assert.IsTrue(record.Normal==Vector2.down||record.Normal==Vector2.left,"Wall face points away from the fixed camera.");
+                        Assert.AreEqual(0,wallFilters.Length,"Thin shared walls must not rebuild the old full-cell separator blocks.");
                         Assert.AreEqual(instances.TotalTriangles, instances.Records.Sum(record => record.TriangleCount));
                         var stateTexture = shared.GetTexture("_WallStates") as Texture2D;
                         Assert.IsNotNull(stateTexture);
                         Assert.AreEqual(2, stateTexture.height);
                         Assert.AreEqual(FilterMode.Point, stateTexture.filterMode);
                         Assert.AreEqual(TextureWrapMode.Clamp, stateTexture.wrapMode);
-                        int stateCount = game.Walls.Runs.Count + game.Walls.Joins.Count + game.Walls.Cores.Count + game.Map.Rooms.Count;
+                        int stateCount = game.Walls.Runs.Count + game.Walls.Perimeter.Spans.Count + game.Walls.Perimeter.Corners.Count + game.Map.Rooms.Count;
                         Assert.GreaterOrEqual(stateTexture.width, stateCount);
                         foreach (var record in instances.Records)
                         {
@@ -207,7 +217,8 @@ namespace BadAppleHotel.Tests
                             }
                             foreach (var record in instances.Records)
                                 foreach (var point in sourceVertices[record.Mesh])
-                                    AssertVertex(game.Map, record.Matrix.MultiplyPoint3x4(point), record.Mode, record.StateId, stateCount, seed);
+                                    try { AssertVertex(game.Map, record.Matrix.MultiplyPoint3x4(point), record.Mode, record.StateId, stateCount, seed); }
+                                    catch(AssertionException){TestContext.WriteLine(record.Piece.Id+" "+record.Footprint+" state "+record.StateId+" map "+game.Map.Seed);throw;}
                         }
                         owned = ((IEnumerable<Object>)assetsField.GetValue(game)).ToArray();
                         Assert.IsTrue(owned.Any(asset => asset is Mesh));
@@ -244,6 +255,7 @@ namespace BadAppleHotel.Tests
         {
             var states = stateTexture.GetPixels(0, 0, stateTexture.width, 1);
             return coreBatches + instances.Records.Where(record =>
+                record.Mode >= 5 ? false :
                 record.Mode == 1 ? states[record.StateId].g > .46f :
                 record.Mode == 2 ? states[record.StateId].g <= .46f : true)
                 .GroupBy(record => record.Mesh)

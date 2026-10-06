@@ -38,6 +38,14 @@ namespace BadAppleHotel.Tests
                 "GLES wall arrays must be emitted as uniform blocks, not ordinary vertex uniforms.");
         }
 
+        [Test] public void Local_peek_base_fragment_compiles_on_android_GLES3()
+        {
+            var shader=Resources.Load<Shader>("Shaders/HotelWall");
+            var result=ShaderUtil.GetShaderData(shader).GetSubshader(0).GetPass(0).CompileVariant(ShaderType.Fragment,new[]{"INSTANCING_ON"},
+                ShaderCompilerPlatform.GLES3x,BuildTarget.Android,GraphicsTier.Tier2,true);
+            Assert.IsTrue(result.Success,string.Join("\n",result.Messages.Select(message=>message.message)));
+        }
+
         [TestCase(ShaderType.Vertex)] [TestCase(ShaderType.Fragment)]
         public void Lamp_glow_compiles_on_android_GLES3(ShaderType stage)
         {

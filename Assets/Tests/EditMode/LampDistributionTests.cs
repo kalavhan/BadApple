@@ -37,7 +37,13 @@ namespace BadAppleHotel.Tests
                 if(coverage<.9f)
                 {
                     Debug.Log("DARK ROOM "+room.Index+" FLOOR "+string.Join(";",room.Floor));
-                    foreach(var lamp in lamps)if(room.ContainsInterior(HotelMap.ToTile(lamp.Position+lamp.Normal*.1f)))
+                    Debug.Log("DOOR "+room.DoorTile+" INSIDE "+room.DoorInside);
+                    var instances=(WallInstances)typeof(GameManager).GetField("wallInstances",Private).GetValue(game);
+                    var stays=typeof(GameManager).GetMethod("RoomLampStaysUp",Private);
+                    foreach(var record in instances.Records)
+                        if(record.Mode==1&&room.ContainsInterior(HotelMap.ToTile(record.Footprint.center+record.Normal*.55f)))
+                            Debug.Log("MOUNT "+record.Footprint+" normal "+record.Normal+" stays "+stays.Invoke(game,new object[]{record.StateId,room}));
+                    foreach(var lamp in lamps)if(room.ContainsInterior(HotelMap.ToTile(lamp.Position+lamp.Normal*.4f)))
                         Debug.Log("ROOM LAMP "+lamp.Position+" normal "+lamp.Normal+" radius "+lamp.Radius);
                     foreach(var tile in room.Floor)if(light.Sample(HotelMap.Center(tile))<.25f)
                         Debug.Log("DIM TILE "+tile+" light "+light.Sample(HotelMap.Center(tile)));

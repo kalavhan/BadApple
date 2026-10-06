@@ -1,6 +1,6 @@
 Shader "BadApple/HotelWall"
 {
-    Properties { _MainTex ("Hotel atlas", 2D) = "white" {} _WallStates ("Run heights and visibility", 2D) = "white" {} [HideInInspector] _WallInstance ("Instance data", Vector) = (0,0,0,0) }
+    Properties { [HideInInspector] _WallPeekBounds ("Peek window", Vector) = (0,0,0,0) [HideInInspector] _WallPeekEnabled ("Peek enabled", Float) = 0 _MainTex ("Hotel atlas", 2D) = "white" {} _WallStates ("Run heights and visibility", 2D) = "white" {} [HideInInspector] _WallInstance ("Instance data", Vector) = (0,0,0,0) }
     SubShader
     {
         Tags { "RenderType"="Opaque" "Queue"="Geometry" }
@@ -39,11 +39,13 @@ Shader "BadApple/HotelWall"
                 float start=tex2Dlod(_WallStates,float4(coordinates.x,.75,0,0)).r;
                 float t=saturate((_WallClock-start)/.15); t=t*t*(3-2*t);
                 float height=lerp(state.r,state.g,t), fade=lerp(state.b,state.a,t);
+                // Modes 5/6 are the structural base/decorative cap shown only in a peek.
+                if(mode>4.5)height=.1;
                 float4 world=mul(unity_ObjectToWorld,v.vertex);
                 float originalHeight=.04-world.z;
                 // The lintel is clipped, never squashed into the doorway in cutaway mode.
                 if(mode<2.5 || mode>3.5)world.z=.04-originalHeight*height/max(.001,coordinates.y);
-                if(mode>3.5)world.z+=.014; // substrate sits below the detailed moulding cap
+                if(mode>3.5 && mode<5.5)world.z+=.014; // substrate sits below the detailed moulding cap
                 o.pos=mul(UNITY_MATRIX_VP,world);o.world=world.xy;
                 o.uv=v.uv;o.color=v.color;o.rule=float4(height,fade,mode,originalHeight);
                 float3 normal=UnityObjectToWorldNormal(v.normal);
@@ -55,11 +57,10 @@ Shader "BadApple/HotelWall"
             {
                 // Sight opens at most the monster's adjacent wall cell and its two neighbours.
                 // Per-pixel clipping keeps all remaining sections of a merged run intact.
-                if(_WallPeekEnabled>.5)
-                {
-                    float2 edge=min(i.world-_WallPeekBounds.xy,_WallPeekBounds.zw-i.world);
-                    clip(-min(edge.x,edge.y)-.0001);
-                }
+                float2 edge=min(i.world-_WallPeekBounds.xy,_WallPeekBounds.zw-i.world);
+                float inside=step(-.0001,min(edge.x,edge.y))*step(.5,_WallPeekEnabled);
+                if(i.rule.z>4.5)clip(inside-.5);
+                else clip(.5-inside);
                 float threshold=frac(dot(floor(i.pos.xy),float2(.75487766,.56984029)));
                 clip(i.rule.y-threshold);
                 if(i.rule.z>.5 && i.rule.z<1.5) clip(i.rule.x-.46);
@@ -67,7 +68,7 @@ Shader "BadApple/HotelWall"
                 if(i.rule.z>2.5 && i.rule.z<3.5) clip(i.rule.x-i.rule.w);
                 float sight=tex2D(_HotelVision,(floor(i.world)+.5)/_HotelSize.xy).r;
                 float fog=lerp(1,lerp(.06,1,sight),_HotelFog);
-                fixed3 albedo=i.rule.z>3.5?i.color.rgb:tex2D(_MainTex,i.uv).rgb*i.color.rgb;
+                fixed3 albedo=(i.rule.z>3.5 && i.rule.z<5.5)?i.color.rgb:tex2D(_MainTex,i.uv).rgb*i.color.rgb;
                 float ambient=lerp(1,.30,saturate(_HotelLightingEnabled));
                 fixed3 lamp=HotelLampLight(i.world,i.normal,lerp(1,step(.9,sight),_HotelFog));
                 // Emission still obeys fog: hidden sconces cannot reveal unexplored rooms.

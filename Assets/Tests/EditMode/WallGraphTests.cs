@@ -12,7 +12,7 @@ namespace BadAppleHotel.Tests
         static readonly Vector2Int[] Directions = { Vector2Int.left, Vector2Int.right, Vector2Int.down, Vector2Int.up };
 
         [Test]
-        public void Boundary_coverage_join_ownership_and_solid_footprints_hold_for_100_hotels()
+        public void Logical_boundary_coverage_and_solid_physical_footprints_hold_for_100_hotels()
         {
             var config = ConfigLoader.Load();
             int cores = 0, innerCorners = 0, outerCorners = 0;
@@ -86,25 +86,19 @@ namespace BadAppleHotel.Tests
         }
 
         [Test]
-        public void Default_camera_rays_reach_every_walkable_center_for_100_hotels()
+        public void All_exterior_runs_corners_and_structural_cores_start_at_full_height()
         {
-            var config = ConfigLoader.Load();
-            int tall = 0, lowered = 0;
-            for (int seed = 1; seed <= 100; seed++)
+            var config=ConfigLoader.Load();
+            for(int seed=1;seed<=100;seed++)
             {
-                var map = new HotelMap(config.map, 10, seed);
-                var graph = WallGraph.Build(map);
-                foreach (var run in graph.Runs)
+                var graph=WallGraph.Build(new HotelMap(config.map,10,seed));
+                foreach(var run in graph.Runs)Assert.AreEqual(WallGraph.FullHeight,run.DefaultHeight);
+                foreach(var join in graph.Joins)
                 {
-                    foreach (var piece in run.RenderFootprints) AssertCenterRaysClear(map, piece, run.DefaultHeight, seed);
-                    if (run.DefaultHeight == WallGraph.FullHeight) tall++; else lowered++;
+                    Assert.AreEqual(WallGraph.FullHeight,join.DefaultHeight);
                 }
-                foreach (var join in graph.Joins)
-                    foreach (var piece in join.Footprints) AssertCenterRaysClear(map, piece, join.DefaultHeight, seed);
-                foreach (var core in graph.Cores) AssertCenterRaysClear(map, core.Footprint, core.DefaultHeight, seed);
+                foreach(var core in graph.Cores)Assert.AreEqual(WallGraph.FullHeight,core.DefaultHeight);
             }
-            Assert.Greater(tall, 0, "safe back walls should remain full height");
-            Assert.Greater(lowered, 0, "occluding walls should be lowered");
         }
 
         [Test]

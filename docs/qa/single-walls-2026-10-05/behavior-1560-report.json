@@ -1,0 +1,280 @@
+{
+  "generatedUtc": "2026-10-06T01:20:39.0604870Z",
+  "unityVersion": "6000.3.24f1",
+  "scope": "Real Unity Editor Game View, 1560x720, normal gameplay fog, fixed seeded match. AI and time are frozen by the editor fixture; production sight, wall shaders, HUD, sleep and shooting availability are exercised. Success requires all gameplay assertions and no gameplay errors. A known Unity SearchDatabase startup exception, if raised before the fixture exists, is retained separately in editorStartupDiagnostics. This is functional visual QA, not Android performance evidence.",
+  "success": true,
+  "shots": [
+    {
+      "scenario": "resident-near-monster",
+      "file": "behavior-1560-resident-near-monster.png",
+      "role": "Resident",
+      "primaryAction": "Sleep",
+      "shotAvailability": "TooFar",
+      "width": 1560,
+      "height": 720,
+      "seed": 929336080,
+      "room": 3,
+      "apertureCells": 3,
+      "peekBaseCaps": 4,
+      "visibleWallTriangles": 92818,
+      "wallSubmissions": 8,
+      "fog": true,
+      "monsterVisible": true,
+      "monsterSprite": true,
+      "residentSprite": true,
+      "probeRoomVisible": true,
+      "asleep": false,
+      "shaderWindow": true,
+      "residentPosition": {
+        "x": 53.5,
+        "y": 36.5
+      },
+      "monsterPosition": {
+        "x": 53.5,
+        "y": 38.5
+      },
+      "apertureBounds": {
+        "serializedVersion": "2",
+        "x": 52.0,
+        "y": 37.0,
+        "width": 3.0,
+        "height": 1.0
+      },
+      "shaderBounds": {
+        "x": 52.0,
+        "y": 37.0,
+        "z": 55.0,
+        "w": 38.0
+      },
+      "minimumRelatedWallHeight": 1.7000000476837158,
+      "minimumRelatedWallFade": 1.0
+    },
+    {
+      "scenario": "resident-monster-away",
+      "file": "behavior-1560-resident-monster-away.png",
+      "role": "Resident",
+      "primaryAction": "Sleep",
+      "shotAvailability": "TooFar",
+      "width": 1560,
+      "height": 720,
+      "seed": 929336080,
+      "room": 3,
+      "apertureCells": 0,
+      "peekBaseCaps": 0,
+      "visibleWallTriangles": 86818,
+      "wallSubmissions": 8,
+      "fog": true,
+      "monsterVisible": false,
+      "monsterSprite": false,
+      "residentSprite": true,
+      "probeRoomVisible": true,
+      "asleep": false,
+      "shaderWindow": false,
+      "residentPosition": {
+        "x": 53.5,
+        "y": 36.5
+      },
+      "monsterPosition": {
+        "x": 53.5,
+        "y": 39.5
+      },
+      "apertureBounds": {
+        "serializedVersion": "2",
+        "x": 0.0,
+        "y": 0.0,
+        "width": 0.0,
+        "height": 0.0
+      },
+      "shaderBounds": {
+        "x": 52.0,
+        "y": 37.0,
+        "z": 55.0,
+        "w": 38.0
+      },
+      "minimumRelatedWallHeight": 1.7000000476837158,
+      "minimumRelatedWallFade": 1.0
+    },
+    {
+      "scenario": "monster-local-window",
+      "file": "behavior-1560-monster-local-window.png",
+      "role": "Monster",
+      "primaryAction": "Sleep",
+      "shotAvailability": "Invalid",
+      "width": 1560,
+      "height": 720,
+      "seed": 929336080,
+      "room": 3,
+      "apertureCells": 3,
+      "peekBaseCaps": 4,
+      "visibleWallTriangles": 89215,
+      "wallSubmissions": 8,
+      "fog": true,
+      "monsterVisible": true,
+      "monsterSprite": true,
+      "residentSprite": true,
+      "probeRoomVisible": true,
+      "asleep": false,
+      "shaderWindow": true,
+      "residentPosition": {
+        "x": 53.5,
+        "y": 36.5
+      },
+      "monsterPosition": {
+        "x": 53.5,
+        "y": 38.5
+      },
+      "apertureBounds": {
+        "serializedVersion": "2",
+        "x": 52.0,
+        "y": 37.0,
+        "width": 3.0,
+        "height": 1.0
+      },
+      "shaderBounds": {
+        "x": 52.0,
+        "y": 37.0,
+        "z": 55.0,
+        "w": 38.0
+      },
+      "minimumRelatedWallHeight": 1.7000000476837158,
+      "minimumRelatedWallFade": 1.0
+    },
+    {
+      "scenario": "monster-away-room-hidden",
+      "file": "behavior-1560-monster-away-room-hidden.png",
+      "role": "Monster",
+      "primaryAction": "Sleep",
+      "shotAvailability": "Invalid",
+      "width": 1560,
+      "height": 720,
+      "seed": 929336080,
+      "room": 3,
+      "apertureCells": 0,
+      "peekBaseCaps": 0,
+      "visibleWallTriangles": 83215,
+      "wallSubmissions": 7,
+      "fog": true,
+      "monsterVisible": true,
+      "monsterSprite": true,
+      "residentSprite": false,
+      "probeRoomVisible": false,
+      "asleep": false,
+      "shaderWindow": false,
+      "residentPosition": {
+        "x": 53.5,
+        "y": 36.5
+      },
+      "monsterPosition": {
+        "x": 53.5,
+        "y": 39.5
+      },
+      "apertureBounds": {
+        "serializedVersion": "2",
+        "x": 0.0,
+        "y": 0.0,
+        "width": 0.0,
+        "height": 0.0
+      },
+      "shaderBounds": {
+        "x": 52.0,
+        "y": 37.0,
+        "z": 55.0,
+        "w": 38.0
+      },
+      "minimumRelatedWallHeight": 1.7000000476837158,
+      "minimumRelatedWallFade": 1.0
+    },
+    {
+      "scenario": "sleeping-monster-inside",
+      "file": "behavior-1560-sleeping-monster-inside.png",
+      "role": "Resident",
+      "primaryAction": "Wake",
+      "shotAvailability": "Blocked",
+      "width": 1560,
+      "height": 720,
+      "seed": 929336080,
+      "room": 3,
+      "apertureCells": 0,
+      "peekBaseCaps": 0,
+      "visibleWallTriangles": 86818,
+      "wallSubmissions": 8,
+      "fog": true,
+      "monsterVisible": true,
+      "monsterSprite": true,
+      "residentSprite": true,
+      "probeRoomVisible": true,
+      "asleep": true,
+      "shaderWindow": false,
+      "residentPosition": {
+        "x": 53.5,
+        "y": 32.5
+      },
+      "monsterPosition": {
+        "x": 53.5,
+        "y": 33.5
+      },
+      "apertureBounds": {
+        "serializedVersion": "2",
+        "x": 0.0,
+        "y": 0.0,
+        "width": 0.0,
+        "height": 0.0
+      },
+      "shaderBounds": {
+        "x": 52.0,
+        "y": 37.0,
+        "z": 55.0,
+        "w": 38.0
+      },
+      "minimumRelatedWallHeight": 1.7000000476837158,
+      "minimumRelatedWallFade": 1.0
+    },
+    {
+      "scenario": "awake-shoot-ready",
+      "file": "behavior-1560-awake-shoot-ready.png",
+      "role": "Resident",
+      "primaryAction": "Sleep",
+      "shotAvailability": "Ok",
+      "width": 1560,
+      "height": 720,
+      "seed": 929336080,
+      "room": 3,
+      "apertureCells": 0,
+      "peekBaseCaps": 0,
+      "visibleWallTriangles": 86818,
+      "wallSubmissions": 8,
+      "fog": true,
+      "monsterVisible": true,
+      "monsterSprite": true,
+      "residentSprite": true,
+      "probeRoomVisible": true,
+      "asleep": false,
+      "shaderWindow": false,
+      "residentPosition": {
+        "x": 53.5,
+        "y": 32.5
+      },
+      "monsterPosition": {
+        "x": 53.5,
+        "y": 33.5
+      },
+      "apertureBounds": {
+        "serializedVersion": "2",
+        "x": 0.0,
+        "y": 0.0,
+        "width": 0.0,
+        "height": 0.0
+      },
+      "shaderBounds": {
+        "x": 52.0,
+        "y": 37.0,
+        "z": 55.0,
+        "w": 38.0
+      },
+      "minimumRelatedWallHeight": 1.7000000476837158,
+      "minimumRelatedWallFade": 1.0
+    }
+  ],
+  "errors": [],
+  "editorStartupDiagnostics": []
+}

@@ -1,6 +1,6 @@
 # Central rooms and lamp coverage — October 5, 2026
 
-This is the latest PR #4 iteration. The [earlier wall/control QA](../walls-2026-10-05/README.md) records the previous layout and APK; its route measurements describe that earlier generator.
+This records the earlier PR #4 iteration. The [single-perimeter QA](../single-walls-2026-10-05/README.md) supersedes its wall geometry and APK. The [earlier wall/control QA](../walls-2026-10-05/README.md) records the previous layout and APK; its route measurements describe that earlier generator.
 
 ## Layout
 

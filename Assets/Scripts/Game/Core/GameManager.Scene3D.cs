@@ -94,7 +94,7 @@ namespace BadAppleHotel.Game
             Camera.onPreCull -= DrawWallInstances; Camera.onPreCull += DrawWallInstances;
             BuildHotelFloors();
             var graph=Walls;
-            wallTextureWidth=Mathf.NextPowerOfTwo(graph.Runs.Count+graph.Joins.Count+graph.Cores.Count+Map.Rooms.Count);
+            wallTextureWidth=Mathf.NextPowerOfTwo(graph.Runs.Count+graph.Perimeter.Spans.Count+graph.Perimeter.Corners.Count+Map.Rooms.Count);
             wallStateTexture=new Texture2D(wallTextureWidth,2,TextureFormat.RGBAFloat,false,true) { name="Wall run states",filterMode=FilterMode.Point,wrapMode=TextureWrapMode.Clamp };
             sceneAssets.Add(wallStateTexture); wallStatePixels=new Color[wallTextureWidth*2];
             hotelWallMaterial=new Material(Resources.Load<Shader>("Shaders/HotelWall"));
@@ -105,58 +105,18 @@ namespace BadAppleHotel.Game
                 int state=AddWallState(run.Footprint,run.DefaultHeight);
                 foreach(int edge in run.EdgeIds)
                     if(Map.Get(graph.Edges[edge].WalkableCell.x,graph.Edges[edge].WalkableCell.y) is Tile.RoomFloor or Tile.Door)wallStates[state].RoomBoundary=true;
-                foreach(var rect in run.RenderFootprints) FillRun(rect,run.Normal,run.Id);
+
             }
-            foreach(var join in graph.Joins)
+            foreach(var span in graph.Perimeter.Spans)
             {
-                Rect bounds=join.Footprints.Count>0?join.Footprints[0]:new Rect(join.Vertex,Vector2.zero);
-                int state=AddWallState(bounds,join.DefaultHeight,join.IncidentRunIds);
-                string id=join.Kind==WallJoinKind.InnerCorner?"wall_inner_corner":join.Kind==WallJoinKind.End?"wall_end_cap":"wall_corner";
-                if(join.Kind==WallJoinKind.OuterCorner)
-                    for(int dx=-1;dx<=0;dx++)for(int dy=-1;dy<=0;dy++)
-                        if(Map.Get(join.Vertex.x+dx,join.Vertex.y+dy)==Tile.Door)id="wall_end_cap";
-                var normal=join.IncidentRunIds.Count>0?graph.Runs[join.IncidentRunIds[0]].Normal:Vector2.down;
-                foreach(var rect in join.Footprints) AddWallPiece(id,rect,normal,state);
+                int state=AddWallState(span.Bounds,WallGraph.FullHeight,span.Runs);
+                FillRun(span.Bounds,span.Normal,state);
             }
-            foreach(var core in graph.Cores)
+            foreach(var corner in graph.Perimeter.Corners)
             {
-                int state=AddWallState(core.Footprint,core.DefaultHeight,core.IncidentRunIds);
-                // Core face strips stop at their own corner posts; even a three-sided pier has no overlapping caps.
-                var normals=new HashSet<Vector2Int>();
-                foreach(var edge in graph.Edges)if(edge.SolidCell==core.Cell)normals.Add(edge.Normal);
-                // Recess the backing behind the recessed decorative faces and rotated posts.
-                // Solid-neighbour sides stay flush so consecutive separator cells meet without gaps.
-                var backing=core.Footprint;float backingInset=graph.Thickness*(.17f/.3f);
-                if(normals.Contains(Vector2Int.down))backing.yMin+=backingInset;
-                if(normals.Contains(Vector2Int.up))backing.yMax-=backingInset;
-                if(normals.Contains(Vector2Int.left))backing.xMin+=backingInset;
-                if(normals.Contains(Vector2Int.right))backing.xMax-=backingInset;
-                Batch(core.Footprint).Box(backing,state,wallTextureWidth,new Color(.22f,.135f,.09f,0),height:1.6f);
-                foreach(var side in normals)
-                {
-                    var r=core.Footprint;float d=graph.Thickness;
-                    if(side.y<0)r.height=d;else if(side.y>0)r.yMin=r.yMax-d;
-                    else if(side.x<0)r.width=d;else r.xMin=r.xMax-d;
-                    if(side.y!=0)
-                    {
-                        if(normals.Contains(Vector2Int.left))r.xMin+=d;
-                        if(normals.Contains(Vector2Int.right))r.xMax-=d;
-                    }
-                    else
-                    {
-                        if(normals.Contains(Vector2Int.down))r.yMin+=d;
-                        if(normals.Contains(Vector2Int.up))r.yMax-=d;
-                    }
-                    FillRun(r,side,state);
-                }
-                foreach(int dx in new[]{-1,1})foreach(int dy in new[]{-1,1})
-                    if(normals.Contains(new Vector2Int(dx,0))&&normals.Contains(new Vector2Int(0,dy)))
-                    {
-                        float d=graph.Thickness;
-                        var r=new Rect(dx<0?core.Footprint.xMin:core.Footprint.xMax-d,dy<0?core.Footprint.yMin:core.Footprint.yMax-d,d,d);
-                        bool doorway=Map.Get(core.Cell.x+dx,core.Cell.y)==Tile.Door||Map.Get(core.Cell.x,core.Cell.y+dy)==Tile.Door;
-                        AddWallPiece(doorway?"wall_end_cap":"wall_corner",r,new Vector2(0,dy),state);
-                    }
+                int state=AddWallState(corner.Bounds,WallGraph.FullHeight,corner.Runs);
+                AddWallPiece(corner.Piece,corner.Bounds,corner.Normal,state);
+                AddWallPiece("wall_cutaway_cap",corner.Bounds,corner.Normal,state,6);
             }
             foreach(var def in Map.Rooms)
             {
@@ -165,7 +125,7 @@ namespace BadAppleHotel.Game
                 bool horizontal=Mathf.Abs(inward.y)>.5f;
                 var rect=horizontal?new Rect(center.x-.6f,center.y-graph.Thickness/2,1.2f,graph.Thickness):new Rect(center.x-graph.Thickness/2,center.y-.6f,graph.Thickness,1.2f);
                 // Openings stay clear: frame tops are clipped in cutaway mode, posts never move inward.
-                int state=AddWallState(rect,WallGraph.CutawayHeight);
+                int state=AddWallState(rect,WallGraph.FullHeight);
                 wallStates[state].DoorRoom=def;wallStates[state].DoorInward=inward;
                 wallStates[state].RoomBoundary=true;
                 AddWallPiece("door_frame",rect,-inward,state,3);
@@ -190,7 +150,7 @@ namespace BadAppleHotel.Game
         }
         void BuildHotelFloors()
         {
-            foreach(bool hallway in new[]{false,true})
+            foreach(bool hallway in new[]{true,false})
             {
                 var v=new List<Vector3>();var t=new List<int>();var u=new List<Vector2>();var c=new List<Color>();
                 for(int x=0;x<Map.W;x++)for(int y=0;y<Map.H;y++)
@@ -199,6 +159,31 @@ namespace BadAppleHotel.Game
                     if(hallway?tile!=Tile.Corridor:(tile!=Tile.RoomFloor&&tile!=Tile.Door))continue;
                     float shade=.86f+HotelArt.Variant(x,y)*.035f;
                     Quad(v,t,u,c,new Vector3(x,y,.08f),new Vector3(x+1,y,.08f),new Vector3(x+1,y+1,.08f),new Vector3(x,y+1,.08f),Color.white*shade);
+
+                }
+                // Fill the recovered margin once, on a shared subdivision. Expanding
+                // whole floor quads would overlap at stepped corners and cause flicker.
+                float margin=(1-Walls.Thickness)*.5f;
+                var cuts=new[]{0f,margin,1-margin,1f};
+                for(int x=0;x<Map.W;x++)for(int y=0;y<Map.H;y++)
+                {
+                    if(WallGraph.IsWalkable(Map.Get(x,y)))continue;
+                    for(int sx=0;sx<3;sx++)for(int sy=0;sy<3;sy++)
+                    {
+                        var center=new Vector2(x+(cuts[sx]+cuts[sx+1])*.5f,y+(cuts[sy]+cuts[sy+1])*.5f);
+                        Tile owner=Tile.Void;
+                        for(int dx=-1;dx<=1;dx++)for(int dy=-1;dy<=1;dy++)
+                        {
+                            var type=Map.Get(x+dx,y+dy);if(!WallGraph.IsWalkable(type))continue;
+                            var expanded=new Rect(x+dx-margin,y+dy-margin,1+2*margin,1+2*margin);
+                            if(expanded.Contains(center)&&(owner==Tile.Void||type!=Tile.Corridor))owner=type;
+                        }
+                        if(hallway?owner!=Tile.Corridor:(owner!=Tile.RoomFloor&&owner!=Tile.Door))continue;
+                        float x0=x+cuts[sx],x1=x+cuts[sx+1],y0=y+cuts[sy],y1=y+cuts[sy+1];
+                        Quad(v,t,u,c,new Vector3(x0,y0,.08f),new Vector3(x1,y0,.08f),new Vector3(x1,y1,.08f),new Vector3(x0,y1,.08f),Color.white*.9f);
+                        int at=u.Count-4;u[at]=new Vector2(cuts[sx],cuts[sy]);u[at+1]=new Vector2(cuts[sx+1],cuts[sy]);
+                        u[at+2]=new Vector2(cuts[sx+1],cuts[sy+1]);u[at+3]=new Vector2(cuts[sx],cuts[sy+1]);
+                    }
                 }
                 Material mat;
                 if(hallway){mat=new Material(Resources.Load<Shader>("Shaders/HotelCarpet"));sceneAssets.Add(mat);}
@@ -233,7 +218,7 @@ namespace BadAppleHotel.Game
             var piece=wallKit?.Get(id);
             if(piece?.Mesh==null){Batch(rect).Box(rect,state,wallTextureWidth,new Color(.30f,.13f,.10f,0));return;}
             WallPieceCounts[id]=WallPieceCounts.TryGetValue(id,out int count)?count+1:1;
-            wallInstances.Add(piece,rect,normal,state,wallTextureWidth,mode);
+            wallInstances.Add(piece,rect,CameraWallNormal(normal),state,wallTextureWidth,mode);
         }
         bool RoomLampStaysUp(int state,RoomDef room)
         {
@@ -247,6 +232,7 @@ namespace BadAppleHotel.Game
                 }
             return borders;
         }
+        static Vector2 CameraWallNormal(Vector2 normal) => Mathf.Abs(normal.y)>.5f?Vector2.down:Vector2.left;
         void FillRun(Rect rect,Vector2 normal,int state)
         {
             if(wallKit==null){Batch(rect).Box(rect,state,wallTextureWidth,new Color(.30f,.13f,.10f,0));return;}
@@ -254,7 +240,7 @@ namespace BadAppleHotel.Game
             float start=horizontal?rect.xMin:rect.yMin,end=horizontal?rect.xMax:rect.yMax;
             for(float at=start;at<end-.001f;)
             {
-                float next=Mathf.Min(end,Mathf.Floor(at+.001f)+1);var slice=rect;
+                float next=Mathf.Min(end,at+1);var slice=rect;
                 if(horizontal){slice.xMin=at;slice.xMax=next;}else{slice.yMin=at;slice.yMax=next;}
                 wallPanels.Add(new WallPanel(slice,normal,state));
                 at=next;
@@ -267,12 +253,13 @@ namespace BadAppleHotel.Game
             {
                 var panel=wallPanels[i];bool horizontal=Mathf.Abs(panel.Normal.y)>.5f;
                 if((horizontal?panel.Rect.width:panel.Rect.height)<.6f)continue;
-                var position=panel.Rect.center+panel.Normal*Walls.Thickness/2;
-                var tile=HotelMap.ToTile(position+panel.Normal*.1f);
+                float depth=horizontal?panel.Rect.height:panel.Rect.width;
+                var position=panel.Rect.center+panel.Normal*depth/2;
+                var tile=HotelMap.ToTile(position+panel.Normal*.4f);
                 var type=Map.Get(tile.x,tile.y);if(type!=Tile.Corridor&&type!=Tile.RoomFloor)continue;
                 var room=type==Tile.RoomFloor?Map.RoomContaining(tile):null;
                 indices[i]=candidates.Count;
-                candidates.Add(new HotelLampPlan.Candidate(position,panel.Normal,room?.Index??Map.Rooms.Count,room!=null&&RoomLampStaysUp(panel.State,room),room!=null?10f:8f));
+                candidates.Add(new HotelLampPlan.Candidate(position,panel.Normal,room?.Index??Map.Rooms.Count,room!=null&&RoomLampStaysUp(panel.State,room),room!=null?10f:9f));
             }
             var chosen=HotelLampPlan.Select(Map,candidates);
             var glowPanels=new List<WallInstances.Record>();
@@ -282,6 +269,7 @@ namespace BadAppleHotel.Game
                 AddWallPiece(lamp?"wall_lamp":"wall_straight",panel.Rect,panel.Normal,panel.State,1);
                 if(lamp){wallLamps.Add(candidates[candidate].Lamp);glowPanels.Add(wallInstances.Records[wallInstances.Count-1]);}
                 AddWallPiece("wall_cutaway_cap",panel.Rect,panel.Normal,panel.State,2);
+                if(wallStates[panel.State].RoomBoundary)AddWallPiece("wall_cutaway_cap",panel.Rect,panel.Normal,panel.State,6);
             }
             BuildLampGlows(glowPanels);wallPanels.Clear();
         }
@@ -393,7 +381,7 @@ namespace BadAppleHotel.Game
                         height=WallVisibility.RoomHeight(Walls,Walls.Runs[i],viewRoom);
                     if(viewRoom!=null&&state.DoorRoom==viewRoom)height=WallVisibility.RoomHeight(state.DoorInward);
                     var delta=HotelView3D.Facing(state.Bounds.center)-HotelView3D.Facing(player);
-                    if(hallway&&HumanRole!=Role.Monster&&DistanceToRect(player,state.Bounds)<4&&WallVisibility.CoversGround(state.Bounds,1.9f,player)&&delta.y<1)
+                    if(state.RoomBoundary&&hallway&&HumanRole!=Role.Monster&&DistanceToRect(player,state.Bounds)<4&&WallVisibility.CoversGround(state.Bounds,1.9f,player)&&delta.y<1)
                     { height=Mathf.Min(height,WallGraph.CutawayHeight);fade=.22f; }
                 }
                 bool roomJoin=false;

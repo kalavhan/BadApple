@@ -46,9 +46,9 @@ namespace BadAppleHotel.Game
     }
 
     /// <summary>
-    /// Shared geometry for rendering, cutaway and collision. Floor edges are never moved into
-    /// walkable space. Runs have exact square ends; joins own the small corner patches, and
-    /// opposite faces of one-cell separators share a filled structural core.
+    /// Logical floor boundaries used by room visibility and map diagnostics. Perimeter
+    /// merges their physical representation into one thin wall; rendering and collision
+    /// both use that perimeter, never the two logical faces or full-cell core metadata.
     /// </summary>
     public sealed class WallGraph
     {
@@ -63,6 +63,7 @@ namespace BadAppleHotel.Game
         public readonly List<WallRun> Runs = new List<WallRun>();
         public readonly List<WallJoin> Joins = new List<WallJoin>();
         public readonly List<WallCore> Cores = new List<WallCore>();
+        public WallPerimeter Perimeter { get; private set; }
         public readonly List<Rect> CollisionFootprints = new List<Rect>();
 
         static readonly Vector2Int[] Neighbours = { Vector2Int.left, Vector2Int.down, Vector2Int.right, Vector2Int.up };
@@ -82,6 +83,10 @@ namespace BadAppleHotel.Game
             graph.FindJoins();
             graph.PartitionGeometry();
             graph.AssignHeights();
+            graph.Perimeter = WallPerimeter.Build(graph);
+            graph.CollisionFootprints.Clear();
+            foreach (var part in graph.Perimeter.Spans) graph.CollisionFootprints.Add(part.Bounds);
+            foreach (var part in graph.Perimeter.Corners) graph.CollisionFootprints.Add(part.Bounds);
             return graph;
         }
 
@@ -271,22 +276,11 @@ namespace BadAppleHotel.Game
 
         void AssignHeights()
         {
-            foreach (var run in Runs) run.DefaultHeight = WallVisibility.DefaultHeight(Map, run.Footprint);
-            foreach (var join in Joins)
-            {
-                join.DefaultHeight = IncidentHeight(join.IncidentRunIds);
-                foreach (var footprint in join.Footprints)
-                    join.DefaultHeight = Mathf.Min(join.DefaultHeight, WallVisibility.DefaultHeight(Map, footprint));
-            }
-            foreach (var core in Cores)
-                core.DefaultHeight = Mathf.Min(IncidentHeight(core.IncidentRunIds), WallVisibility.DefaultHeight(Map, core.Footprint));
-        }
-
-        float IncidentHeight(List<int> ids)
-        {
-            float height = FullHeight;
-            foreach (int id in ids) height = Mathf.Min(height, Runs[id].DefaultHeight);
-            return height;
+            // Cutaway is local to the occupied room/observer, never a permanent
+            // camera-facing cut across the entire hotel's exterior silhouette.
+            foreach (var run in Runs) run.DefaultHeight = FullHeight;
+            foreach (var join in Joins) join.DefaultHeight = FullHeight;
+            foreach (var core in Cores) core.DefaultHeight = FullHeight;
         }
 
         static int CompareVertices(Vector2Int a, Vector2Int b) => a.y != b.y ? a.y.CompareTo(b.y) : a.x.CompareTo(b.x);

@@ -20,7 +20,7 @@ namespace BadAppleHotel.EditorTools
         [Serializable] sealed class Shot
         {
             public string scenario, file, role, primaryAction, shotAvailability;
-            public int width, height, seed, room, apertureCells, visibleWallTriangles, wallSubmissions;
+            public int width, height, seed, room, apertureCells, peekBaseCaps, visibleWallTriangles, wallSubmissions;
             public bool fog, monsterVisible, monsterSprite, residentSprite, probeRoomVisible, asleep, shaderWindow;
             public Vector2 residentPosition, monsterPosition;
             public Rect apertureBounds;
@@ -191,11 +191,13 @@ namespace BadAppleHotel.EditorTools
             var instances = (WallInstances)typeof(GameManager).GetField("wallInstances", Private).GetValue(game);
             foreach (int state in instances.Records.Where(record => record.Footprint.Overlaps(fixturePeek.Bounds)).Select(record => record.StateId).Distinct())
             { minHeight = Mathf.Min(minHeight, pixels[state].g); minFade = Mathf.Min(minFade, pixels[state].a); }
+            int baseCaps=instances.Records.Count(record=>record.Mode==6&&record.Footprint.Overlaps(fixturePeek.Bounds));
             bool local = scenario == 0 || scenario == 2;
             Require(game.FogActive, "Behavior fixture must use normal fog, never clairvoyance.");
             Require((peek != null) == local && enabled == local, "Aperture/shader activation mismatch for " + Names[scenario]);
             if (local)
             {
+                Require(baseCaps>=peek.Cells.Count,"Peek is missing its low wall cap.");
                 Require(peek.Cells.Count == 3 && peek.Room == room, "Aperture escaped its three-cell room wall.");
                 Require(Vector4.Distance(bounds, new Vector4(peek.Bounds.xMin, peek.Bounds.yMin, peek.Bounds.xMax, peek.Bounds.yMax)) < .0001f, "Shader mask does not match sight aperture.");
                 Require(minFade > .999f, "Peeking faded an entire wall run.");
@@ -212,7 +214,7 @@ namespace BadAppleHotel.EditorTools
                 width = Screen.width, height = Screen.height, seed = game.Map.Seed, room = room.Index,
                 role = game.HumanRole.ToString(), fog = game.FogActive, monsterVisible = game.IsVisible(game.Monster.Pos), monsterSprite = game.Monster.Sr.enabled,
                 residentSprite = resident.Sr.enabled, probeRoomVisible = probe, asleep = resident.Asleep, primaryAction = game.ActionFor(resident).ToString(),
-                shotAvailability = game.ResidentShotAvailability(resident).ToString(), apertureCells = peek?.Cells.Count ?? 0,
+                shotAvailability = game.ResidentShotAvailability(resident).ToString(), apertureCells = peek?.Cells.Count ?? 0, peekBaseCaps=local?baseCaps:0,
                 apertureBounds = peek?.Bounds ?? new Rect(), shaderWindow = enabled, shaderBounds = bounds,
                 minimumRelatedWallHeight = minHeight, minimumRelatedWallFade = minFade,
                 residentPosition = resident.Pos, monsterPosition = game.Monster.Pos,

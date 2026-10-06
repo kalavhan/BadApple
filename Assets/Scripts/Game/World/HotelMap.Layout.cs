@@ -131,7 +131,13 @@ namespace BadAppleHotel.Game
             // Merge accidentally adjacent hallway strips and bring hallway faces up to a
             // single reserved room-wall cell. Room floors and their wall shell never move.
             foreach(var room in Rooms) Tiles[room.DoorTile.x,room.DoorTile.y]=Tile.Door;
-            RemoveDoubleSeparators();
+            for(int pass=0;pass<8;pass++)
+            {
+                RemoveDoubleSeparators();
+                if(!NormalizeCorridors())return false;
+                if(!HasDoubleWallRuns())break;
+                if(pass==7)return false;
+            }
 
             // Walls also surround hallways, including the ends of corridors.
             var walk = new List<Vector2Int>();
@@ -196,8 +202,10 @@ namespace BadAppleHotel.Game
             {
                 foreach (var f in room.Floor)
                 {
-                    protectedRoom[f.x, f.y] = true;
-                    foreach (var direction in Dirs4) protectedRoom[f.x + direction.x, f.y + direction.y] = true;
+                    // The diagonal cell holds the single outside corner. Allowing a
+                    // corridor there chops the room perimeter into disconnected stubs.
+                    for(int dx=-1;dx<=1;dx++)for(int dy=-1;dy<=1;dy++)
+                        protectedRoom[f.x+dx,f.y+dy]=true;
                 }
                 protectedRoom[room.DoorTile.x, room.DoorTile.y] = true;
                 var inward=room.DoorInside-room.DoorTile;var tangent=new Vector2Int(-inward.y,inward.x);
@@ -234,6 +242,74 @@ namespace BadAppleHotel.Game
                             if (RouteOpen(cell)) { Tiles[cell.x, cell.y] = Tile.Corridor; changed = true; }
                     }
             } while (changed);
+        }
+
+        bool HasDoubleWallRuns()
+        {
+            foreach(var axis in new[]{Vector2Int.right,Vector2Int.up})
+                for(int x=1;x<W-2;x++)for(int y=1;y<H-2;y++)
+                {
+                    var a=new Vector2Int(x,y);var tangent=new Vector2Int(-axis.y,axis.x);
+                    bool Across(Vector2Int p)=>!WallGraph.IsWalkable(Get(p.x,p.y))&&
+                        !WallGraph.IsWalkable(Get(p.x+axis.x,p.y+axis.y))&&
+                        WallGraph.IsWalkable(Get(p.x-axis.x,p.y-axis.y))&&
+                        WallGraph.IsWalkable(Get(p.x+axis.x*2,p.y+axis.y*2));
+                    if(Across(a)&&Across(a+tangent))return true;
+                }
+            return false;
+        }
+
+        bool NormalizeCorridors()
+        {
+            // Routing beside irregular outlines can leave two-square hooks and tiny
+            // blind pockets. A usable hall belongs to a complete corridor-width square.
+            int width=Mathf.Max(3,cfg.corridorWidth);
+            bool Fits(int x,int y)
+            {
+                for(int dx=0;dx<width;dx++)for(int dy=0;dy<width;dy++)
+                    if(!RouteOpen(new Vector2Int(x+dx,y+dy)))return false;
+                return true;
+            }
+            bool Covered(Vector2Int p)
+            {
+                for(int x=p.x-width+1;x<=p.x;x++)for(int y=p.y-width+1;y<=p.y;y++)
+                {
+                    bool full=true;
+                    for(int dx=0;dx<width&&full;dx++)for(int dy=0;dy<width;dy++)
+                        if(Get(x+dx,y+dy)!=Tile.Corridor){full=false;break;}
+                    if(full)return true;
+                }
+                return false;
+            }
+            foreach(var p in CorridorTiles())
+            {
+                if(Covered(p))continue;
+                int best=int.MaxValue,bx=0,by=0;
+                for(int x=p.x-width+1;x<=p.x;x++)for(int y=p.y-width+1;y<=p.y;y++)
+                {
+                    if(!Fits(x,y))continue;
+                    int cost=0;for(int dx=0;dx<width;dx++)for(int dy=0;dy<width;dy++)
+                        if(Get(x+dx,y+dy)!=Tile.Corridor)cost++;
+                    if(cost<best){best=cost;bx=x;by=y;}
+                }
+                if(best==int.MaxValue)continue;
+                for(int dx=0;dx<width;dx++)for(int dy=0;dy<width;dy++)Tiles[bx+dx,by+dy]=Tile.Corridor;
+            }
+            // Trim only unsupported slivers; protected room floors/walls never change.
+            var remove=new List<Vector2Int>();
+            foreach(var p in CorridorTiles())if(!Covered(p))remove.Add(p);
+            foreach(var p in remove)Tiles[p.x,p.y]=Tile.Void;
+            if(Get(Lobby.x,Lobby.y)!=Tile.Corridor||Get(MonsterSpawn.x,MonsterSpawn.y)!=Tile.Corridor)return false;
+            var seen=new HashSet<Vector2Int>{Lobby};var queue=new Queue<Vector2Int>();queue.Enqueue(Lobby);
+            while(queue.Count>0)
+            {
+                var p=queue.Dequeue();
+                foreach(var d in Dirs4){var n=p+d;if(Get(n.x,n.y)==Tile.Corridor&&seen.Add(n))queue.Enqueue(n);}
+            }
+            foreach(var p in CorridorTiles())if(!seen.Contains(p))return false;
+            foreach(var room in Rooms)if(!seen.Contains(room.DoorOutside))return false;
+            DeadEnds.RemoveAll(p=>!seen.Contains(p));
+            return true;
         }
 
         static int Manhattan(Vector2Int a, Vector2Int b) => Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);

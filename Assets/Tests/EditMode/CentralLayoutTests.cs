@@ -32,6 +32,9 @@ namespace BadAppleHotel.Tests
                         }
                     }
                 }
+                foreach(var room in map.Rooms)foreach(var floor in room.Floor)
+                    for(int dx=-1;dx<=1;dx++)for(int dy=-1;dy<=1;dy++)
+                        Assert.AreNotEqual(Tile.Corridor,map.Get(floor.x+dx,floor.y+dy),"Corridor consumed a room corner, seed "+seed);
                 var joined=new HashSet<string>();
                 for(int y=1;y<map.H-1;y++)for(int x=1;x<map.W-1;x++)
                     foreach(var d in new[]{Vector2Int.right,Vector2Int.up})

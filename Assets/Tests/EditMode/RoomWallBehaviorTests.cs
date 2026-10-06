@@ -38,7 +38,7 @@ namespace BadAppleHotel.Tests
         }
 
         [TestCase(11)] [TestCase(41)] [TestCase(83)]
-        public void Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_joins_cores_and_door_frames(int seed)
+        public void Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames(int seed)
         {
             Build(seed);
             game.SetWallMode(WallDisplayMode.Cutaway);
@@ -53,9 +53,9 @@ namespace BadAppleHotel.Tests
                 foreach (var item in expected) AssertTarget(item.Key, item.Value, "room " + room.Index + " run");
 
                 int index = game.Walls.Runs.Count;
-                foreach (var join in game.Walls.Joins)
+                foreach (var join in game.Walls.Perimeter.Spans)
                 {
-                    var roomSides = join.IncidentRunIds.Where(expected.ContainsKey).ToArray();
+                    var roomSides = join.Runs.Where(expected.ContainsKey).ToArray();
                     if (roomSides.Length > 0)
                     {
                         AssertTarget(index, roomSides.Min(id => expected[id]), "room " + room.Index + " join");
@@ -63,9 +63,9 @@ namespace BadAppleHotel.Tests
                     }
                     index++;
                 }
-                foreach (var core in game.Walls.Cores)
+                foreach (var core in game.Walls.Perimeter.Corners)
                 {
-                    var roomSides = core.IncidentRunIds.Where(expected.ContainsKey).ToArray();
+                    var roomSides = core.Runs.Where(expected.ContainsKey).ToArray();
                     if (roomSides.Length > 0)
                     {
                         AssertTarget(index, roomSides.Min(id => expected[id]), "room " + room.Index + " core");
@@ -137,15 +137,19 @@ namespace BadAppleHotel.Tests
                 var farLamps = instances.Records.Where(record => record.Piece.Id == "wall_lamp" &&
                     HeightForRoomFace(record.Normal) == WallGraph.FullHeight &&
                     targets.GetPixel(record.StateId, 0).g > WallGraph.FullHeight - .001f &&
-                    room.ContainsInterior(HotelMap.ToTile(record.Footprint.center + record.Normal * (game.Walls.Thickness / 2 + .1f)))).ToArray();
+                    room.ContainsInterior(HotelMap.ToTile(record.Footprint.center + record.Normal * (game.Walls.Thickness / 2 + .4f)))).ToArray();
                 Assert.Greater(farLamps.Length, 0, "No visible far-wall lamp in room " + room.Index);
                 foreach (var record in farLamps)
                 {
                     Assert.AreEqual(1, record.Mode);
                     AssertTarget(record.StateId, WallGraph.FullHeight, "Far lamp in room " + room.Index);
-                    Vector2 position = record.Footprint.center + record.Normal * game.Walls.Thickness / 2;
+                    float depth=Mathf.Abs(record.Normal.y)>.5f?record.Footprint.height:record.Footprint.width;
+                    Vector2 position = record.Footprint.center + record.Normal * depth / 2;
                     Assert.IsTrue(lamps.Any(lamp => Vector2.Distance(lamp.Position, position) < .001f && lamp.Normal == record.Normal));
-                    Assert.Greater(lighting.Sample(position + record.Normal * .5f), .5f,
+                    // Centered thin walls recover .35 tiles of margin. Measure the
+                    // adjacent floor square, rather than the old face-relative sample.
+                    var floor=HotelMap.ToTile(position+record.Normal*.4f);
+                    Assert.Greater(lighting.Sample(HotelMap.Center(floor)), .5f,
                         "The far-wall lamp in room " + room.Index + " should illuminate its adjacent floor.");
                 }
             }
@@ -168,16 +172,9 @@ namespace BadAppleHotel.Tests
                         run.EdgeIds.Any(id => room.ContainsInterior(game.Walls.Edges[id].WalkableCell))) continue;
                     Assert.IsTrue(WallVisibility.BordersRoom(game.Walls, run, room), "A jamb is part of its doorway's room boundary.");
                     AssertTarget(run.Id, expected, "Door-only jamb in room " + room.Index);
-                    // Some jamb strips are owned by a filled core instead of the run.
-                    // Include those linked states to exercise the meshes actually drawn.
-                    var ownedStates = new HashSet<int> { run.Id };
-                    for (int i = 0; i < game.Walls.Joins.Count; i++)
-                        if (game.Walls.Joins[i].IncidentRunIds.Contains(run.Id)) ownedStates.Add(game.Walls.Runs.Count + i);
-                    for (int i = 0; i < game.Walls.Cores.Count; i++)
-                        if (game.Walls.Cores[i].IncidentRunIds.Contains(run.Id))
-                            ownedStates.Add(game.Walls.Runs.Count + game.Walls.Joins.Count + i);
-                    Assert.IsTrue(instances.Records.Any(record => ownedStates.Contains(record.StateId) && record.Mode == 1),
-                        "The regression must include the actual full jamb mesh or its structural core.");
+                    var frame=instances.Records.Single(record=>record.Piece.Id=="door_frame" &&
+                        Vector2.Distance(record.Footprint.center,HotelMap.Center(room.DoorTile))<.001f);
+                    AssertTarget(frame.StateId,expected,"The single door frame follows its room side.");
                     if (expected == WallGraph.DownHeight) near++; else far++;
                 }
             }
@@ -212,7 +209,7 @@ namespace BadAppleHotel.Tests
             AssertTarget(corridor.Id, corridor.DefaultHeight, "Separate corridor boundary");
         }
 
-        int StateCount => game.Walls.Runs.Count + game.Walls.Joins.Count + game.Walls.Cores.Count + game.Map.Rooms.Count;
+        int StateCount => game.Walls.Runs.Count + game.Walls.Perimeter.Spans.Count + game.Walls.Perimeter.Corners.Count + game.Map.Rooms.Count;
         T Field<T>(string name) => (T)typeof(GameManager).GetField(name, Private).GetValue(game);
         void UpdateTargets() => typeof(GameManager).GetMethod("UpdateWallStateTexture", Private).Invoke(game, new object[] { false });
 
