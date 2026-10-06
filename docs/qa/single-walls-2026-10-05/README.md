@@ -20,6 +20,7 @@ Corridor cleanup requires every corridor tile to belong to a complete 3×3 corri
 
 ## Validation
 
+- Complete Unity EditMode suite: **115/115 passed**, no skipped tests. [XML report](editmode-tests.xml) includes 100-layout checks, 300 navigation routes, exact build budgets, door clearance, physical wall ownership, room cutaways, monster sight, sleep/shoot controls, lamp coverage and GLES3 shader compilation.
 - Twenty complete rendered hotels use the imported kit with no overlapping physical spans, no full-cell backing blocks, and matching thin collision footprints. The maximum full-hotel wall submission count is **15**, including the combined lamp glow batch.
 - The full-suite lighting fixtures cover 23 hotel builds. All rooms meet 90% useful-light coverage; all corridors exceed 85%. Exact measurements are in [light-coverage.csv](light-coverage.csv). Lamps remain at least three tiles apart.
 - **24 geometry captures** passed at 1560×720 and 960×720, including the central-room perimeter, south corner, outer boundary, both wall axes, doors and glow. **Six normal-fog gameplay captures** passed, including the three-square low-base peek.
