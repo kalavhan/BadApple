@@ -29,12 +29,12 @@ namespace BadAppleHotel.Tests
             var light=(HotelLighting)typeof(GameManager).GetField("hotelLighting",Private).GetValue(game);
             Assert.AreEqual(lamps.Count,light.LampCount,"Every visible sconce must actually cast light.");
             for(int i=0;i<lamps.Count;i++)for(int j=i+1;j<lamps.Count;j++)
-                Assert.GreaterOrEqual(Vector2.Distance(lamps[i].Position,lamps[j].Position),2.9999f,"lamps "+i+","+j+" seed "+game.Map.Seed);
+                Assert.GreaterOrEqual(Vector2.Distance(lamps[i].Position,lamps[j].Position),HotelLampPlan.MinimumSpacing-.0001f,"lamps "+i+","+j+" seed "+game.Map.Seed);
             float minRoom=1;
             foreach(var room in game.Map.Rooms)
             {
                 float coverage=Coverage(light,room.Floor);minRoom=Mathf.Min(minRoom,coverage);
-                if(coverage<.9f)
+                if(coverage<.98f)
                 {
                     Debug.Log("DARK ROOM "+room.Index+" FLOOR "+string.Join(";",room.Floor));
                     Debug.Log("DOOR "+room.DoorTile+" INSIDE "+room.DoorInside);
@@ -48,10 +48,11 @@ namespace BadAppleHotel.Tests
                     foreach(var tile in room.Floor)if(light.Sample(HotelMap.Center(tile))<.25f)
                         Debug.Log("DIM TILE "+tile+" light "+light.Sample(HotelMap.Center(tile)));
                 }
-                Assert.GreaterOrEqual(coverage,.9f,"Room "+room.Index+" seed "+game.Map.Seed);
+                Assert.GreaterOrEqual(coverage,.98f,"Room "+room.Index+" seed "+game.Map.Seed);
             }
             float corridor=Coverage(light,game.Map.CorridorTiles());
-            Assert.GreaterOrEqual(corridor,.85f,"Corridor coverage seed "+game.Map.Seed);
+            // Hallways are a little dimmer than rooms, but most of the floor stays lamp-lit.
+            Assert.GreaterOrEqual(corridor,.78f,"Corridor coverage seed "+game.Map.Seed);
             Debug.Log("LAMP COVERAGE seed="+game.Map.Seed+" lamps="+lamps.Count+" roomMin="+minRoom+" corridor="+corridor);
         }
         static float Coverage(HotelLighting light,IReadOnlyList<Vector2Int> tiles)

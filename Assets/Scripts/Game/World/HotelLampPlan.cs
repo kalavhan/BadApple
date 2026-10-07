@@ -6,7 +6,10 @@ namespace BadAppleHotel.Game
     /// <summary>Deterministic, spaced wall sconces selected against actual occluded floor coverage.</summary>
     public static class HotelLampPlan
     {
-        public const float MinimumSpacing=3f, RoomCoverage=.90f, CorridorCoverage=.85f;
+        // Rooms light every floor sample a sconce can reach; hallways stay a little dimmer.
+        public const float MinimumSpacing=2f, RoomCoverage=1f, CorridorCoverage=.80f;
+        // Sconces only hang on camera-facing walls, so room lamps must reach the near corners.
+        public const float RoomLampRadius=10f, CorridorLampRadius=9f;
         // Plan above the .25 useful-light threshold to leave room for texture quantization.
         const float UsefulLight=.30f;
         public readonly struct Candidate
@@ -57,7 +60,12 @@ namespace BadAppleHotel.Game
             var selected=new HashSet<int>();var allowed=new bool[candidates.Count];
             for(int i=0;i<allowed.Length;i++)allowed[i]=true;
             var illumination=new float[samples.Count];var covered=new int[groups];
-            int Target(int group)=>Mathf.CeilToInt(totals[group]*(group<map.Rooms.Count?RoomCoverage:CorridorCoverage));
+            // Samples hidden behind an island from every mount can never be lit; aim for the rest.
+            var reach=new float[samples.Count];var reachable=new int[groups];
+            for(int i=0;i<candidates.Count;i++)foreach(var pair in contributions[i])reach[pair.Key]+=pair.Value;
+            for(int j=0;j<samples.Count;j++)if(reach[j]>=UsefulLight)reachable[samples[j].Group]++;
+            int Target(int group)=>Mathf.Min(reachable[group],
+                Mathf.CeilToInt(totals[group]*(group<map.Rooms.Count?RoomCoverage:CorridorCoverage)));
             float Gain(int i)
             {
                 float score=0;

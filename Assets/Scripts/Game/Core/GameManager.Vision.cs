@@ -4,6 +4,7 @@ namespace BadAppleHotel.Game
 {
     public partial class GameManager
     {
+        static readonly Vector2Int[] Neighbours = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
         Texture2D fogTex;
         Color32[] fogPx;
         bool[] visible, explored;
@@ -38,8 +39,19 @@ namespace BadAppleHotel.Game
             Shader.SetGlobalVector("_HotelSize",new Vector4(Map.W,Map.H,0,0));
             Shader.SetGlobalFloat("_HotelFog",0);
         }
+        /// <summary>The living guest's own claimed room, which they always see whole. Once the
+        /// monster is revealed, a monster player sees only through the monster's eyes.</summary>
+        RoomDef OwnRoom => InMatch && Human != null && Human.Alive && Human.Room != null &&
+            !(HumanRole == Role.Monster && Monster != null) ? Human.Room.Def : null;
+        bool InOwnRoom(Vector2 world)
+        {
+            var own = OwnRoom; if (own == null) return false;
+            var cell = HotelMap.ToTile(world);
+            return own.ContainsInterior(cell) || cell == own.DoorTile;
+        }
         public bool IsVisible(Vector2 world)
         {
+            if (InOwnRoom(world)) return true;
             // Clairvoyance still reveals the hotel and guests, but a living resident in
             // a room cannot track the monster down a remote hallway. Spectators can.
             if (InMatch && HumanRole == Role.Resident && Human != null && Human.Alive && IsMonsterPoint(world) &&
@@ -83,10 +95,21 @@ namespace BadAppleHotel.Game
                         var center=HotelMap.Center(new Vector2Int(x,y));
                         if(WallSight.CanSee(Map,origin,center,radius,Opaque,peek,monsterObserver,false,true))visible[y*Map.W+x]=true;
                     }
+                    // A claimed room stays in view for its guest, whatever their line of sight.
+                    var own=OwnRoom;
+                    if(own!=null)
+                    {
+                        foreach(var cell in own.Floor)
+                        {
+                            visible[cell.y*Map.W+cell.x]=true;
+                            x0=Mathf.Min(x0,cell.x);x1=Mathf.Max(x1,cell.x);y0=Mathf.Min(y0,cell.y);y1=Mathf.Max(y1,cell.y);
+                        }
+                        visible[own.DoorTile.y*Map.W+own.DoorTile.x]=true;
+                    }
                     // A visible floor exposes its bordering wall face, including oblique corners.
                     for(int x=x0;x<=x1;x++)for(int y=y0;y<=y1;y++)
                         if(visible[y*Map.W+x]&&Map.Get(x,y)!=Tile.Wall)
-                            foreach(var d in new[]{Vector2Int.up,Vector2Int.down,Vector2Int.left,Vector2Int.right})
+                            foreach(var d in Neighbours)
                                 if(Map.Get(x+d.x,y+d.y)==Tile.Wall)visible[(y+d.y)*Map.W+x+d.x]=true;
                     for(int i=0;i<visible.Length;i++)
                     {

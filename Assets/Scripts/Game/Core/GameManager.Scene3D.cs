@@ -259,7 +259,8 @@ namespace BadAppleHotel.Game
                 var type=Map.Get(tile.x,tile.y);if(type!=Tile.Corridor&&type!=Tile.RoomFloor)continue;
                 var room=type==Tile.RoomFloor?Map.RoomContaining(tile):null;
                 indices[i]=candidates.Count;
-                candidates.Add(new HotelLampPlan.Candidate(position,panel.Normal,room?.Index??Map.Rooms.Count,room!=null&&RoomLampStaysUp(panel.State,room),room!=null?10f:9f));
+                candidates.Add(new HotelLampPlan.Candidate(position,panel.Normal,room?.Index??Map.Rooms.Count,room!=null&&RoomLampStaysUp(panel.State,room),
+                    room!=null?HotelLampPlan.RoomLampRadius:HotelLampPlan.CorridorLampRadius));
             }
             var chosen=HotelLampPlan.Select(Map,candidates);
             var glowPanels=new List<WallInstances.Record>();

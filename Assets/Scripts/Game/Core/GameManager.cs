@@ -418,7 +418,8 @@ namespace BadAppleHotel.Game
             int slot = -1;
             for (int i = 0; i < room.Slots.Length; i++) if (CanBuildAt(room, i)) { slot = i; break; }
             if (slot < 0) return;
-            var options = Cfg.towers.towers;
+            // A free crystal ball would silently lift the fog for the whole match.
+            var options = Cfg.towers.towers.Where(t => t.effect != "clairvoyance").ToArray();
             var def = options[Random.Range(0, options.Length)];
             PlaceTower(room, slot, def);
             string who = room.Owner.IsHuman ? "You get" : room.Owner.Name + " gets";
