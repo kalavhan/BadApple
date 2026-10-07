@@ -68,6 +68,7 @@ namespace BadAppleHotel.Game
         public float NoWeaponBlinkUntil;
         public SpriteRenderer DoorSr;
         public SpriteRenderer BedSr;
+        public MeshRenderer BedModel;
 
         public Room(RoomDef def)
         {
@@ -134,6 +135,7 @@ namespace BadAppleHotel.Game
         public Vector2 SleepFrom;          // where the glide started
         public SpriteRenderer Sr;
         public CharacterAnimator Anim;     // 8-direction art; null when only the placeholder sprite exists
+        public CharacterModel Model;       // baked 3D resident; replaces Anim when the roster art has a model
         public RosterDef Char;             // which of the roster characters this seat plays
         public Vector2 LastPos;
         public float AttackUntil;          // personal attack animation; bots may join their towers

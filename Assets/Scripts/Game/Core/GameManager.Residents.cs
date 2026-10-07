@@ -172,7 +172,7 @@ namespace BadAppleHotel.Game
                 var head = r.Anim != null ? r.Anim.RestHead : new Vector2(0f, 1.25f);
                 var target = SleepPose.Position(r.Room.Def.BedCenter, r.Room.Def.BedRotation, bed, head, r.Room.BedSr.transform.localScale);
                 var p = Vector2.Lerp(r.SleepFrom + Vector2.down * 0.3f, target, k);
-                t.position = new Vector3(p.x, p.y, -0.06f);
+                t.position = new Vector3(p.x, p.y, Mathf.Lerp(-0.06f, SleepZ(r.Room), k));
                 t.rotation = Quaternion.Slerp(HotelView3D.SpriteRotation, Quaternion.Euler(0f, 0f, angle), k);
                 t.localScale = Vector3.Lerp(HotelView3D.SpriteScale,Vector3.one,k);
                 r.Sr.color = Color.Lerp(Color.white, new Color(0.8f, 0.8f, 0.95f, 1f), k);
@@ -192,6 +192,7 @@ namespace BadAppleHotel.Game
                 bool attacking = !r.Asleep && Now < r.AttackUntil;
                 r.Anim.Drive(HotelView3D.Facing(r.Facing), moving, attacking);
             }
+            if (r.Model != null) PlaceResidentModel(r);
             ContactShadow.Place(r.Sr, r.Pos, !r.Asleep && r.Alive);
             r.LastPos = r.Pos;
         }
@@ -383,8 +384,7 @@ namespace BadAppleHotel.Game
             if (cost < 0f) return ActionResult.MaxLevel;
             if (!Spend(r, "dreamPower", cost)) return ActionResult.NoMoney;
             room.BedLevel++;
-            room.BedSr.sprite = Sprites.Bed(room.BedLevel);
-            room.BedSr.transform.localScale = SleepPose.BedScale(room.BedSr.sprite);
+            ApplyBedLook(room);
             AddFloater(room.Def.BedCenter + Vector2.up, Cfg.beds.levels[room.BedLevel - 1].name, (Color)Palette.Candle);
             return ActionResult.Ok;
         }

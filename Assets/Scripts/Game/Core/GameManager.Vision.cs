@@ -126,6 +126,7 @@ namespace BadAppleHotel.Game
             {
                 bool known=room.Owner==Human||!fog||IsVisible(room.Def.BedCenter);
                 if(room.BedSr!=null)room.BedSr.enabled=known;
+                if(room.BedModel!=null)room.BedModel.enabled=known;
                 foreach(var tower in room.Slots)if(tower?.Sr!=null)tower.Sr.enabled=room.Owner==Human||!fog||IsTileVisible(tower.Tile);
             }
         }
