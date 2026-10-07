@@ -15,14 +15,14 @@ namespace BadAppleHotel.Tests
             for(int seed=1;seed<=100;seed++)
             {
                 var map=new HotelMap(cfg.map,10,seed);
-                CollectionAssert.AreEqual(new[]{20,20,20,23,23,23,26,26,26,30},map.Rooms.Select(r=>r.BuildTiles.Count).OrderBy(n=>n));
-                assignments.Add(string.Join(",",map.Rooms.Select(r=>r.BuildTiles.Count)));
+                CollectionAssert.AreEqual(new[]{20,20,20,23,23,23,26,26,26,30},map.Rooms.Select(r=>r.BuildBudget).OrderBy(n=>n));
+                assignments.Add(string.Join(",",map.Rooms.Select(r=>r.BuildBudget)));
                 foreach(var room in map.Rooms)
                 {
                     Assert.AreEqual(1,Vector2Int.Distance(room.BedTile,room.BedHeadTile));
                     Assert.IsTrue(room.FloorSet.Contains(room.BedHeadTile));
                     Assert.IsFalse(room.Walkway.Contains(room.BedHeadTile));
-                    Assert.IsTrue(room.BuildTiles.All(t=>!room.IsBedTile(t)&&!room.Walkway.Contains(t)));
+                    Assert.IsTrue(room.BuildTiles.All(t=>!room.IsBedTile(t)&&t!=room.DoorInside));
                     int area=(room.Floor.Max(t=>t.x)-room.Floor.Min(t=>t.x)+1)*(room.Floor.Max(t=>t.y)-room.Floor.Min(t=>t.y)+1);
                     Assert.Less(room.Floor.Count,area,"no rectangular rooms");
                     foreach(var f in room.Floor)

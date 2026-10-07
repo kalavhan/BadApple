@@ -58,11 +58,6 @@ namespace BadAppleHotel.Game
             if (fogTex != null) RemoveObject(fogTex);
             if (worldSpriteMaterial != null) RemoveObject(worldSpriteMaterial);
         }
-        Material Surface(Texture texture, Color tint)
-        {
-            var material = new Material(Resources.Load<Shader>("Shaders/HotelSurface"));
-            material.mainTexture = texture; material.color = tint; sceneAssets.Add(material); return material;
-        }
         MeshRenderer MeshObject(string name, Mesh mesh, Material material, Transform parent)
         {
             var go = new GameObject(name); go.transform.SetParent(parent, false);
@@ -150,56 +145,75 @@ namespace BadAppleHotel.Game
         }
         void BuildHotelFloors()
         {
-            foreach(bool hallway in new[]{true,false})
+            // One continuous floor mesh: walnut is mapped in world space with a finish,
+            // board direction and offset owned by each room; the corridor runner, its
+            // binding and the claimed-room energy are resolved per pixel by HotelFloor.
+            var v=new List<Vector3>();var t=new List<int>();var u=new List<Vector2>();var c=new List<Color>();
+            for(int x=0;x<Map.W;x++)for(int y=0;y<Map.H;y++)
             {
-                var v=new List<Vector3>();var t=new List<int>();var u=new List<Vector2>();var c=new List<Color>();
-                for(int x=0;x<Map.W;x++)for(int y=0;y<Map.H;y++)
-                {
-                    var tile=Map.Get(x,y);
-                    if(hallway?tile!=Tile.Corridor:(tile!=Tile.RoomFloor&&tile!=Tile.Door))continue;
-                    float shade=.86f+HotelArt.Variant(x,y)*.035f;
-                    Quad(v,t,u,c,new Vector3(x,y,.08f),new Vector3(x+1,y,.08f),new Vector3(x+1,y+1,.08f),new Vector3(x,y+1,.08f),Color.white*shade);
-
-                }
-                // Fill the recovered margin once, on a shared subdivision. Expanding
-                // whole floor quads would overlap at stepped corners and cause flicker.
-                float margin=(1-Walls.Thickness)*.5f;
-                var cuts=new[]{0f,margin,1-margin,1f};
-                for(int x=0;x<Map.W;x++)for(int y=0;y<Map.H;y++)
-                {
-                    if(WallGraph.IsWalkable(Map.Get(x,y)))continue;
-                    for(int sx=0;sx<3;sx++)for(int sy=0;sy<3;sy++)
-                    {
-                        var center=new Vector2(x+(cuts[sx]+cuts[sx+1])*.5f,y+(cuts[sy]+cuts[sy+1])*.5f);
-                        Tile owner=Tile.Void;
-                        for(int dx=-1;dx<=1;dx++)for(int dy=-1;dy<=1;dy++)
-                        {
-                            var type=Map.Get(x+dx,y+dy);if(!WallGraph.IsWalkable(type))continue;
-                            var expanded=new Rect(x+dx-margin,y+dy-margin,1+2*margin,1+2*margin);
-                            if(expanded.Contains(center)&&(owner==Tile.Void||type!=Tile.Corridor))owner=type;
-                        }
-                        if(hallway?owner!=Tile.Corridor:(owner!=Tile.RoomFloor&&owner!=Tile.Door))continue;
-                        float x0=x+cuts[sx],x1=x+cuts[sx+1],y0=y+cuts[sy],y1=y+cuts[sy+1];
-                        Quad(v,t,u,c,new Vector3(x0,y0,.08f),new Vector3(x1,y0,.08f),new Vector3(x1,y1,.08f),new Vector3(x0,y1,.08f),Color.white*.9f);
-                        int at=u.Count-4;u[at]=new Vector2(cuts[sx],cuts[sy]);u[at+1]=new Vector2(cuts[sx+1],cuts[sy]);
-                        u[at+2]=new Vector2(cuts[sx+1],cuts[sy+1]);u[at+3]=new Vector2(cuts[sx],cuts[sy+1]);
-                    }
-                }
-                Material mat;
-                if(hallway){mat=new Material(Resources.Load<Shader>("Shaders/HotelCarpet"));sceneAssets.Add(mat);}
-                else mat=Surface(Resources.Load<Texture2D>("Art/floor_room"),Color.white);
-                MeshObject(hallway?"Hallway hexagon carpet":"Room wood floors",Mesh(v,t,u,c),mat,worldRoot);
+                if(!WallGraph.IsWalkable(Map.Get(x,y)))continue;
+                Quad(v,t,u,c,new Vector3(x,y,.08f),new Vector3(x+1,y,.08f),new Vector3(x+1,y+1,.08f),new Vector3(x,y+1,.08f),FloorZone(new Vector2Int(x,y)));
             }
+            // Fill the recovered margin once, on a shared subdivision. Expanding
+            // whole floor quads would overlap at stepped corners and cause flicker.
+            float margin=(1-Walls.Thickness)*.5f;
+            var cuts=new[]{0f,margin,1-margin,1f};
+            for(int x=0;x<Map.W;x++)for(int y=0;y<Map.H;y++)
+            {
+                if(WallGraph.IsWalkable(Map.Get(x,y)))continue;
+                for(int sx=0;sx<3;sx++)for(int sy=0;sy<3;sy++)
+                {
+                    var center=new Vector2(x+(cuts[sx]+cuts[sx+1])*.5f,y+(cuts[sy]+cuts[sy+1])*.5f);
+                    Tile owner=Tile.Void;var ownerCell=Vector2Int.zero;
+                    for(int dx=-1;dx<=1;dx++)for(int dy=-1;dy<=1;dy++)
+                    {
+                        var type=Map.Get(x+dx,y+dy);if(!WallGraph.IsWalkable(type))continue;
+                        var expanded=new Rect(x+dx-margin,y+dy-margin,1+2*margin,1+2*margin);
+                        if(expanded.Contains(center)&&(owner==Tile.Void||type!=Tile.Corridor)){owner=type;ownerCell=new Vector2Int(x+dx,y+dy);}
+                    }
+                    if(owner==Tile.Void)continue;
+                    float x0=x+cuts[sx],x1=x+cuts[sx+1],y0=y+cuts[sy],y1=y+cuts[sy+1];
+                    // Margin fragments share the finish of the floor they extend.
+                    Quad(v,t,u,c,new Vector3(x0,y0,.08f),new Vector3(x1,y0,.08f),new Vector3(x1,y1,.08f),new Vector3(x0,y1,.08f),FloorZone(ownerCell));
+                }
+            }
+            floorMaterial=new Material(Resources.Load<Shader>("Shaders/HotelFloor"));sceneAssets.Add(floorMaterial);
+            floorMaterial.SetTexture("_WoodA",FloorTexture("floor-walnut-continuous-a"));
+            floorMaterial.SetTexture("_WoodB",FloorTexture("floor-walnut-continuous-b"));
+            floorMaterial.SetTexture("_Carpet",FloorTexture("carpet-burgundy-field"));
+            floorMaterial.SetTexture("_Binding",FloorTexture("carpet-antique-binding"));
+            BuildFloorEnergyTextures();
+            MeshObject("Hotel floors",Mesh(v,t,u,c),floorMaterial,worldRoot);
+
             var rv=new List<Vector3>();var rt=new List<int>();var ru=new List<Vector2>();var rc=new List<Color>();
             foreach(var room in Map.Rooms)
             {
                 var turn=Quaternion.Euler(0,0,room.BedRotation);
                 var center=new Vector3(room.BedCenter.x,room.BedCenter.y,.06f);
                 // Fits within the bed's reserved two squares, including irregular room corners.
-                Quad(rv,rt,ru,rc,center+turn*new Vector3(-.47f,-.94f),center+turn*new Vector3(.47f,-.94f),center+turn*new Vector3(.47f,.94f),center+turn*new Vector3(-.47f,.94f),Color.white);
+                var design=room.Index%3==1?Color.white:Color.black;
+                Quad(rv,rt,ru,rc,center+turn*new Vector3(-.47f,-.94f),center+turn*new Vector3(.47f,-.94f),center+turn*new Vector3(.47f,.94f),center+turn*new Vector3(-.47f,.94f),design);
             }
-            var rug=new Material(Resources.Load<Shader>("Shaders/HotelCarpet"));rug.SetFloat("_Rug",1);sceneAssets.Add(rug);
+            var rug=new Material(Resources.Load<Shader>("Shaders/HotelCarpet"));sceneAssets.Add(rug);
+            rug.SetTexture("_FieldA",FloorTexture("carpet-burgundy-field"));
+            rug.SetTexture("_FieldB",FloorTexture("carpet-charcoal-field"));
+            rug.SetTexture("_Binding",FloorTexture("carpet-antique-binding"));
             MeshObject("Bed rugs",Mesh(rv,rt,ru,rc),rug,worldRoot);
+        }
+        Material floorMaterial;
+        static Texture2D FloorTexture(string name) => Resources.Load<Texture2D>("Art/Floors/"+name);
+        /// <summary>Vertex colour for a floor cell: r finish, g board direction, b offset seed,
+        /// a room interior (eligible for claimed-room energy). Deterministic per room.</summary>
+        Color FloorZone(Vector2Int cell)
+        {
+            var tile=Map.Get(cell.x,cell.y);
+            var room=tile==Tile.Door?Map.RoomAtDoor(cell):tile==Tile.RoomFloor?Map.RoomContaining(cell):null;
+            if(room==null)return new Color(0,0,.37f,0);
+            int minX=int.MaxValue,maxX=int.MinValue,minY=int.MaxValue,maxY=int.MinValue;
+            foreach(var f in room.Floor){minX=Mathf.Min(minX,f.x);maxX=Mathf.Max(maxX,f.x);minY=Mathf.Min(minY,f.y);maxY=Mathf.Max(maxY,f.y);}
+            // Boards run along the room's longer axis; roughly a third of rooms get the cooler finish.
+            float finish=(room.Index*5+2)%3==0?1:0, vertical=maxY-minY>maxX-minX?1:0;
+            return new Color(finish,vertical,Mathf.Repeat(room.Index*.6180339f,1),tile==Tile.RoomFloor?1:0);
         }
         int AddWallState(Rect bounds,float height,IEnumerable<int> runs=null)
         {

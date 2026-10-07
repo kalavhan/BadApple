@@ -1,6 +1,13 @@
 Shader "BadApple/HotelCarpet"
 {
-    Properties { _Rug ("Bed rug", Float)=0 }
+    // Bed rugs: a woven fabric field in world space, framed by the antique binding.
+    Properties
+    {
+        _FieldA ("Burgundy field", 2D) = "gray" {}
+        _FieldB ("Charcoal field", 2D) = "gray" {}
+        _Binding ("Binding", 2D) = "gray" {}
+        _Size ("Rug size in tiles", Vector) = (.94,1.88,0,0)
+    }
     SubShader
     {
         Tags { "RenderType"="Opaque" "Queue"="Geometry" }
@@ -12,31 +19,26 @@ Shader "BadApple/HotelCarpet"
             #pragma fragment frag
             #include "UnityCG.cginc"
             #include "HotelLighting.cginc"
-            sampler2D _HotelVision;
-            float4 _HotelSize;
-            float _HotelFog, _Rug;
-            struct a { float4 vertex:POSITION; float2 uv:TEXCOORD0; };
-            struct v { float4 pos:SV_POSITION; float2 world:TEXCOORD0; float2 uv:TEXCOORD1; };
-            v vert(a i) { v o; o.pos=UnityObjectToClipPos(i.vertex); o.world=mul(unity_ObjectToWorld,i.vertex).xy; o.uv=i.uv; return o; }
+            sampler2D _HotelVision, _FieldA, _FieldB, _Binding;
+            float4 _HotelSize, _Size;
+            float _HotelFog;
+            struct a { float4 vertex:POSITION; float2 uv:TEXCOORD0; fixed4 color:COLOR; };
+            struct v { float4 pos:SV_POSITION; float2 world:TEXCOORD0; float2 uv:TEXCOORD1; fixed4 color:COLOR; };
+            v vert(a i) { v o; o.pos=UnityObjectToClipPos(i.vertex); o.world=mul(unity_ObjectToWorld,i.vertex).xy; o.uv=i.uv; o.color=i.color; return o; }
             fixed4 frag(v i):SV_Target
             {
-                float2 p=floor(i.world*80)/80;
-                // Offset rows of nested hexagons: a seamless, muted 1980s carpet weave.
-                float2 q=p*2; q.x+=floor(q.y/.8660254)*.5;
-                float2 h=abs(float2(frac(q.x)-.5,frac(q.y/.8660254)*.8660254-.4330127));
-                float d=max(h.x*.8660254+h.y*.5,h.y);
-                fixed3 c=d>.38?fixed3(.17,.065,.045):d>.30?fixed3(.52,.245,.115):d>.245?fixed3(.24,.055,.055):d>.12?fixed3(.38,.12,.07):fixed3(.60,.32,.14);
-                if(_Rug>.5)
-                {
-                    float2 edge=min(i.uv,1-i.uv); float border=min(edge.x,edge.y);
-                    c=border<.035?fixed3(.25,.105,.035):border<.085?fixed3(.63,.40,.17):border<.11?fixed3(.18,.055,.055):fixed3(.30,.09,.095);
-                    if(border>.12) c+=step(.89,frac((i.uv.x+i.uv.y)*12))*fixed3(.12,.075,.025);
-                }
-                float weave=.91+.09*frac(dot(floor(p*80),float2(.7549,.5698)));
+                // Distances to the rug edge in tiles, so the binding keeps its width on both axes.
+                float2 d=min(i.uv,1-i.uv)*_Size.xy;
+                float border=min(d.x,d.y);
+                const float band=.11;
+                fixed3 field=lerp(tex2D(_FieldA,i.world/2.4).rgb,tex2D(_FieldB,i.world/2.4).rgb,step(.5,i.color.r));
+                float along=d.x<d.y?i.uv.y*_Size.y:i.uv.x*_Size.x;
+                fixed3 c=border<band?tex2D(_Binding,float2(along/(band*4),border/band)).rgb:field;
+                c*=lerp(.7,1,saturate(border/.015));
                 float sight=tex2D(_HotelVision,(floor(i.world)+.5)/_HotelSize.xy).r;
                 float ambient=lerp(1,.25,saturate(_HotelLightingEnabled));
                 fixed3 lamp=HotelLampLight(i.world,float2(0,0),lerp(1,step(.9,sight),_HotelFog));
-                return fixed4(c*weave*(ambient+lamp)*lerp(1,lerp(.06,1,sight),_HotelFog),1);
+                return fixed4(c*(ambient+lamp)*lerp(1,lerp(.06,1,sight),_HotelFog),1);
             }
             ENDCG
         }

@@ -271,6 +271,7 @@ namespace BadAppleHotel.Game
             if (gm == null) return;
             scale = Mathf.Max(0.01f, Screen.height / VH);
             vw = Screen.width / scale;
+            gm.SelectedBuildSlot = sel == Sel.Slot ? selSlot : -1;
 
             if (!gm.InMatch)
             {
@@ -427,7 +428,7 @@ namespace BadAppleHotel.Game
             if (slot >= 0) { sel = Sel.Slot; selSlot = slot; return; }
             if (room.Def.IsBedTile(tile)) { sel = Sel.Bed; return; }
             if (tile == room.Def.DoorTile) { sel = Sel.Door; return; }
-            if (room.Def.Walkway.Contains(tile)) gm.Toast("Bed access: this path stays clear.");
+            if (tile == room.Def.DoorInside) gm.Toast("The doorway square stays clear.");
             ClearSelection();
         }
 
@@ -699,7 +700,7 @@ namespace BadAppleHotel.Game
                     if (gm.Phase == Phase.Setup && (gm.IsVisible(def.Center) || gm.IsTileVisible(def.DoorTile)))
                     {
                         var c = WorldToGui(def.Center);
-                        string text = "Room " + (def.Index + 1) + "\n" + def.BuildTiles.Count + " build spots" +
+                        string text = "Room " + (def.Index + 1) + "\n" + def.BuildBudget + " build spots" +
                                       (def.Isolated ? "\n<color=#9FE3C8>lonely: free building</color>" : "");
                         Shadowed(new Rect(c.x - 80, c.y - 26, 160, 52), text, Bone);
                     }
@@ -722,26 +723,18 @@ namespace BadAppleHotel.Game
                     Shadowed(new Rect(dg.x - 60, dg.y - 10, 120, 20), "OPEN!", Red);
                 }
 
-                // empty plates in your own room show a "+" so it is clear where things attach
-                if (mine && me.Alive)
-                {
-                    bool blinkEmpty = Time.unscaledTime < room.NoWeaponBlinkUntil && Mathf.FloorToInt(Time.unscaledTime * 8f) % 2 == 0;
-                    if (sel == Sel.Slot || blinkEmpty)
-                        for (int i = 0; i < room.Slots.Length; i++)
-                        {
-                            if (room.Slots[i] != null) continue;
-                            var pg = WorldToGui(HotelMap.Center(def.BuildTiles[i]));
-                            if (blinkEmpty)
-                            {
-                                var old = GUI.color;
-                                GUI.color = new Color(Red.r, Red.g, Red.b, 0.3f);
-                                GUI.DrawTexture(new Rect(pg.x - tile / 2, pg.y - tile / 2, tile, tile), Sprites.White);
-                                GUI.color = old;
-                            }
-                            bool can = gm.CanBuildAt(room, i);
-                            Shadowed(new Rect(pg.x - 10, pg.y - 10, 20, 20), "+", can ? new Color(Candle.r, Candle.g, Candle.b, 0.75f) : new Color(Red.r, Red.g, Red.b, 0.6f));
-                        }
-                }
+                // Legal empty squares show a spectral plus on the floor (GameManager.FloorEnergy);
+                // the HUD only flashes empty squares when the room still has no weapon.
+                if (mine && me.Alive && Time.unscaledTime < room.NoWeaponBlinkUntil && Mathf.FloorToInt(Time.unscaledTime * 8f) % 2 == 0)
+                    for (int i = 0; i < room.Slots.Length; i++)
+                    {
+                        if (room.Slots[i] != null) continue;
+                        var pg = WorldToGui(HotelMap.Center(def.BuildTiles[i]));
+                        var old = GUI.color;
+                        GUI.color = new Color(Red.r, Red.g, Red.b, 0.3f);
+                        GUI.DrawTexture(new Rect(pg.x - tile / 2, pg.y - tile / 2, tile, tile), Sprites.White);
+                        GUI.color = old;
+                    }
             }
 
             // residents

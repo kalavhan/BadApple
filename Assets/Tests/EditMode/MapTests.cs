@@ -55,7 +55,8 @@ namespace BadAppleHotel.Tests
                     Assert.IsTrue(room.FloorSet.Contains(room.DoorInside), where + " door inside");
                     Assert.IsTrue(room.FloorSet.Contains(room.BedTile), where + " bed");
                     Assert.GreaterOrEqual(room.BuildTiles.Count, 2, where + " build tiles");
-                    Assert.AreEqual(room.Floor.Count - 2 - room.Walkway.Count, room.BuildTiles.Count, where + " bed and its access path are reserved");
+                    Assert.AreEqual(room.Floor.Count - 3, room.BuildTiles.Count, where + " only the bed and the doorway square are reserved");
+                    Assert.AreEqual(room.Floor.Count - 2 - room.Walkway.Count, room.BuildBudget, where + " budget keeps the default walkway clear");
 
                     foreach (var f in room.Floor)
                     {

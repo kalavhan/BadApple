@@ -22,7 +22,11 @@ namespace BadAppleHotel.Game
         public Vector2 BedCenter => (HotelMap.Center(BedTile) + HotelMap.Center(BedHeadTile)) * 0.5f;
         public bool IsBedTile(Vector2Int tile) => tile == BedTile || tile == BedHeadTile;
         public readonly HashSet<Vector2Int> Walkway = new HashSet<Vector2Int>(); // default door -> bed path (used by bots)
-        public readonly List<Vector2Int> BuildTiles = new List<Vector2Int>();     // floor squares excluding the two-square bed and reserved access path
+        // Every floor square except the two-square bed and the doorway square. Guests arrange
+        // freely; GameManager.CanBuildAt keeps some path from the doorway to the bed open.
+        public readonly List<Vector2Int> BuildTiles = new List<Vector2Int>();
+        /// <summary>How many towers fit while the default walkway stays clear: the room's build budget.</summary>
+        public int BuildBudget;
         public bool IsCentral;              // one of the four corridor-surrounded central islands
         public bool Isolated;               // no other door nearby: gets a free building when claimed
         public int NearestDoorDistance;
@@ -101,11 +105,11 @@ namespace BadAppleHotel.Game
                         DoorTile = door, DoorInside = inside, DoorOutside = outside };
                     foreach (var f in floor) { def.Floor.Add(f); def.FloorSet.Add(f); }
                     def.Floor.Sort((a, b) => a.y != b.y ? b.y.CompareTo(a.y) : a.x.CompareTo(b.x));
-                    if (!FurnishRoom(def) || def.BuildTiles.Count < buildBudget) break;
+                    if (!FurnishRoom(def) || def.BuildBudget < buildBudget) break;
                     int xmin = int.MaxValue, ymin = int.MaxValue, xmax = 0, ymax = 0;
                     foreach (var f in floor) { xmin = Mathf.Min(xmin, f.x); ymin = Mathf.Min(ymin, f.y); xmax = Mathf.Max(xmax, f.x); ymax = Mathf.Max(ymax, f.y); }
                     int boxArea = (xmax - xmin + 1) * (ymax - ymin + 1);
-                    if (def.BuildTiles.Count == buildBudget && floor.Count < boxArea && floor.Count >= boxArea * 0.6f)
+                    if (def.BuildBudget == buildBudget && floor.Count < boxArea && floor.Count >= boxArea * 0.6f)
                     {
                         Vector2 sum = Vector2.zero;
                         foreach (var f in def.Floor)
@@ -272,8 +276,9 @@ namespace BadAppleHotel.Game
             }
             def.Walkway.Add(def.DoorInside);
             foreach (var f in def.Floor)
-                if (!def.IsBedTile(f) && !def.Walkway.Contains(f)) def.BuildTiles.Add(f);
-            if (def.BuildTiles.Count < 2) return false;
+                if (!def.IsBedTile(f) && f != def.DoorInside) def.BuildTiles.Add(f);
+            def.BuildBudget = def.Floor.Count - 2 - def.Walkway.Count;
+            if (def.BuildBudget < 2) return false;
             def.BuildTiles.Sort((a, b) => a.y != b.y ? b.y.CompareTo(a.y) : a.x.CompareTo(b.x));
             return true;
         }
