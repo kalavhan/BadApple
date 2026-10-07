@@ -94,8 +94,11 @@ namespace BadAppleHotel.Game
             var delta=point-lamp.Position;float distance=delta.magnitude;
             if(distance>=lamp.Radius||Vector2.Dot(delta,lamp.Normal)<-.015f||!Sight.Clear(origin,point,opaque))return 0;
             float radial=1-distance/lamp.Radius;radial=radial*radial*(3-2*radial);
+            // A bright pool right under the sconce makes the lamp read as the source;
+            // the wider, softer falloff keeps the far side of its area usable.
+            float hotspot=Mathf.Exp(-distance*distance/2f);
             float direction=.65f+.35f*Mathf.Clamp01(Vector2.Dot(delta/Mathf.Max(.001f,distance),lamp.Normal));
-            return radial*direction*lamp.Strength;
+            return Mathf.Min(1,radial*.6f+hotspot*.5f)*direction*lamp.Strength;
         }
 
         /// <summary>Diagnostic CPU sample of the same bilinear field sampled by the world shaders.</summary>
