@@ -156,6 +156,10 @@ namespace BadAppleHotel.Game
         bool recenterCamera;
         Vector2 cameraPosition, cameraVelocity;
         float lastCameraInput = -100f;
+        /// <summary>Follow-camera zoom: 1 is the widest view; pinching zooms in up to 40% closer.</summary>
+        public const float MinZoom = 1f, MaxZoom = 1.4f, DefaultZoom = 1.15f;
+        public float Zoom { get; private set; } = DefaultZoom;
+        public void SetZoom(float zoom) => Zoom = Mathf.Clamp(zoom, MinZoom, MaxZoom);
         public bool SleepingCamera => InMatch && Human != null && Human.Alive && Human.Asleep;
         public void DragCamera(Vector2 screenDelta)
         {
@@ -184,7 +188,7 @@ namespace BadAppleHotel.Game
             float aspect = Mathf.Max(0.5f, Cam.aspect), dt = Time.unscaledDeltaTime;
             if (HotelView && !HotelViewAvailable) HotelView = false;
             bool actor = InMatch && !HotelView && ((Monster != null && HumanRole == Role.Monster) || (Human != null && Human.Alive));
-            float size = !HotelView && (actor || (InMatch && sleepCameraActive)) ? HotelView3D.FollowSize : Mathf.Max((Map.W+Map.H)*0.7071f*0.383f+2, (Map.W+Map.H)*0.7071f/(2*aspect)+2);
+            float size = !HotelView && (actor || (InMatch && sleepCameraActive)) ? HotelView3D.FollowSize / Zoom : Mathf.Max((Map.W+Map.H)*0.7071f*0.383f+2, (Map.W+Map.H)*0.7071f/(2*aspect)+2);
             Vector2 follow = actor ? (HumanRole == Role.Monster && Monster != null ? Monster.Pos : Human.Pos) : new Vector2(Map.W / 2f, Map.H / 2f);
             var target = HotelView3D.Clamp(follow, size, aspect, Map.W, Map.H);
             if (sleepCameraActive)
@@ -284,7 +288,8 @@ namespace BadAppleHotel.Game
                 r.Sr = MakeSprite(r.Name, Sprites.Resident(i), r.Pos, OrderFor(r.Pos.y), matchRoot);
                 if (!Simulation) ContactShadow.Attach(r.Sr, r.Pos, new Vector2(.65f, .45f));
                 r.LastPos = r.Pos;
-                if (Sprites.UseArt)
+                r.Model = ResidentModel(r);
+                if (r.Model == null && Sprites.UseArt)
                 {
                     var hues = Cfg.residents.shirtHues;
                     float hue = hues != null && hues.Length > 0 ? hues[i % hues.Length] : 0.86f;
@@ -396,7 +401,7 @@ namespace BadAppleHotel.Game
             var bedPos = def.BedCenter;
             room.BedSr = MakeSprite("Bed", Sprites.Bed(1), bedPos, OrderFor(bedPos.y + 0.4f), matchRoot);
             room.BedSr.transform.rotation = Quaternion.Euler(0f, 0f, def.BedRotation);
-            room.BedSr.transform.localScale = SleepPose.BedScale(room.BedSr.sprite);
+            ApplyBedLook(room);
             RoomsByDef[def] = room;
             r.Room = room;
             RefreshDoor(room);

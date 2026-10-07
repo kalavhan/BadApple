@@ -24,7 +24,7 @@
     },
     {
       "level": 3,
-      "name": "The Straw Suite",
+      "name": "The Biohazard",
       "dreamPowerPerSecond": 3.5,
       "upgradeCost": 260,
       "sleepAnchor": {
@@ -35,7 +35,7 @@
     },
     {
       "level": 4,
-      "name": "The Spring Trap",
+      "name": "An Actual Bed",
       "dreamPowerPerSecond": 5.5,
       "upgradeCost": 450,
       "sleepAnchor": {
@@ -46,7 +46,7 @@
     },
     {
       "level": 5,
-      "name": "The Raised Standard",
+      "name": "No Strings Attached",
       "dreamPowerPerSecond": 8.0,
       "upgradeCost": 700,
       "sleepAnchor": {
@@ -57,12 +57,23 @@
     },
     {
       "level": 6,
-      "name": "The Haunted Standard",
+      "name": "Rest in Heat",
       "dreamPowerPerSecond": 11.0,
-      "upgradeCost": 0,
+      "upgradeCost": 1000,
       "sleepAnchor": {
         "x": 0,
         "y": 0.408
+      },
+      "sleepRotation": 0
+    },
+    {
+      "level": 7,
+      "name": "The Headache",
+      "dreamPowerPerSecond": 15.0,
+      "upgradeCost": 0,
+      "sleepAnchor": {
+        "x": 0,
+        "y": 0.3
       },
       "sleepRotation": 0
     }

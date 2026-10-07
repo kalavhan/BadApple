@@ -33,6 +33,10 @@ namespace BadAppleHotel.Game
             public float StartTime;
             public bool Moved;
             public bool Ignore;
+            /// <summary>Began in the middle of the screen, away from the joystick and buttons: may pinch-zoom.</summary>
+            public bool Middle;
+            /// <summary>Took part in a pinch; never drags or taps until lifted.</summary>
+            public bool Pinched;
         }
 
         struct Zone
@@ -300,6 +304,8 @@ namespace BadAppleHotel.Game
                     if (Input.GetMouseButtonDown(0)) PointerEvent(-1, mp, TouchPhase.Began);
                     else if (Input.GetMouseButton(0)) PointerEvent(-1, mp, TouchPhase.Moved);
                     else if (Input.GetMouseButtonUp(0)) PointerEvent(-1, mp, TouchPhase.Ended);
+                    // Editor and desktop stand-in for the pinch: the scroll wheel over the middle of the screen.
+                    if (Input.mouseScrollDelta.y != 0f && InPinchArea(ScreenToGui(mp))) gm.SetZoom(gm.Zoom * (1f + Input.mouseScrollDelta.y * .05f));
                 }
             }
             catch (System.InvalidOperationException)
@@ -357,6 +363,7 @@ namespace BadAppleHotel.Game
                     foreach (var z in zones)
                         if (z.R.Contains(g)) { p.Ignore = true; z.Press?.Invoke(); return; }
                     if (OverUi(g)) { p.Ignore = true; return; }
+                    p.Middle = InPinchArea(g);
                     if (joyId == NoPointer && JoystickAllowed && InJoystickArea(g))
                     {
                         joyId = id;
@@ -375,7 +382,8 @@ namespace BadAppleHotel.Game
                     var previous = p.Current;
                     p.Current = g;
                     if ((g - p.Start).magnitude * scale > 12f) p.Moved = true;
-                    if (id != joyId && !p.Ignore && p.Moved && phase == TouchPhase.Moved)
+                    if (id != joyId && Pinch(id, p, previous, g)) break;
+                    if (id != joyId && !p.Ignore && !p.Pinched && p.Moved && phase == TouchPhase.Moved)
                     {
                         var d = (g - previous) * scale;
                         gm.DragCamera(new Vector2(d.x, -d.y));
@@ -402,6 +410,25 @@ namespace BadAppleHotel.Game
                     break;
                 }
             }
+        }
+
+        /// <summary>The central half of the screen: pinches there zoom, so they never fight the
+        /// joystick, the action buttons or the HUD panels along the edges.</summary>
+        bool InPinchArea(Vector2 g) => g.x > vw * .25f && g.x < vw * .75f && g.y > VH * .2f && g.y < VH * .8f;
+
+        /// <summary>Two fingers that both began in the middle of the screen zoom like a photo:
+        /// spreading them zooms in, pinching zooms out.</summary>
+        bool Pinch(int id, Pointer p, Vector2 previous, Vector2 g)
+        {
+            if (!p.Middle || p.Ignore) return false;
+            Pointer other = null;
+            foreach (var kv in pointers)
+                if (kv.Key != id && kv.Key != joyId && kv.Value.Middle && !kv.Value.Ignore) { other = kv.Value; break; }
+            if (other == null) return false;
+            p.Pinched = other.Pinched = p.Moved = other.Moved = true;
+            float before = (previous - other.Current).magnitude, after = (g - other.Current).magnitude;
+            if (before > 1f && after > 1f) gm.SetZoom(gm.Zoom * after / before);
+            return true;
         }
 
         void ReleaseJoystick()

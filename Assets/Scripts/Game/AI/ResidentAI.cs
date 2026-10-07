@@ -155,7 +155,7 @@ namespace BadAppleHotel.Game
             bool hasEmpty = room.EmptySlot() >= 0;
 
             if (room.BedLevel < gm.Cfg.beds.levels.Length)
-                options.Add((eco * (6 - room.BedLevel) * 0.8f, () => gm.TryUpgradeBed(me)));
+                options.Add((eco * (gm.Cfg.beds.levels.Length - room.BedLevel) * 0.8f, () => gm.TryUpgradeBed(me)));
 
             var door = gm.CheckDoor(room);
             if (!door.AtMaxLevel)

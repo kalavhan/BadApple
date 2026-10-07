@@ -247,7 +247,7 @@ namespace BadAppleHotel.Game
             return Sprite.Create(t, new Rect(0, 0, size, size), Center, size);
         });
 
-        // ---------- Beds (6 levels; the code-drawn fallback only has 5 looks) ----------
+        // ---------- Beds (7 levels; 3D models replace these where baked; the code-drawn fallback only has 5 looks) ----------
 
         public static Sprite Bed(int level) => Cached("bed" + level, () =>
         {
