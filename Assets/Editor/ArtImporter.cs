@@ -29,6 +29,21 @@ namespace BadAppleHotel.EditorTools
                 ti.npotScale = TextureImporterNPOTScale.None; ti.maxTextureSize = 2048;
                 return;
             }
+            if (assetPath.StartsWith("Assets/Resources/Art/Floors/"))
+            {
+                // Continuous floor materials: sampled in world space across many cells, so
+                // they repeat, need trilinear mipmaps at gameplay zoom and compress safely.
+                ti.textureType = TextureImporterType.Default; ti.sRGBTexture = true;
+                ti.alphaSource = TextureImporterAlphaSource.None; ti.alphaIsTransparency = false;
+                ti.mipmapEnabled = true; ti.filterMode = FilterMode.Trilinear; ti.anisoLevel = 2;
+                ti.wrapMode = TextureWrapMode.Repeat;
+                ti.textureCompression = TextureImporterCompression.CompressedHQ;
+                ti.npotScale = TextureImporterNPOTScale.ToNearest; ti.maxTextureSize = 1024;
+                var android = ti.GetPlatformTextureSettings("Android");
+                android.overridden = true; android.maxTextureSize = 1024; android.format = TextureImporterFormat.ASTC_6x6;
+                ti.SetPlatformTextureSettings(android);
+                return;
+            }
             if (assetPath.StartsWith("Assets/Resources/Art/Chars/"))
             {
                 // animation atlases: big sheets, so compress them; no mipmaps (frames sit side by side)

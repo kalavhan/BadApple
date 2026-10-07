@@ -445,6 +445,7 @@ namespace BadAppleHotel.Game
             UpdateProjectiles();
             Floaters.RemoveAll(f => Time.unscaledTime - f.Born > 1.4f);
             UpdateVision();
+            UpdateFloorEnergy();
             if (!InMatch) return;
 
             // fixed sub-steps keep movement and collisions stable at high game speed or low frame rates

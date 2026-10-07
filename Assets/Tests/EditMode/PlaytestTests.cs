@@ -16,7 +16,7 @@ namespace BadAppleHotel.Tests
                 var map=new HotelMap(cfg.map,10,seed);
                 foreach(var room in map.Rooms)
                 {
-                    Assert.GreaterOrEqual(room.BuildTiles.Count(t=>!room.Walkway.Contains(t)),20,$"seed {seed}");
+                    Assert.GreaterOrEqual(room.BuildBudget,20,$"seed {seed}");
                     Assert.GreaterOrEqual((float)room.Floor.Count/((room.Floor.Max(t=>t.x)-room.Floor.Min(t=>t.x)+1)*(room.Floor.Max(t=>t.y)-room.Floor.Min(t=>t.y)+1)),.6f);
                     Assert.IsTrue(new[]{Vector2Int.up,Vector2Int.down,Vector2Int.left,Vector2Int.right}.Any(d=>!room.FloorSet.Contains(room.BedHeadTile+d)));
                     Assert.IsNotNull(Pathfinding.FindPath(room.DoorInside,room.BedTile,(x,y)=>room.FloorSet.Contains(new Vector2Int(x,y))));

@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-06",
+  "project": "Bad Apple Hotel",
+  "generator": "Built-in image_gen tool",
+  "baselineCommit": "20d9f5f",
+  "status": "Generated source artwork. Game integration, seamless-edge preparation, mobile texture import, and gameplay-camera validation remain implementation work.",
+  "supersedes": "Earlier one-square parquet floor concept in output/imagegen/floor-kit-2026-10-06. Never stamp a source texture once per gameplay cell.",
+  "assetFolder": "/home/josue/Documents/BadApple/docs/art/floor-materials-2026-10-06",
+  "assets": [
+    {
+      "id": "floor-walnut-continuous-a",
+      "role": "continuous wood floor",
+      "file": "floor-walnut-continuous-a.png",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-cb955832-dbfe-4395-bdcf-20f70c0d08b7.png",
+      "prompt": "Use case: stylized-concept. Asset type: source base-color surface texture for Bad Apple Hotel, an original darkly humorous gothic 2.5D game. Produce a square 2048x2048 image if supported. Strict orthographic overhead, completely flat edge-to-edge material swatch. No perspective, background margin, 3D object, scene, furniture, title, labels, symbols, magic or game UI. Uniform neutral diffuse illumination, no baked cast shadows, specular glare, center spotlight or vignette. Painterly material realism with restrained grain and broad mobile-readable detail, neither a photograph nor chunky pixel blocks. Matching repeat edges are a requirement; continue details naturally across them. Subject: a continuous expanse of aged medium-dark walnut floorboards, all running left to right. About twelve parallel rows of narrow planks. Each row has irregularly staggered butt joints with long plank lengths spanning roughly one-third to two-thirds of the image width; no four corners meet. Thin quiet brown seams, no gaps. Natural subdued grain with small varied knots, gentle worn satin finish, muted warm umber with soft gray-brown undertones. Several quiet grain variations with very similar brightness. The board field continues beyond all image edges; no perimeter border and no square parquet panels, framing strips, herringbone or decorative inset. Avoid strongly distinctive repeated damage marks. Material must read as the actual continuous wooden floor of an old hotel.",
+      "reference": null,
+      "actualResolution": [
+        1254,
+        1254
+      ],
+      "sha256": "c200654b688412043083c2f0669ed321ff2d78e7dad5a90f6995e02e294b4188"
+    },
+    {
+      "id": "carpet-burgundy-field",
+      "role": "carpet fabric",
+      "file": "carpet-burgundy-field.png",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-afe00e22-c960-4089-b0d9-c6f8c1d82e0a.png",
+      "prompt": "Use case: stylized-concept. Asset type: source base-color surface texture for Bad Apple Hotel, an original darkly humorous gothic 2.5D game. Produce a square 2048x2048 image if supported. Strict orthographic overhead, completely flat edge-to-edge material swatch. No perspective, background margin, 3D object, scene, furniture, title, labels, symbols, magic or game UI. Uniform neutral diffuse illumination, no baked cast shadows, specular glare, center spotlight or vignette. Painterly material realism with restrained grain and broad mobile-readable detail, neither a photograph nor chunky pixel blocks. Matching repeat edges are a requirement; continue details naturally across them. Subject: continuous short-pile woven hotel carpet, faded oxblood and burgundy with sparse muted antique-brass and dusty mauve thread. A restrained repeating botanical damask using slender curling leaves and narrow pointed arches, generous quiet burgundy negative space between motifs. Medium-small pattern, subdued contrast, no huge centerpiece. Fibers feel believable while avoiding noisy sharp speckles. Repeat in both directions; no rug silhouette, no border, tassels or trim. Original gothic-comic sensibility, elegant but slightly unsettling, no faces, skulls, or recognizable film motifs. Suitable as fabric over long corridor runners.",
+      "reference": null,
+      "actualResolution": [
+        1254,
+        1254
+      ],
+      "sha256": "ce5978326ddf5ce09929c3150b77a4fe43388b4736f34848ee9e259837019d2c"
+    },
+    {
+      "id": "carpet-charcoal-field",
+      "role": "second carpet fabric",
+      "file": "carpet-charcoal-field.png",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-c8cc5eac-909a-4469-aaf7-39a69d7788bf.png",
+      "prompt": "Use case: stylized-concept. Asset type: source base-color surface texture for Bad Apple Hotel, an original darkly humorous gothic 2.5D game. Produce a square 2048x2048 image if supported. Strict orthographic overhead, completely flat edge-to-edge material swatch. No perspective, background margin, 3D object, scene, furniture, title, labels, symbols, magic or game UI. Uniform neutral diffuse illumination, no baked cast shadows, specular glare, center spotlight or vignette. Painterly material realism with restrained grain and broad mobile-readable detail, neither a photograph nor chunky pixel blocks. Matching repeat edges are a requirement; continue details naturally across them. Subject: continuous short-pile woven hotel carpet in muted charcoal-green with restrained tarnished bronze and desaturated sage thread. A subtle geometric lattice of elongated diamonds with little stylized crooked leaf flourishes, enough plain background between motifs. Medium-small pattern, low contrast and soft lived-in fabric, broad readable shapes. Repeat in both directions, no central medallion, outer border, rug silhouette, tassels or trim. Original elegant dark gothic hotel character, no faces or skulls. A coordinated alternative to oxblood walls and walnut floorboards, maintaining the same dark warm antique hotel palette.",
+      "reference": null,
+      "actualResolution": [
+        1254,
+        1254
+      ],
+      "sha256": "75a318dc0a12839c3794912928492cbcc73232c1ebdd22562df31bdfd3bb103b"
+    },
+    {
+      "id": "floor-walnut-continuous-b",
+      "role": "alternative continuous wood finish",
+      "file": "floor-walnut-continuous-b.png",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-bdaa1843-7a2f-4326-a2f8-7bed0f022ccf.png",
+      "prompt": "Use case: precise-object-edit. Edit the supplied overhead wood floor material into a coordinated alternate finish for the same gothic hotel. Preserve the exact plank seam layout, narrow seam widths, image framing, straight overhead view, continuous edge-to-edge coverage, and edge brightness. Replace the interior grain patterns with quieter fine walnut grain, fewer small knots in different places, and a slightly cooler weathered gray-brown satin finish. Slightly less saturated than the source but keep nearly the same average brightness. Add only restrained tiny scratches inside some boards. This is a base-color texture, not a lit scene. No square framing panels, outer border, objects, magic, text, shadows, highlights or vignette. Preserve repeat-border continuity. All changes should be subtle natural material variation, never alternating checkerboard colored planks.",
+      "reference": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-cb955832-dbfe-4395-bdcf-20f70c0d08b7.png",
+      "actualResolution": [
+        1254,
+        1254
+      ],
+      "sha256": "7de2d7dcbde458dec8cec3f8e9a9acdb558073cdee4b830022e7ccef7e13a993"
+    },
+    {
+      "id": "carpet-antique-binding",
+      "role": "repeating edge binding trim",
+      "file": "carpet-antique-binding.png",
+      "source": "/home/josue/.codex/generated_images/01a107d2-cbee-76f2-a35d-f3d4ec70cf65/exec-8d0e4e55-96b0-45df-a2f3-9bd02e8f6685.png",
+      "prompt": "Use case: stylized-concept. Generate one flat overhead base-color TEXTURE of woven edge binding for a dark gothic hotel carpet. Square image, texture fills entire canvas, no background. The canvas is a close-up of one very broad horizontal ribbon whose length continues seamlessly through left and right edges; across its width from top to bottom: a narrow dark oxblood woven band, a slim muted antique-brass stitched line, a broad desaturated walnut-brown fabric band with a very restrained repeated small interlocking leaf braid in dusty brass, a second slim muted antique-brass stitched line, and a narrow dark oxblood woven band. These five parallel bands together fill the entire image height with no margins. Soft short-pile fabric and quiet fine stitching in painterly material realism, broad mobile-readable detail. The trim will be mapped to a narrow strip in the engine. No end caps, rounded ends, outer frame, rug body, room, perspective, cast shadows, embossed metal, glow, tassels, letters, labels or objects. Flat uniform diffuse albedo lighting, no baked directional shading or vignette. Repeat only left-to-right, keep top and bottom cloth edges straight. Restrained muted colors that coordinate with burgundy and charcoal-green antique carpet.",
+      "reference": null,
+      "actualResolution": [
+        1254,
+        1254
+      ],
+      "sha256": "80e5337dd26aa0af40a939ad90e4f378a1376a69ead1d23ed4cf5a3b9dff775f"
+    }
+  ],
+  "useRules": [
+    "Continuous room/world texture coordinates; keep coherent plank direction per room.",
+    "Wood B is an alternative whole-room finish. Do not crossfade or interleave full wood images unless seams and plank geometry are proved compatible.",
+    "Do not rotate random tiles or mix carpet designs in checkerboards. Assign a finish by room/corridor zone.",
+    "Carpet field images repeat in two directions. Binding repeats only along its horizontal axis; corners and ends use mesh UVs.",
+    "Spectral signs and arrows are separate procedural shapes, never baked into these images.",
+    "Sources are albedo artwork, not physically calibrated material maps. Normal and roughness maps need preparation and shader integration.",
+    "No AutoSprite or Tripo generation was used."
+  ]
+}
