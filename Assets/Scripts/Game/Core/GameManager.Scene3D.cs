@@ -84,6 +84,8 @@ namespace BadAppleHotel.Game
             hotelLighting?.Dispose(); hotelLighting = null; wallLamps.Clear(); wallPanels.Clear(); lampGlowMaterial=null; lampGlowView=null;
             foreach(var asset in sceneAssets) if(asset!=null) RemoveObject(asset);
             sceneAssets.Clear(); wallStates.Clear(); wallBatches.Clear(); WallPieceCounts.Clear(); nextWallUpdate=0; WallFocusRoom=null;
+            doorModels.Clear(); doorMaterials.Clear();
+            doorMats.Clear(); doorMatMesh = null; doorMatMaterial = null;
             wallKit=WallKit.Load(); wallInstances=new WallInstances(); wallCoreViews.Clear();
             wallHeightAt=CurrentWallHeight;
             Camera.onPreCull -= DrawWallInstances; Camera.onPreCull += DrawWallInstances;
@@ -126,6 +128,8 @@ namespace BadAppleHotel.Game
                 AddWallPiece("door_frame",rect,-inward,state,3);
                 var door=MakeSprite("Door "+(def.Index+1),Sprites.DoorOpen,center,-2800,worldRoot);
                 PoseDoor(door,def,true);doorSprites[def]=door;
+                ApplyDoorLook(def);
+                CreateDoorMat(def);
             }
             BuildWallPanels();
             WallBatchCount=wallInstances.MaxDrawCalls+(lampGlowView!=null?1:0);WallTriangleCount=wallInstances.TotalTriangles+wallLamps.Count*2;

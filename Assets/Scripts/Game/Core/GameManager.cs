@@ -211,7 +211,7 @@ namespace BadAppleHotel.Game
             }
             Cam.orthographicSize = size;
             Cam.transform.position = new Vector3(target.x, target.y, 0) - HotelView3D.Forward * 100f;
-            if (!Simulation) UpdateWallOcclusion();
+            if (!Simulation) { UpdateWallOcclusion(); UpdateDoorViews(); }
         }
 
         public bool HotelViewAvailable =>
@@ -378,7 +378,7 @@ namespace BadAppleHotel.Game
             HotelView = false;
             sleepCameraActive = false;
             GameInput.ClearAll();
-            foreach (var kv in doorSprites) if (kv.Value != null) kv.Value.sprite = Sprites.DoorOpen;
+            ResetDoorViews();
         }
 
         public bool IsRoomFree(RoomDef def) => !RoomsByDef.ContainsKey(def);
