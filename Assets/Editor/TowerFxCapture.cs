@@ -75,7 +75,8 @@ namespace BadAppleHotel.EditorTools
                     if (!game.CanBuildAt(room, slot)) continue;
                     Invoke(game, "PlaceTower", room, slot, tower);
                     var t = room.Slots[slot];
-                    SetLevel(t, 1 + k % 3);
+                    // Forms with animated art are shown at the level that has it.
+                    SetLevel(t, TowerSpriteSet.Load(tower.id, 1) != null ? 1 : 1 + k % 3);
                     placed.Add(t);
                 }
 
@@ -91,6 +92,9 @@ namespace BadAppleHotel.EditorTools
                 var towers = placed.Aggregate(Vector2.zero, (sum, t) => sum + HotelMap.Center(t.Tile)) / Mathf.Max(1, placed.Count);
                 var focus = (Vector3)((towers + m.Pos) * .5f) + new Vector3(0, 0, -.6f);
                 camera.orthographicSize = 4.6f;
+                // BADAPPLE_TOWER_FX_FOCUS=<tower id> frames a close-up of that creature instead.
+                var close = placed.FirstOrDefault(t => t.Def.id == Environment.GetEnvironmentVariable("BADAPPLE_TOWER_FX_FOCUS"));
+                if (close != null) { focus = (Vector3)HotelMap.Center(close.Tile) + new Vector3(0, 0, -.7f); camera.orthographicSize = 1.6f; }
                 camera.transform.SetPositionAndRotation(focus - HotelView3D.Forward * 100, HotelView3D.Rotation);
                 target = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
                 target.Create(); camera.targetTexture = target;

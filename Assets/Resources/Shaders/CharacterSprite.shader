@@ -120,7 +120,7 @@ Shader "BadApple/CharacterSprite"
                 }
                 dream += _DreamColor.rgb * _DreamGlow * exp(-max(i.height, 0) * 2.4);
                 fixed4 c = fixed4(rgb, t.a) * i.color;
-                c.rgb *= lerp(1,.65,saturate(_HotelLightingEnabled))+HotelLampLight(i.ground,float2(0,0),1)*.7;
+                c.rgb *= lerp(1,.65,saturate(_HotelLightingEnabled))+HotelLampLight(i.ground,float2(0,0),1,.35)*.7;
                 c.rgb += dream * t.a;
                 c.rgb *= c.a;
                 return c;

@@ -44,7 +44,7 @@ namespace BadAppleHotel.EditorTools
                 ti.SetPlatformTextureSettings(android);
                 return;
             }
-            if (assetPath.StartsWith("Assets/Resources/Art/Chars/"))
+            if (assetPath.StartsWith("Assets/Resources/Art/Chars/") || assetPath.StartsWith("Assets/Resources/Art/TowerAnim/"))
             {
                 // animation atlases: big sheets, so compress them; no mipmaps (frames sit side by side)
                 ti.textureType = TextureImporterType.Default;

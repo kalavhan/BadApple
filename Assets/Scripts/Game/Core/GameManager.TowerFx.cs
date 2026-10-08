@@ -20,7 +20,9 @@ namespace BadAppleHotel.Game
             public Room Room;
             public Vector2Int Tile;
             public int Level, Frame;
-            public float Seed, Arrive, FlashUntil, PulseAt = -99f, NextIncome;
+            public float Seed, Arrive, FlashAt = -99f, FlashLength = .12f, PulseAt = -99f, FireAt = -99f, NextIncome;
+            public int Dir = 6;
+            public TowerSpriteSet Art;
             public Color Accent;
             public bool Visible;
         }
@@ -34,6 +36,7 @@ namespace BadAppleHotel.Game
             public Monster Target;
             public Resident Receiver;
             public float Born, Duration, Arc, Scale, NextTrail, NextJitter;
+            public bool Launched;
             public Color Color;
             public TowerFxState Source;
             public readonly List<Vector3> Path = new List<Vector3>(10);
@@ -145,6 +148,7 @@ namespace BadAppleHotel.Game
 
         void Summon(TowerFxState s, float now)
         {
+            ApplyArt(s);
             var center = HotelMap.Center(s.Tile);
             var owner = s.Room.Owner;
             bool fromBed = owner != null && owner.Alive;
@@ -176,6 +180,7 @@ namespace BadAppleHotel.Game
         {
             s.Level = s.Tower.Level;
             s.Arrive = now + .18f;
+            ApplyArt(s);
             SetMaterialize(s, 0);
             var center = HotelMap.Center(s.Tile);
             if (!IsTileVisible(s.Tile)) return;
@@ -189,7 +194,7 @@ namespace BadAppleHotel.Game
                     Vel = new Vector3(-offset.y, offset.x, 0) * 4f + Vector3.back * (1.2f + i * .08f), Size = .05f, Life = .9f,
                     Color = i % 2 == 0 ? s.Accent : Color.white * .8f, Drag = 1.2f, Age = -i * .025f, Stretch = .03f });
             }
-            s.FlashUntil = now + .25f;
+            s.FlashAt = now; s.FlashLength = .25f;
         }
 
         /// <summary>A removed creature (sold, or a disguise unmasked) dissolves back into the dream.</summary>
@@ -209,6 +214,17 @@ namespace BadAppleHotel.Game
             if (owner != null && owner.Alive)
                 towerShots.Add(new TowerShot { Style = ShotStyle.Wisp, From = Lifted(center, .6f), To = Lifted(s.Room.Def.BedCenter, .4f),
                     Born = now, Duration = .6f, Arc = .7f, Color = DreamViolet, Scale = .7f });
+        }
+
+        /// <summary>Animated art for this form, when it exists, replaces the static tier sprite.</summary>
+        void ApplyArt(TowerFxState s)
+        {
+            s.Art = TowerSpriteSet.Load(s.Tower.Def.id, s.Tower.Level);
+            s.FireAt = -99f;
+            var sr = s.Tower.Sr;
+            if (s.Art == null || sr == null) return;
+            sr.sprite = s.Art.Idle(s.Dir, s.Seed);
+            HotelView3D.Billboard(sr, HotelMap.Center(s.Tile));
         }
 
         void SetMaterialize(TowerFxState s, float amount)
@@ -238,14 +254,24 @@ namespace BadAppleHotel.Game
             if (sr == null) return;
             float materialize = Mathf.Clamp01((now - s.Arrive) / MaterializeSeconds);
             float strength = RoomDreamStrength(s.Room, t);
-            float flash = now < s.FlashUntil ? Mathf.Clamp01((s.FlashUntil - now) / .12f) : 0f;
+            float flash = now >= s.FlashAt ? Mathf.Clamp01(1 - (now - s.FlashAt) / s.FlashLength) : 0f;
+            if (s.Art != null)
+            {
+                // Characters turn to face the monster while it is in reach, then hold that facing.
+                var m = Monster;
+                if (s.Art.Directional && t.IsWeapon && m != null && !m.Dead && Phase == Phase.Night &&
+                    Rules.UpgradeRules.InRange(Cfg.towers, t.Def, t.Level, Vector2.Distance(HotelMap.Center(s.Tile), m.Pos)))
+                    s.Dir = CharacterSet.DirIndex(HotelView3D.Facing(m.Pos - HotelMap.Center(s.Tile)));
+                var frame = s.Art.Fire(s.Dir, now - s.FireAt) ?? s.Art.Idle(s.Dir, now + s.Seed);
+                if (sr.sprite != frame) sr.sprite = frame;
+            }
 
             sr.GetPropertyBlock(towerBlock);
             towerBlock.SetFloat("_Materialize", materialize);
             towerBlock.SetFloat("_DreamGlow", (.3f + .12f * Mathf.Sin(now * 1.7f + s.Seed)) * strength);
             towerBlock.SetColor("_DreamColor", Color.Lerp(DreamMint, s.Accent, .45f));
-            towerBlock.SetFloat("_Flash", flash * .55f);
-            towerBlock.SetColor("_FlashColor", Color.Lerp(s.Accent, Color.white, .35f));
+            towerBlock.SetFloat("_Flash", flash * .18f);
+            towerBlock.SetColor("_FlashColor", s.Accent);
             // A slow breath (deeper while the sleeper dreams) and a squash when the creature attacks.
             towerBlock.SetVector("_Breathe", new Vector4(.012f + .008f * strength, s.Seed, 1.4f + .1f * Mathf.Repeat(s.Seed, 3f), flash));
             sr.SetPropertyBlock(towerBlock);
@@ -334,13 +360,19 @@ namespace BadAppleHotel.Game
             var muzzle = Lifted(from, MuzzleHeight * Mathf.Lerp(.85f, 1.1f, (s.Tower.Level - 1) / 3f));
             var aim = Lifted(m.Pos, TargetHeight) - muzzle; aim.z = 0;
             if (aim.sqrMagnitude > .0001f) muzzle += aim.normalized * .22f;
-            s.FlashUntil = now + .12f;
-            s.PulseAt = now;
+            // With an attack clip, the shot leaves at the clip's release frame instead of instantly.
+            float delay = 0;
+            if (s.Art != null && s.Art.HasFire)
+            {
+                if (s.Art.Directional) s.Dir = CharacterSet.DirIndex(HotelView3D.Facing(m.Pos - from));
+                s.FireAt = now;
+                delay = s.Art.Release;
+            }
             bool seen = s.Visible || IsVisible(m.Pos);
-            if (!seen) return true;
+            if (!seen) { s.FlashAt = s.PulseAt = now + delay; s.FlashLength = .12f; return true; }
 
             float dist = Vector2.Distance(from, m.Pos);
-            var shot = new TowerShot { Style = style, From = muzzle, Target = m, To = Lifted(m.Pos, TargetHeight), Born = now, Color = s.Accent, Source = s, Scale = scale };
+            var shot = new TowerShot { Style = style, From = muzzle, Target = m, To = Lifted(m.Pos, TargetHeight), Born = now + delay, Color = s.Accent, Source = s, Scale = scale };
             switch (style)
             {
                 case ShotStyle.Beam: shot.Duration = .18f; break;
@@ -351,12 +383,21 @@ namespace BadAppleHotel.Game
                 default: shot.Duration = Mathf.Clamp(dist / 16f, .05f, .3f); break;
             }
             towerShots.Add(shot);
-
-            // Muzzle: a bloom at the creature and a light that catches the floor around it.
-            dreamFx.Emit(DreamFx.Shape.Glow, muzzle, Vector3.zero, .2f * scale, .14f, Color.Lerp(s.Accent, Color.white, .25f));
-            dreamFx.FlashLight(from, .8f * scale, s.Accent * .9f, .16f);
-            if (style == ShotStyle.Beam || style == ShotStyle.Lightning) Impact(shot, now);
+            if (delay <= 0) Launch(shot, now);
             return true;
+        }
+
+        /// <summary>The moment a shot leaves: a bloom at the creature, a light on the floor around it,
+        /// the creature's own flash and squash, and a pulse along its dream thread.</summary>
+        void Launch(TowerShot shot, float now)
+        {
+            shot.Launched = true;
+            var s = shot.Source;
+            if (s != null) { s.FlashAt = s.PulseAt = now; s.FlashLength = .12f; }
+            var color = s != null ? s.Accent : shot.Color;
+            dreamFx.Emit(DreamFx.Shape.Glow, shot.From, Vector3.zero, .2f * shot.Scale, .14f, Color.Lerp(color, Color.white, .25f));
+            dreamFx.FlashLight(shot.From, .8f * shot.Scale, color * .9f, .16f);
+            if (shot.Style == ShotStyle.Beam || shot.Style == ShotStyle.Lightning) Impact(shot, now);
         }
 
         Vector3 ShotPosition(TowerShot shot, float k)
@@ -371,6 +412,8 @@ namespace BadAppleHotel.Game
         {
             float k = (now - shot.Born) / Mathf.Max(.01f, shot.Duration);
             if (shot.Target != null && !shot.Target.Dead) shot.To = Lifted(shot.Target.Pos, TargetHeight);
+            if (k < 0) return true;
+            if (!shot.Launched && shot.Target != null) Launch(shot, now);
             if (shot.Receiver != null && shot.Receiver.Alive) shot.To = Lifted(shot.Receiver.Pos, 1.1f);
             var fx = dreamFx;
             if (k >= 1f)

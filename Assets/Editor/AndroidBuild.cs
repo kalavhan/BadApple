@@ -26,8 +26,8 @@ namespace BadAppleHotel.EditorTools
             PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
             PlayerSettings.Android.useCustomKeystore = false;
-            PlayerSettings.bundleVersion = "1.20-dream-towers";
-            PlayerSettings.Android.bundleVersionCode = 21;
+            PlayerSettings.bundleVersion = "1.21-animated-towers";
+            PlayerSettings.Android.bundleVersionCode = 22;
             EditorUserBuildSettings.buildAppBundle = false;
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {

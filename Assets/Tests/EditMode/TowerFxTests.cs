@@ -58,6 +58,34 @@ namespace BadAppleHotel.Tests
             fx.Dispose();
         }
 
+        [Test] public void Animated_tower_art_loads_in_one_or_eight_views_and_falls_back_when_missing()
+        {
+            var art = Sprites.ArtOverride;
+            Sprites.ArtOverride = true;
+            try
+            {
+                var soldier = TowerSpriteSet.Load("gun_turret", 1);
+                Assert.IsNotNull(soldier);
+                Assert.IsTrue(soldier.Directional);
+                Assert.IsTrue(soldier.HasFire);
+                Assert.AreNotSame(soldier.Idle(0, 0), soldier.Idle(4, 0), "East and west are different views.");
+                Assert.IsNotNull(soldier.Fire(6, soldier.Release));
+                Assert.IsNull(soldier.Fire(6, soldier.FireDuration + .01f), "The attack clip ends.");
+                var bounds = soldier.Idle(2, 0).bounds;
+                Assert.AreEqual(bounds.size, soldier.Fire(5, .3f).bounds.size, "Every frame shares one cell.");
+                Assert.AreEqual(0f, bounds.min.y, 1e-4f, "The feet sit on the pivot.");
+
+                var hourglass = TowerSpriteSet.Load("slow_totem", 1);
+                Assert.IsNotNull(hourglass);
+                Assert.IsFalse(hourglass.Directional);
+                Assert.IsFalse(hourglass.HasFire);
+                Assert.AreSame(hourglass.Idle(0, .3f), hourglass.Idle(5, .3f), "A single view ignores facing.");
+
+                Assert.IsNull(TowerSpriteSet.Load("tesla_coil", 4), "Forms without animation keep their static art.");
+            }
+            finally { Sprites.ArtOverride = art; }
+        }
+
         [Test] public void Every_element_has_its_own_accent()
         {
             var towers = ConfigLoader.Load().towers.towers;

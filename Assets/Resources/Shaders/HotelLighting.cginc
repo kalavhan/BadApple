@@ -28,7 +28,9 @@ inline fixed3 HotelFxLight(float2 p)
 // XY is the hotel floor plane. Walls pass their outward world normal.xy; floors
 // pass zero. The offset leaves the thin slab so each wall side samples its own
 // adjacent space. Visibility gates the added light, including explored dark fog.
-inline fixed3 HotelLampLight(float2 worldXY, float2 outwardNormalXY, float visible)
+// fxGain scales the effect lights: upright sprites take a fraction so a creature's own
+// muzzle flash cannot wash it out.
+inline fixed3 HotelLampLight(float2 worldXY, float2 outwardNormalXY, float visible, float fxGain)
 {
     float normalLength = length(outwardNormalXY);
     float2 samplePosition = worldXY;
@@ -37,6 +39,11 @@ inline fixed3 HotelLampLight(float2 worldXY, float2 outwardNormalXY, float visib
     float inside = step(0, uv.x) * step(0, uv.y) * step(uv.x, 1) * step(uv.y, 1);
     float light = tex2D(_HotelLightMap, uv).r;
     fixed3 lamp = lerp(fixed3(.72,.67,.60), _HotelLampColor.rgb, .3) * light * .65 * inside;
-    return (lamp + HotelFxLight(samplePosition)) * saturate(visible) * saturate(_HotelLightingEnabled);
+    return (lamp + HotelFxLight(samplePosition) * fxGain) * saturate(visible) * saturate(_HotelLightingEnabled);
+}
+
+inline fixed3 HotelLampLight(float2 worldXY, float2 outwardNormalXY, float visible)
+{
+    return HotelLampLight(worldXY, outwardNormalXY, visible, 1);
 }
 #endif
