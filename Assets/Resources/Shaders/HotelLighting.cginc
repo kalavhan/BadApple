@@ -20,7 +20,9 @@ inline fixed3 HotelFxLight(float2 p)
         float k = saturate(1 - dot(d, d) * _FxLightPos[i].z);
         c += _FxLightColor[i].rgb * k * k;
     }
-    return c;
+    // Overlapping flashes roll off softly instead of blowing the floor out to white.
+    float m = max(c.r, max(c.g, c.b));
+    return m > .8 ? c * ((.8 + (m - .8) / (1 + (m - .8) * 1.5)) / m) : c;
 }
 
 // XY is the hotel floor plane. Walls pass their outward world normal.xy; floors
