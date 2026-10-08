@@ -7,11 +7,11 @@ box, so frames swap without moving the sprite on its square, and the feet sit on
 
   python3 tools/art/tower_anim.py --out Assets/Resources/Art/TowerAnim/gun_turret_1 --height 1.35 \
       --idle pack:/path/idle --fire pack:/path/fire --release .3
-  python3 tools/art/tower_anim.py --out Assets/Resources/Art/TowerAnim/slow_totem_1 --height 1.26 \
+  python3 tools/art/tower_anim.py --out Assets/Resources/Art/TowerAnim/slow_totem_1 --object-height 1.26 \
       --idle sheet:/path/sheet.png:/path/atlas.json
 """
 import argparse, json, os
-from PIL import Image
+from PIL import Image, ImageChops
 
 # TowerSpriteSet.DirNames order (CharacterSet.DirIndex): east, then counter-clockwise on screen.
 PACK_DIRS = [("e", "right"), ("ne", "northeast"), ("n", "up"), ("nw", "northwest"),
@@ -27,6 +27,17 @@ def atlas_frames(sheet, atlas):
         f = f.get("frame", f)
         out.append(image.crop((f["x"], f["y"], f["x"] + f["w"], f["y"] + f["h"])))
     return out
+
+
+def key_white(frame, threshold=236):
+    """Clears pure white pixels (every channel above the threshold): leftovers of a white
+    background that animation reveals, for example behind wings that spread."""
+    rgba = frame.convert("RGBA")
+    r, g, b, a = rgba.split()
+    low = ImageChops.darker(ImageChops.darker(r, g), b)
+    white = low.point(lambda v: 255 if v > threshold else 0)
+    rgba.putalpha(ImageChops.subtract(a, white))
+    return rgba
 
 
 def load_clip(spec):
@@ -49,7 +60,10 @@ def sample(frames, count):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--out", required=True)
-    p.add_argument("--height", type=float, required=True, help="world height of the tallest frame, in tiles")
+    size = p.add_mutually_exclusive_group(required=True)
+    size.add_argument("--height", type=float, help="world height of the shared cell, in tiles")
+    size.add_argument("--object-height", type=float,
+                      help="world height of the object in the first idle frame; motion above or below it (smoke, wings) adds to the cell")
     p.add_argument("--idle", required=True)
     p.add_argument("--fire")
     p.add_argument("--idle-frames", type=int, default=16)
@@ -59,12 +73,16 @@ def main():
     p.add_argument("--release", type=float, default=.3, help="seconds into the fire clip when the shot leaves")
     p.add_argument("--max-cell", type=int, default=176, help="cell height cap in pixels (mobile memory)")
     p.add_argument("--cols", type=int, default=8)
+    p.add_argument("--key-white", action="store_true", help="remove pure white background leftovers")
     a = p.parse_args()
 
     clips = {"idle": (load_clip(a.idle), a.idle_frames, a.idle_fps, True)}
     if a.fire:
         clips["fire"] = (load_clip(a.fire), a.fire_frames, a.fire_fps, False)
     clips = {name: ({d: sample(f, n) for d, f in views.items()}, fps, loop) for name, (views, n, fps, loop) in clips.items()}
+    if a.key_white:
+        clips = {name: ({d: [key_white(f) for f in frames] for d, frames in views.items()}, fps, loop)
+                 for name, (views, fps, loop) in clips.items()}
 
     # One box around the opaque pixels of every frame in every clip and direction.
     box = None
@@ -77,6 +95,11 @@ def main():
     if box is None:
         raise SystemExit("every frame is empty")
     w, h = box[2] - box[0], box[3] - box[1]
+    height = a.height
+    if height is None:
+        first = next(iter(clips["idle"][0].values()))[0]
+        b = first.split()[-1].point(lambda v: 255 if v > 8 else 0).getbbox()
+        height = a.object_height * h / max(1, b[3] - b[1])
     scale = min(1.0, a.max_cell / h)
     cw, ch = max(1, round(w * scale)), max(1, round(h * scale))
 
@@ -91,9 +114,11 @@ def main():
             for i, frame in enumerate(frames):
                 cell = frame.crop(box).resize((cw, ch), Image.LANCZOS)
                 sheet.paste(cell, ((i % cols) * cw, (i // cols) * ch))
+            # AutoSprite already delivers 256-colour sheets; quantizing again keeps the repository small.
+            sheet = sheet.quantize(colors=256, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE)
             sheet.save(os.path.join(a.out, name + ("_" + d if d else "") + ".png"), optimize=True)
         defs.append({"name": name, "dirs": len(views), "count": count, "cols": cols, "fps": fps, "loop": loop})
-    meta = {"cellW": cw, "cellH": ch, "height": a.height, "release": a.release, "clips": defs}
+    meta = {"cellW": cw, "cellH": ch, "height": round(height, 3), "release": a.release, "clips": defs}
     with open(os.path.join(a.out, "anim.json"), "w") as f:
         json.dump(meta, f, indent=2)
     print(a.out, meta)

@@ -75,8 +75,7 @@ namespace BadAppleHotel.EditorTools
                     if (!game.CanBuildAt(room, slot)) continue;
                     Invoke(game, "PlaceTower", room, slot, tower);
                     var t = room.Slots[slot];
-                    // Forms with animated art are shown at the level that has it.
-                    SetLevel(t, TowerSpriteSet.Load(tower.id, 1) != null ? 1 : 1 + k % 3);
+                    SetLevel(t, 1 + k % 4);
                     placed.Add(t);
                 }
 

@@ -81,7 +81,24 @@ namespace BadAppleHotel.Tests
                 Assert.IsFalse(hourglass.HasFire);
                 Assert.AreSame(hourglass.Idle(0, .3f), hourglass.Idle(5, .3f), "A single view ignores facing.");
 
-                Assert.IsNull(TowerSpriteSet.Load("tesla_coil", 4), "Forms without animation keep their static art.");
+                Assert.IsNull(TowerSpriteSet.Load("crystal_ball", 1), "Forms without animation keep their static art.");
+            }
+            finally { Sprites.ArtOverride = art; }
+        }
+
+        [Test] public void Every_tower_form_has_animated_art()
+        {
+            var art = Sprites.ArtOverride;
+            Sprites.ArtOverride = true;
+            try
+            {
+                foreach (var tower in ConfigLoader.Load().towers.towers)
+                    for (int level = 1; level <= (tower.tiers?.Length ?? 0); level++)
+                    {
+                        var set = TowerSpriteSet.Load(tower.id, level);
+                        Assert.IsNotNull(set, tower.id + " level " + level);
+                        if (set.Directional) Assert.IsTrue(set.HasFire, tower.id + " level " + level + " turns to aim, so it needs an attack clip.");
+                    }
             }
             finally { Sprites.ArtOverride = art; }
         }
