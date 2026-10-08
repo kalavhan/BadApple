@@ -112,13 +112,13 @@ namespace BadAppleHotel.Tests
         [Test] public void Rift_batches_shrink_in_total_but_grow_per_survivor_as_residents_die()
         {
             float exponent = gm.Cfg.minions.aliveExponent;
-            Assert.AreEqual(3, GameManager.RiftBatch(3, 1, 6, 6, exponent));
-            Assert.AreEqual(6, GameManager.RiftBatch(3, 1, 6, 1, exponent));
-            Assert.AreEqual(10, GameManager.RiftBatch(5, 1, 6, 1, exponent), "The last resident faces about 10 a night, not 30.");
+            Assert.AreEqual(3, GameManager.RiftBatch(3, 6, 6, exponent));
+            Assert.AreEqual(6, GameManager.RiftBatch(3, 6, 1, exponent));
+            Assert.AreEqual(10, GameManager.RiftBatch(5, 6, 1, exponent), "The last resident faces about 10 a night, not 30.");
             int lastPer = 0, lastTotal = int.MaxValue;
             for (int alive = 6; alive >= 1; alive--)
             {
-                int per = GameManager.RiftBatch(4, 1, 6, alive, exponent);
+                int per = GameManager.RiftBatch(4, 6, alive, exponent);
                 Assert.GreaterOrEqual(per, lastPer);
                 Assert.LessOrEqual(per * alive, lastTotal);
                 lastPer = per; lastTotal = per * alive;
@@ -132,52 +132,100 @@ namespace BadAppleHotel.Tests
             Assert.AreEqual(DamageTypes.Bullet, GameManager.Weakness(DamageTypes.Electric));
         }
 
-        [Test] public void Awakened_horde_opens_a_rift_per_living_resident_and_spawns_in_pulses()
+        [Test] public void Every_monster_has_a_swarm_breachers_and_an_escort_covering_all_three_resistances()
+        {
+            foreach (var line in gm.Cfg.minions.lines)
+            {
+                CollectionAssert.AreEqual(new[] { "swarm", "breacher", "escort" }, line.creatures.Select(c => c.role).ToArray(), line.id);
+                CollectionAssert.AreEquivalent(new[] { "bullet", "electric", "fire" }, line.creatures.Select(c => c.resist).ToArray(), line.id);
+            }
+        }
+
+        [Test] public void Horde_strength_climbs_in_price_and_each_evolution_has_its_own_price()
+        {
+            var c = gm.Cfg.minions;
+            Assert.AreEqual(c.strengthCostBase, GameManager.StrengthCost(c, 1));
+            Assert.AreEqual(Mathf.Round(c.strengthCostBase * c.strengthCostGrowth), GameManager.StrengthCost(c, 2));
+            Assert.AreEqual(-1f, GameManager.StrengthCost(c, c.maxStrength));
+            Assert.AreEqual(-1f, GameManager.StrengthCost(c, 0), "Nothing to upgrade before the horde awakens.");
+            foreach (var line in c.lines)
+                Assert.Greater(line.creatures.Select(x => x.evolveCost).Distinct().Count(), 1, line.id + " prices its evolutions by value, not one rule");
+        }
+
+        [Test] public void Horde_strength_carries_to_creatures_unlocked_later_and_evolutions_survive_switching()
+        {
+            var m = gm.Monster;
+            m.Fear = 5000;
+            gm.TryUnlockMinion(m, 0);
+            gm.TryUpgradeStrength(m); gm.TryUpgradeStrength(m);
+            Assert.AreEqual(3, m.HordeStrength);
+            gm.TryUnlockMinion(m, 1);
+            float expected = gm.Creature(m, 1).health * (1f + 2f * gm.Cfg.minions.healthPerStrength);
+            Assert.AreEqual(expected, gm.MinionHealth(m, 1), .01f, "Strength III applies to a creature unlocked afterwards.");
+            Assert.AreEqual(ActionResult.Ok, gm.TryEvolveMinion(m, 1));
+            Assert.AreEqual(ActionResult.MaxLevel, gm.TryEvolveMinion(m, 1), "An evolution is bought once.");
+            m.ActiveMinion = 1; m.QueuedMinion = -1; m.SwitchedNight = -1;
+            gm.TryQueueMinion(m, 0);
+            Assert.IsTrue(gm.MinionEvolved(m, 1));
+            Assert.AreEqual(3, m.HordeStrength);
+        }
+
+        [Test] public void Awakening_unlocks_the_swarm_and_opens_a_rift_per_living_resident()
         {
             var m = gm.Monster;
             m.Fear = 1000;
-            Assert.AreEqual(ActionResult.Blocked, gm.TryBuyMinionUpgrade(m, "horde"), "Everything waits for the awakening.");
-            Assert.AreEqual(ActionResult.Ok, gm.TryBuyMinionUpgrade(m, "awaken"));
+            Assert.AreEqual(ActionResult.Blocked, gm.TryUnlockMinion(m, 1), "The other creatures wait for the awakening.");
+            Assert.AreEqual(ActionResult.Ok, gm.TryUnlockMinion(m, 0));
             int living = gm.Residents.Count(r => r.Alive && r.Room != null && r.Room != m.Lair);
             Assert.AreEqual(living, gm.Rifts.Count);
-            Assert.GreaterOrEqual(m.MinionResist, DamageTypes.Bullet);
             for (int i = 0; i < 90; i++) gm.StepMatch(1f / 30);
             Assert.Greater(gm.Minions.Count, 0);
-            Assert.IsTrue(gm.Minions.All(n => n.Resist == m.MinionResist));
+            int resist = gm.ResistOf(gm.Creature(m, 0));
+            Assert.IsTrue(gm.Minions.All(n => n.Index == 0 && n.Resist == resist));
         }
 
         [Test] public void Killing_a_resident_closes_their_rift_and_their_minions_crumble()
         {
             var m = gm.Monster;
             m.Fear = 1000;
-            gm.TryBuyMinionUpgrade(m, "awaken");
+            gm.TryUnlockMinion(m, 0);
             for (int i = 0; i < 90; i++) gm.StepMatch(1f / 30);
             var victim = gm.Rifts[0].Room.Owner;
             Assert.IsTrue(gm.Minions.Any(n => n.Rift.Room == victim.Room));
             Call("KillResident", victim, true);
             gm.StepMatch(1f / 30);
             Assert.IsFalse(gm.Rifts.Any(r => r.Room == victim.Room));
-            Assert.IsFalse(gm.Minions.Any(n => n.Rift.Room == victim.Room));
+            Assert.IsFalse(gm.Minions.Any(n => n.Rift != null && n.Rift.Room == victim.Room));
         }
 
-        [Test] public void The_resistance_can_only_change_every_four_nights()
+        [Test] public void A_bought_creature_is_queued_takes_over_at_the_next_pulse_and_then_switching_locks()
         {
             var m = gm.Monster;
             m.Fear = 1000;
-            gm.TryBuyMinionUpgrade(m, "awaken");
-            int other = (m.MinionResist + 1) % 3;
-            Assert.AreEqual(ActionResult.Blocked, gm.TrySetMinionResist(m, other));
-            Assert.AreEqual(gm.Cfg.minions.swapEveryNights, gm.NightsUntilSwap(m));
-            m.ResistChosenNight = gm.Night - gm.Cfg.minions.swapEveryNights;
-            Assert.AreEqual(ActionResult.Ok, gm.TrySetMinionResist(m, other));
-            Assert.AreEqual(other, m.MinionResist);
+            gm.TryUnlockMinion(m, 0);
+            for (int i = 0; i < 90; i++) gm.StepMatch(1f / 30);   // past the first pulse
+            Assert.AreEqual(ActionResult.Ok, gm.TryUnlockMinion(m, 1));
+            Assert.AreEqual(0, m.ActiveMinion, "The current creature stays active until the next pulse.");
+            Assert.AreEqual(1, m.QueuedMinion);
+            int before = gm.Minions.Count(n => n.Index == 0);
+            while (gm.NextPulseIn() > 0f && gm.Phase == Phase.Night) gm.StepMatch(1f / 30);
+            gm.StepMatch(1f / 30);
+            Assert.AreEqual(1, m.ActiveMinion);
+            Assert.AreEqual(-1, m.QueuedMinion);
+            Assert.IsTrue(gm.Minions.Any(n => n.Index == 1), "The new creature spawns from that pulse.");
+            Assert.AreEqual(ActionResult.Blocked, gm.TryQueueMinion(m, 0), "One switch per night.");
+            m.SwitchedNight = gm.Night - 1;   // as if the next night had started
+            float fear = m.Fear;
+            Assert.AreEqual(ActionResult.Ok, gm.TryQueueMinion(m, 0));
+            Assert.AreEqual(0, m.QueuedMinion);
+            Assert.AreEqual(fear, m.Fear, "Switching is free.");
         }
 
         [Test] public void Towers_shoot_minions_and_their_resistance_cuts_the_damage()
         {
             var m = gm.Monster;
             m.Fear = 1000;
-            gm.TryBuyMinionUpgrade(m, "awaken");
+            gm.TryUnlockMinion(m, 0);
             for (int i = 0; i < 90; i++) gm.StepMatch(1f / 30);
             var minion = gm.Minions[0];
             var owner = minion.Rift.Room.Owner;
@@ -203,12 +251,38 @@ namespace BadAppleHotel.Tests
             minion.Resist = DamageTypes.Bullet;
             hp = minion.Hp; tower.Cooldown = 0;
             Call("UpdateTowers", .1f, gm.Now);
-            Assert.AreEqual(neutral * (1f - gm.MinionResistance(m)), hp - minion.Hp, .01f);
+            Assert.AreEqual(neutral * (1f - gm.Cfg.minions.resistPct), hp - minion.Hp, .01f);
 
             minion.Resist = DamageTypes.Electric;   // electric-proof minions are weak to bullets
             hp = minion.Hp; tower.Cooldown = 0;
             Call("UpdateTowers", .1f, gm.Now);
             Assert.AreEqual(neutral * (1f + gm.Cfg.minions.weaknessBonus), hp - minion.Hp, .01f);
+        }
+
+        [Test] public void An_escort_beside_the_monster_steps_in_front_of_tower_shots()
+        {
+            var m = gm.Monster;
+            m.Fear = 2000;
+            gm.TryUnlockMinion(m, 0);
+            gm.TryUnlockMinion(m, 2);
+            var victim = Victim();
+            victim.DreamPower = 10000;
+            int slot = Enumerable.Range(0, victim.Room.Slots.Length).First(i => gm.CanBuildAt(victim.Room, i));
+            Assert.AreEqual(ActionResult.Ok, gm.TryBuildTower(victim, slot, "gun_turret"));
+            var tower = victim.Room.Slots[slot];
+            foreach (var room in gm.RoomsByDef.Values)
+                for (int i = 0; i < room.Slots.Length; i++) if (room.Slots[i] != tower) room.Slots[i] = null;
+            m.Pos = HotelMap.Center(tower.Tile) + Vector2.right * 2f;
+            var escort = (Minion)typeof(GameManager).GetMethod("SpawnMinion", Private).Invoke(gm, new object[] { m, 2, null, m.Pos, false });
+            escort.Creature.interceptChance = 1f;
+            try
+            {
+                float monsterHp = m.Hp, escortHp = escort.Hp;
+                Call("UpdateTowers", .1f, gm.Now);
+                Assert.AreEqual(monsterHp, m.Hp, "The shot never reached the monster.");
+                Assert.Less(escort.Hp, escortHp);
+            }
+            finally { escort.Creature.interceptChance = .5f; }
         }
 
         [Test] public void Flambe_burns_residents_in_the_ring()

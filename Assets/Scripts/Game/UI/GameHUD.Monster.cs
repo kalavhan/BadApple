@@ -7,49 +7,56 @@ namespace BadAppleHotel.Game
     /// The monster's windows. Tapping the monster opens a ring of stat orbs around it, like a tower's ring: one tap on
     /// an orb spends the Fear for the next level and puts the point into that stat, with what it adds written under
     /// the orb. Ability ranks and utility tricks owed at some levels appear in the same ring as gold orbs.
-    /// The Horde button opens one big window: the resistance types across the top tint the whole window, three tabs
-    /// down the side are the minion's three forms, and the current form's upgrades sit in a ring around it.
+    /// The Horde button opens a compact tray above the combat controls: three creature cards (Swarm, Breachers,
+    /// Escort) with their art, role and resistance, and a strip with the selected creature's level and its one action.
+    /// The monster's own buttons are icon orbs, each with its own colour and border.
     /// </summary>
     public partial class GameHUD
     {
         const string FearHex = "#FF6FAE";
         static readonly Color FearPink = new Color32(0xFF, 0x6F, 0xAE, 255);
+        static readonly Color Brass = new Color32(0xE8, 0xB8, 0x4A, 255);
         static readonly string[] Romans = { "I", "II", "III" };
         static readonly string[] KitSlots = { "attack", "area", "special" };
         static readonly string[] KitIcons = { "kit_attack", "kit_area", "kit_special" };
-        static readonly string[] HordeStats = { "horde", "toughness", "fangs", "scurry", "frenzy", "hide" };
 
         bool monsterRing, hordeOpen;
         float monsterRingAt = -9f, hordeOpenedAt = -9f, monsterShakeAt = -9f;
-        int hordeTab = -1;
+        int hordeCard = -1;
+        float cardSelectedAt = -9f;
+        readonly float[] cardFlashAt = { -9f, -9f, -9f };
 
         static Color StatColor(string id)
         {
             switch (id)
             {
-                case "vitality": case "toughness": return new Color32(0xFF, 0x7A, 0x8E, 255);
+                case "vitality": return new Color32(0xFF, 0x7A, 0x8E, 255);
                 case "hide": return new Color32(0x9C, 0xC2, 0xFF, 255);
-                case "stride": case "scurry": return DreamSkin.Mint;
+                case "stride": return DreamSkin.Mint;
                 case "frenzy": return new Color32(0xF2, 0xC1, 0x4E, 255);
-                case "maw": case "fangs": return new Color32(0xFF, 0x8A, 0x4C, 255);
+                case "maw": return new Color32(0xFF, 0x8A, 0x4C, 255);
                 default: return DreamSkin.Violet;
             }
         }
 
-        static string StatIcon(string id)
+        static string StatIcon(string id) => id == "vitality" ? "stat_vitality" : id == "hide" ? "stat_hide" : id == "stride" ? "stat_stride" :
+            id == "frenzy" ? "stat_frenzy" : id == "maw" ? "stat_maw" : "stat_horde";
+
+        /// <summary>What a stat rank does, said as the benefit ("Attacks 7% faster", not "+7% attack speed").</summary>
+        static string StatGain(string id, float perRank)
         {
+            int p = Mathf.RoundToInt(perRank * 100f);
             switch (id)
             {
-                case "vitality": case "toughness": return "stat_vitality";
-                case "hide": return "stat_hide";
-                case "stride": case "scurry": return "stat_stride";
-                case "frenzy": return "stat_frenzy";
-                case "maw": case "fangs": return "stat_maw";
-                default: return "stat_horde";
+                case "vitality": return "+" + p + "% health";
+                case "hide": return "Takes " + p + "% less damage";
+                case "stride": return "Moves " + p + "% faster";
+                case "frenzy": return "Attacks " + p + "% faster";
+                case "maw": return "Hits " + p + "% harder";
+                default: return "+" + p + "%";
             }
         }
 
-        /// <summary>Thick hide shows in the colour of the resistance it thickens.</summary>
         static Color ResistColor(int type)
         {
             switch (type)
@@ -62,6 +69,29 @@ namespace BadAppleHotel.Game
         }
 
         static string ResistIcon(int type) => type == DamageTypes.Bullet ? "type_bullets" : type == DamageTypes.Electric ? "type_electric" : "type_fire";
+        static string RoleIcon(string role) => "role_" + role;
+
+        /// <summary>Icon, rim colour and label colour for each ability button, so each reads as a different action.</summary>
+        static string AbilityIcon(Config.AbilityDef a)
+        {
+            switch (a.effect)
+            {
+                case "flambe": return "ab_flambe";
+                case "sporeBloom": return "ab_spores";
+                case "lastCall": return "ab_bell";
+                case "meatHook": return "ab_hook";
+                case "graveroot": return "ab_shrine";
+                case "doNotDisturb": return "ab_door";
+                case "towerDamageMultiplier": return "ab_jam";
+                case "doorDamageMultiplier": return "ab_rampage";
+                case "faithIncomeMultiplier": return "ab_blackout";
+                case "dash": return "ab_lunge";
+                case "towerUntargetable": return "ab_cloak";
+                case "residentSlowZone": return "ab_slime";
+                case "bedIncomeMultiplier": return "ab_gaze";
+                default: return "trick";
+            }
+        }
 
         static float Ease(float since, float seconds = .24f)
         {
@@ -100,27 +130,14 @@ namespace BadAppleHotel.Game
             }
 
             DrawJoystick();
+            DrawMonsterButtons(m);
 
-            bool night = gm.Phase == Phase.Night;
-            for (int i = 0; i < m.Loadout.Length; i++)
-            {
-                var a = m.Loadout[i];
-                float cd = m.Cooldowns[i];
-                int idx = i;
-                var c = new Vector2(vw - 75f - (i % 3) * 110f, VH - 75f - (i / 3) * 108f);
-                string text = a.name + "\n<size=11>" + AbilityHint(a) + "</size>" + (cd > 0 ? "\n" + Mathf.CeilToInt(cd) + "s" : "\n[" + (i + 1) + "]");
-                RoundButton(c, 100f, text, i < 2 ? gm.ColorOf(m) : Mint, cd <= 0f && night && !m.Dead, () => gm.UseAbility(idx), roundSmall);
-            }
-            if (gm.HotelViewAvailable)
-                RoundButton(new Vector2(vw - 80f, VH - 310f), 72f, gm.HotelView ? "Back" : "Hotel\nview", Bone, true, () => gm.HotelView = !gm.HotelView, roundSmall);
-            DrawHordeButton(m);
-
-            if (!m.Dead && !hordeOpen)
+            if (!m.Dead)
             {
                 if (monsterRing) DrawMonsterRing(m);
                 else DrawGrowHint(m);
             }
-            if (hordeOpen) DrawHordeWindow(m);
+            if (hordeOpen) DrawHordeTray(m);
         }
 
         /// <summary>Top left: level, health and Fear. Tapping it opens the ring too.</summary>
@@ -138,20 +155,63 @@ namespace BadAppleHotel.Game
             TapZone(r, () => ToggleMonsterRing(true));
         }
 
-        void DrawHordeButton(Monster m)
+        /// <summary>An icon orb: dark lacquer face, a coloured rim (double for the signature special), an icon, a short
+        /// label and a cooldown sweep. Fires on finger down like the other round buttons, so it works while moving.</summary>
+        void IconButton(Vector2 c, float d, string icon, string label, Color col, bool enabled, float cooldown, float cooldownTotal, string key, System.Action press, Texture art = null)
         {
-            var c = new Vector2(78f + Screen.safeArea.xMin / scale, VH - 262f);
-            float d = 92f;
-            bool awake = gm.HordeAwake(m);
-            var tint = awake ? ResistColor(m.MinionResist) : DreamSkin.Violet;
-            bool afford = !awake && m.Fear >= gm.MinionUpgradeCost(m, "awaken");
-            DreamSkin.Orb(c, d, tint, .9f, hordeOpen || afford ? .3f + .1f * Mathf.Sin(Time.unscaledTime * 3f) : .08f);
-            DreamSkin.Icon(new Rect(c.x - 20f, c.y - 30f, 40f, 40f), awake ? "minion_" + gm.MinionLine(m).id : "stat_horde", tint);
-            DreamSkin.Label(new Rect(c.x - 46f, c.y + 10f, 92f, 20f), "<b>Horde</b>", DreamSkin.Tiny, DreamSkin.Bone);
-            if (awake) DreamSkin.Label(new Rect(c.x - 46f, c.y + 26f, 92f, 16f), gm.Minions.Count + " out", DreamSkin.Tiny, DreamSkin.BoneDim);
+            bool down = pointers.Values.Any(p => (p.Current - c).sqrMagnitude < d * d * 0.25f);
+            float a = enabled ? 1f : .45f;
+            DreamSkin.Orb(c, d * (down ? .94f : 1f), col, a, enabled ? (down ? .45f : .16f) : 0f);
+            DreamSkin.Ring(c, d - 7f, 2.4f, A(col, .85f * a));
+            // Small orbs and art orbs keep their face clear: the label sits under the orb instead.
+            bool below = art != null || d < 70f;
+            if (art != null) DreamSkin.Tex(new Rect(c.x - d * .36f, c.y - d * .38f, d * .72f, d * .72f), art, new Color(1, 1, 1, a));
+            else if (below) DreamSkin.Icon(new Rect(c.x - d * .25f, c.y - d * .25f, d * .5f, d * .5f), icon, A(col, a));
+            else DreamSkin.Icon(new Rect(c.x - d * .2f, c.y - d * .3f, d * .4f, d * .4f), icon, A(col, a));
+            if (below) DreamSkin.Shadowed(new Rect(c.x - 50f, c.y + d * .5f + 2f, 100f, 18f), "<b>" + label + "</b>", DreamSkin.Tiny, A(DreamSkin.Bone, a), TextAnchor.MiddleCenter);
+            else DreamSkin.Label(new Rect(c.x - d * .5f, c.y + d * .1f, d, 18f), "<b>" + label + "</b>", DreamSkin.Tiny, A(DreamSkin.Bone, a));
+            if (cooldown > 0f)
+            {
+                UiFx.Arc(c, d / 2f - 3f, 4f, 1f - cooldown / Mathf.Max(.01f, cooldownTotal), A(col, .9f), scale);
+                DreamSkin.Shadowed(new Rect(c.x - 30f, c.y - 14f, 60f, 26f), "<b>" + Mathf.CeilToInt(cooldown) + "</b>", DreamSkin.Body, DreamSkin.Bone, TextAnchor.MiddleCenter);
+            }
+            else if (!string.IsNullOrEmpty(key) && !below) DreamSkin.Label(new Rect(c.x - d * .5f, c.y + d * .26f, d, 14f), key, DreamSkin.Tiny, A(DreamSkin.BoneDim, a));
             var r = new Rect(c.x - d / 2f, c.y - d / 2f, d, d);
             Ui(r);
-            TapZone(r, () => ToggleHorde(!hordeOpen), round: true);
+            if (enabled) AddZone(r, press);
+        }
+
+        /// <summary>Bottom right: the area attack (the monster's colour, largest), the special (gold, double rim),
+        /// utilities (mint and violet), the Horde button (the active creature's art, brass) and the hotel view (bone).</summary>
+        void DrawMonsterButtons(Monster m)
+        {
+            bool night = gm.Phase == Phase.Night;
+            float right = vw - (Screen.width - Screen.safeArea.xMax) / scale, bottom = VH - Screen.safeArea.yMin / scale;
+            var spots = new[]
+            {
+                new Vector2(right - 82f, bottom - 86f), new Vector2(right - 206f, bottom - 66f),
+                new Vector2(right - 70f, bottom - 214f), new Vector2(right - 176f, bottom - 184f), new Vector2(right - 296f, bottom - 160f),
+            };
+            // A restrained palette: the area attack in the monster's colour, the special and the horde in brass,
+            // utilities and the hotel view in bone. Every rim is the same weight.
+            for (int i = 0; i < m.Loadout.Length && i < spots.Length; i++)
+            {
+                var a = m.Loadout[i];
+                int idx = i;
+                bool area = a.id == m.Def.area, special = a.id == m.Def.special;
+                var col = area ? gm.ColorOf(m) : special ? Brass : DreamSkin.Bone;
+                float d = area ? 112f : special ? 94f : 78f;
+                IconButton(spots[i], d, AbilityIcon(a), a.name, col, night && !m.Dead, m.Cooldowns[i], a.cooldownSeconds, "[" + (i + 1) + "]",
+                    () => gm.UseAbility(idx));
+            }
+            // Horde: the active creature's art in a brass rim; it glows when something there is affordable.
+            var hc = new Vector2(right - 318f, bottom - 62f);
+            bool awake = gm.HordeAwake(m);
+            var art = awake ? Sprites.MinionArt(gm.MinionLine(m).id, gm.Creature(m, m.ActiveMinion).role) : null;
+            IconButton(hc, 90f, "stat_horde", awake ? "Horde · " + gm.Minions.Count : "Horde", hordeOpen ? Color.white : Brass, true, 0f, 1f, "[H]", () => ToggleHorde(!hordeOpen), art: art);
+            if (!awake && m.Fear >= gm.UnlockCost(m, 0)) DreamSkin.GlowAt(hc, Vector2.one * 150f, A(Brass, .25f + .15f * Mathf.Sin(Time.unscaledTime * 3f)));
+            if (gm.HotelViewAvailable)
+                IconButton(new Vector2(right - 52f, 248f), 64f, "eye", gm.HotelView ? "Back" : "Hotel", DreamSkin.Bone, true, 0f, 1f, "[M]", () => gm.HotelView = !gm.HotelView);
         }
 
         void ToggleMonsterRing(bool open)
@@ -165,7 +225,13 @@ namespace BadAppleHotel.Game
         {
             if (open == hordeOpen) return;
             hordeOpen = open;
-            if (open) { hordeOpenedAt = Time.unscaledTime; monsterRing = false; hordeTab = -1; }
+            if (open)
+            {
+                hordeOpenedAt = Time.unscaledTime; monsterRing = false;
+                var m = gm.Monster;
+                hordeCard = m != null && gm.HordeAwake(m) ? m.ActiveMinion : 0;
+                cardSelectedAt = Time.unscaledTime;
+            }
         }
 
         /// <summary>World taps while playing the monster: the monster's own body opens or closes its ring; anywhere else closes the windows.</summary>
@@ -282,7 +348,7 @@ namespace BadAppleHotel.Game
                 DreamSkin.Icon(new Rect(c.x - 19f, c.y - 30f, 38f, 38f), StatIcon(s.id), ok ? col : A(col, .45f));
                 DreamSkin.Label(new Rect(c.x - 48f, c.y + 10f, 96f, 18f), "<b>" + s.name + "</b>", DreamSkin.Tiny, ok ? DreamSkin.Bone : DreamSkin.BoneDim);
                 // Under the orb: what it adds, and its rank as pips.
-                string gain = maxed ? "maxed" : (s.id == "hide" ? "−" : "+") + Mathf.RoundToInt(s.perRank * 100f) + "% " + s.stat.ToLower().Replace("hp", "HP");
+                string gain = maxed ? "maxed" : StatGain(s.id, s.perRank);
                 DreamSkin.Shadowed(new Rect(c.x - 70f, c.y + d / 2f + 2f, 140f, 18f), gain, DreamSkin.Tiny, maxed ? DreamSkin.BoneDim : col, TextAnchor.MiddleCenter);
                 Pips(new Vector2(c.x, c.y + d / 2f + 26f), rank, s.maxRank, col);
                 var r = new Rect(c.x - d / 2f, c.y - d / 2f, d, d);
@@ -318,7 +384,7 @@ namespace BadAppleHotel.Game
             fxFront.Burst(at, 18, col, 160f, 8f, .7f);
             fxFront.Ring(at, 60f, col);
             var box = MonsterBox(m);
-            fxFront.Say(new Vector2(box.center.x, box.yMin - 24f), "LEVEL " + m.Level, s.name.ToUpper() + " " + (s.id == "hide" ? "−" : "+") + Mathf.RoundToInt(s.perRank * 100f) + "%");
+            fxFront.Say(new Vector2(box.center.x, box.yMin - 24f), "LEVEL " + m.Level, StatGain(s.id, s.perRank).ToUpper());
             // A pick owed at this level keeps the ring open; otherwise one tap was the whole action.
             if (!gm.HasPendingPick(m) && (gm.LevelPrice(m) < 0 || m.Fear < gm.LevelPrice(m))) ToggleMonsterRing(false);
         }
@@ -367,214 +433,268 @@ namespace BadAppleHotel.Game
             }
         }
 
-        // ------------------------------------------------------------ the horde window
+        // ------------------------------------------------------------ the horde tray
 
-        Rect HordeRect()
+        /// <summary>Right-aligned above the combat controls, so the joystick, the ability buttons and most of the hallway stay in view.</summary>
+        Rect HordeTrayRect()
         {
             var safe = SafeRect();
-            float w = Mathf.Min(860f, safe.width - 40f), h = Mathf.Min(560f, safe.height - 40f);
-            return new Rect(safe.center.x - w / 2f, safe.center.y - h / 2f + 10f, w, h);
+            float w = Mathf.Min(560f, safe.width - 24f), h = 416f;
+            return new Rect(safe.xMax - w - 12f, Mathf.Max(safe.yMin + 56f, safe.yMax - 262f - h), w, h);
         }
 
-        void DrawHordeWindow(Monster m)
+        void SelectCard(int i)
+        {
+            if (hordeCard != i) cardSelectedAt = Time.unscaledTime;
+            hordeCard = i;
+        }
+
+        void DrawHordeTray(Monster m)
         {
             float k = Ease(hordeOpenedAt);
             var line = gm.MinionLine(m);
             bool awake = gm.HordeAwake(m);
-            int form = gm.MinionFormIndex(m);
-            if (hordeTab < 0 || hordeTab >= line.forms.Length) hordeTab = form;
-            var tint = ResistColor(m.MinionResist);
-
-            var r = HordeRect();
-            r.y += (1f - k) * 40f;
+            if (hordeCard < 0 || hordeCard > 2) hordeCard = 0;
+            var r = HordeTrayRect();
+            r.y += (1f - k) * 30f;
             var old = GUI.color;
             GUI.color = new Color(1, 1, 1, k);
-            DreamSkin.Panel(r, k);
-            // The window takes the colour of the horde's resistance.
-            DreamSkin.GlowAt(new Vector2(r.center.x, r.y + 40f), new Vector2(r.width * 1.1f, 220f), A(tint, .22f));
-            DreamSkin.GlowAt(r.center, new Vector2(r.width * .9f, r.height * .9f), A(tint, .08f));
-            DreamSkin.Border(r, A(tint, .7f), 2f, 18f);
+            // Dark lacquer with a worn brass edge and a restrained purple glow.
+            DreamSkin.GlowAt(new Vector2(r.center.x, r.y + 20f), new Vector2(r.width * 1.1f, 140f), A(DreamSkin.Violet, .14f));
+            DreamSkin.Fill(r, new Color(.07f, .05f, .09f, .96f), 16f);
+            DreamSkin.Border(r, A(Brass, .55f), 1.6f, 16f);
+            DreamSkin.Border(new Rect(r.x + 5f, r.y + 5f, r.width - 10f, r.height - 10f), A(Brass, .18f), 1f, 12f);
             Ui(r);
-            CloseButton(new Rect(r.xMax - 58f, r.y + 12f, 46f, 46f), () => ToggleHorde(false));
 
-            // ---- the types across the top
-            DreamSkin.Label(new Rect(r.x + 22f, r.y + 14f, 200f, 40f), "Horde", DreamSkin.Title, tint, TextAnchor.MiddleLeft);
-            bool canSwap = gm.CanSwapMinionResist(m);
-            float tx = r.x + 190f;
-            DreamSkin.Label(new Rect(tx, r.y + 14f, 80f, 40f), "Resists", DreamSkin.Small, DreamSkin.BoneDim, TextAnchor.MiddleLeft);
-            tx += 70f;
+            // ---- header: Horde, Fear, living minions and the next wave
+            DreamSkin.Label(new Rect(r.x + 18f, r.y + 10f, 120f, 34f), "Horde", DreamSkin.Heading, Brass, TextAnchor.MiddleLeft);
+            DreamSkin.Icon(new Rect(r.x + 120f, r.y + 15f, 22f, 22f), "fear", Color.white);
+            DreamSkin.Label(new Rect(r.x + 146f, r.y + 10f, 70f, 32f), "<b><color=" + FearHex + ">" + Mathf.FloorToInt(m.Fear) + "</color></b>", DreamSkin.Body, DreamSkin.Bone, TextAnchor.MiddleLeft);
+            DreamSkin.Icon(new Rect(r.x + 206f, r.y + 15f, 22f, 22f), "role_swarm", DreamSkin.BoneDim);
+            DreamSkin.Label(new Rect(r.x + 232f, r.y + 10f, 80f, 32f), gm.Minions.Count + " out", DreamSkin.Small, DreamSkin.BoneDim, TextAnchor.MiddleLeft);
+            float next = gm.NextPulseIn();
+            string wave = !awake ? "asleep" : next < 0 ? "next night" : next < 1f ? "now" : Mathf.CeilToInt(next) + "s";
+            var pill = new Rect(r.xMax - 210f, r.y + 10f, 150f, 32f);
+            DreamSkin.Fill(pill, A(Brass, awake && next >= 0 && next < 5f ? .35f + .2f * Mathf.Sin(Time.unscaledTime * 6f) : .16f), 16f);
+            DreamSkin.Label(pill, "Next wave · <b>" + wave + "</b>", DreamSkin.Small, DreamSkin.Bone, TextAnchor.MiddleCenter);
+            CloseButton(new Rect(r.xMax - 50f, r.y + 8f, 38f, 38f), () => ToggleHorde(false));
+
+            // ---- three creature cards
+            float gap = 12f, cw = (r.width - 36f - gap * 2f) / 3f, ch = 176f;
             for (int i = 0; i < 3; i++)
-            {
-                int type = i;
-                bool on = m.MinionResist == type;
-                var col = ResistColor(type);
-                var b = new Rect(tx + i * 132f, r.y + 12f, 124f, 44f);
-                bool usable = canSwap || on;
-                if (on) { DreamSkin.GlowAt(b.center, b.size * 1.5f, A(col, .3f)); DreamSkin.Fill(b, col, 22f); }
-                else DreamSkin.Fill(b, new Color(1, 1, 1, usable ? .06f : .03f), 22f);
-                DreamSkin.Border(b, A(col, usable ? .7f : .25f), 1.4f, 22f);
-                DreamSkin.Icon(new Rect(b.x + 14f, b.y + 10f, 24f, 24f), ResistIcon(type), on ? DreamSkin.Ink : A(col, usable ? 1f : .4f));
-                DreamSkin.Label(new Rect(b.x + 42f, b.y, b.width - 46f, b.height), "<b>" + DamageTypes.Label(type) + "</b>", DreamSkin.Small, on ? DreamSkin.Ink : A(DreamSkin.Bone, usable ? 1f : .4f), TextAnchor.MiddleLeft);
-                TapZone(b, () =>
-                {
-                    var res = gm.TrySetMinionResist(m, type);
-                    if (res == ActionResult.Blocked) gm.Toast("You can change the resistance in " + gm.NightsUntilSwap(m) + " night(s).");
-                });
-            }
-            string typeNote = m.MinionResist < 0 ? "pick what your minions shrug off"
-                : "take " + Mathf.RoundToInt(gm.MinionResistance(m) * 100f) + "% less " + DamageTypes.Label(m.MinionResist).ToLower() + ", weak to " + DamageTypes.Label(GameManager.Weakness(m.MinionResist)).ToLower() +
-                  (canSwap ? "" : "  ·  change in " + gm.NightsUntilSwap(m) + " night(s)");
-            DreamSkin.Label(new Rect(tx, r.y + 58f, 400f, 20f), typeNote, DreamSkin.Tiny, DreamSkin.BoneDim, TextAnchor.MiddleLeft);
+                DrawCreatureCard(m, line, i, new Rect(r.x + 18f + i * (cw + gap), r.y + 52f, cw, ch));
 
-            // ---- the three forms as tabs down the left
-            for (int i = 0; i < line.forms.Length; i++)
-            {
-                int tab = i;
-                var b = new Rect(r.x + 18f, r.y + 96f + i * 132f, 112f, 122f);
-                bool on = hordeTab == i;
-                bool owned = awake && i <= form;
-                var col = owned ? tint : DreamSkin.BoneDim;
-                if (on) { DreamSkin.GlowAt(b.center, b.size * 1.4f, A(col, .25f)); DreamSkin.Fill(b, A(col, .22f), 16f); }
-                else DreamSkin.Fill(b, new Color(1, 1, 1, .04f), 16f);
-                DreamSkin.Border(b, A(col, on ? .9f : .3f), on ? 2f : 1.2f, 16f);
-                float iconSize = 44f + i * 8f;
-                DreamSkin.Icon(new Rect(b.center.x - iconSize / 2f, b.y + 14f + (60f - iconSize) / 2f, iconSize, iconSize), "minion_" + line.id, owned ? col : A(col, .35f));
-                DreamSkin.Label(new Rect(b.x + 4f, b.y + 76f, b.width - 8f, 20f), "<b>" + Romans[i] + "</b>", DreamSkin.Small, owned ? DreamSkin.Bone : DreamSkin.BoneDim, TextAnchor.MiddleCenter);
-                DreamSkin.Label(new Rect(b.x + 4f, b.y + 96f, b.width - 8f, 20f), line.forms[i].name, DreamSkin.Tiny, owned ? DreamSkin.Bone : DreamSkin.BoneDim);
-                TapZone(b, () => hordeTab = tab);
-            }
-
-            // ---- the middle: awaken, the current form's ring, or the next evolution
-            var area = new Rect(r.x + 150f, r.y + 90f, r.width - 170f, r.height - 140f);
-            var mid = new Vector2(area.center.x, area.center.y - 6f);
-            if (!awake) DrawAwaken(m, line, mid, k);
-            else if (hordeTab == form) DrawFormRing(m, line, form, mid, Mathf.Min(area.height * .5f - 54f, 176f), tint, k);
-            else if (hordeTab == form + 1) DrawEvolve(m, line, hordeTab, mid, tint);
-            else DrawFormInfo(line, hordeTab, mid, hordeTab < form ? "an earlier form" : "Evolve to form " + Romans[Mathf.Min(2, form + 1)] + " first");
-
-            // ---- footer: tonight and what the monster has seen
-            var tally = gm.ScoutTally(m, out int unknown);
-            string foot = (awake ? "<b>" + gm.HordeSize(m) + "</b> per door each night  ·  <b>" + gm.Minions.Count + "</b> out now      " : "") +
-                "Towers seen: bullet " + tally[0] + "  electric " + tally[1] + "  fire " + tally[2] + (unknown > 0 ? "   <color=#8A8070>? " + unknown + " room" + (unknown > 1 ? "s" : "") + " unseen</color>" : "");
-            DreamSkin.Label(new Rect(r.x + 150f, r.yMax - 40f, r.width - 170f, 26f), foot, DreamSkin.Small, DreamSkin.BoneDim, TextAnchor.MiddleCenter);
+            // ---- the selected creature's actions, then Horde Strength for all of them
+            DrawSelectedRow(m, line, hordeCard, new Rect(r.x + 18f, r.y + 240f, r.width - 36f, 74f));
+            DrawStrengthStrip(m, new Rect(r.x + 18f, r.y + 322f, r.width - 36f, 80f));
             GUI.color = old;
         }
 
-        void DrawAwaken(Monster m, Config.MinionLineDef line, Vector2 c, float k)
+        static void Pill(Rect r, string text, Color fill, Color textCol, bool outlined = false)
         {
-            float cost = gm.MinionUpgradeCost(m, "awaken");
-            bool afford = m.Fear + .001f >= cost;
-            float d = 168f;
-            DreamSkin.Orb(c, d, DreamSkin.Violet, .95f, afford ? .3f + .12f * Mathf.Sin(Time.unscaledTime * 3f) : .05f);
-            DreamSkin.Icon(new Rect(c.x - 34f, c.y - 56f, 68f, 68f), "minion_" + line.id, afford ? DreamSkin.Violet : A(DreamSkin.Violet, .5f));
-            DreamSkin.Label(new Rect(c.x - 80f, c.y + 16f, 160f, 26f), "<b>Awaken</b>", DreamSkin.Body, DreamSkin.Bone, TextAnchor.MiddleCenter);
-            DreamSkin.Label(new Rect(c.x - 80f, c.y + 42f, 160f, 20f), "<color=" + FearHex + ">" + Mathf.CeilToInt(cost) + " Fear</color>", DreamSkin.Tiny, DreamSkin.Bone);
-            DreamSkin.Label(new Rect(c.x - 230f, c.y + d / 2f + 14f, 460f, 44f),
-                "Opens a rift outside every resident's door. Each night it releases " + gm.Cfg.minions.baseHorde + " " + line.forms[0].name + "s per door.",
-                DreamSkin.Small, DreamSkin.BoneDim, TextAnchor.MiddleCenter);
-            var r = new Rect(c.x - d / 2f, c.y - d / 2f, d, d);
-            Ui(r);
-            TapZone(r, () =>
-            {
-                var res = gm.TryBuyMinionUpgrade(m, "awaken");
-                if (res == ActionResult.Ok) { fxFront.Burst(c, 30, DreamSkin.Violet, 200f, 9f, .8f); hordeTab = 0; }
-                else ReportFear(res, cost - m.Fear);
-            }, round: true);
+            if (outlined) { DreamSkin.Fill(r, new Color(.07f, .05f, .09f, .95f), r.height / 2f); DreamSkin.Border(r, fill, 1.4f, r.height / 2f); }
+            else DreamSkin.Fill(r, fill, r.height / 2f);
+            DreamSkin.Label(r, "<b>" + text + "</b>", DreamSkin.Tiny, textCol, TextAnchor.MiddleCenter);
         }
 
-        static string Trait(Config.MinionFormDef f)
+        void DrawCreatureCard(Monster m, Config.MinionLineDef line, int i, Rect c)
         {
-            switch (f.trait)
+            var creature = line.creatures[i];
+            var role = gm.MinionRole(creature.role);
+            bool owned = gm.MinionOwned(m, i), active = owned && m.ActiveMinion == i, queued = m.QueuedMinion == i, selected = hordeCard == i;
+            float now = Time.unscaledTime;
+
+            DreamSkin.Fill(c, owned ? new Color(.13f, .09f, .15f, .98f) : new Color(.08f, .06f, .1f, .98f), 12f);
+            DreamSkin.GlowAt(new Vector2(c.center.x, c.y + 60f), new Vector2(c.width, 120f), A(ResistColor(gm.ResistOf(creature)), owned ? .16f : .05f));
+            // Active: a steady gold frame. Queued: a thinner brass frame. Selected: a thin white outline and a tab under
+            // the card, with a beam that runs round the border once when it is picked.
+            if (active) { DreamSkin.GlowAt(c.center, c.size * 1.25f, A(Brass, .2f)); DreamSkin.Border(c, Brass, 2.4f, 12f); }
+            else if (queued) DreamSkin.Border(c, A(Brass, .75f), 1.6f, 12f);
+            else DreamSkin.Border(c, A(DreamSkin.Bone, owned ? .3f : .14f), 1.2f, 12f);
+            if (selected)
             {
-                case "dropPart": return "drops a body part when it breaks a door";
-                case "deathSlow": return "pops into a slowing puff";
-                case "deathBlind": return "its puff also blinds towers for 1 s";
-                case "split": return "splits into two Puffcaps when it dies";
-                case "swallowShot": return "swallows the first tower shot";
-                case "releaseTwo": return "releases two Mimics when it breaks";
-                default: return "";
+                DreamSkin.Border(new Rect(c.x + 3f, c.y + 3f, c.width - 6f, c.height - 6f), A(Color.white, .45f), 1f, 10f);
+                DreamSkin.Fill(new Rect(c.center.x - 22f, c.yMax + 3f, 44f, 4f), A(Color.white, .85f), 2f);
+                float beam = 1f - Mathf.Clamp01((now - cardSelectedAt) / 1.1f);
+                if (beam > 0f) BorderBeam(c, A(Color.white, beam), Mathf.Clamp01((now - cardSelectedAt) / 1.1f));
+            }
+            float flash = Mathf.Clamp01(1f - (now - cardFlashAt[i]) / .45f);
+            if (flash > 0f) DreamSkin.Fill(c, A(Brass, .35f * flash), 12f);
+
+            // Art: the creature itself is the biggest thing on the card. The selected one breathes a little.
+            var art = Sprites.MinionArt(line.id, creature.role);
+            float bob = selected ? Mathf.Sin(now * 3f) * 2.5f : 0f;
+            var artRect = new Rect(c.x + 10f, c.y + 10f - bob, c.width - 20f, 102f);
+            if (art != null) DrawTextureFit(art, artRect, owned ? Color.white : new Color(.38f, .34f, .42f, 1f));
+            else DreamSkin.Icon(new Rect(artRect.center.x - 36f, artRect.center.y - 36f, 72f, 72f), "minion_" + line.id, owned ? DreamSkin.Bone : DreamSkin.BoneDim);
+
+            // Corner markers, each with its own word as well as colour.
+            if (active) Pill(new Rect(c.xMax - 68f, c.y - 9f, 74f, 22f), "ACTIVE", Brass, DreamSkin.Ink);
+            else if (queued) Pill(new Rect(c.xMax - 74f, c.y - 9f, 80f, 22f), "QUEUED", Brass, Brass, outlined: true);
+            if (owned && gm.MinionEvolved(m, i))
+            {
+                var ev = new Rect(c.x + 6f, c.y + 6f, 84f, 20f);
+                DreamSkin.Fill(ev, A(DreamSkin.Violet, .9f), 10f);
+                DreamSkin.Icon(new Rect(ev.x + 5f, ev.y + 3f, 14f, 14f), "kit_special", DreamSkin.Ink);
+                DreamSkin.Label(new Rect(ev.x + 18f, ev.y, ev.width - 20f, ev.height), "<b>EVOLVED</b>", DreamSkin.Tiny, DreamSkin.Ink, TextAnchor.MiddleCenter);
+            }
+            if (!owned)
+            {
+                var lockC = new Vector2(c.center.x, c.y + 58f);
+                DreamSkin.Orb(lockC, 46f, DreamSkin.Bone, .5f, 0f);
+                DreamSkin.Icon(new Rect(lockC.x - 12f, lockC.y - 13f, 24f, 24f), "lock", DreamSkin.Bone);
+                DreamSkin.Label(new Rect(c.x + 10f, c.y + 84f, c.width - 20f, 22f), "<b><color=" + FearHex + ">" + Mathf.CeilToInt(gm.UnlockCost(m, i)) + " Fear</color></b>", DreamSkin.Small, DreamSkin.Bone, TextAnchor.MiddleCenter);
+            }
+
+            // Role and numbers under the art: role icon and name, quantity, resistance and weakness.
+            float y = c.y + 114f;
+            DreamSkin.Icon(new Rect(c.x + 10f, y + 2f, 20f, 20f), RoleIcon(role.id), Brass);
+            DreamSkin.Label(new Rect(c.x + 34f, y, c.width - 40f, 24f), "<b>" + role.name + "</b>", DreamSkin.Small, DreamSkin.Bone, TextAnchor.MiddleLeft);
+            string qty = role.id == "escort" ? "guard ×" + gm.EscortCap(m, i) : "×" + gm.PerDoor(m, i) + " per door";
+            DreamSkin.Label(new Rect(c.x + 10f, y + 22f, c.width - 20f, 18f), qty, DreamSkin.Tiny, DreamSkin.BoneDim, TextAnchor.MiddleLeft);
+            int resist = gm.ResistOf(creature), weak = GameManager.Weakness(resist);
+            DreamSkin.Icon(new Rect(c.x + 10f, y + 42f, 16f, 16f), ResistIcon(resist), ResistColor(resist));
+            DreamSkin.Label(new Rect(c.x + 28f, y + 40f, 60f, 20f), "resists", DreamSkin.Tiny, ResistColor(resist), TextAnchor.MiddleLeft);
+            DreamSkin.Icon(new Rect(c.center.x + 6f, y + 42f, 16f, 16f), ResistIcon(weak), A(ResistColor(weak), .8f));
+            DreamSkin.Label(new Rect(c.center.x + 24f, y + 40f, 50f, 20f), "weak", DreamSkin.Tiny, A(ResistColor(weak), .8f), TextAnchor.MiddleLeft);
+            int index = i;
+            TapZone(c, () => SelectCard(index));
+        }
+
+        /// <summary>A short bright beam that runs once round a card's border as it is selected.</summary>
+        void BorderBeam(Rect r, Color col, float progress)
+        {
+            float perimeter = 2f * (r.width + r.height);
+            float head = progress * perimeter;
+            for (int s = 0; s < 12; s++)
+            {
+                float d = head - s * 7f;
+                if (d < 0f) break;
+                DreamSkin.GlowAt(PerimeterPoint(r, d), Vector2.one * (14f - s * .6f), A(col, .8f * (1f - s / 12f)));
             }
         }
 
-        string FormStats(Monster m, Config.MinionFormDef f) =>
-            Mathf.RoundToInt(f.health * (1f + gm.MinionRank(m, "toughness") * gm.MinionUpgrade("toughness").perRank)) + " HP  ·  " +
-            Mathf.RoundToInt(f.damage * (1f + gm.MinionRank(m, "fangs") * gm.MinionUpgrade("fangs").perRank)) + " dmg  ·  speed " + f.speed.ToString("0.#");
-
-        void DrawFormRing(Monster m, Config.MinionLineDef line, int form, Vector2 c, float R, Color tint, float k)
+        static Vector2 PerimeterPoint(Rect r, float d)
         {
-            var f = line.forms[form];
-            DreamSkin.GlowAt(c, Vector2.one * 190f, A(tint, .18f));
-            DreamSkin.Icon(new Rect(c.x - 44f, c.y - 58f, 88f, 88f), "minion_" + line.id, tint);
-            DreamSkin.Label(new Rect(c.x - 110f, c.y + 30f, 220f, 26f), "<b>" + f.name + "</b>", DreamSkin.Body, DreamSkin.Bone, TextAnchor.MiddleCenter);
-            DreamSkin.Label(new Rect(c.x - 110f, c.y + 54f, 220f, 18f), FormStats(m, f), DreamSkin.Tiny, DreamSkin.BoneDim);
-            string trait = Trait(f);
-            if (trait != "") DreamSkin.Label(new Rect(c.x - 110f, c.y + 72f, 220f, 18f), trait, DreamSkin.Tiny, tint);
-            DreamSkin.Ring(c, R * 2f, 1.4f, A(tint, .25f));
+            if (d < r.width) return new Vector2(r.x + d, r.y);
+            d -= r.width;
+            if (d < r.height) return new Vector2(r.xMax, r.y + d);
+            d -= r.height;
+            if (d < r.width) return new Vector2(r.xMax - d, r.yMax);
+            d -= r.width;
+            return new Vector2(r.x, r.yMax - d);
+        }
 
-            for (int i = 0; i < HordeStats.Length; i++)
+        void DrawTextureFit(Texture tex, Rect box, Color tint)
+        {
+            float aspect = tex.width / (float)tex.height;
+            float w = box.width, h = w / aspect;
+            if (h > box.height) { h = box.height; w = h * aspect; }
+            DreamSkin.Tex(new Rect(box.center.x - w / 2f, box.yMax - h, w, h), tex, tint);
+        }
+
+        /// <summary>One clearly labelled action button; the price is spent on the tap, with no extra confirm.</summary>
+        void ActionButton(Rect b, string label, string sub, Color col, bool enabled, bool afford, System.Action act)
+        {
+            DreamSkin.GlowAt(b.center, b.size * 1.3f, A(col, afford ? .2f + .08f * Mathf.Sin(Time.unscaledTime * 3f) : .03f));
+            DreamSkin.Fill(b, afford ? A(col, .9f) : new Color(1, 1, 1, .06f), b.height / 2f);
+            DreamSkin.Border(b, A(col, enabled ? 1f : .3f), 1.8f, b.height / 2f);
+            float labelY = string.IsNullOrEmpty(sub) ? b.y : b.y + 3f;
+            DreamSkin.Label(new Rect(b.x, labelY, b.width, string.IsNullOrEmpty(sub) ? b.height : b.height * .55f), "<b>" + label + "</b>", DreamSkin.Small, afford ? DreamSkin.Ink : A(DreamSkin.Bone, enabled ? 1f : .45f), TextAnchor.MiddleCenter);
+            if (!string.IsNullOrEmpty(sub)) DreamSkin.Label(new Rect(b.x, b.y + b.height * .52f, b.width, b.height * .42f), sub, DreamSkin.Tiny, afford ? DreamSkin.Ink : FearPink);
+            if (enabled) TapZone(b, act);
+        }
+
+        GUIStyle wrapTiny;
+
+        /// <summary>A state, not a button: filled, no glow, two lines.</summary>
+        void StatusBox(Rect b, string title, string sub, Color col)
+        {
+            DreamSkin.Fill(b, A(col, .22f), b.height / 2f);
+            DreamSkin.Border(b, A(col, .8f), 1.4f, b.height / 2f);
+            DreamSkin.Label(new Rect(b.x, b.y + 3f, b.width, b.height * .55f), "<b>" + title + "</b>", DreamSkin.Small, col, TextAnchor.MiddleCenter);
+            DreamSkin.Label(new Rect(b.x, b.y + b.height * .52f, b.width, b.height * .42f), sub, DreamSkin.Tiny, DreamSkin.BoneDim);
+        }
+
+        /// <summary>The selected creature: name, role and signature evolution, with its contextual actions (Unlock,
+        /// Deploy next pulse / Queued, Evolve).</summary>
+        void DrawSelectedRow(Monster m, Config.MinionLineDef line, int i, Rect s)
+        {
+            var creature = line.creatures[i];
+            bool owned = gm.MinionOwned(m, i), awake = gm.HordeAwake(m), evolved = gm.MinionEvolved(m, i);
+            DreamSkin.Fill(s, new Color(1, 1, 1, .035f), 12f);
+            DreamSkin.Icon(new Rect(s.x + 12f, s.y + 9f, 20f, 20f), RoleIcon(creature.role), Brass);
+            DreamSkin.Label(new Rect(s.x + 38f, s.y + 6f, s.width - 330f, 24f), "<b>" + creature.name + "</b>", DreamSkin.Body, DreamSkin.Bone, TextAnchor.MiddleLeft);
+            // The evolution, named and explained, wrapping under the name.
+            if (wrapTiny == null) wrapTiny = new GUIStyle(DreamSkin.Tiny) { wordWrap = true, fontStyle = FontStyle.Normal };
+            string evo = "<color=#B99CFF><b>" + creature.evolveName + "</b></color>" + (evolved ? "" : " (evolution)") + ": " + creature.evolveText;
+            DreamSkin.Label(new Rect(s.x + 14f, s.y + 32f, s.width - 300f, 38f), evo, wrapTiny, DreamSkin.BoneDim, TextAnchor.UpperLeft);
+
+            float bw = 132f, bh = 50f, by = s.y + 12f;
+            var right = new Rect(s.xMax - bw - 8f, by, bw, bh);
+            var left = new Rect(right.x - bw - 8f, by, bw, bh);
+            if (!owned)
             {
-                string id = HordeStats[i];
-                var u = gm.MinionUpgrade(id);
-                int rank = gm.MinionRank(m, id);
-                float cost = gm.MinionUpgradeCost(m, id);
-                bool maxed = cost < 0;
-                bool ok = !maxed && m.Fear + .001f >= cost;
-                var p = OrbAt(c, R, i, HordeStats.Length);
-                var col = id == "hide" ? tint : StatColor(id);
-                float d = 84f * (.8f + .2f * k);
-                DreamSkin.Orb(p, d, col, ok ? .95f : .3f, ok ? .2f + .08f * Mathf.Sin(Time.unscaledTime * 3f + i) : 0f);
-                DreamSkin.Icon(new Rect(p.x - 17f, p.y - 27f, 34f, 34f), StatIcon(id), ok ? col : A(col, .45f));
-                DreamSkin.Label(new Rect(p.x - 44f, p.y + 8f, 88f, 18f), "<b>" + (id == "horde" ? "Horde" : u.name) + "</b>", DreamSkin.Tiny, ok ? DreamSkin.Bone : DreamSkin.BoneDim);
-                string gain = maxed ? "maxed" : id == "horde" ? "+1 per door" : id == "hide" ? Mathf.RoundToInt(gm.Cfg.minions.resistByRank[Mathf.Min(rank + 1, gm.Cfg.minions.resistByRank.Length - 1)] * 100f) + "% resist" :
-                    "+" + Mathf.RoundToInt(u.perRank * 100f) + "% " + (id == "toughness" ? "HP" : id == "fangs" ? "damage" : id == "scurry" ? "speed" : "attack speed");
-                DreamSkin.Shadowed(new Rect(p.x - 95f, p.y + d / 2f, 190f, 16f), gain + (maxed ? "" : "  ·  <color=" + FearHex + ">" + Mathf.CeilToInt(cost) + "</color>"), DreamSkin.Tiny, maxed ? DreamSkin.BoneDim : col, TextAnchor.MiddleCenter);
-                Pips(new Vector2(p.x, p.y + d / 2f + 22f), rank, id == "horde" ? gm.Cfg.minions.maxHorde - gm.Cfg.minions.baseHorde : u.costs.Length, col);
-                var r = new Rect(p.x - d / 2f, p.y - d / 2f, d, d);
-                Ui(r);
-                Vector2 at = p;
-                TapZone(r, () =>
-                {
-                    var res = gm.TryBuyMinionUpgrade(m, id);
-                    if (res == ActionResult.Ok) { fxFront.Burst(at, 16, col, 150f, 7f, .6f); fxFront.Ring(at, 50f, col); }
-                    else ReportFear(res, cost - m.Fear);
-                }, round: true);
+                float cost = gm.UnlockCost(m, i);
+                bool can = i == 0 || awake;
+                ActionButton(right, i == 0 ? "Awaken" : "Unlock", can ? Mathf.CeilToInt(cost) + " Fear" : "awaken first", FearPink, can, can && m.Fear + .001f >= cost,
+                    () => { var res = gm.TryUnlockMinion(m, i); if (res == ActionResult.Ok) Bought(i); else ReportFear(res, cost - m.Fear); });
+                return;
             }
-        }
-
-        void DrawEvolve(Monster m, Config.MinionLineDef line, int next, Vector2 c, Color tint)
-        {
-            float cost = gm.MinionUpgradeCost(m, "evolve");
-            string lockReason = gm.MinionUpgradeLock(m, "evolve");
-            bool ok = cost >= 0 && lockReason == null && m.Fear + .001f >= cost;
-            float d = 168f;
-            DreamSkin.Orb(c, d, DreamSkin.Violet, ok ? .95f : .35f, ok ? .3f + .12f * Mathf.Sin(Time.unscaledTime * 2.8f) : .04f);
-            DreamSkin.Icon(new Rect(c.x - 40f, c.y - 56f, 80f, 52f), ok ? "evolve_body" : "evolve_dim", Color.white);
-            DreamSkin.Label(new Rect(c.x - 80f, c.y + 8f, 160f, 26f), "<b>Evolve</b>", DreamSkin.Body, ok ? DreamSkin.Mint : DreamSkin.BoneDim, TextAnchor.MiddleCenter);
-            int needRanks = gm.MinionUpgrade("evolve").requiresRanks[Mathf.Min(next - 1, gm.MinionUpgrade("evolve").requiresRanks.Length - 1)];
-            string sub = lockReason != null ? gm.CoreMinionRanks(m) + " / " + needRanks + " upgrades" : "<color=" + FearHex + ">" + Mathf.CeilToInt(cost) + " Fear</color>";
-            DreamSkin.Label(new Rect(c.x - 80f, c.y + 34f, 160f, 20f), sub, DreamSkin.Tiny, DreamSkin.Bone);
-            var f = line.forms[next];
-            DreamSkin.Label(new Rect(c.x - 230f, c.y + d / 2f + 12f, 460f, 24f), "<b>" + f.name + "</b>  ·  " + FormStats(m, f), DreamSkin.Small, DreamSkin.Bone, TextAnchor.MiddleCenter);
-            string trait = Trait(f);
-            if (trait != "") DreamSkin.Label(new Rect(c.x - 230f, c.y + d / 2f + 36f, 460f, 20f), trait, DreamSkin.Small, tint, TextAnchor.MiddleCenter);
-            var r = new Rect(c.x - d / 2f, c.y - d / 2f, d, d);
-            Ui(r);
-            TapZone(r, () =>
+            // Evolve, or a quiet note once it is evolved.
+            if (!evolved)
             {
-                var res = gm.TryBuyMinionUpgrade(m, "evolve");
-                if (res == ActionResult.Ok) fxFront.Burst(c, 30, DreamSkin.Mint, 200f, 9f, .8f);
-                else if (lockReason != null) gm.Toast("Buy " + (needRanks - gm.CoreMinionRanks(m)) + " more upgrades on the current form first.");
-                else ReportFear(res, cost - m.Fear);
-            }, round: true);
+                float cost = gm.EvolveCost(m, i);
+                ActionButton(right, "Evolve", Mathf.CeilToInt(cost) + " Fear", DreamSkin.Violet, true, m.Fear + .001f >= cost,
+                    () => { var res = gm.TryEvolveMinion(m, i); if (res == ActionResult.Ok) Bought(i); else ReportFear(res, cost - m.Fear); });
+            }
+            else StatusBox(right, "Evolved", "kept for the match", DreamSkin.Violet);
+            // Deploy next pulse / Queued / spawning now.
+            if (m.ActiveMinion == i) StatusBox(left, "Active", m.QueuedMinion >= 0 ? "until next pulse" : "spawning now", Brass);
+            else if (m.QueuedMinion == i)
+                ActionButton(left, "Queued", "tap to cancel", Brass, true, false, () => gm.TryQueueMinion(m, m.ActiveMinion));
+            else if (!gm.CanSwitchMinion(m))
+                ActionButton(left, "Deploy", "next night", Brass, false, false, null);
+            else
+                ActionButton(left, "Deploy", "free · next pulse", Brass, true, true, () => { if (gm.TryQueueMinion(m, i) == ActionResult.Ok) cardFlashAt[i] = Time.unscaledTime; });
         }
 
-        void DrawFormInfo(Config.MinionLineDef line, int index, Vector2 c, string note)
+        /// <summary>Horde Strength, always shown: one shared level that improves every creature, now and unlocked later.</summary>
+        void DrawStrengthStrip(Monster m, Rect s)
         {
-            var f = line.forms[index];
-            DreamSkin.Orb(c, 150f, DreamSkin.BoneDim, .25f, 0f);
-            DreamSkin.Icon(new Rect(c.x - 36f, c.y - 48f, 72f, 72f), "minion_" + line.id, A(DreamSkin.BoneDim, .6f));
-            DreamSkin.Label(new Rect(c.x - 230f, c.y + 90f, 460f, 24f), "<b>" + f.name + "</b>", DreamSkin.Body, DreamSkin.Bone, TextAnchor.MiddleCenter);
-            DreamSkin.Label(new Rect(c.x - 230f, c.y + 114f, 460f, 20f), note + (Trait(f) != "" ? "  ·  " + Trait(f) : ""), DreamSkin.Small, DreamSkin.BoneDim, TextAnchor.MiddleCenter);
+            int strength = m.HordeStrength, max = gm.Cfg.minions.maxStrength;
+            DreamSkin.Fill(s, new Color(1, 1, 1, .05f), 12f);
+            DreamSkin.Border(s, A(Brass, .25f), 1f, 12f);
+            DreamSkin.Label(new Rect(s.x + 14f, s.y + 6f, 300f, 26f), "<b>Horde Strength " + (strength > 0 ? Roman(strength) : "—") + "</b>", DreamSkin.Body, DreamSkin.Bone, TextAnchor.MiddleLeft);
+            float tx = s.x + 18f, tw = Mathf.Clamp(s.width - 220f, 120f, 240f), step = tw / (max - 1);
+            for (int l = 1; l <= max; l++)
+            {
+                var p = new Vector2(tx + (l - 1) * step, s.y + 44f);
+                bool done = l <= strength;
+                if (l > 1) DreamSkin.Fill(new Rect(p.x - step, p.y - 1.5f, step, 3f), done ? A(Brass, .9f) : new Color(1, 1, 1, .12f), 1.5f);
+                DreamSkin.Fill(new Rect(p.x - 6f, p.y - 6f, 12f, 12f), done ? Brass : new Color(1, 1, 1, .18f), 6f);
+            }
+            string note = strength <= 0 ? "Awaken the horde to start." :
+                "All creatures: +" + Mathf.RoundToInt(gm.Cfg.minions.healthPerStrength * 100f) + "% health, hit " + Mathf.RoundToInt(gm.Cfg.minions.damagePerStrength * 100f) + "% harder, more per wave";
+            DreamSkin.Label(new Rect(s.x + 14f, s.y + 56f, s.width - 190f, 20f), note, DreamSkin.Tiny, DreamSkin.BoneDim, TextAnchor.MiddleLeft);
+            float cost = gm.StrengthCost(m);
+            var b = new Rect(s.xMax - 150f, s.y + 14f, 138f, 52f);
+            if (strength <= 0) ActionButton(b, "Upgrade", "awaken first", Brass, false, false, null);
+            else if (cost < 0) Pill(new Rect(b.x + 8f, b.y + 13f, b.width - 16f, 26f), "MAX STRENGTH", Brass, DreamSkin.Ink);
+            else ActionButton(b, "Upgrade", Mathf.CeilToInt(cost) + " Fear", Brass, true, m.Fear + .001f >= cost,
+                () => { var res = gm.TryUpgradeStrength(m); if (res == ActionResult.Ok) { cardFlashAt[0] = cardFlashAt[1] = cardFlashAt[2] = Time.unscaledTime; fxFront.Burst(b.center, 18, Brass, 160f, 7f, .6f); } else ReportFear(res, cost - m.Fear); });
+        }
+
+        static string Roman(int n) => n <= 0 ? "" : n < 4 ? new string('I', n) : n == 4 ? "IV" : n == 5 ? "V" : n == 6 ? "VI" : n.ToString();
+
+        /// <summary>Purchase feedback: a quick brass flash on the card and a burst of sparks.</summary>
+        void Bought(int i)
+        {
+            cardFlashAt[i] = Time.unscaledTime;
+            var r = HordeTrayRect();
+            float gap = 12f, cw = (r.width - 36f - gap * 2f) / 3f;
+            var c = new Vector2(r.x + 18f + i * (cw + gap) + cw / 2f, r.y + 120f);
+            fxFront.Burst(c, 22, Brass, 170f, 8f, .6f);
         }
     }
 }

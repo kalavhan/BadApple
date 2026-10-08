@@ -324,38 +324,51 @@ namespace BadAppleHotel.Game
             return false;
         }
 
-        static readonly string[] MinionOrder = { "evolve", "horde", "fangs", "toughness", "frenzy", "hide", "scurry" };
-
-        /// <summary>Picks the horde's resistance from scouted towers, then spends Fear: the horde wakes on night 1, after
-        /// that levels and minion ranks alternate so neither side of the tree is ignored.</summary>
+        /// <summary>Picks which creature the rifts spawn, then spends Fear: the horde wakes on night 1, after that levels and
+        /// horde purchases alternate so neither side of the tree is ignored.</summary>
         void ThinkUpgrades()
         {
-            if (gm.HordeAwake(me) && gm.CanSwapMinionResist(me))
-            {
-                var tally = gm.ScoutTally(me, out _);
-                int best = me.MinionResist;
-                for (int i = 0; i < 3; i++) if (best < 0 || tally[i] > tally[best] * 1.3f + 0.5f) best = i;
-                if (best != me.MinionResist) gm.TrySetMinionResist(me, best);
-            }
+            ChooseActiveMinion();
             for (int k = 0; k < 3 && SpendOnce(); k++) { }
+        }
+
+        /// <summary>Favour the creature that resists what the scouted towers shoot, a breacher against strong doors and the
+        /// escort when the monster itself is under heavy fire.</summary>
+        void ChooseActiveMinion()
+        {
+            if (!gm.HordeAwake(me) || !gm.CanSwitchMinion(me)) return;
+            var tally = gm.ScoutTally(me, out _);
+            float doors = 0f; int rooms = 0;
+            foreach (var room in gm.RoomsByDef.Values)
+                if (room.Owner != null && room.Owner.Alive && room != me.Lair) { doors += room.DoorLevel; rooms++; }
+            doors = rooms > 0 ? doors / rooms : 1f;
+            int best = me.ActiveMinion; float bestScore = float.MinValue;
+            for (int i = 0; i < 3; i++)
+            {
+                if (!gm.MinionOwned(me, i)) continue;
+                var c = gm.Creature(me, i);
+                int resist = gm.ResistOf(c);
+                float score = tally[resist] - tally[GameManager.Weakness(resist)] * .7f + (gm.MinionEvolved(me, i) ? 2f : 0f);
+                if (c.role == "breacher") score += (doors - 2f) * 1.5f;
+                if (c.role == "escort") score += gm.ThreatAt(me.Pos, me) > 30f ? 4f : -2f;
+                if (i == me.ActiveMinion) score += 1f;   // a little stickiness, since a switch locks for the night
+                if (score > bestScore) { bestScore = score; best = i; }
+            }
+            if (best != me.ActiveMinion && best != me.QueuedMinion) gm.TryQueueMinion(me, best);
         }
 
         bool SpendOnce()
         {
             if (gm.Phase != Phase.Night) return false;
-            if (!gm.HordeAwake(me)) return gm.TryBuyMinionUpgrade(me, "awaken") == ActionResult.Ok;
-            int minionRanks = 0;
-            foreach (int rank in me.MinionRanks) minionRanks += rank;
-            string minion = null;
-            foreach (var id in MinionOrder)
-            {
-                if (gm.MinionUpgradeCost(me, id) < 0f || gm.MinionUpgradeLock(me, id) != null) continue;
-                if (minion == null || gm.MinionUpgradeCost(me, id) < gm.MinionUpgradeCost(me, minion) * 0.7f || id == "evolve") minion = id;
-                if (id == "evolve") break;
-            }
-            bool level = gm.LevelPrice(me) >= 0f && (minion == null || me.Level < 2 + 2 * minionRanks);
-            if (level) return gm.TryBuyLevel(me) == ActionResult.Ok;
-            return minion != null && gm.TryBuyMinionUpgrade(me, minion) == ActionResult.Ok;
+            if (!gm.HordeAwake(me)) return gm.TryUnlockMinion(me, 0) == ActionResult.Ok;
+            int horde = me.HordeStrength;
+            for (int i = 0; i < 3; i++) horde += (gm.MinionOwned(me, i) ? 1 : 0) + (gm.MinionEvolved(me, i) ? 1 : 0);
+            if (gm.LevelPrice(me) >= 0f && me.Level < 2 + 2 * horde) return gm.TryBuyLevel(me) == ActionResult.Ok;
+            for (int i = 1; i < 3; i++)
+                if (!gm.MinionOwned(me, i) && me.Level >= 4 * i + 1) return gm.TryUnlockMinion(me, i) == ActionResult.Ok;
+            if (!gm.MinionEvolved(me, me.ActiveMinion) && me.HordeStrength >= 3) return gm.TryEvolveMinion(me, me.ActiveMinion) == ActionResult.Ok;
+            if (gm.StrengthCost(me) >= 0f) return gm.TryUpgradeStrength(me) == ActionResult.Ok;
+            return gm.LevelPrice(me) >= 0f && gm.TryBuyLevel(me) == ActionResult.Ok;
         }
     }
 }

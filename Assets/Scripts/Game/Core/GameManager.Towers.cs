@@ -41,8 +41,10 @@ namespace BadAppleHotel.Game
                         float d = Vector2.Distance(tpos, m.Pos);
                         if (UpgradeRules.InRange(Cfg.towers, t.Def, t.Level, d)) { monsterInRange = true; best = d - MonsterPriorityTiles; }
                     }
-                    Minion minion = null;
-                    foreach (var n in Minions)
+                    // An evolved taunting escort close by draws the fire first.
+                    Minion minion = TauntingEscort(tpos, t.Def, t.Level);
+                    if (minion != null) monsterInRange = false;
+                    else foreach (var n in Minions)
                     {
                         if (n.Dead) continue;
                         float d = Vector2.Distance(tpos, n.Pos);
@@ -57,6 +59,8 @@ namespace BadAppleHotel.Game
                     }
                     if(t.Cooldown>0f)continue;
                     if (minion != null) FireAtMinion(t, room, tpos, minion, now, mult);
+                    else if (InterceptingEscort(m) is Minion guard)
+                        FireAtMinion(t, room, tpos, guard, now, mult);   // an escort steps into the shot
                     else
                     {
                         Fire(t, room, tpos, m, now, mult);
@@ -107,6 +111,19 @@ namespace BadAppleHotel.Game
                 m.BurnSource = room.Owner;
             }
             DamageMonster(dmg, room.Owner);
+            Splash(t, room, m.Pos, null, now, ownerMult);
+        }
+
+        /// <summary>Area towers (areaRadius in towers.json) also hit every minion around the point they strike.</summary>
+        void Splash(TowerInstance t, Room room, Vector2 at, Minion primary, float now, float ownerMult)
+        {
+            float radius = t.Def.areaRadius;
+            if (radius <= 0f || Minions.Count == 0) return;
+            int type = DamageTypes.Index(t.Def.damageType);
+            float baseDmg = UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * ownerMult;
+            foreach (var n in Minions.ToArray())
+                if (n != primary && !n.Dead && Vector2.Distance(n.Pos, at) <= radius)
+                    DamageMinion(n, baseDmg * MinionDamageTaken(n, type), room.Owner);
         }
 
         /// <summary>A tower shot at a minion, after the horde's chosen resistance (and its weakness).</summary>
@@ -115,15 +132,9 @@ namespace BadAppleHotel.Game
             float rate = UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level);
             t.Cooldown = rate > 0f ? 1f / rate : 1f;
             int type = DamageTypes.Index(t.Def.damageType);
-            if (room.Owner != null && room.Owner.IsHuman && type >= 0) KnownMinionTypes[type] = true;
+            if (room.Owner != null && room.Owner.IsHuman && type >= 0) KnownMinionTypes[n.Index * 4 + type] = true;
             SpawnProjectile(tpos, n.Pos + Vector2.up * 0.3f, t.Def.damageType, null, n);
             JoinTowerAttack(room, n.Pos);
-            if (n.Form.trait == "swallowShot" && !n.ShotSwallowed)
-            {
-                n.ShotSwallowed = true;
-                if (IsVisible(n.Pos)) AddFloater(n.Pos + Vector2.up, "gulp!", (Color)Palette.Bone);
-                return;
-            }
             float mult = MinionDamageTaken(n, type) * UpgradeRules.DistanceBonus(t.Def, Vector2.Distance(tpos, n.Pos));
             var tier = UpgradeRules.Tier(Cfg.towers, t.Def, t.Level);
             if (type == DamageTypes.Slow)
@@ -142,7 +153,9 @@ namespace BadAppleHotel.Game
                 n.BurnUntil = now + burn;
                 n.BurnSource = room.Owner;
             }
+            var at = n.Pos;
             DamageMinion(n, dmg, room.Owner);
+            Splash(t, room, at, n, now, ownerMult);
         }
 
         /// <summary>

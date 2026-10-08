@@ -27,7 +27,6 @@ namespace BadAppleHotel.Game
         {
             m.LastDamageAt = m.LastKillAt = Now;
             m.StatRanks = new int[Cfg.progression.statTracks.Length];
-            m.MinionRanks = new int[Cfg.minions.upgrades.Length];
             var area = Cfg.abilities.abilities.First(a => a.id == m.Def.area);
             m.Loadout = new[] { area };
             m.Cooldowns = new float[1];
@@ -93,6 +92,15 @@ namespace BadAppleHotel.Game
         /// <summary>True when a rank or utility pick is waiting for the player.</summary>
         public bool HasPendingPick(Monster m) => m != null && m.Choices.Count > 0 && m.Choices.Peek().Kind != "Stat";
 
+        /// <summary>Each night start: a guaranteed Fear payout, so a horde build is not starved, and the special arrives
+        /// on schedule (specialUnlockNight) even when Fear went into minions instead of levels.</summary>
+        void NightStartForMonster(Monster m)
+        {
+            if (m == null) return;
+            AddFear(m, Cfg.progression.fear.perNight);
+            if (Night >= Cfg.progression.specialUnlockNight) AddToLoadout(m, Cfg.abilities.abilities.First(a => a.id == m.Def.special));
+        }
+
         void LevelUp(Monster m)
         {
             var p = Cfg.progression;
@@ -117,7 +125,8 @@ namespace BadAppleHotel.Game
 
         void OfferRank(Monster m)
         {
-            var options = Enumerable.Range(0, 3).Where(k => m.KitRanks[k] < 3 && (k < 2 || m.Level >= Cfg.progression.specialLevel)).Select(k => KitSlots[k]).ToArray();
+            bool special = m.Loadout.Any(a => a.id == m.Def.special);
+            var options = Enumerable.Range(0, 3).Where(k => m.KitRanks[k] < 3 && (k < 2 || special)).Select(k => KitSlots[k]).ToArray();
             if (options.Length > 0) m.Choices.Enqueue(new ProgressChoice { Kind = "Rank", Level = m.Level, Options = options });
         }
 

@@ -432,7 +432,7 @@ namespace BadAppleHotel.Game
         {
             float k = (now - shot.Born) / Mathf.Max(.01f, shot.Duration);
             if (shot.Target != null && !shot.Target.Dead) shot.To = Lifted(shot.Target.Pos, TargetHeight);
-            if (shot.TargetMinion != null && !shot.TargetMinion.Dead) shot.To = Lifted(shot.TargetMinion.Pos, TargetHeight * shot.TargetMinion.Form.scale);
+            if (shot.TargetMinion != null && !shot.TargetMinion.Dead) shot.To = Lifted(shot.TargetMinion.Pos, TargetHeight * (shot.TargetMinion.IsEscort ? .7f : .45f));
             if (k < 0) return true;
             if (!shot.Launched && (shot.Target != null || shot.TargetMinion != null)) Launch(shot, now);
             if (shot.Receiver != null && shot.Receiver.Alive) shot.To = Lifted(shot.Receiver.Pos, 1.1f);

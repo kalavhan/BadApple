@@ -181,10 +181,13 @@ namespace BadAppleHotel.Game
         public float NextAttackAt;
         public int HitCount;
 
-        // minions
-        public int[] MinionRanks;                  // one per minions.upgrades entry
-        public int MinionResist = -1;              // damage type index the horde resists; -1 before the horde awakens
-        public int ResistChosenNight;
+        // minions: three creatures (Swarm, Breachers, Escort)
+        public int HordeStrength;                  // shared by every creature; 0 until the horde awakens
+        public readonly bool[] MinionOwned = new bool[3];
+        public readonly bool[] MinionEvolved = new bool[3];
+        public int ActiveMinion;                   // the creature the rifts are spawning
+        public int QueuedMinion = -1;              // takes over at the next pulse, then switching locks for the night
+        public int SwitchedNight = -1;
         public readonly System.Collections.Generic.HashSet<Room> Scouted = new System.Collections.Generic.HashSet<Room>();
 
         // signature specials
@@ -209,21 +212,23 @@ namespace BadAppleHotel.Game
         public MonsterAI Ai;
     }
 
-    /// <summary>A minion: walks from its rift to its resident's door, chews through it, then attacks the resident.</summary>
+    /// <summary>A minion: Swarm and Breachers walk from their rift to their resident's door, chew through it and attack the
+    /// resident; an Escort walks to the monster and fights beside it.</summary>
     public class Minion
     {
-        public MinionFormDef Form;
-        public int FormIndex;
+        public MinionCreatureDef Creature;
+        public int Index;                    // 0 swarm, 1 breachers, 2 escort
+        public bool Evolved, Child;          // Child: a split-off swarm piece, which never splits again
         public Rift Rift;
         public Vector2 Pos;
         public Vector2 Facing = Vector2.down;
-        public float Hp, MaxHp;
+        public float Hp, MaxHp, Damage;
         public int Resist;
         public float NextAttackAt;
-        public bool ShotSwallowed;
         public float SlowPct, SlowUntil, StunUntil, BurnDps, BurnUntil;
         public Resident BurnSource;
         public bool Dead;
+        public bool IsEscort => Creature.role == "escort";
         public readonly Navigator Navigator = new Navigator();
         public SpriteRenderer Sr;
     }

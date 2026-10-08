@@ -4,8 +4,9 @@
     "perDoorDamage": 0.1,
     "perKill": 35,
     "perPart": 40,
-    "idlePerSecond": 0.8,
-    "idleAfterSeconds": 6
+    "idlePerSecond": 0.5,
+    "idleAfterSeconds": 6,
+    "perNight": 30
   },
   "maxLevel": 20,
   "levelPriceBase": 20,
@@ -100,5 +101,6 @@
   "riskPerMinuteWithoutKill": 0.25,
   "retreatHealth": 0.3,
   "maxStunSeconds": 0.3,
-  "stunRecoverySeconds": 1.2
+  "stunRecoverySeconds": 1.2,
+  "specialUnlockNight": 2
 }

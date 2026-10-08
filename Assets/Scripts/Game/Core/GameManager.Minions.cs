@@ -8,50 +8,31 @@ using Random = UnityEngine.Random;
 namespace BadAppleHotel.Game
 {
     /// <summary>
-    /// The monster's horde: a rift outside every living resident's door releases a fixed nightly batch in pulses.
-    /// Minions chew that door, then attack its resident. The monster buys and evolves them with Fear and picks one
-    /// resistance for the whole horde, changeable every few nights.
+    /// The monster's horde. Awakening it opens a rift outside every living resident's door and unlocks the first of
+    /// the monster's three creatures (Swarm, Breachers, Escort); the other two are bought. One creature spawns at a
+    /// time: a new choice is queued, takes over at the next pulse, and switching then locks for the rest of the night.
+    /// Horde Strength is one shared level that improves every creature, including ones unlocked later; each creature
+    /// also has one signature evolution, bought once and kept when switching.
     /// </summary>
     public partial class GameManager
     {
         public readonly List<Minion> Minions = new List<Minion>();
         public readonly List<Rift> Rifts = new List<Rift>();
-        /// <summary>Which damage types the human resident has seen land on a minion (their multiplier shows in the HUD after that).</summary>
-        public readonly bool[] KnownMinionTypes = new bool[4];
+        /// <summary>Which damage types the human resident has seen land on each creature (index * 4 + type); its multiplier shows in the HUD after that.</summary>
+        public readonly bool[] KnownMinionTypes = new bool[12];
+        public bool KnownMinion(int creature, int type) => type >= 0 && type < 4 && KnownMinionTypes[creature * 4 + type];
         int pulsesFired;
         float nextScout;
 
-        // ------------------------------------------------------------------ upgrades
+        // ------------------------------------------------------------------ creatures
 
         public MinionLineDef MinionLine(Monster m) => Array.Find(Cfg.minions.lines, l => l.id == m.Def.minionLine);
-        int UpgradeIndex(string id) => Array.FindIndex(Cfg.minions.upgrades, u => u.id == id);
-        public MinionUpgradeDef MinionUpgrade(string id) => Array.Find(Cfg.minions.upgrades, u => u.id == id);
-
-        public int MinionRank(Monster m, string id)
-        {
-            int i = UpgradeIndex(id);
-            return m == null || i < 0 || m.MinionRanks == null ? 0 : m.MinionRanks[i];
-        }
-
-        float MinionBonus(Monster m, string id)
-        {
-            var u = MinionUpgrade(id);
-            return u == null ? 0f : MinionRank(m, id) * u.perRank;
-        }
-
-        public bool HordeAwake(Monster m) => MinionRank(m, "awaken") > 0;
-        public int HordeSize(Monster m) => Mathf.Min(Cfg.minions.maxHorde, Cfg.minions.baseHorde + Mathf.RoundToInt(MinionBonus(m, "horde")));
-        public int MinionFormIndex(Monster m) => Mathf.Min(MinionLine(m).forms.Length - 1, MinionRank(m, "evolve"));
-        public float MinionResistance(Monster m) => Cfg.minions.resistByRank[Mathf.Clamp(MinionRank(m, "hide"), 0, Cfg.minions.resistByRank.Length - 1)];
-
-        /// <summary>Ranks bought in the stat upgrades (everything except Awaken and Evolve); evolving needs enough of them.</summary>
-        public int CoreMinionRanks(Monster m)
-        {
-            int n = 0;
-            for (int i = 0; i < Cfg.minions.upgrades.Length; i++)
-                if (Cfg.minions.upgrades[i].id != "awaken" && Cfg.minions.upgrades[i].id != "evolve") n += m.MinionRanks[i];
-            return n;
-        }
+        public MinionCreatureDef Creature(Monster m, int i) => MinionLine(m).creatures[i];
+        public MinionRoleDef MinionRole(string id) => Array.Find(Cfg.minions.roles, r => r.id == id);
+        public bool HordeAwake(Monster m) => m != null && m.HordeStrength > 0;
+        public bool MinionOwned(Monster m, int i) => m != null && m.MinionOwned[i];
+        public bool MinionEvolved(Monster m, int i) => m != null && m.MinionEvolved[i];
+        public int ResistOf(MinionCreatureDef c) => DamageTypes.Index(c.resist);
 
         /// <summary>Bullet-proof minions are weak to fire, fire-proof to electric, electric-proof to bullets.</summary>
         public static int Weakness(int resist)
@@ -68,68 +49,94 @@ namespace BadAppleHotel.Game
         public float MinionDamageTaken(Minion n, int type)
         {
             if (type < 0 || type == DamageTypes.Slow) return 1f;
-            var m = Monster;
-            if (type == n.Resist) return 1f - (m != null ? MinionResistance(m) : Cfg.minions.resistByRank[0]);
+            if (type == n.Resist) return 1f - Cfg.minions.resistPct;
             if (type == Weakness(n.Resist)) return 1f + Cfg.minions.weaknessBonus;
             return 1f;
         }
 
-        /// <summary>Fear price of the next rank, or -1 when the upgrade is maxed.</summary>
-        public float MinionUpgradeCost(Monster m, string id)
-        {
-            var u = MinionUpgrade(id);
-            if (u == null) return -1f;
-            int rank = MinionRank(m, id);
-            if (id == "horde" && HordeSize(m) >= Cfg.minions.maxHorde) return -1f;
-            if (id == "evolve" && rank >= MinionLine(m).forms.Length - 1) return -1f;
-            return rank < u.costs.Length ? u.costs[rank] : -1f;
-        }
+        /// <summary>Fear to unlock creature i (index 0 is the awakening), or -1 once it is owned.</summary>
+        public float UnlockCost(Monster m, int i) => MinionOwned(m, i) ? -1f : i == 0 ? Cfg.minions.awakenCost : Cfg.minions.unlockCosts[i];
 
-        /// <summary>Why an upgrade cannot be bought yet (ignoring Fear), or null.</summary>
-        public string MinionUpgradeLock(Monster m, string id)
+        /// <summary>Unlocks creature i. The first one awakens the horde; later ones queue themselves to deploy at the next pulse when switching is open.</summary>
+        public ActionResult TryUnlockMinion(Monster m, int i)
         {
-            if (id != "awaken" && !HordeAwake(m)) return "Awaken the horde first";
-            var u = MinionUpgrade(id);
-            int rank = MinionRank(m, id);
-            if (id == "evolve" && u.requiresRanks != null && rank < u.requiresRanks.Length && CoreMinionRanks(m) < u.requiresRanks[rank])
-                return "Needs " + u.requiresRanks[rank] + " upgrade ranks";
-            return null;
-        }
-
-        public ActionResult TryBuyMinionUpgrade(Monster m, string id)
-        {
-            if (m == null || m.MinionRanks == null) return ActionResult.Invalid;
-            float cost = MinionUpgradeCost(m, id);
-            if (cost < 0f) return ActionResult.MaxLevel;
-            if (MinionUpgradeLock(m, id) != null) return ActionResult.Blocked;
-            if (m.Fear + 0.001f < cost) return ActionResult.NoMoney;
+            if (m == null || i < 0 || i > 2) return ActionResult.Invalid;
+            if (MinionOwned(m, i)) return ActionResult.MaxLevel;
+            if (i > 0 && !HordeAwake(m)) return ActionResult.Blocked;
+            float cost = UnlockCost(m, i);
+            if (m.Fear + .001f < cost) return ActionResult.NoMoney;
             m.Fear -= cost;
-            m.MinionRanks[UpgradeIndex(id)]++;
-            if (id == "awaken")
+            m.MinionOwned[i] = true;
+            if (i == 0)
             {
-                if (m.MinionResist < 0) { m.MinionResist = BestResistGuess(m); m.ResistChosenNight = Mathf.Max(1, Night); }
+                m.HordeStrength = 1;
+                m.ActiveMinion = 0;
                 if (Phase == Phase.Night) StartNightRifts();
                 Announce(m.IsHuman ? "Your horde awakens. Rifts open outside every door." : "Rifts tear open outside every door...", 3f);
             }
-            if (id == "evolve") AddFloater(m.Pos + Vector2.up * 2.2f, MinionLine(m).forms[MinionFormIndex(m)].name + "!", ColorOf(m));
+            else if (CanSwitchMinion(m)) m.QueuedMinion = i;
+            AddFloater(m.Pos + Vector2.up * 2.2f, Creature(m, i).name + "!", ColorOf(m));
             return ActionResult.Ok;
         }
 
-        // ------------------------------------------------------------------ resistance & scouting
+        /// <summary>A new creature can be queued unless a switch already happened tonight.</summary>
+        public bool CanSwitchMinion(Monster m) => m.SwitchedNight < Night;
 
-        public bool CanSwapMinionResist(Monster m) => m.MinionResist < 0 || Night - m.ResistChosenNight >= Cfg.minions.swapEveryNights;
-        public int NightsUntilSwap(Monster m) => Mathf.Max(0, m.ResistChosenNight + Cfg.minions.swapEveryNights - Night);
-
-        public ActionResult TrySetMinionResist(Monster m, int type)
+        /// <summary>Queues creature i to take over at the next pulse (free). Picking the active one cancels a queued switch.</summary>
+        public ActionResult TryQueueMinion(Monster m, int i)
         {
-            if (m == null || type < DamageTypes.Bullet || type > DamageTypes.Fire) return ActionResult.Invalid;
-            if (type == m.MinionResist) return ActionResult.Ok;
-            if (!CanSwapMinionResist(m)) return ActionResult.Blocked;
-            m.MinionResist = type;
-            m.ResistChosenNight = Mathf.Max(1, Night);
-            if (m.IsHuman) Toast("New minions will resist " + DamageTypes.Label(type).ToLower() + ".");
+            if (!MinionOwned(m, i)) return ActionResult.Invalid;
+            if (m.ActiveMinion == i) { m.QueuedMinion = -1; return ActionResult.Ok; }
+            if (!CanSwitchMinion(m)) return ActionResult.Blocked;
+            m.QueuedMinion = i;
+            if (m.IsHuman) Toast(Creature(m, i).name + " come out of the rifts from the next pulse.");
             return ActionResult.Ok;
         }
+
+        public float EvolveCost(Monster m, int i) => MinionEvolved(m, i) ? -1f : Creature(m, i).evolveCost;
+
+        /// <summary>Buys creature i's signature evolution once; it is kept when switching away and back.</summary>
+        public ActionResult TryEvolveMinion(Monster m, int i)
+        {
+            if (!MinionOwned(m, i)) return ActionResult.Blocked;
+            if (MinionEvolved(m, i)) return ActionResult.MaxLevel;
+            float cost = EvolveCost(m, i);
+            if (m.Fear + .001f < cost) return ActionResult.NoMoney;
+            m.Fear -= cost;
+            m.MinionEvolved[i] = true;
+            AddFloater(m.Pos + Vector2.up * 2.2f, Creature(m, i).evolveName + "!", ColorOf(m));
+            return ActionResult.Ok;
+        }
+
+        /// <summary>Fear for the next Horde Strength rank, or -1 before awakening or at the cap.</summary>
+        public float StrengthCost(Monster m) => StrengthCost(Cfg.minions, m.HordeStrength);
+
+        /// <summary>base × growth^(strength − 1).</summary>
+        public static float StrengthCost(MinionsConfig c, int strength)
+        {
+            if (strength <= 0 || strength >= c.maxStrength) return -1f;
+            return Mathf.Round(c.strengthCostBase * Mathf.Pow(c.strengthCostGrowth, strength - 1));
+        }
+
+        public ActionResult TryUpgradeStrength(Monster m)
+        {
+            if (!HordeAwake(m)) return ActionResult.Blocked;
+            float cost = StrengthCost(m);
+            if (cost < 0f) return ActionResult.MaxLevel;
+            if (m.Fear + .001f < cost) return ActionResult.NoMoney;
+            m.Fear -= cost;
+            m.HordeStrength++;
+            AddFloater(m.Pos + Vector2.up * 2.2f, "Horde Strength " + m.HordeStrength + "!", ColorOf(m));
+            return ActionResult.Ok;
+        }
+
+        float StrengthLerp(Monster m) => Cfg.minions.maxStrength <= 1 ? 1f : (Mathf.Max(1, m.HordeStrength) - 1) / (float)(Cfg.minions.maxStrength - 1);
+        public int PerDoor(Monster m, int i) { var r = MinionRole(Creature(m, i).role); return Mathf.RoundToInt(Mathf.Lerp(r.perDoor, r.perDoorAtMax, StrengthLerp(m))); }
+        public int EscortCap(Monster m, int i) { var r = MinionRole(Creature(m, i).role); return Mathf.RoundToInt(Mathf.Lerp(r.escortCap, r.escortCapAtMax, StrengthLerp(m))); }
+        public float MinionHealth(Monster m, int i) => Creature(m, i).health * (1f + (Mathf.Max(1, m.HordeStrength) - 1) * Cfg.minions.healthPerStrength);
+        public float MinionHitDamage(Monster m, int i) => Creature(m, i).damage * (1f + (Mathf.Max(1, m.HordeStrength) - 1) * Cfg.minions.damagePerStrength);
+
+        // ------------------------------------------------------------------ scouting
 
         /// <summary>The monster learns a room's towers only once it has looked inside (open door in view, or within its Eye reveal radius).</summary>
         void UpdateScouting(Monster m, float now)
@@ -169,24 +176,16 @@ namespace BadAppleHotel.Game
             return tally;
         }
 
-        int BestResistGuess(Monster m)
-        {
-            var tally = ScoutTally(m, out _);
-            int best = DamageTypes.Bullet;
-            for (int i = 1; i < 3; i++) if (tally[i] > tally[best]) best = i;
-            return best;
-        }
-
         // ------------------------------------------------------------------ rifts
 
-        /// <summary>Minions one rift releases in a night: horde * multiplier * (starting residents / alive) ^ exponent, rounded.</summary>
-        public static int RiftBatch(int horde, float multiplier, int residents, int alive, float exponent)
+        /// <summary>Minions one rift releases in a night: perDoor * (starting residents / alive) ^ exponent, rounded.</summary>
+        public static int RiftBatch(int perDoor, int residents, int alive, float exponent)
         {
-            if (alive <= 0) return 0;
-            return Mathf.RoundToInt(horde * multiplier * Mathf.Pow(Mathf.Max(residents, alive) / (float)alive, exponent));
+            if (alive <= 0 || perDoor <= 0) return 0;
+            return Mathf.RoundToInt(perDoor * Mathf.Pow(Mathf.Max(residents, alive) / (float)alive, exponent));
         }
 
-        /// <summary>Opens a rift outside every living resident's door and loads tonight's batch (called at each night start and on awakening).</summary>
+        /// <summary>Opens a rift outside every living resident's door (at each night start and on awakening).</summary>
         void StartNightRifts()
         {
             var m = Monster;
@@ -194,19 +193,13 @@ namespace BadAppleHotel.Game
             Rifts.Clear();
             pulsesFired = 0;
             if (m == null || !HordeAwake(m)) return;
-            var living = RoomsByDef.Values.Where(r => r.Owner != null && r.Owner.Alive && r != m.Lair).ToList();
-            if (living.Count == 0) return;
-            var line = MinionLine(m);
-            int batch = RiftBatch(HordeSize(m), line.spawnMultiplier, Cfg.match.residentCount, living.Count, Cfg.minions.aliveExponent);
-            if (batch * living.Count > Cfg.minions.nightCeiling) batch = Cfg.minions.nightCeiling / living.Count;
-            // Awakened mid-night: skip the pulses already gone and scale the batch to what is left.
+            // Awakened mid-night: the pulses already gone are skipped.
             var pulses = Cfg.minions.pulseSeconds;
             float elapsed = Phase == Phase.Night ? Cfg.match.nightSeconds - PhaseTimer : 0f;
             while (pulsesFired < pulses.Length - 1 && elapsed > pulses[pulsesFired] + 1f) pulsesFired++;
-            int share = Mathf.CeilToInt(batch * (pulses.Length - pulsesFired) / (float)pulses.Length);
-            foreach (var room in living)
+            foreach (var room in RoomsByDef.Values.Where(r => r.Owner != null && r.Owner.Alive && r != m.Lair))
             {
-                var rift = new Rift { Room = room, Pos = RiftSpot(room), Pending = share };
+                var rift = new Rift { Room = room, Pos = RiftSpot(room) };
                 if (!Simulation && matchRoot != null)
                 {
                     rift.Sr = MakeSprite("Rift", Sprites.Ring, rift.Pos, OrderFor(rift.Pos.y) - 30, matchRoot);
@@ -229,7 +222,7 @@ namespace BadAppleHotel.Game
             return outside;
         }
 
-        /// <summary>A dead resident's rift closes and its minions crumble.</summary>
+        /// <summary>A dead resident's rift closes and the minions it sent crumble (escorts stay with the monster).</summary>
         void CloseRift(Resident r)
         {
             for (int i = Rifts.Count - 1; i >= 0; i--)
@@ -258,7 +251,15 @@ namespace BadAppleHotel.Game
             return true;
         }
 
-        // ------------------------------------------------------------------ minions
+        // ------------------------------------------------------------------ pulses
+
+        /// <summary>Seconds until the next pulse tonight, or -1 when none is left.</summary>
+        public float NextPulseIn()
+        {
+            var pulses = Cfg.minions.pulseSeconds;
+            if (Phase != Phase.Night || pulsesFired >= pulses.Length) return -1f;
+            return Mathf.Max(0f, pulses[pulsesFired] - (Cfg.match.nightSeconds - PhaseTimer));
+        }
 
         void UpdateMinions(float dt, float now)
         {
@@ -270,16 +271,13 @@ namespace BadAppleHotel.Game
                 float elapsed = Cfg.match.nightSeconds - PhaseTimer;
                 while (pulsesFired < pulses.Length && elapsed >= pulses[pulsesFired])
                 {
-                    int left = pulses.Length - pulsesFired;
-                    foreach (var rift in Rifts.ToArray())
-                    {
-                        int count = Mathf.CeilToInt(rift.Pending / (float)left);
-                        rift.Pending -= count;
-                        if (rift.Boost) { count *= 2; rift.Boost = false; }
-                        for (int k = 0; k < count && Minions.Count < Cfg.minions.nightCeiling; k++) SpawnMinion(rift, rift.Pos, MinionFormIndex(m));
-                    }
+                    ReleasePulse(m, pulsesFired, pulses.Length);
                     pulsesFired++;
                 }
+                // Mildred's mourning moss: evolved escorts heal her while she is near.
+                foreach (var n in Minions)
+                    if (!n.Dead && n.IsEscort && n.Evolved && n.Creature.evolve == "regenAura" && !m.Dead && Vector2.Distance(n.Pos, m.Pos) <= 2f)
+                    { m.Hp = Mathf.Min(MaxHp(m), m.Hp + MaxHp(m) * .02f * dt); break; }
             }
             foreach (var rift in Rifts)
                 if (rift.Sr != null)
@@ -292,65 +290,142 @@ namespace BadAppleHotel.Game
             Minions.RemoveAll(n => n.Dead);
         }
 
-        Minion SpawnMinion(Rift rift, Vector2 at, int formIndex)
+        /// <summary>Pulse k of P: each rift sends its share of the active creature's nightly batch (read now, so a switch shows
+        /// from the next pulse). Escorts instead top up around the monster from the nearest rift.</summary>
+        void ReleasePulse(Monster m, int k, int pulses)
         {
-            var m = Monster;
-            var form = MinionLine(m).forms[Mathf.Clamp(formIndex, 0, MinionLine(m).forms.Length - 1)];
+            // A queued creature takes over now; switching then waits for the next night.
+            if (m.QueuedMinion >= 0 && m.QueuedMinion != m.ActiveMinion && MinionOwned(m, m.QueuedMinion))
+            {
+                m.ActiveMinion = m.QueuedMinion;
+                m.SwitchedNight = Night;
+            }
+            m.QueuedMinion = -1;
+            int active = m.ActiveMinion;
+            var creature = Creature(m, active);
+            if (creature.role == "escort")
+            {
+                int alive = Minions.Count(n => !n.Dead && n.IsEscort);
+                var from = Rifts.OrderBy(r => Vector2.Distance(r.Pos, m.Pos)).FirstOrDefault();
+                var at = from != null ? from.Pos : m.Lair != null ? HotelMap.Center(m.Lair.Def.DoorInside) : m.Pos;
+                for (int e = alive; e < EscortCap(m, active) && Minions.Count < Cfg.minions.nightCeiling; e++) SpawnMinion(m, active, null, at);
+                return;
+            }
+            int living = Rifts.Count;
+            int batch = RiftBatch(PerDoor(m, active), Cfg.match.residentCount, living, Cfg.minions.aliveExponent);
+            if (batch * living > Cfg.minions.nightCeiling && living > 0) batch = Cfg.minions.nightCeiling / living;
+            int share = batch * (k + 1) / pulses - batch * k / pulses;
+            foreach (var rift in Rifts.ToArray())
+            {
+                int count = share;
+                if (rift.Boost && count > 0) { count *= 2; rift.Boost = false; }
+                for (int s = 0; s < count && Minions.Count < Cfg.minions.nightCeiling; s++) SpawnMinion(m, active, rift, rift.Pos);
+            }
+        }
+
+        Minion SpawnMinion(Monster m, int index, Rift rift, Vector2 at, bool child = false)
+        {
+            var creature = Creature(m, index);
             var pos = at + Random.insideUnitCircle * 0.3f;
             if (!CanStand(pos, MonsterWalkable, Cfg.minions.radius)) pos = at;
-            float hp = form.health * (1f + MinionBonus(m, "toughness"));
-            var n = new Minion { Form = form, FormIndex = formIndex, Rift = rift, Pos = pos, Hp = hp, MaxHp = hp, Resist = m.MinionResist, NextAttackAt = Now + 0.4f };
+            float hp = MinionHealth(m, index) * (child ? .5f : 1f);
+            var n = new Minion
+            {
+                Creature = creature, Index = index, Evolved = MinionEvolved(m, index), Child = child, Rift = creature.role == "escort" ? null : rift,
+                Pos = pos, Hp = hp, MaxHp = hp, Damage = MinionHitDamage(m, index), Resist = ResistOf(creature), NextAttackAt = Now + 0.4f,
+            };
             if (!Simulation && matchRoot != null)
             {
-                // Stand-in until the minion props arrive: a small spectre in the monster's colour.
-                n.Sr = MakeSprite("Minion", Sprites.Ghost, pos, OrderFor(pos.y), matchRoot);
-                n.Sr.color = Color.Lerp(Color.white, ColorOf(m), .7f);
+                var art = Sprites.Minion(MinionLine(m).id, creature.role);
+                n.Sr = MakeSprite("Minion", art ?? Sprites.Ghost, pos, OrderFor(pos.y), matchRoot);
+                if (art == null) n.Sr.color = Color.Lerp(Color.white, ColorOf(m), .7f);
             }
             Minions.Add(n);
             Metrics.MinionsSpawned++;
             return n;
         }
 
+        // ------------------------------------------------------------------ behaviour
+
         void StepMinion(Minion n, float dt, float now)
         {
             var m = Monster;
-            var room = n.Rift.Room;
-            var owner = room.Owner;
-            if (owner == null || !owner.Alive) { RemoveMinion(n); return; }
             if (now < n.BurnUntil) DamageMinion(n, n.BurnDps * dt, n.BurnSource);
             if (n.Dead) return;
-            if (n.Rift.Shrine && Vector2.Distance(n.Pos, n.Rift.Pos) <= ShrineRadius(m))
-                n.Hp = Mathf.Min(n.MaxHp, n.Hp + n.MaxHp * ShrineRegen(m) * dt);
+            if (n.Rift != null && n.Rift.Shrine && Vector2.Distance(n.Pos, n.Rift.Pos) <= ShrineRadius())
+                n.Hp = Mathf.Min(n.MaxHp, n.Hp + n.MaxHp * ShrineRegen() * dt);
+            if (n.IsEscort) { StepEscort(n, m, dt, now); return; }
 
-            float interval = n.Form.interval / (1f + MinionBonus(m, "frenzy"));
-            float damage = n.Form.damage * (1f + MinionBonus(m, "fangs"));
+            var room = n.Rift != null ? n.Rift.Room : null;
+            var owner = room?.Owner;
+            if (owner == null || !owner.Alive) { RemoveMinion(n); return; }
             bool stunned = now < n.StunUntil;
-            if (!stunned && Vector2.Distance(n.Pos, owner.Pos) <= Cfg.minions.reachTiles && ClearLine(n.Pos, owner.Pos))
-            {
-                n.Facing = (owner.Pos - n.Pos).normalized;
-                if (now >= n.NextAttackAt) { n.NextAttackAt = now + interval; DamageResident(owner, damage, false); }
-                PlaceMinion(n, now);
-                return;
-            }
+            if (!stunned && TryBite(n, owner, now)) { PlaceMinion(n, now); return; }
             Vector2Int goal;
             if (room.DoorBlocks)
             {
                 if (!stunned && Vector2.Distance(n.Pos, HotelMap.Center(room.Def.DoorTile)) <= 1.3f)
                 {
-                    if (now >= n.NextAttackAt)
-                    {
-                        n.NextAttackAt = now + interval;
-                        DamageDoor(room, damage * n.Form.doorMultiplier, false);
-                        if (room.DoorBroken && n.Form.trait == "dropPart" && Parts.Count < Cfg.match.bodyPartsPerNight) AddPartAt(room.Def.DoorOutside);
-                    }
+                    HitDoor(n, room, now);
                     PlaceMinion(n, now);
                     return;
                 }
                 goal = room.Def.DoorOutside;
             }
             else goal = HotelMap.ToTile(owner.Pos);
+            Walk(n, goal, stunned, dt, now);
+        }
 
-            float speed = stunned ? 0f : n.Form.speed * (1f + MinionBonus(m, "scurry")) * (now < n.SlowUntil ? 1f - n.SlowPct : 1f);
+        /// <summary>Escorts stay at the monster's side, bite residents beside it and help on the door it is breaking.</summary>
+        void StepEscort(Minion n, Monster m, float dt, float now)
+        {
+            bool stunned = now < n.StunUntil;
+            if (!stunned)
+            {
+                Resident prey = null;
+                float best = Cfg.minions.reachTiles;
+                foreach (var r in Residents)
+                    if (r.Alive && Vector2.Distance(n.Pos, r.Pos) <= best && ClearLine(n.Pos, r.Pos)) { best = Vector2.Distance(n.Pos, r.Pos); prey = r; }
+                if (prey != null && TryBite(n, prey, now)) { PlaceMinion(n, now); return; }
+                var door = m != null && !m.Dead ? m.AttackingRoom : null;
+                if (door != null && door.DoorBlocks && door.Owner != null && door.Owner.Alive && Vector2.Distance(n.Pos, HotelMap.Center(door.Def.DoorTile)) <= 1.3f)
+                {
+                    HitDoor(n, door, now);
+                    PlaceMinion(n, now);
+                    return;
+                }
+            }
+            if (m == null || m.Dead || Vector2.Distance(n.Pos, m.Pos) <= Cfg.minions.escortFollowTiles) { PlaceMinion(n, now); return; }
+            Walk(n, HotelMap.ToTile(m.Pos), stunned, dt, now);
+        }
+
+        bool TryBite(Minion n, Resident r, float now)
+        {
+            if (Vector2.Distance(n.Pos, r.Pos) > Cfg.minions.reachTiles || !ClearLine(n.Pos, r.Pos)) return false;
+            n.Facing = (r.Pos - n.Pos).normalized;
+            if (now < n.NextAttackAt) return true;
+            n.NextAttackAt = now + n.Creature.interval;
+            if (n.Evolved && n.Creature.evolve == "tongue") r.SlowUntil = Mathf.Max(r.SlowUntil, now + 1f);
+            DamageResident(r, n.Damage * n.Creature.residentMultiplier, false);
+            return true;
+        }
+
+        void HitDoor(Minion n, Room room, float now)
+        {
+            if (now < n.NextAttackAt) return;
+            n.NextAttackAt = now + n.Creature.interval;
+            float hit = n.Damage * n.Creature.doorMultiplier;
+            if (n.Evolved && n.Creature.evolve == "rotDoor") { hit *= 1.4f; room.RotUntil = Mathf.Max(room.RotUntil, now + 4f); }
+            bool wasShut = room.DoorBlocks;
+            DamageDoor(room, hit, false);
+            if (!wasShut || !room.DoorBroken || !n.Evolved) return;
+            if (n.Creature.evolve == "dropPart" && Parts.Count < Cfg.match.bodyPartsPerNight) AddPartAt(room.Def.DoorOutside);
+            if (n.Creature.evolve == "shatter" && room.Owner != null && room.Owner.Alive) room.Owner.StunUntil = now + 1.5f;
+        }
+
+        void Walk(Minion n, Vector2Int goal, bool stunned, float dt, float now)
+        {
+            float speed = stunned ? 0f : n.Creature.speed * (now < n.SlowUntil ? 1f - n.SlowPct : 1f);
             var move = n.Navigator.Steer(ref n.Pos, goal, MonsterWalkable, Cfg.minions.radius, dt, now, Walls);
             if (move.sqrMagnitude > 0.0001f) n.Facing = move.normalized;
             // Spread out a little so a batch does not stack into one sprite.
@@ -370,15 +445,45 @@ namespace BadAppleHotel.Game
             if (n.Sr == null) return;
             HotelView3D.Billboard(n.Sr, n.Pos);
             float hop = Mathf.Abs(Mathf.Sin(now * 9f + n.Pos.x)) * .06f;
-            n.Sr.transform.localScale = HotelView3D.SpriteScale * n.Form.scale * (1f + hop);
+            float size = n.IsEscort ? .62f : n.Creature.role == "breacher" ? .5f : .38f;
+            if (n.Child) size *= .7f;
+            n.Sr.transform.localScale = HotelView3D.SpriteScale * size * (1f + hop);
             n.Sr.flipX = n.Facing.x < 0f;
             n.Sr.enabled = IsVisible(n.Pos);
         }
 
-        float ShrineRadius(Monster m) => Array.Find(Cfg.abilities.abilities, a => a.id == "graveroot")?.radius ?? 3f;
-        float ShrineRegen(Monster m) => Array.Find(Cfg.abilities.abilities, a => a.id == "graveroot")?.value ?? 0f;
+        float ShrineRadius() => Array.Find(Cfg.abilities.abilities, a => a.id == "graveroot")?.radius ?? 3f;
+        float ShrineRegen() => Array.Find(Cfg.abilities.abilities, a => a.id == "graveroot")?.value ?? 0f;
 
-        /// <summary>Tower damage to a minion (already multiplied by its resistance); the Steamer Trunk swallows its first shot.</summary>
+        // ------------------------------------------------------------------ escorts guarding the monster
+
+        /// <summary>An escort near the monster that steps in front of a tower shot aimed at the monster, or null.</summary>
+        Minion InterceptingEscort(Monster m)
+        {
+            foreach (var n in Minions)
+            {
+                if (n.Dead || !n.IsEscort || Vector2.Distance(n.Pos, m.Pos) > Cfg.minions.interceptRangeTiles) continue;
+                bool catchAll = n.Evolved && n.Creature.evolve == "catchAll";
+                if (catchAll || Random.value < n.Creature.interceptChance) return n;
+            }
+            return null;
+        }
+
+        /// <summary>An evolved taunting escort a tower must shoot first, when it is in range and close to that tower.</summary>
+        Minion TauntingEscort(Vector2 towerPos, TowerDef def, int level)
+        {
+            foreach (var n in Minions)
+            {
+                if (n.Dead || !n.IsEscort || !n.Evolved || n.Creature.evolve != "taunt") continue;
+                float d = Vector2.Distance(towerPos, n.Pos);
+                if (d <= Cfg.minions.tauntRangeTiles && Rules.UpgradeRules.InRange(Cfg.towers, def, level, d)) return n;
+            }
+            return null;
+        }
+
+        // ------------------------------------------------------------------ damage
+
+        /// <summary>Tower damage to a minion (already multiplied by its resistance).</summary>
         public void DamageMinion(Minion n, float amount, Resident source)
         {
             if (n.Dead || amount <= 0f) return;
@@ -391,22 +496,16 @@ namespace BadAppleHotel.Game
             if (n.Dead) return;
             RemoveMinion(n);
             Metrics.MinionsKilled++;
+            if (!n.Evolved) return;
             float now = Now;
-            switch (n.Form.trait)
+            switch (n.Creature.evolve)
             {
                 case "deathSlow":
                     foreach (var r in Residents) if (r.Alive && Vector2.Distance(r.Pos, n.Pos) <= 2f) r.SlowUntil = now + 2f;
                     break;
-                case "deathBlind":
-                    foreach (var room in RoomsByDef.Values)
-                        foreach (var t in room.Slots)
-                            if (t != null && t.IsWeapon && Vector2.Distance(HotelMap.Center(t.Tile), n.Pos) <= 2.5f)
-                                t.DisabledUntil = Mathf.Max(t.DisabledUntil, now + 1f);
-                    break;
                 case "split":
-                case "releaseTwo":
-                    if (n.Rift != null && Rifts.Contains(n.Rift))
-                        for (int k = 0; k < 2; k++) SpawnMinion(n.Rift, n.Pos, 0);
+                    if (n.Child || Monster == null || (n.Rift != null && !Rifts.Contains(n.Rift))) break;
+                    for (int k = 0; k < 2; k++) SpawnMinion(Monster, n.Index, n.Rift, n.Pos, child: true);
                     break;
             }
         }

@@ -162,19 +162,19 @@ namespace BadAppleHotel.Config
             foreach (var id in p.utilityAbilities)
                 Require(Array.Exists(c.abilities.abilities, a => a.id == id), $"monster_progression.json: unknown utility ability '{id}'");
             var mc = c.minions;
-            Require(mc != null && mc.pulseSeconds != null && mc.pulseSeconds.Length > 0 && mc.baseHorde > 0 && mc.maxHorde >= mc.baseHorde &&
-                mc.swapEveryNights > 0 && mc.resistByRank != null && mc.resistByRank.Length > 0 && mc.upgrades != null && mc.lines != null,
-                "minions.json: invalid pulses, horde sizes, swap interval, resistances or upgrades");
-            foreach (var u in mc.upgrades)
-                Require(u.costs != null && u.costs.Length > 0 && Array.TrueForAll(u.costs, v => v > 0), $"minions.json: upgrade '{u.id}' needs positive costs");
+            Require(mc != null && mc.pulseSeconds != null && mc.pulseSeconds.Length > 0 && mc.roles != null && mc.lines != null &&
+                mc.unlockCosts != null && mc.unlockCosts.Length == 3 && mc.maxStrength > 1 && mc.strengthCostBase > 0 && mc.strengthCostGrowth >= 1,
+                "minions.json: invalid pulses, roles, unlock costs or Horde Strength");
             foreach (var m in c.monsters.monsters)
             {
                 Require(m.attackDamage > 0 && m.attackInterval > 0, $"monsters.json: '{m.id}' needs an attack");
                 foreach (var id in new[] { m.area, m.special })
                     Require(Array.Exists(c.abilities.abilities, a => a.id == id), $"monsters.json: '{m.id}' uses unknown ability '{id}'");
                 var line = Array.Find(mc.lines, l => l.id == m.minionLine);
-                Require(line != null && line.forms != null && line.forms.Length > 0 && Array.TrueForAll(line.forms, f => f.health > 0 && f.speed > 0 && f.interval > 0),
-                    $"minions.json: '{m.id}' needs a minion line '{m.minionLine}' with forms");
+                Require(line != null && line.creatures != null && line.creatures.Length == 3 &&
+                    Array.TrueForAll(line.creatures, f => f.health > 0 && f.speed > 0 && f.interval > 0 && f.evolveCost > 0 && Array.Exists(mc.roles, r => r.id == f.role) &&
+                        (f.resist == "bullet" || f.resist == "electric" || f.resist == "fire")),
+                    $"minions.json: '{m.id}' needs a minion line '{m.minionLine}' with three creatures");
             }
             foreach (var m in c.monsters.monsters)
                 Require(m.moveSpeed >= c.residents.moveSpeed * 1.1f, "monsters.json: every monster must outrun residents by at least 10%");

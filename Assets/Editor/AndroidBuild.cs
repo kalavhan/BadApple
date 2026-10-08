@@ -26,8 +26,8 @@ namespace BadAppleHotel.EditorTools
             PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
             PlayerSettings.Android.useCustomKeystore = false;
-            PlayerSettings.bundleVersion = "1.26-monster-rings";
-            PlayerSettings.Android.bundleVersionCode = 27;
+            PlayerSettings.bundleVersion = "1.27-horde-roles";
+            PlayerSettings.Android.bundleVersionCode = 28;
             EditorUserBuildSettings.buildAppBundle = false;
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {

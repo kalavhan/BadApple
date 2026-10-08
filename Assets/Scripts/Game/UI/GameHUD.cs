@@ -1079,12 +1079,14 @@ namespace BadAppleHotel.Game
             GUI.Label(new Rect(r.x + 8, r.y + 42, r.width - 16, 20), "Ate: arm " + gm.PartCount(m, "arm") + "  leg " + gm.PartCount(m, "leg") +
                 "  torso " + gm.PartCount(m, "torso") + "  eye " + gm.PartCount(m, "eye"), small);
             if (!gm.HordeAwake(m)) return;
-            // Minion multipliers stay hidden too, until one of your towers lands that type on a minion.
-            string minions = "Minions: ";
+            // Minion multipliers stay hidden too, until one of your towers lands that type on that creature.
+            var creature = gm.Creature(m, m.ActiveMinion);
+            string minions = creature.name + ": ";
             for (int i = 0; i < 3; i++)
             {
-                if (!gm.KnownMinionTypes[i]) { minions += "<color=#8A8070>" + DamageTypes.Label(i) + " ?</color>  "; continue; }
-                float mult = i == m.MinionResist ? 1f - gm.MinionResistance(m) : i == GameManager.Weakness(m.MinionResist) ? 1f + gm.Cfg.minions.weaknessBonus : 1f;
+                if (!gm.KnownMinion(m.ActiveMinion, i)) { minions += "<color=#8A8070>" + DamageTypes.Label(i) + " ?</color>  "; continue; }
+                int resist = gm.ResistOf(creature);
+                float mult = i == resist ? 1f - gm.Cfg.minions.resistPct : i == GameManager.Weakness(resist) ? 1f + gm.Cfg.minions.weaknessBonus : 1f;
                 string col = mult > 1.05f ? "#9FE3C8" : mult < 0.95f ? "#D7263D" : "#E8DCC0";
                 minions += "<color=" + col + ">" + DamageTypes.Label(i) + " x" + mult.ToString("0.0#") + "</color>  ";
             }

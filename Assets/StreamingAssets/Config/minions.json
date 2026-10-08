@@ -4,226 +4,215 @@
     30,
     60
   ],
-  "baseHorde": 2,
-  "maxHorde": 5,
   "aliveExponent": 0.4,
   "nightCeiling": 40,
-  "swapEveryNights": 4,
-  "resistByRank": [
-    0.4,
-    0.55,
-    0.7
-  ],
-  "weaknessBonus": 0.25,
   "reachTiles": 0.85,
   "radius": 0.24,
-  "upgrades": [
+  "resistPct": 0.5,
+  "weaknessBonus": 0.25,
+  "awakenCost": 30,
+  "unlockCosts": [
+    0,
+    60,
+    90
+  ],
+  "maxStrength": 6,
+  "strengthCostBase": 40,
+  "strengthCostGrowth": 1.4,
+  "healthPerStrength": 0.15,
+  "damagePerStrength": 0.12,
+  "escortFollowTiles": 1.4,
+  "interceptRangeTiles": 1.8,
+  "tauntRangeTiles": 4,
+  "roles": [
     {
-      "id": "awaken",
-      "name": "Awaken the horde",
-      "description": "Rifts open: 2 minions per rift each night",
-      "costs": [
-        30
-      ],
-      "perRank": 0,
-      "requiresRanks": []
+      "id": "swarm",
+      "name": "Swarm",
+      "blurb": "Many small attackers",
+      "perDoor": 3,
+      "perDoorAtMax": 5,
+      "escortCap": 0,
+      "escortCapAtMax": 0
     },
     {
-      "id": "horde",
-      "name": "Horde size",
-      "description": "+1 minion per rift each night",
-      "costs": [
-        50,
-        90,
-        150
-      ],
-      "perRank": 1,
-      "requiresRanks": []
+      "id": "breacher",
+      "name": "Breachers",
+      "blurb": "Wreck doors fast",
+      "perDoor": 1,
+      "perDoorAtMax": 2,
+      "escortCap": 0,
+      "escortCapAtMax": 0
     },
     {
-      "id": "toughness",
-      "name": "Toughness",
-      "description": "+20% minion HP",
-      "costs": [
-        25,
-        50,
-        80
-      ],
-      "perRank": 0.2,
-      "requiresRanks": []
-    },
-    {
-      "id": "fangs",
-      "name": "Fangs",
-      "description": "+20% minion damage",
-      "costs": [
-        25,
-        50,
-        80
-      ],
-      "perRank": 0.2,
-      "requiresRanks": []
-    },
-    {
-      "id": "scurry",
-      "name": "Scurry",
-      "description": "+10% minion speed",
-      "costs": [
-        20,
-        40,
-        60
-      ],
-      "perRank": 0.1,
-      "requiresRanks": []
-    },
-    {
-      "id": "frenzy",
-      "name": "Frenzy",
-      "description": "+15% minion attack speed",
-      "costs": [
-        25,
-        50,
-        80
-      ],
-      "perRank": 0.15,
-      "requiresRanks": []
-    },
-    {
-      "id": "hide",
-      "name": "Thick hide",
-      "description": "Resistance 40% to 55% to 70%",
-      "costs": [
-        30,
-        60,
-        100
-      ],
-      "perRank": 0,
-      "requiresRanks": []
-    },
-    {
-      "id": "evolve",
-      "name": "Evolve",
-      "description": "Next minion form",
-      "costs": [
-        120,
-        220
-      ],
-      "perRank": 0,
-      "requiresRanks": [
-        4,
-        8
-      ]
+      "id": "escort",
+      "name": "Escort",
+      "blurb": "Guards the monster",
+      "perDoor": 0,
+      "perDoorAtMax": 0,
+      "escortCap": 2,
+      "escortCapAtMax": 4
     }
   ],
   "lines": [
     {
       "id": "cloche",
       "monster": "stitchwork_chef",
-      "spawnMultiplier": 1,
-      "forms": [
+      "creatures": [
         {
-          "name": "Cloche Biter",
-          "trait": "",
-          "health": 60,
-          "damage": 7,
-          "interval": 1.0,
-          "speed": 3.0,
-          "doorMultiplier": 1.5,
-          "scale": 0.42
+          "role": "swarm",
+          "name": "Cloche Biters",
+          "resist": "bullet",
+          "health": 40,
+          "damage": 6,
+          "interval": 0.9,
+          "speed": 3.4,
+          "doorMultiplier": 1,
+          "residentMultiplier": 1,
+          "evolveName": "Snapping Lids",
+          "evolve": "split",
+          "evolveText": "Splits into two biters when killed",
+          "interceptChance": 0.0,
+          "evolveCost": 80
         },
         {
-          "name": "Carving Cloche",
-          "trait": "",
-          "health": 85,
-          "damage": 9,
+          "role": "breacher",
+          "name": "Carving Cloches",
+          "resist": "fire",
+          "health": 95,
+          "damage": 8,
           "interval": 1.0,
           "speed": 3.0,
-          "doorMultiplier": 1.5,
-          "scale": 0.5
+          "doorMultiplier": 3.5,
+          "residentMultiplier": 0.5,
+          "evolveName": "Butcher's Ram",
+          "evolve": "dropPart",
+          "evolveText": "Leaves a body part when it breaks a door",
+          "interceptChance": 0.0,
+          "evolveCost": 100
         },
         {
+          "role": "escort",
           "name": "Banquet Trolley",
-          "trait": "dropPart",
-          "health": 120,
-          "damage": 11,
-          "interval": 1.0,
-          "speed": 3.1,
-          "doorMultiplier": 1.7,
-          "scale": 0.6
+          "resist": "electric",
+          "health": 260,
+          "damage": 5,
+          "interval": 1.2,
+          "speed": 4.2,
+          "doorMultiplier": 1,
+          "residentMultiplier": 1,
+          "evolveName": "Silver Platter",
+          "evolve": "taunt",
+          "evolveText": "Towers within 4 tiles shoot it first",
+          "interceptChance": 0.5,
+          "evolveCost": 130
         }
       ]
     },
     {
       "id": "puffcap",
       "monster": "moldy_matron",
-      "spawnMultiplier": 1.5,
-      "forms": [
+      "creatures": [
         {
-          "name": "Puffcap",
-          "trait": "deathSlow",
+          "role": "swarm",
+          "name": "Puffcaps",
+          "resist": "electric",
           "health": 35,
           "damage": 5,
           "interval": 0.9,
-          "speed": 3.2,
-          "doorMultiplier": 1,
-          "scale": 0.38
-        },
-        {
-          "name": "Mourning Morel",
-          "trait": "deathBlind",
-          "health": 50,
-          "damage": 6,
-          "interval": 0.9,
           "speed": 3.3,
           "doorMultiplier": 1,
-          "scale": 0.46
+          "residentMultiplier": 1,
+          "evolveName": "Spore Pop",
+          "evolve": "deathSlow",
+          "evolveText": "Pops into a slowing puff when killed",
+          "interceptChance": 0.0,
+          "evolveCost": 70
         },
         {
-          "name": "Funeral Shroom",
-          "trait": "split",
-          "health": 70,
+          "role": "breacher",
+          "name": "Mourning Morels",
+          "resist": "bullet",
+          "health": 100,
           "damage": 7,
-          "interval": 0.9,
-          "speed": 3.3,
+          "interval": 1.0,
+          "speed": 2.9,
+          "doorMultiplier": 3.2,
+          "residentMultiplier": 0.5,
+          "evolveName": "Rot Fist",
+          "evolve": "rotDoor",
+          "evolveText": "Doors it hits rot: no repairs for 4 s, +40% damage",
+          "interceptChance": 0.0,
+          "evolveCost": 90
+        },
+        {
+          "role": "escort",
+          "name": "Funeral Shroom",
+          "resist": "fire",
+          "health": 280,
+          "damage": 4,
+          "interval": 1.3,
+          "speed": 4.4,
           "doorMultiplier": 1,
-          "scale": 0.55
+          "residentMultiplier": 1,
+          "evolveName": "Mourning Moss",
+          "evolve": "regenAura",
+          "evolveText": "Heals Mildred 2% a second while she is near",
+          "interceptChance": 0.5,
+          "evolveCost": 110
         }
       ]
     },
     {
       "id": "mimic",
       "monster": "bellhop_wraith",
-      "spawnMultiplier": 1,
-      "forms": [
+      "creatures": [
         {
-          "name": "Luggage Mimic",
-          "trait": "",
-          "health": 40,
-          "damage": 8,
+          "role": "swarm",
+          "name": "Luggage Mimics",
+          "resist": "fire",
+          "health": 35,
+          "damage": 7,
           "interval": 0.7,
           "speed": 4.2,
           "doorMultiplier": 1,
-          "scale": 0.4
+          "residentMultiplier": 1,
+          "evolveName": "Sticky Tongue",
+          "evolve": "tongue",
+          "evolveText": "Its bites slow residents for 1 s",
+          "interceptChance": 0.0,
+          "evolveCost": 70
         },
         {
-          "name": "Steamer Trunk",
-          "trait": "swallowShot",
-          "health": 55,
-          "damage": 10,
-          "interval": 0.7,
-          "speed": 4.2,
-          "doorMultiplier": 1,
-          "scale": 0.48
+          "role": "breacher",
+          "name": "Steamer Trunks",
+          "resist": "electric",
+          "health": 90,
+          "damage": 9,
+          "interval": 0.9,
+          "speed": 3.2,
+          "doorMultiplier": 3.5,
+          "residentMultiplier": 0.5,
+          "evolveName": "Slam",
+          "evolve": "shatter",
+          "evolveText": "Breaking a door stuns everyone inside for 1.5 s",
+          "interceptChance": 0.0,
+          "evolveCost": 95
         },
         {
+          "role": "escort",
           "name": "Wardrobe Mimic",
-          "trait": "releaseTwo",
-          "health": 80,
-          "damage": 12,
-          "interval": 0.7,
-          "speed": 4.0,
+          "resist": "bullet",
+          "health": 240,
+          "damage": 6,
+          "interval": 1.0,
+          "speed": 5.4,
           "doorMultiplier": 1,
-          "scale": 0.6
+          "residentMultiplier": 1,
+          "evolveName": "Closet Guard",
+          "evolve": "catchAll",
+          "evolveText": "Catches every shot aimed at the Porter nearby",
+          "interceptChance": 0.5,
+          "evolveCost": 140
         }
       ]
     }

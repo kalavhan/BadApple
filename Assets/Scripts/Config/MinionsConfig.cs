@@ -1,40 +1,47 @@
 using System;
 namespace BadAppleHotel.Config
 {
-    /// <summary>One upgrade in the monster's minion tree (minions.json); costs has one entry per rank.</summary>
-    [Serializable] public class MinionUpgradeDef
+    /// <summary>A battlefield job shared by every monster's horde: Swarm, Breachers or Escort.</summary>
+    [Serializable] public class MinionRoleDef
     {
-        public string id, name, description;
-        public float[] costs;
-        public float perRank;
-        /// <summary>Evolve only: total ranks of the other upgrades needed before each rank.</summary>
-        public int[] requiresRanks;
+        public string id, name, blurb;
+        /// <summary>Minions per rift per night at Strength I and at max Strength (Swarm and Breachers).</summary>
+        public int perDoor, perDoorAtMax;
+        /// <summary>Escorts alive at once around the monster at Strength I and at max Strength.</summary>
+        public int escortCap, escortCapAtMax;
     }
-    [Serializable] public class MinionFormDef
+    /// <summary>One of a monster's three creatures: its role, stats, built-in resistance and signature evolution
+    /// (a one-time purchase, priced by what that behaviour is worth).</summary>
+    [Serializable] public class MinionCreatureDef
     {
-        public string name, trait;
-        public float health, damage, interval = 1f, speed, doorMultiplier = 1f, scale = .5f;
+        public string role, name, resist, evolveName, evolve, evolveText;
+        public float health, damage, interval = 1f, speed, doorMultiplier = 1f, residentMultiplier = 1f, interceptChance, evolveCost;
     }
-    /// <summary>A monster's minion species and its three evolution forms.</summary>
     [Serializable] public class MinionLineDef
     {
         public string id, monster;
-        public float spawnMultiplier = 1f;
-        public MinionFormDef[] forms;
+        public MinionCreatureDef[] creatures;
     }
     [Serializable] public class MinionsConfig
     {
         /// <summary>Seconds into the night when each rift releases a share of its nightly batch.</summary>
         public float[] pulseSeconds;
-        public int baseHorde = 2, maxHorde = 5;
-        /// <summary>Each rift's batch is horde * (starting residents / alive) ^ aliveExponent.</summary>
+        /// <summary>Each rift's batch is perDoor * (starting residents / alive) ^ aliveExponent.</summary>
         public float aliveExponent = .4f;
         public int nightCeiling = 40;
-        public int swapEveryNights = 4;
-        public float[] resistByRank;
-        public float weaknessBonus = .25f;
         public float reachTiles = .85f, radius = .24f;
-        public MinionUpgradeDef[] upgrades;
+        /// <summary>Damage cut from the creature's own resistance, and the extra taken from its weakness.</summary>
+        public float resistPct = .5f, weaknessBonus = .25f;
+        /// <summary>Awakening unlocks the first creature; unlockCosts are per creature (index 0 is the awakening).</summary>
+        public float awakenCost = 30f;
+        public float[] unlockCosts;
+        /// <summary>Horde Strength: one shared level for every creature, owned now or unlocked later. Each rank adds
+        /// health and damage and moves each role's numbers toward their max-level count.</summary>
+        public int maxStrength = 6;
+        public float strengthCostBase = 40f, strengthCostGrowth = 1.4f;
+        public float healthPerStrength = .15f, damagePerStrength = .12f;
+        public float escortFollowTiles = 1.4f, interceptRangeTiles = 1.8f, tauntRangeTiles = 4f;
+        public MinionRoleDef[] roles;
         public MinionLineDef[] lines;
     }
 }

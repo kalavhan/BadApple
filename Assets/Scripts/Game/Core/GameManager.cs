@@ -540,6 +540,7 @@ namespace BadAppleHotel.Game
             RevealMonster();
             SpawnParts();
             StartNightRifts();
+            NightStartForMonster(Monster);
 
         }
 
@@ -553,6 +554,7 @@ namespace BadAppleHotel.Game
             PhaseTimer = Cfg.match.nightSeconds + Cfg.match.nightBreakSeconds;
             SpawnParts();
             StartNightRifts();
+            NightStartForMonster(Monster);
             Announce("Night " + Night + " of " + Cfg.match.nightCount + ".", 3f);
         }
 

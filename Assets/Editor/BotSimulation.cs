@@ -56,7 +56,7 @@ namespace BadAppleHotel.EditorTools
                                 attacksPerNight=Enumerable.Range(1,gm.Night).Select(night=>gm.Metrics.AttacksPerNight.TryGetValue(night,out int attacks)?attacks:0).ToArray(),
                                 doorAssaultsPerNight=Enumerable.Range(1,gm.Night).Select(night=>gm.Metrics.DoorAssaultsPerNight.TryGetValue(night,out int attacks)?attacks:0).ToArray(),
                                 levelPerNight=gm.Metrics.LevelPerNight.ToArray(),
-                                monster=gm.Monster.Def.id, fearEarned=gm.Monster.FearEarned, minionRanks=gm.Monster.MinionRanks.Sum(),
+                                monster=gm.Monster.Def.id, fearEarned=gm.Monster.FearEarned, minionRanks=gm.Monster.HordeStrength + gm.Monster.MinionOwned.Count(o=>o) + gm.Monster.MinionEvolved.Count(e=>e),
                                 minionsSpawned=gm.Metrics.MinionsSpawned, minionsKilled=gm.Metrics.MinionsKilled, killsByMinions=gm.Metrics.KillsByMinions };
                             report.matches.Add(row);
                             Debug.Log("SIM "+(endless?"endless":"standard")+" "+(i+1)+"/"+count+" seed="+row.seed+" night="+row.night+" kills="+row.kills+" first="+row.firstAttackSeconds+" level="+row.monsterLevel);

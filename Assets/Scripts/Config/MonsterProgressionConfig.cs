@@ -10,7 +10,7 @@ namespace BadAppleHotel.Config
     /// <summary>Where the monster's Fear comes from.</summary>
     [Serializable] public class FearConfig
     {
-        public float perResidentDamage, perDoorDamage, perKill, perPart, idlePerSecond, idleAfterSeconds;
+        public float perResidentDamage, perDoorDamage, perKill, perPart, idlePerSecond, idleAfterSeconds, perNight;
     }
     /// <summary>One of the five stat tracks a level point can go into.</summary>
     [Serializable] public class StatTrackDef
@@ -28,6 +28,8 @@ namespace BadAppleHotel.Config
         public float autoHealthPerLevel, autoAttackPerLevel;
         public StatTrackDef[] statTracks;
         public int specialLevel = 3;
+        /// <summary>The special unlocks at specialLevel or at the start of this night, whichever comes first.</summary>
+        public int specialUnlockNight = 2;
         public int[] abilityRankLevels, utilityLevels, growthLevels;
         /// <summary>Kit ability rank I/II/III multipliers.</summary>
         public float[] rankDamage, rankCooldown;
