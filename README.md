@@ -75,3 +75,9 @@ Short-range weapons deal +35% damage within two tiles. Mid-range weapons fire at
 Art prompts and sources: [2.5D textures and directional sheets](docs/art/2.5D-textures.md).
 
 The latest APK is `Builds/BadAppleHotel-1.2-isometric.apk` (version code 3), with ARM64 and x86_64 in one package. See [the 2.5D validation report](docs/ISOMETRIC-PLAYTEST-OCT04.md) for Android startup diagnostics and current test/balance results.
+
+### Dream summons (October 7)
+
+Towers now read as creatures a sleeping guest dreams into being, in the same mint-and-violet language as the claimed-room floor seams. A dream wisp leaves the owner's bed and the creature materializes from the floor up over a summoning sigil whose pips show its level. Idle creatures breathe, shed rising motes and stay tied to the bed by a faint dream thread that brightens while the owner sleeps. Every damage type has its own attack and impact (spectral bolts, a sniper beam, arcing missiles, forked lightning, fireballs, a slowing hex), and muzzle and impact flashes briefly light nearby floors, walls and characters. Upgrades evolve the creature in a burst; selling it lets it dissolve back into the dream. Dream Power and Faith creatures send their harvest to the owner as drifting motes.
+
+All of it lives in one additive mesh (`DreamFx`, one draw call) driven by `GameManager.TowerFx`, with at most six shader lights and no `Light` components. It is presentation only: the bot simulation skips it, and it uses its own random source so gameplay rolls are unchanged. `-executeMethod BadAppleHotel.EditorTools.TowerFxCapture.Run` in a batch editor records the whole sequence frame by frame (`BADAPPLE_TOWER_FX_OUT` picks the folder). Test build: `Builds/BadAppleHotel-dream-towers.apk` (version `1.20-dream-towers`, code 21).

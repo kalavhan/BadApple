@@ -362,6 +362,7 @@ namespace BadAppleHotel.Game
 
         void ClearMatch()
         {
+            ClearTowerFx();
             if (matchRoot != null) RemoveObject(matchRoot.gameObject);
             matchRoot = null;
             foreach (var p in projectiles) if (p.T != null) RemoveObject(p.T.gameObject);
@@ -451,7 +452,7 @@ namespace BadAppleHotel.Game
             Floaters.RemoveAll(f => Time.unscaledTime - f.Born > 1.4f);
             UpdateVision();
             UpdateFloorEnergy();
-            if (!InMatch) return;
+            if (!InMatch) { UpdateTowerFx(); return; }
 
             // fixed sub-steps keep movement and collisions stable at high game speed or low frame rates
             float total = Time.deltaTime;
@@ -465,6 +466,7 @@ namespace BadAppleHotel.Game
 
             foreach (var r in Residents) if (r.Alive) PlaceResidentSprite(r);
             UpdateTowerBlink(Time.time);
+            UpdateTowerFx();
 
 
 
