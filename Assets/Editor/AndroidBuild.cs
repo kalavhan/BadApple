@@ -26,8 +26,8 @@ namespace BadAppleHotel.EditorTools
             PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
             PlayerSettings.Android.useCustomKeystore = false;
-            PlayerSettings.bundleVersion = "1.24-night-shift-monsters";
-            PlayerSettings.Android.bundleVersionCode = 25;
+            PlayerSettings.bundleVersion = "1.25-tripo-monsters";
+            PlayerSettings.Android.bundleVersionCode = 26;
             EditorUserBuildSettings.buildAppBundle = false;
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
