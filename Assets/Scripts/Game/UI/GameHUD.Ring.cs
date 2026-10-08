@@ -9,7 +9,7 @@ namespace BadAppleHotel.Game
     /// The tower ring: tapping a tower opens three orbs around it (Level up, Evolve, Banish) and a card with its
     /// level, its track to the next evolution and what the next step gives. Level up and Evolve unfold into a
     /// switch that you slide (or tap at either end) while the ghost of the result floats over the tower.
-    /// Evolve stays dark until the last level of a form. Banish is held while mint fire climbs its rim.
+    /// Evolve stays dark until the last level of a form. Banish is held for a second while a ring fills.
     /// Double-tapping a tower takes the next step straight away when you can afford it.
     /// The bed and door use the same card with a single Upgrade button.
     /// </summary>
@@ -204,9 +204,6 @@ namespace BadAppleHotel.Game
         {
             float d = SideOrb * (.7f + .3f * k);
             float p = banishHoldStart >= 0 ? Mathf.Clamp01((Time.unscaledTime - banishHoldStart) / BanishHoldSeconds) : 0f;
-            banishCenter = c; banishRadius = d / 2f;
-            // fxBack holds the flames: they are drawn before this face, so they burn around the rim and the
-            // orb itself stays readable.
             DreamSkin.Orb(c, d, DreamSkin.Mint, .45f + .5f * p, .12f + .3f * p);
             DreamSkin.Label(new Rect(c.x - 50f, c.y - 26f, 100f, 22f), "<b>Banish</b>", DreamSkin.Body, new Color(.8f, .98f, .9f, 1f), TextAnchor.MiddleCenter);
             DreamSkin.Label(new Rect(c.x - 50f, c.y - 4f, 100f, 16f), p > 0 ? "keep holding" : "hold", DreamSkin.Tiny, DreamSkin.BoneDim);
@@ -223,39 +220,18 @@ namespace BadAppleHotel.Game
             });
         }
 
-        Vector2 banishCenter;
-        float banishRadius;
-
-        /// <summary>Feeds the mint fire around the Banish orb and finishes a completed hold (from Update).</summary>
-        void UpdateBanish(float dt)
+        /// <summary>Finishes a completed Banish hold (from Update).</summary>
+        void UpdateBanish()
         {
             bool ringOpen = sel == Sel.Slot && ringTower != null && !pending.HasValue && windowClosingAt < 0f && gm.Human?.Room != null
                             && selSlot >= 0 && selSlot < gm.Human.Room.Slots.Length && gm.Human.Room.Slots[selSlot] == ringTower;
             if (!ringOpen) { banishHoldStart = -1f; return; }
-            float p = banishHoldStart >= 0 ? Mathf.Clamp01((Time.unscaledTime - banishHoldStart) / BanishHoldSeconds) : 0f;
-            float rate = 60f + 200f * p;
-            flameDebt += rate * dt;
-            while (flameDebt >= 1f)
-            {
-                flameDebt -= 1f;
-                float a = Random.value * Mathf.PI * 2f;
-                var dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-                // Born on the outside of the rim and pushed outward, so the fire wraps the orb without covering it.
-                var at = banishCenter + dir * banishRadius * Random.Range(1.02f, 1.12f);
-                var late = Color.Lerp(DreamSkin.Mint, DreamSkin.Violet, .8f);
-                var col = Random.value < .2f ? DreamSkin.Violet : DreamSkin.Mint;
-                // Kept translucent so overlapping tongues stay mint instead of blowing out to white.
-                col.a = .5f;
-                fxBack.Flame(at, dir * 1.6f, 1.1f + p * .7f, col, late);
-            }
-            if (p >= 1f)
+            if (banishHoldStart >= 0 && Time.unscaledTime - banishHoldStart >= BanishHoldSeconds)
             {
                 banishHoldStart = -1f;
                 Banish(gm.Human, ringTower);
             }
         }
-
-        float flameDebt;
 
         void Banish(Resident me, TowerInstance t)
         {

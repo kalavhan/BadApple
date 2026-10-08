@@ -75,7 +75,7 @@ namespace BadAppleHotel.Game
         Sel sel = Sel.None;
         int selSlot = -1;
         float windowOpenedAt = -9f, windowClosingAt = -1f;
-        readonly UiFx fxBack = new UiFx(), fxFront = new UiFx();
+        readonly UiFx fxFront = new UiFx();
 
         static readonly Color Bone = (Color)Palette.Bone;
         static readonly Color Candle = (Color)Palette.Candle;
@@ -310,7 +310,7 @@ namespace BadAppleHotel.Game
 
             gm.WallFocusRoom = sel != Sel.None ? gm.Human?.Room?.Def : null;
             if (windowClosingAt >= 0f && Time.unscaledTime - windowClosingAt > .18f) ClearSelection();
-            UpdateBanish(Time.unscaledDeltaTime);
+            UpdateBanish();
             UpdateCameraFocus();
             HandleKeys();
             if (pointerInputBroken) return;
@@ -635,7 +635,6 @@ namespace BadAppleHotel.Game
                     else DrawMonsterUI();
                     int popupStart = nextUiRects.Count;
                     if (repaint) hudRects = new List<Rect>(nextUiRects);
-                    fxBack.Draw(scale);
                     if (gm.Human != null && gm.Human.Alive && gm.Human.Room != null) DrawSelection(gm.Human);
                     if (gm.PendingHelpFrom != null) DrawHelpPopup();
                     DrawProgressChoice();
