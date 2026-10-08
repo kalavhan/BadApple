@@ -34,7 +34,7 @@ namespace BadAppleHotel.Game
                     if (!UpgradeRules.InRange(Cfg.towers,t.Def,t.Level,Vector2.Distance(tpos,m.Pos))) continue;
                     if (!Simulation && t.Sr != null)
                     {
-                        var facing = TowerDirections.Get(t.Def.id,t.Level,m.Pos-tpos);
+                        var facing = TowerDirections.Get(t.Def.id,TowerForm(t),m.Pos-tpos);
                         if(facing!=null)t.Sr.sprite=facing;
                     }
                     if(t.Cooldown>0f)continue;
@@ -46,11 +46,10 @@ namespace BadAppleHotel.Game
 
         void Fire(TowerInstance t, Room room, Vector2 tpos, Monster m, float now, float ownerMult)
         {
-            var sc = Cfg.towers.levelScaling;
-            int lv = t.Level - 1;
             float rate = UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level);
             t.Cooldown = rate > 0f ? 1f / rate : 1f;
             int type = DamageTypes.Index(t.Def.damageType);
+            if (room.Owner != null && room.Owner.IsHuman) LearnDamageType(type);
             float mult = DamageTaken(m, type) * UpgradeRules.DistanceBonus(t.Def,Vector2.Distance(tpos,m.Pos));
             SpawnProjectile(tpos, m.Pos + Vector2.up * 0.5f, t.Def.damageType);
             var owner = room.Owner;
@@ -63,8 +62,8 @@ namespace BadAppleHotel.Game
 
             if (type == DamageTypes.Slow)
             {
-                m.SlowPct = Mathf.Clamp((UpgradeRules.Tier(t.Def, t.Level)?.slowPct ?? t.Def.slowPct * (1f + 0.05f * lv)) * mult, 0f, 0.75f);
-                m.SlowUntil = now + (UpgradeRules.Tier(t.Def, t.Level)?.slowSeconds ?? t.Def.slowSeconds);
+                m.SlowPct = Mathf.Clamp(UpgradeRules.SlowPct(Cfg.towers, t.Def, t.Level) * mult, 0f, 0.75f);
+                m.SlowUntil = now + (UpgradeRules.Tier(Cfg.towers, t.Def, t.Level)?.slowSeconds ?? t.Def.slowSeconds);
                 return;
             }
 
@@ -72,24 +71,30 @@ namespace BadAppleHotel.Game
             if (m.JamAura > 0 && Vector2.Distance(tpos,m.Pos)<5) dmg *= 1f/(1+m.JamAura);
             if (type == DamageTypes.Bullet && now < m.JamUntil && Vector2.Distance(tpos, m.Pos) <= m.JamRadius)
                 dmg *= m.JamValue;
-            if (type == DamageTypes.Electric && now >= m.StunImmuneUntil && (UpgradeRules.Tier(t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds) > 0f)
+            if (type == DamageTypes.Electric && now >= m.StunImmuneUntil && (UpgradeRules.Tier(Cfg.towers, t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds) > 0f)
             {
-                m.StunUntil = now + Mathf.Min(Cfg.progression.maxStunSeconds, UpgradeRules.Tier(t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds);
+                m.StunUntil = now + Mathf.Min(Cfg.progression.maxStunSeconds, UpgradeRules.Tier(Cfg.towers, t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds);
                 m.StunImmuneUntil = m.StunUntil + Cfg.progression.stunRecoverySeconds;
             }
-            if (type == DamageTypes.Fire && (UpgradeRules.Tier(t.Def, t.Level)?.burnSeconds ?? t.Def.burnSeconds) > 0f)
+            if (type == DamageTypes.Fire && (UpgradeRules.Tier(Cfg.towers, t.Def, t.Level)?.burnSeconds ?? t.Def.burnSeconds) > 0f)
             {
                 m.BurnDps = UpgradeRules.BurnDamage(Cfg.towers, t.Def, t.Level) * mult * ownerMult;
-                m.BurnUntil = now + (UpgradeRules.Tier(t.Def, t.Level)?.burnSeconds ?? t.Def.burnSeconds);
+                m.BurnUntil = now + (UpgradeRules.Tier(Cfg.towers, t.Def, t.Level)?.burnSeconds ?? t.Def.burnSeconds);
                 m.BurnSource = room.Owner;
             }
             DamageMonster(dmg, room.Owner);
         }
 
+        /// <summary>
+        /// Which damage types the player has seen land on the monster this match. A resident starts out not
+        /// knowing the monster's weaknesses; each multiplier shows up in the HUD after their first hit of that type.
+        /// </summary>
+        public readonly bool[] KnownDamageTypes = new bool[4];
+        public void LearnDamageType(int type) { if (type >= 0 && type < KnownDamageTypes.Length) KnownDamageTypes[type] = true; }
+
         /// <summary>Damage per second the monster would take standing at a point (used by the monster bot).</summary>
         public float ThreatAt(Vector2 pos, Monster m)
         {
-            var sc = Cfg.towers.levelScaling;
             float dps = 0f;
             foreach (var room in RoomsByDef.Values)
             {
@@ -100,7 +105,6 @@ namespace BadAppleHotel.Game
                     if (t == null || t.Decoy || !t.IsWeapon || t.Def.damageType == "slow") continue;
                     float distance=Vector2.Distance(HotelMap.Center(t.Tile),pos);
                     if (!UpgradeRules.InRange(Cfg.towers,t.Def,t.Level,distance)) continue;
-                    int lv = t.Level - 1;
                     float mult = DamageTaken(m, DamageTypes.Index(t.Def.damageType)) * own * UpgradeRules.DistanceBonus(t.Def,distance);
                     dps += UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level) * mult;
                     dps += UpgradeRules.BurnDamage(Cfg.towers, t.Def, t.Level) * mult * 0.5f;

@@ -60,8 +60,9 @@ namespace BadAppleHotel.Tests
             Assert.AreEqual(ActionResult.Ok, gm.TryBuildTower(me, slot, "gun_turret"));
             var tower = me.Room.Slots[slot];
             var firstSprite = tower.Sr.sprite;
-            for (int i = 0; i < 3; i++) Assert.AreEqual(ActionResult.Ok, gm.TryUpgradeTower(me, slot));
-            Assert.AreEqual(4, tower.Level);
+            for (int i = 0; i < 14; i++) Assert.AreEqual(ActionResult.Ok, gm.TryUpgradeTower(me, slot));
+            Assert.AreEqual(15, tower.Level);
+            Assert.AreEqual(4, gm.TowerForm(tower));
             Assert.AreNotSame(firstSprite, tower.Sr.sprite);
             Assert.AreEqual(HotelView3D.SpriteScale, tower.Sr.transform.localScale);
             Assert.AreEqual(ActionResult.MaxLevel, gm.TryUpgradeTower(me, slot));

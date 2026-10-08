@@ -125,17 +125,19 @@ namespace BadAppleHotel.Tests
             {
                 Assert.AreEqual(4, tower.tiers.Length, tower.id);
                 Assert.AreEqual(4, tower.tiers.Select(t => t.sprite).Distinct().Count());
-                Assert.AreEqual(4, UpgradeRules.TowerMaxLevel(cfg.towers, tower));
-                Assert.AreEqual(10, UpgradeRules.DoorSupportLevel(tower, 4));
-                for (int lv = 1; lv <= 4; lv++)
+                Assert.AreEqual(15, UpgradeRules.TowerMaxLevel(cfg.towers, tower));
+                Assert.AreEqual(10, UpgradeRules.DoorSupportLevel(cfg.towers, tower, 15));
+                for (int form = 1; form <= 4; form++)
                 {
-                    var tier = tower.tiers[lv - 1];
+                    // Each form shows its tier's stats exactly at the form's first level.
+                    int lv = UpgradeRules.FormStart(cfg.towers, tower, form);
+                    var tier = tower.tiers[form - 1];
                     Assert.IsNotNull(Resources.Load<Texture2D>("Art/" + tier.sprite), tier.sprite);
                     Assert.AreEqual(tier.damage, UpgradeRules.Damage(cfg.towers, tower, lv));
                     Assert.AreEqual(tier.range, UpgradeRules.TowerRange(cfg.towers, tower, lv));
-                    Assert.AreEqual(tier.faithPerSecond, UpgradeRules.FaithRate(tower, lv));
-                    Assert.AreEqual(tier.dreamPerSecond, UpgradeRules.DreamRate(tower, lv));
-                    if (lv < 4) Assert.Greater(tier.upgradeCost, 0);
+                    Assert.AreEqual(tier.faithPerSecond, UpgradeRules.FaithRate(cfg.towers, tower, lv));
+                    Assert.AreEqual(tier.dreamPerSecond, UpgradeRules.DreamRate(cfg.towers, tower, lv));
+                    if (form < 4) Assert.Greater(tier.upgradeCost, 0);
                 }
             }
         }

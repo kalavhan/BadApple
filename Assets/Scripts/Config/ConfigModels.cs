@@ -149,6 +149,27 @@ namespace BadAppleHotel.Config
         public float upgradeCostGrowth;
     }
 
+    /// <summary>
+    /// Levels inside each tier ("form"). A tower levels up within its form, and at the last level of a
+    /// form it evolves into the next tier. formStartLevels[i] is the level where form i + 1 begins.
+    /// </summary>
+    [Serializable]
+    public class TowerLevels
+    {
+        public int[] formStartLevels;
+        public int maxLevel;
+        /// <summary>How far (0..1, in log space) a form's last level gets toward the next form's stats.</summary>
+        public float inFormGrowth = 0.5f;
+        /// <summary>
+        /// Reaching the next form costs the tier's upgradeCost in total, as before levels existed: the level-ups
+        /// take this share of it (each one levelUpCostGrowth times the last) and Evolve takes the rest.
+        /// </summary>
+        public float levelUpShare = 0.55f;
+        public float levelUpCostGrowth = 1.15f;
+        /// <summary>The final form's level-ups cost, in total, the last evolve price times this.</summary>
+        public float finalFormCostMultiplier = 1.5f;
+    }
+
     [Serializable]
     public class RangeTiles
     {
@@ -210,6 +231,7 @@ namespace BadAppleHotel.Config
         public float sellRefundPct;
         public RangeTiles rangeTiles;
         public TowerLevelScaling levelScaling;
+        public TowerLevels levels;
         public TowerDef[] towers;
     }
 

@@ -33,6 +33,7 @@ namespace BadAppleHotel.Game
             if (direction.sqrMagnitude > .0001f) resident.Facing = direction.normalized;
             SpawnProjectile(resident.Pos, monster.Pos + Vector2.up * .5f, "bullet");
             float damage = Cfg.residents.personalShotDamage * DamageTaken(monster, DamageTypes.Bullet);
+            if (resident.IsHuman) LearnDamageType(DamageTypes.Bullet);
             if (Now < monster.JamUntil && direction.magnitude <= monster.JamRadius) damage *= monster.JamValue;
             DamageMonster(damage, resident);
             return ActionResult.Ok;

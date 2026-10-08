@@ -404,9 +404,10 @@ namespace BadAppleHotel.Game
 
         // ---------- Towers ----------
 
-        public static Sprite Tower(TowerDef def, int level)
+        /// <summary>Static art of one form (tier, 1-based) of a tower family.</summary>
+        public static Sprite Tower(TowerDef def, int form)
         {
-            var tier = UpgradeRules.Tier(def, level);
+            var tier = UpgradeRules.FormTier(def, form);
             if (!UseArt || tier == null || string.IsNullOrEmpty(tier.sprite)) return Tower(def.id);
             string key = "tier:" + tier.sprite;
             if (cache.TryGetValue(key, out var hit) && hit != null) return hit;

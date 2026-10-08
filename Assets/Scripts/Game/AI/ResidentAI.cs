@@ -178,7 +178,7 @@ namespace BadAppleHotel.Game
 
             var faithTower = room.Slots.FirstOrDefault(t => t != null && t.IsFaith);
             if (faithTower != null)
-                options.Add((1.2f * eco, () => gm.TryUpgradeTower(me, faithTower.SlotIndex)));
+                options.Add((1.2f * eco, () => Upgrade(faithTower)));
 
             if (options.Count == 0) return;
             float total = options.Sum(o => o.w);
@@ -195,7 +195,29 @@ namespace BadAppleHotel.Game
             var weapons = gm.Weapons(me.Room);
             if (weapons.Count == 0) return BuildBestWeapon(me.Room);
             var lowest = weapons.OrderBy(w => w.Level).First();
-            return gm.TryUpgradeTower(me, lowest.SlotIndex);
+            return Upgrade(lowest);
+        }
+
+        /// <summary>
+        /// One upgrade decision climbs a whole form at once (every level-up and the Evolve), as a player
+        /// double-tapping through the levels would. Bots save until they can pay for the whole climb, so their
+        /// money still reaches doors and beds the way it did when each upgrade was one tier.
+        /// </summary>
+        ActionResult Upgrade(TowerInstance t)
+        {
+            int form = gm.TowerForm(t), end = Rules.UpgradeRules.FormEnd(gm.Cfg.towers, t.Def, form), max = gm.TowerMaxLevel(t);
+            if (t.Level >= max) return ActionResult.MaxLevel;
+            float climb = 0f;
+            for (int l = t.Level; l <= end && l < max; l++) climb += Rules.UpgradeRules.TowerUpgradeCost(gm.Cfg.towers, t.Def, l);
+            if (gm.Wallet(me, t.Def.costResource) + .001f < climb) return ActionResult.NoMoney;
+            var result = ActionResult.Invalid;
+            while (gm.TowerForm(t) == form && t.Level < max)
+            {
+                var step = gm.TryUpgradeTower(me, t.SlotIndex);
+                if (step != ActionResult.Ok) break;
+                result = ActionResult.Ok;
+            }
+            return result;
         }
 
         ActionResult BuildFaith(Room room)
@@ -266,7 +288,7 @@ namespace BadAppleHotel.Game
         {
             var weapons = gm.Weapons(room);
             if (weapons.Count == 0) return ActionResult.Invalid;
-            return gm.TryUpgradeTower(me, weapons.OrderBy(w => w.Level).First().SlotIndex);
+            return Upgrade(weapons.OrderBy(w => w.Level).First());
         }
     }
 }
