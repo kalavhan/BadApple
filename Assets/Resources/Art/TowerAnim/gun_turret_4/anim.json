@@ -1,0 +1,24 @@
+{
+  "cellW": 180,
+  "cellH": 176,
+  "height": 1.394,
+  "release": 0.2,
+  "clips": [
+    {
+      "name": "idle",
+      "dirs": 8,
+      "count": 16,
+      "cols": 8,
+      "fps": 8.0,
+      "loop": true
+    },
+    {
+      "name": "fire",
+      "dirs": 8,
+      "count": 16,
+      "cols": 8,
+      "fps": 14.0,
+      "loop": false
+    }
+  ]
+}

@@ -51,6 +51,7 @@ namespace BadAppleHotel.Game
         {
             Camera.onPreCull -= DrawWallInstances;
             hotelLighting?.Dispose(); hotelLighting = null;
+            ClearTowerFx();
             if (Instance == this) Instance = null;
             if (worldRoot != null) RemoveObject(worldRoot.gameObject);
             if (matchRoot != null) RemoveObject(matchRoot.gameObject);

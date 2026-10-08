@@ -124,6 +124,7 @@ namespace BadAppleHotel.Game
         void SpawnProjectile(Vector2 from, Vector2 to, string type)
         {
             if (Simulation || matchRoot == null) return;
+            if (TowerAttackFx(from, type)) return;
             var sr = MakeSprite("shot", Sprites.Projectile(type), from, 6000, matchRoot);
             projectiles.Add(new Projectile { T = sr.transform, From = from, To = to, Born = Now, Duration = 0.15f });
         }

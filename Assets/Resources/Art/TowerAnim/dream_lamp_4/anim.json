@@ -1,0 +1,16 @@
+{
+  "cellW": 148,
+  "cellH": 176,
+  "height": 1.078,
+  "release": 0.3,
+  "clips": [
+    {
+      "name": "idle",
+      "dirs": 1,
+      "count": 24,
+      "cols": 8,
+      "fps": 10.0,
+      "loop": true
+    }
+  ]
+}
