@@ -68,6 +68,25 @@ namespace BadAppleHotel.Tests
             Assert.Greater(gm.MaxHp(m), hp - .01f);
         }
 
+        [Test] public void One_tap_on_a_stat_buys_the_level_and_puts_the_point_there()
+        {
+            var m = gm.Monster;
+            m.IsHuman = true;   // a player's picks wait for taps instead of being chosen by the bot
+            m.Fear = 1000;
+            Assert.AreEqual(ActionResult.Ok, gm.TryBuyLevelInto(m, "maw"));
+            Assert.AreEqual(2, m.Level);
+            Assert.AreEqual(1, gm.StatRank(m, "maw"));
+            Assert.AreEqual(0, m.Choices.Count, "Nothing else is owed at level 2.");
+            while (m.Level < 4) gm.TryBuyLevelInto(m, "vitality");
+            Assert.AreEqual(2, gm.StatRank(m, "vitality"));
+            Assert.IsTrue(gm.HasPendingPick(m), "Level 4 owes an ability rank, picked in the same ring.");
+            gm.ChooseProgression(0);
+            Assert.IsFalse(gm.HasPendingPick(m));
+            m.Fear = 0;
+            Assert.AreEqual(ActionResult.NoMoney, gm.TryBuyLevelInto(m, "hide"));
+            Assert.AreEqual(4, m.Level);
+        }
+
         [Test] public void Hitting_residents_and_eating_parts_earn_fear_and_idling_earns_a_little()
         {
             var m = gm.Monster;

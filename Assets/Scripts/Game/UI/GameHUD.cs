@@ -350,7 +350,12 @@ namespace BadAppleHotel.Game
             }
             if (GameInput.ConsumePressed(KeyCode.M) && gm.HotelViewAvailable) gm.HotelView = !gm.HotelView;
             if (GameInput.ConsumePressed(KeyCode.R)) gm.RecenterCamera();
-            if (GameInput.ConsumePressed(KeyCode.Escape)) CloseWindow();
+            if (GameInput.ConsumePressed(KeyCode.Escape)) { CloseWindow(); ToggleMonsterRing(false); ToggleHorde(false); }
+            if (gm.HumanRole == Role.Monster && gm.Monster != null)
+            {
+                if (GameInput.ConsumePressed(KeyCode.L)) ToggleMonsterRing(!monsterRing);
+                if (GameInput.ConsumePressed(KeyCode.H)) ToggleHorde(!hordeOpen);
+            }
         }
 
         void ShootResident()
@@ -509,7 +514,9 @@ namespace BadAppleHotel.Game
 
         void WorldTap(Vector2 g)
         {
-            if (gm.Cam == null || gm.Human == null) return;
+            if (gm.Cam == null) return;
+            if (gm.HumanRole == Role.Monster && gm.Monster != null) { MonsterWorldTap(g); return; }
+            if (gm.Human == null) return;
             var me = gm.Human;
             if (me == null || !me.Alive) return;
             var tile = HotelMap.ToTile(GuiToWorld(g));
@@ -637,7 +644,6 @@ namespace BadAppleHotel.Game
                     if (repaint) hudRects = new List<Rect>(nextUiRects);
                     if (gm.Human != null && gm.Human.Alive && gm.Human.Room != null) DrawSelection(gm.Human);
                     if (gm.PendingHelpFrom != null) DrawHelpPopup();
-                    DrawProgressChoice();
                     if (repaint) popupRects = nextUiRects.Skip(popupStart).ToList();
                 }
                 fxFront.Draw(scale);
@@ -906,8 +912,12 @@ namespace BadAppleHotel.Game
             if (m != null && !m.Dead && gm.IsVisible(m.Pos))
             {
                 var g = WorldToGui(m.Pos) + Vector2.up * -2.2f * GuiPerTile;
-                Bar(new Rect(g.x - 30, g.y, 60, 7), m.Hp / gm.MaxHp(m), Red);
-                Shadowed(new Rect(g.x - 80, g.y - 18, 160, 18), m.Def.name, Bone);
+                // The monster player reads its own health in the corner chip, and its windows open over its head.
+                if (!m.IsHuman)
+                {
+                    Bar(new Rect(g.x - 30, g.y, 60, 7), m.Hp / gm.MaxHp(m), Red);
+                    Shadowed(new Rect(g.x - 80, g.y - 18, 160, 18), m.Def.name, Bone);
+                }
                 if (m.EatingPart != null)
                     Bar(new Rect(g.x - 20, g.y + 10, 40, 5), m.EatProgress / gm.Cfg.bodyParts.eatSeconds, (Color)Palette.Moss);
             }
@@ -1183,155 +1193,6 @@ namespace BadAppleHotel.Game
         }
 
         // ------------------------------------------------------------ monster
-
-        int monsterTab;   // 0 = the monster itself, 1 = its horde
-        static readonly string FearHex = "#FF6FAE";
-
-        void DrawMonsterUI()
-        {
-            var m = gm.Monster;
-            if (m == null) return;
-
-            float w = 330;
-            bool horde = monsterTab == 1;
-            var panel = new Rect(10, 146, w, horde ? (gm.HordeAwake(m) ? 368 : 190) : 262);
-            Panel(panel);
-            float x = panel.x + 10, y = panel.y + 6, iw = w - 20;
-            GUI.Label(new Rect(x, y, iw, 22), "<b>Lv " + m.Level + " " + m.Def.name + "</b>", label);
-            y += 24;
-            Bar(new Rect(x, y, iw, 10), m.Dead ? 0f : m.Hp / gm.MaxHp(m), Red);
-            y += 14;
-            GUI.Label(new Rect(x, y, iw, 22), "<color=" + FearHex + "><b>Fear " + Mathf.FloorToInt(m.Fear) + "</b></color>    kills " + m.Kills +
-                (m.Frenzy ? "    <color=#D7263D>HUNGRY</color>" : ""), small);
-            y += 24;
-            if (GUI.Button(new Rect(x, y, iw / 2 - 3, 28), horde ? "Monster" : "<b>Monster</b>", centerButton)) monsterTab = 0;
-            if (GUI.Button(new Rect(x + iw / 2 + 3, y, iw / 2 - 3, 28), horde ? "<b>Horde</b>" : "Horde", centerButton)) monsterTab = 1;
-            y += 34;
-            if (horde) DrawHordeTab(m, x, y, iw); else DrawGrowthTab(m, x, y, iw);
-
-            if (m.Dead)
-            {
-                var r = new Rect(vw / 2 - 200, VH / 2 - 30, 400, 60);
-                GUI.Box(r, GUIContent.none, box);
-                Ui(r);
-                GUI.Label(r, "Banished! Back in " + Mathf.CeilToInt(Mathf.Max(0f, m.RespawnAt - gm.Now)) + " s", center);
-            }
-
-            DrawJoystick();
-
-            // abilities as round buttons, right side
-            bool night = gm.Phase == Phase.Night;
-            for (int i = 0; i < m.Loadout.Length; i++)
-            {
-                var a = m.Loadout[i];
-                float cd = m.Cooldowns[i];
-                int idx = i;
-                var c = new Vector2(vw - 75f - (i % 3) * 110f, VH - 75f - (i / 3) * 108f);
-                string text = a.name + "\n<size=11>" + AbilityHint(a) + "</size>" + (cd > 0 ? "\n" + Mathf.CeilToInt(cd) + "s" : "\n[" + (i + 1) + "]");
-                RoundButton(c, 100f, text, i < 2 ? (Color)gm.ColorOf(m) : Mint, cd <= 0f && night && !m.Dead, () => gm.UseAbility(idx), roundSmall);
-            }
-            if (gm.HotelViewAvailable)
-                RoundButton(new Vector2(vw - 80f, VH - 310f), 72f, gm.HotelView ? "Back" : "Hotel\nview", Bone, true, () => gm.HotelView = !gm.HotelView, roundSmall);
-        }
-
-        void DrawGrowthTab(Monster m, float x, float y, float iw)
-        {
-            float price = gm.LevelPrice(m);
-            string text = price < 0 ? "Max level" : "Level up  ·  <color=" + FearHex + ">" + Mathf.CeilToInt(price) + " Fear</color>";
-            if (GUI.Button(new Rect(x, y, iw, 34), text, centerButton) && price >= 0) ReportFear(gm.TryBuyLevel(m));
-            y += 40;
-            var tracks = gm.Cfg.progression.statTracks;
-            string stats = "";
-            for (int i = 0; i < tracks.Length; i++) stats += tracks[i].name + " <b>" + m.StatRanks[i] + "</b>/" + tracks[i].maxRank + (i == 2 ? "\n" : "   ");
-            GUI.Label(new Rect(x, y, iw, 40), stats, small);
-            y += 42;
-            string kit = gm.KitName(m, 0) + " " + Roman(m.KitRanks[0]) + "   " + gm.KitName(m, 1) + " " + Roman(m.KitRanks[1]) + "\n" +
-                gm.KitName(m, 2) + (m.Level >= gm.Cfg.progression.specialLevel ? " " + Roman(m.KitRanks[2]) : " <color=#8A8070>(level " + gm.Cfg.progression.specialLevel + ")</color>");
-            GUI.Label(new Rect(x, y, iw, 40), kit, small);
-            y += 42;
-            GUI.Label(new Rect(x, y, iw, 22), "Ate: arm " + gm.PartCount(m, "arm") + "  leg " + gm.PartCount(m, "leg") +
-                "  torso " + gm.PartCount(m, "torso") + "  eye " + gm.PartCount(m, "eye"), small);
-        }
-
-        void DrawHordeTab(Monster m, float x, float y, float iw)
-        {
-            var line = gm.MinionLine(m);
-            if (!gm.HordeAwake(m))
-            {
-                float cost = gm.MinionUpgradeCost(m, "awaken");
-                GUI.Label(new Rect(x, y, iw, 40), "Open a rift outside every resident's door. Each night it releases <b>" + line.forms[0].name + "s</b>.", small);
-                y += 44;
-                if (GUI.Button(new Rect(x, y, iw, 34), "Awaken the horde  ·  <color=" + FearHex + ">" + Mathf.CeilToInt(cost) + " Fear</color>", centerButton))
-                    ReportFear(gm.TryBuyMinionUpgrade(m, "awaken"));
-                return;
-            }
-            var form = line.forms[gm.MinionFormIndex(m)];
-            GUI.Label(new Rect(x, y, iw, 20), "<b>" + form.name + "</b>  ·  " + gm.HordeSize(m) + " per door each night  ·  " + gm.Minions.Count + " out", small);
-            y += 24;
-            bool canSwap = gm.CanSwapMinionResist(m);
-            GUI.Label(new Rect(x, y + 4, 70, 22), "Resists", small);
-            for (int i = 0; i < 3; i++)
-            {
-                int type = i;
-                bool on = m.MinionResist == type;
-                var old = GUI.backgroundColor;
-                GUI.backgroundColor = on ? Candle : Color.white;
-                GUI.enabled = canSwap || on;
-                if (GUI.Button(new Rect(x + 64 + i * 84, y, 80, 26), (on ? "<b>" : "") + DamageTypes.Label(type) + (on ? "</b>" : ""), centerButton))
-                {
-                    var res = gm.TrySetMinionResist(m, type);
-                    if (res == ActionResult.Blocked) gm.Toast("You can change the resistance in " + gm.NightsUntilSwap(m) + " night(s).");
-                }
-                GUI.enabled = true;
-                GUI.backgroundColor = old;
-            }
-            y += 28;
-            var tally = gm.ScoutTally(m, out int unknown);
-            GUI.Label(new Rect(x, y, iw, 20), (canSwap ? "Seen: " : "Swap in " + gm.NightsUntilSwap(m) + " night(s) · seen: ") +
-                "bullet " + tally[0] + "  electric " + tally[1] + "  fire " + tally[2] + (unknown > 0 ? "  <color=#8A8070>? " + unknown + " room" + (unknown > 1 ? "s" : "") + "</color>" : ""), small);
-            y += 24;
-            foreach (var u in gm.Cfg.minions.upgrades)
-            {
-                if (u.id == "awaken") continue;
-                int rank = gm.MinionRank(m, u.id);
-                float cost = gm.MinionUpgradeCost(m, u.id);
-                string lockReason = gm.MinionUpgradeLock(m, u.id);
-                string name = u.id == "evolve" && cost >= 0 ? "Evolve: " + line.forms[Mathf.Min(line.forms.Length - 1, rank + 1)].name : u.name;
-                GUI.Label(new Rect(x, y + 4, iw - 112, 22), name + "  <color=#8A8070>" + rank + "/" + u.costs.Length + "</color>", small);
-                string button = cost < 0 ? "MAX" : lockReason != null ? "<size=10>" + lockReason + "</size>" : "<color=" + FearHex + ">" + Mathf.CeilToInt(cost) + " Fear</color>";
-                GUI.enabled = cost >= 0 && lockReason == null;
-                if (GUI.Button(new Rect(x + iw - 108, y, 108, 25), button, centerButton)) ReportFear(gm.TryBuyMinionUpgrade(m, u.id));
-                GUI.enabled = true;
-                y += 27;
-            }
-        }
-
-        void ReportFear(ActionResult r)
-        {
-            switch (r)
-            {
-                case ActionResult.NoMoney: gm.Toast("Not enough Fear. Hit residents, eat body parts, or lurk."); break;
-                case ActionResult.MaxLevel: gm.Toast("Already maxed."); break;
-                case ActionResult.Blocked: gm.Toast("Not available yet."); break;
-                case ActionResult.Invalid: gm.Toast("Can't do that right now."); break;
-            }
-        }
-
-        static string Roman(int rank) => rank <= 1 ? "I" : rank == 2 ? "II" : "III";
-
-        void DrawProgressChoice()
-        {
-            var m = gm.Monster;
-            if (m == null || !m.IsHuman || m.Choices.Count == 0) return;
-            var choice = m.Choices.Peek();
-            float width = Mathf.Min(720,vw-40);
-            var r = new Rect((vw-width)/2, 220, width, 175); Panel(r);
-            GUI.Label(new Rect(r.x+10,r.y+10,r.width-20,35), gm.ChoiceTitle(choice), subtitle);
-            float w = (width-30)/choice.Options.Length;
-            for (int i=0;i<choice.Options.Length;i++)
-                if (GUI.Button(new Rect(r.x+15+i*w,r.y+60,w-8,95),gm.ChoiceLabel(choice,choice.Options[i]),centerButton))
-                { gm.ChooseProgression(i); break; }
-        }
 
         static string AbilityHint(Config.AbilityDef a)
         {

@@ -59,6 +59,40 @@ namespace BadAppleHotel.Game
             return ActionResult.Ok;
         }
 
+        /// <summary>One tap on a stat in the monster's ring: buys the next level and puts its point there.</summary>
+        public ActionResult TryBuyLevelInto(Monster m, string statId)
+        {
+            if (m == null || m.StatRanks == null) return ActionResult.Invalid;
+            int i = Array.FindIndex(Cfg.progression.statTracks, s => s.id == statId);
+            if (i < 0) return ActionResult.Invalid;
+            if (m.StatRanks[i] >= Cfg.progression.statTracks[i].maxRank) return ActionResult.MaxLevel;
+            // Settle any stat point already owed first, so this tap's point lands where it was aimed.
+            if (m.Choices.Count > 0 && m.Choices.Peek().Kind == "Stat") return ChooseStat(m, statId) ? ActionResult.Ok : ActionResult.Invalid;
+            var result = TryBuyLevel(m);
+            if (result != ActionResult.Ok) return result;
+            // LevelUp queues the stat pick first; ranks or utilities for this level wait behind it.
+            ChooseStat(m, statId);
+            return ActionResult.Ok;
+        }
+
+        bool ChooseStat(Monster m, string statId)
+        {
+            if (m.Choices.Count == 0 || m.Choices.Peek().Kind != "Stat") return false;
+            int option = Array.IndexOf(m.Choices.Peek().Options, statId);
+            if (option < 0) return false;
+            ChooseProgression(option);
+            return true;
+        }
+
+        public int StatRank(Monster m, string id)
+        {
+            int i = Array.FindIndex(Cfg.progression.statTracks, s => s.id == id);
+            return i < 0 || m.StatRanks == null ? 0 : m.StatRanks[i];
+        }
+
+        /// <summary>True when a rank or utility pick is waiting for the player.</summary>
+        public bool HasPendingPick(Monster m) => m != null && m.Choices.Count > 0 && m.Choices.Peek().Kind != "Stat";
+
         void LevelUp(Monster m)
         {
             var p = Cfg.progression;

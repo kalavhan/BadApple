@@ -23,9 +23,8 @@ namespace BadAppleHotel.Game
             if (model == null || model.Rig == null) return null;
             var view = CharacterModel.Create(m.Sr, model, MonsterModelHeight(m.Def.id), matchRoot);
             // Dark goth costumes vanish in the night hallway; lift them a little so the silhouette reads.
-            view.Brighten(1.3f);
+            view.Brighten(1.6f);
             view.Glide = m.Def.id == "moldy_matron";
-            if (m.Def.id == "bellhop_wraith") { view.Glide = true; view.Hover = .12f; }
             return view;
         }
 
