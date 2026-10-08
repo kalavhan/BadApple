@@ -203,6 +203,9 @@ namespace BadAppleHotel.Game
 
         public SpriteRenderer Sr;
         public CharacterAnimator Anim;
+        public CharacterModel Model;               // baked 3D monster; replaces Anim when the kit has one
+        public bool HitPending;                    // a single-target hit landed since the model last drew
+        public string ActionPending;               // "Cast" / "Special" for the model to play
         public MonsterAI Ai;
     }
 

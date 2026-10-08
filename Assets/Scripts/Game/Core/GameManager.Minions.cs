@@ -302,8 +302,9 @@ namespace BadAppleHotel.Game
             var n = new Minion { Form = form, FormIndex = formIndex, Rift = rift, Pos = pos, Hp = hp, MaxHp = hp, Resist = m.MinionResist, NextAttackAt = Now + 0.4f };
             if (!Simulation && matchRoot != null)
             {
-                n.Sr = MakeSprite("Minion", Sprites.Monster(m.Def.id), pos, OrderFor(pos.y), matchRoot);
-                n.Sr.color = Color.Lerp(Color.white, ColorOf(m), .45f);
+                // Stand-in until the minion props arrive: a small spectre in the monster's colour.
+                n.Sr = MakeSprite("Minion", Sprites.Ghost, pos, OrderFor(pos.y), matchRoot);
+                n.Sr.color = Color.Lerp(Color.white, ColorOf(m), .7f);
             }
             Minions.Add(n);
             Metrics.MinionsSpawned++;

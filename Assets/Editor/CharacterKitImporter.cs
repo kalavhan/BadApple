@@ -183,7 +183,7 @@ namespace BadAppleHotel.EditorTools
             finally { AnimationMode.StopAnimationMode(); }
         }
 
-        static T SaveAsset<T>(T asset, string path) where T : Object
+        internal static T SaveAsset<T>(T asset, string path) where T : Object
         {
             var existing = AssetDatabase.LoadAssetAtPath<T>(path);
             if (existing == null) { AssetDatabase.CreateAsset(asset, path); return asset; }
@@ -205,15 +205,15 @@ namespace BadAppleHotel.EditorTools
             finally { Object.DestroyImmediate(go); }
         }
 
-        static Mesh Reduce(Mesh source)
+        internal static Mesh Reduce(Mesh source, int budget = TriangleBudget)
         {
             int triangles = source.triangles.Length / 3;
-            if (triangles <= TriangleBudget) return Object.Instantiate(source);
+            if (triangles <= budget) return Object.Instantiate(source);
             var reducer = new MeshSimplifier();
             var options = SimplificationOptions.Default;
             options.MaxIterationCount = 200; options.PreserveUVSeamEdges = false; options.PreserveUVFoldoverEdges = true; options.EnableSmartLink = true;
             reducer.SimplificationOptions = options; reducer.Initialize(source);
-            reducer.SimplifyMesh((float)TriangleBudget / triangles);
+            reducer.SimplifyMesh((float)budget / triangles);
             return reducer.ToMesh();
         }
 
@@ -251,7 +251,7 @@ namespace BadAppleHotel.EditorTools
 
         /// <summary>The export's base colour: a "_BaseColor" texture, else the only colour texture
         /// (Tripo's rigged exports name it tripo_image_*).</summary>
-        static Texture2D FindAlbedo(string stem)
+        internal static Texture2D FindAlbedo(string stem)
         {
             Texture2D any = null;
             foreach (var guid in AssetDatabase.FindAssets("t:Texture2D", new[] { $"Assets/TripoModels/{stem}/{stem}.fbm" }))
@@ -263,7 +263,7 @@ namespace BadAppleHotel.EditorTools
             return any;
         }
 
-        static Texture2D SaveAlbedo(Texture sourceTexture, string name)
+        internal static Texture2D SaveAlbedo(Texture sourceTexture, string name, string folder = Output)
         {
             var rt = RenderTexture.GetTemporary(TextureSize, TextureSize, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
             var previous = RenderTexture.active;
@@ -271,7 +271,7 @@ namespace BadAppleHotel.EditorTools
             var tex = new Texture2D(TextureSize, TextureSize, TextureFormat.RGBA32, false);
             tex.ReadPixels(new Rect(0, 0, TextureSize, TextureSize), 0, 0); tex.Apply();
             RenderTexture.active = previous; RenderTexture.ReleaseTemporary(rt);
-            string output = $"{Output}/{name}_albedo.png";
+            string output = $"{folder}/{name}_albedo.png";
             File.WriteAllBytes(output, tex.EncodeToPNG()); Object.DestroyImmediate(tex);
             AssetDatabase.ImportAsset(output, ImportAssetOptions.ForceSynchronousImport);
             var ti = (TextureImporter)AssetImporter.GetAtPath(output);

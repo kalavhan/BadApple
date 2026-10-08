@@ -143,6 +143,13 @@ namespace BadAppleHotel.Game
 
             if (Simulation) return;
             // visuals
+            if (m.Model != null)
+            {
+                m.Sr.enabled = IsVisible(m.Pos);
+                PlaceMonsterModel(m, move.sqrMagnitude > 0.0001f || now < m.DashUntil);
+                ContactShadow.Place(m.Sr, m.Pos, true);
+                return;
+            }
             HotelView3D.Billboard(m.Sr, m.Pos);
             if (m.Anim != null)
             {
@@ -204,6 +211,7 @@ namespace BadAppleHotel.Game
                 if (now < m.NextAttackAt) return;
                 m.NextAttackAt = now + AttackInterval(m);
                 m.HitCount++;
+                m.HitPending = true;
                 if (m.Def.stunEveryHits > 0 && m.HitCount % m.Def.stunEveryHits == 0) prey.StunUntil = now + m.Def.stunSeconds;
                 if (m.Def.rotSeconds > 0 && prey.Room != null) prey.Room.RotUntil = now + m.Def.rotSeconds;
                 DamageResident(prey, HitDamage(m), true);
@@ -222,6 +230,7 @@ namespace BadAppleHotel.Game
             m.AttackingRoom = door;
             if (now < m.NextAttackAt) return;
             m.NextAttackAt = now + AttackInterval(m);
+            m.HitPending = true;
             float rampage = now < m.RampageUntil ? m.RampageValue : 1f;
             float hit = m.Def.doorDamagePerSecond * m.Def.attackInterval * m.Def.attackDoorMultiplier * RankDamage(m.KitRanks[0]) *
                 AttackMult(m) * rampage * (m.Frenzy ? Cfg.progression.frenzyMultiplier : 1f);
@@ -460,6 +469,7 @@ namespace BadAppleHotel.Game
                     return false;
             }
             m.Cooldowns[i] = a.cooldownSeconds * (rank > 0 ? RankCooldown(rank) : 1f);
+            m.ActionPending = a.id == m.Def.special ? "Special" : "Cast";
             if (IsVisible(m.Pos)) AddFloater(m.Pos + Vector2.up * 2.2f, a.name + "!", ColorOf(m));
             if (!m.IsHuman) AddLog(m.Def.name + " used " + a.name + ".");
             return true;
