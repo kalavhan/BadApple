@@ -276,9 +276,7 @@ namespace BadAppleHotel.Game
 
         void RefreshDoor(Room room)
         {
-            if (room.DoorSr == null) return;
-            room.DoorSr.sprite = room.DoorBroken ? Sprites.DoorBroken : room.DoorOpen ? Sprites.DoorOpen : Sprites.Door(room.DoorLevel);
-            PoseDoor(room.DoorSr,room.Def,room.DoorBroken||room.DoorOpen);
+            ApplyDoorLook(room.Def, room);
         }
 
         // ------------------------------------------------------------------ economy

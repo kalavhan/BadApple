@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87e6a0f35d474fe5b3ed6c24e816a930, type: 3}
+  m_Name: HotelDoorKit
+  m_EditorClassIdentifier: BadAppleHotel::BadAppleHotel.Game.DoorKit
+  Pieces:
+  - Level: 1
+    Mesh: {fileID: 4300000, guid: a2ce5c45a4c2795c28153a11d3ce94ea, type: 2}
+    BrokenMesh: {fileID: 4300000, guid: f6431e63b0da94f35b2c117fa00160d4, type: 2}
+    Albedo: {fileID: 2800000, guid: 3a61f1b03b914d0dfa2bfa5d6582c6da, type: 3}
+    Size: {x: 0.94000006, y: 0.2, z: 1.4}
+    Source: Assets/TripoModels/cardboard_crate_3d_model/cardboard_crate_3d_model.fbx
+    Triangles: 1862
+    SourceTriangles: 1862
+  - Level: 2
+    Mesh: {fileID: 4300000, guid: 25c5948efbc6fe2dbaa26a0750a61e65, type: 2}
+    BrokenMesh: {fileID: 4300000, guid: bdf0b88a05f9ac914ae200fa2fa45167, type: 2}
+    Albedo: {fileID: 2800000, guid: 526621c20daa38f488b65e439c7b0ce8, type: 3}
+    Size: {x: 0.93999994, y: 0.2, z: 1.4}
+    Source: Assets/TripoModels/rustic_wooden_door_3d_model/rustic_wooden_door_3d_model.fbx
+    Triangles: 1890
+    SourceTriangles: 1890
+  - Level: 3
+    Mesh: {fileID: 4300000, guid: 1b89dca8aa28331399aa8f9c4c93d745, type: 2}
+    BrokenMesh: {fileID: 4300000, guid: e901621c63ef52ac8b38764d4565cbdf, type: 2}
+    Albedo: {fileID: 2800000, guid: 8e9182d23f98e9c598bf9238b6cc10b0, type: 3}
+    Size: {x: 0.94000006, y: 0.1838407, z: 1.4}
+    Source: Assets/TripoModels/antique_wooden_door_3d_model/antique_wooden_door_3d_model.fbx
+    Triangles: 1850
+    SourceTriangles: 1850
+  - Level: 4
+    Mesh: {fileID: 4300000, guid: 9e310af021906a00a985990dbd2b4d4d, type: 2}
+    BrokenMesh: {fileID: 4300000, guid: dddf30370d9a3a71880d9079f6df6f84, type: 2}
+    Albedo: {fileID: 2800000, guid: 92e7949ec09bf5297a0f2cce62333dc7, type: 3}
+    Size: {x: 0.94000006, y: 0.19999999, z: 1.4}
+    Source: Assets/TripoModels/wooden_door_3d_model/wooden_door_3d_model.fbx
+    Triangles: 4000
+    SourceTriangles: 19762
+  - Level: 5
+    Mesh: {fileID: 4300000, guid: 53d93499599b1eec4bb7bbf5c8757842, type: 2}
+    BrokenMesh: {fileID: 4300000, guid: 0a28bc5ed610039758ebc46535683e41, type: 2}
+    Albedo: {fileID: 2800000, guid: 5f5b83ab80593edc78ad1de62a455fe8, type: 3}
+    Size: {x: 0.94000006, y: 0.2, z: 1.4}
+    Source: Assets/TripoModels/stone_door_3d_model/stone_door_3d_model.fbx
+    Triangles: 4000
+    SourceTriangles: 13510
+  - Level: 6
+    Mesh: {fileID: 4300000, guid: 7781bda382ecd627783f5090cb8e107f, type: 2}
+    BrokenMesh: {fileID: 4300000, guid: ffd30830f0bf363beaab4ec6b6b7465e, type: 2}
+    Albedo: {fileID: 2800000, guid: bd4bae632a4e65077b8e52275b3294d1, type: 3}
+    Size: {x: 0.93999994, y: 0.19650756, z: 1.4}
+    Source: Assets/TripoModels/medieval_wooden_door_3d_model/medieval_wooden_door_3d_model.fbx
+    Triangles: 3999
+    SourceTriangles: 12386
+  - Level: 7
+    Mesh: {fileID: 4300000, guid: 1805514efd173fa3e991a809f3cbf13a, type: 2}
+    BrokenMesh: {fileID: 4300000, guid: ad452b764b03b9f6b9520f4f83652777, type: 2}
+    Albedo: {fileID: 2800000, guid: 1d2d2e9ba27b16cb7b1831b1feabe9f1, type: 3}
+    Size: {x: 0.94, y: 0.2, z: 1.4}
+    Source: Assets/TripoModels/skull_door_3d_model/skull_door_3d_model.fbx
+    Triangles: 4000
+    SourceTriangles: 13157

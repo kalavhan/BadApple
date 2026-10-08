@@ -1,0 +1,1062 @@
+{
+    "unityVersion": "6000.3.24f1",
+    "graphicsDevice": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "shots": [
+        {
+            "state": "closed",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-closed.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "open",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-open.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "broken",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-broken.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "rebuilt",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-rebuilt.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "cutaway",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-cutaway.png",
+            "wallMode": "Cutaway",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 43070,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "walls-down",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-walls-down.png",
+            "wallMode": "Down",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "mat-available",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-mat-available.png",
+            "wallMode": "Down",
+            "matState": "Available",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "mat-occupied",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-mat-occupied.png",
+            "wallMode": "Down",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "mat-sleeping",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-mat-sleeping.png",
+            "wallMode": "Down",
+            "matState": "Sleeping",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "mat-awake",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-mat-awake.png",
+            "wallMode": "Down",
+            "matState": "Awake",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "mat-dead",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-mat-dead.png",
+            "wallMode": "Down",
+            "matState": "Dead",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "mat-empty",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-1-mat-empty.png",
+            "wallMode": "Down",
+            "matState": "Empty",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 1,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "closed",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-2-closed.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 2,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "open",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-2-open.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 2,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "broken",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-2-broken.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 2,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "rebuilt",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-2-rebuilt.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 2,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "cutaway",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-2-cutaway.png",
+            "wallMode": "Cutaway",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 2,
+            "visibleWallTriangles": 43070,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "walls-down",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-2-walls-down.png",
+            "wallMode": "Down",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 2,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "closed",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-3-closed.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 3,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "open",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-3-open.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 3,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "broken",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-3-broken.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 3,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "rebuilt",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-3-rebuilt.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 3,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "cutaway",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-3-cutaway.png",
+            "wallMode": "Cutaway",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 3,
+            "visibleWallTriangles": 43070,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "walls-down",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-3-walls-down.png",
+            "wallMode": "Down",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 3,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "closed",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-4-closed.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 4,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "open",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-4-open.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 4,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "broken",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-4-broken.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 4,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "rebuilt",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-4-rebuilt.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 4,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "cutaway",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-4-cutaway.png",
+            "wallMode": "Cutaway",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 4,
+            "visibleWallTriangles": 43070,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "walls-down",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-4-walls-down.png",
+            "wallMode": "Down",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 4,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "closed",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-5-closed.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 5,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "open",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-5-open.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 5,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "broken",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-5-broken.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 5,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "rebuilt",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-5-rebuilt.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 5,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "cutaway",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-5-cutaway.png",
+            "wallMode": "Cutaway",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 5,
+            "visibleWallTriangles": 43070,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "walls-down",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-5-walls-down.png",
+            "wallMode": "Down",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 5,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "closed",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-6-closed.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 6,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "open",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-6-open.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 6,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "broken",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-6-broken.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 6,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "rebuilt",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-6-rebuilt.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 6,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "cutaway",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-6-cutaway.png",
+            "wallMode": "Cutaway",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 6,
+            "visibleWallTriangles": 43070,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "walls-down",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-6-walls-down.png",
+            "wallMode": "Down",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 6,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "closed",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-7-closed.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 7,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "open",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-7-open.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 7,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "broken",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-7-broken.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 7,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": false,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "rebuilt",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-7-rebuilt.png",
+            "wallMode": "Up",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 7,
+            "visibleWallTriangles": 39768,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "cutaway",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-7-cutaway.png",
+            "wallMode": "Cutaway",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 7,
+            "visibleWallTriangles": 43070,
+            "wallDrawCalls": 7,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        },
+        {
+            "state": "walls-down",
+            "file": "/tmp/badapple-door-qa/Builds/DoorQA/door-game-7-walls-down.png",
+            "wallMode": "Down",
+            "matState": "Occupied",
+            "mapSeed": 634280400,
+            "roomIndex": 0,
+            "doorLevel": 7,
+            "visibleWallTriangles": 43670,
+            "wallDrawCalls": 6,
+            "fog": false,
+            "doorBlocks": true,
+            "meshVisible": true,
+            "actorPosition": {
+                "x": 36.5,
+                "y": 17.5
+            },
+            "doorway": {
+                "x": 36.5,
+                "y": 16.5
+            }
+        }
+    ]
+}
