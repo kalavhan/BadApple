@@ -19,7 +19,7 @@ namespace BadAppleHotel.Game
             public TowerInstance Tower;
             public Room Room;
             public Vector2Int Tile;
-            public int Level, Frame;
+            public int Level, Form, Frame;
             public float Seed, Arrive, FlashAt = -99f, FlashLength = .12f, PulseAt = -99f, FireAt = -99f, NextIncome;
             public int Dir = 6;
             public TowerSpriteSet Art;
@@ -123,12 +123,13 @@ namespace BadAppleHotel.Game
                     if (t == null) continue;
                     if (!towerFx.TryGetValue(t, out var s))
                     {
-                        s = new TowerFxState { Tower = t, Room = room, Tile = t.Tile, Level = t.Level, Seed = DreamFx.Range(0f, 50f),
+                        s = new TowerFxState { Tower = t, Room = room, Tile = t.Tile, Level = t.Level, Form = TowerForm(t), Seed = DreamFx.Range(0f, 50f),
                             Accent = TowerAccent(t.Def), NextIncome = now + DreamFx.Range(.5f, 2f) };
                         towerFx[t] = s;
                         Summon(s, now);
                     }
-                    else if (s.Level != t.Level) Evolve(s, now);
+                    else if (s.Form != TowerForm(t)) Evolve(s, now);
+                    else if (s.Level != t.Level) LevelUp(s, now);
                     s.Frame = towerFxFrame;
                     DrawTower(s, now);
                 }
@@ -179,6 +180,7 @@ namespace BadAppleHotel.Game
         void Evolve(TowerFxState s, float now)
         {
             s.Level = s.Tower.Level;
+            s.Form = TowerForm(s.Tower);
             s.Arrive = now + .18f;
             ApplyArt(s);
             SetMaterialize(s, 0);
@@ -197,12 +199,29 @@ namespace BadAppleHotel.Game
             s.FlashAt = now; s.FlashLength = .25f;
         }
 
-        /// <summary>A removed creature (sold, or a disguise unmasked) dissolves back into the dream.</summary>
+        /// <summary>A level inside the same form: a seam ring on the floor and mint sparks climbing the creature.</summary>
+        void LevelUp(TowerFxState s, float now)
+        {
+            s.Level = s.Tower.Level;
+            if (!IsTileVisible(s.Tile)) return;
+            var center = HotelMap.Center(s.Tile);
+            dreamFx.Emit(new DreamFx.Particle { Shape = DreamFx.Shape.Ring, Pos = Lifted(center, 0), Size = .75f, Life = .55f, Color = DreamMint, Ground = true });
+            dreamFx.Emit(new DreamFx.Particle { Shape = DreamFx.Shape.Ring, Pos = Lifted(center, 0), Size = .5f, Life = .45f, Color = DreamViolet, Ground = true, Age = -.1f });
+            dreamFx.Burst(Lifted(center, .2f), 14, DreamMint, 1.6f, .035f, .8f, 2.2f, -1.2f);
+            dreamFx.FlashLight(center, 1.4f, DreamMint * .8f, .35f);
+            s.FlashAt = now; s.FlashLength = .14f;
+        }
+
+        /// <summary>A removed creature (sold, or a disguise unmasked) burns away in mint dream fire.</summary>
         void Banish(TowerFxState s, float now)
         {
             if (!IsTileVisible(s.Tile)) return;
             var center = HotelMap.Center(s.Tile);
             dreamFx.Emit(new DreamFx.Particle { Shape = DreamFx.Shape.Ring, Pos = Lifted(center, 0), Size = .7f, Life = .5f, Color = DreamViolet, Ground = true });
+            for (int i = 0; i < 9; i++)
+                dreamFx.Emit(new DreamFx.Particle { Shape = DreamFx.Shape.Flame, Pos = Lifted(center, .1f) + (Vector3)(DreamFx.InCircle() * .28f),
+                    Vel = Vector3.back * DreamFx.Range(.7f, 1.3f), Size = .34f * DreamFx.Range(.7f, 1.2f), Life = DreamFx.Range(.5f, .8f),
+                    Color = i % 3 == 0 ? DreamViolet : DreamMint, Age = -i * .05f });
             for (int i = 0; i < 16; i++)
             {
                 var p = Lifted(center, DreamFx.Range(.1f, 1.4f)) + (Vector3)(DreamFx.InCircle() * .3f);
@@ -219,7 +238,7 @@ namespace BadAppleHotel.Game
         /// <summary>Animated art for this form, when it exists, replaces the static tier sprite.</summary>
         void ApplyArt(TowerFxState s)
         {
-            s.Art = TowerSpriteSet.Load(s.Tower.Def.id, s.Tower.Level);
+            s.Art = TowerSpriteSet.Load(s.Tower.Def.id, TowerForm(s.Tower));
             s.FireAt = -99f;
             var sr = s.Tower.Sr;
             if (s.Art == null || sr == null) return;
@@ -280,17 +299,17 @@ namespace BadAppleHotel.Game
             var center = HotelMap.Center(s.Tile);
             var fx = dreamFx;
             float sigil = Mathf.Clamp01((now - s.Arrive + .15f) / .45f);
-            fx.Decal(center + SigilBack, .44f, DreamFx.Shape.Sigil, s.Accent * new Color(1, 1, 1, .9f * strength), sigil, s.Seed, t.Level);
+            fx.Decal(center + SigilBack, .44f, DreamFx.Shape.Sigil, s.Accent * new Color(1, 1, 1, .9f * strength), sigil, s.Seed, s.Form);
 
             // Motes climb from the sigil; more of them as the creature evolves.
-            int motes = 2 + t.Level;
+            int motes = 2 + s.Form;
             for (int k = 0; k < motes; k++)
             {
                 float phase = Mathf.Repeat(now * (.24f + .05f * k) + s.Seed * .37f + k / (float)motes, 1f);
                 float a = s.Seed * 7f + k * 2.4f, r = .16f + .14f * Mathf.Repeat(s.Seed * (k + 1) * .618f, 1f);
                 var p = Lifted(center + SigilBack + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r * (1 - phase * .4f), .04f + phase * 1.35f);
                 float glow = Mathf.Sin(phase * Mathf.PI) * strength * sigil;
-                fx.Billboard(p, .045f + .008f * t.Level, .045f + .008f * t.Level, DreamFx.Shape.Glow,
+                fx.Billboard(p, .045f + .008f * s.Form, .045f + .008f * s.Form, DreamFx.Shape.Glow,
                     (k % 2 == 0 ? s.Accent : DreamMint) * new Color(1, 1, 1, glow), 0, s.Seed + k);
             }
 
@@ -356,8 +375,8 @@ namespace BadAppleHotel.Game
             float now = fxNow;
             var m = Monster;
             var style = StyleFor(s.Tower.Def);
-            float scale = (1f + .14f * (s.Tower.Level - 1)) * AttackSize;
-            var muzzle = Lifted(from, MuzzleHeight * Mathf.Lerp(.85f, 1.1f, (s.Tower.Level - 1) / 3f));
+            float scale = (1f + .14f * (s.Form - 1)) * AttackSize;
+            var muzzle = Lifted(from, MuzzleHeight * Mathf.Lerp(.85f, 1.1f, (s.Form - 1) / 3f));
             var aim = Lifted(m.Pos, TargetHeight) - muzzle; aim.z = 0;
             if (aim.sqrMagnitude > .0001f) muzzle += aim.normalized * .22f;
             // With an attack clip, the shot leaves at the clip's release frame instead of instantly.

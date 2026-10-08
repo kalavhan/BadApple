@@ -161,6 +161,16 @@ namespace BadAppleHotel.Game
         public float Zoom { get; private set; } = DefaultZoom;
         public void SetZoom(float zoom) => Zoom = Mathf.Clamp(zoom, MinZoom, MaxZoom);
         public bool SleepingCamera => InMatch && Human != null && Human.Alive && Human.Asleep;
+
+        /// <summary>
+        /// A floor point an open HUD window is about (a build plate, a tower). While set, the camera eases so the
+        /// point sits between UiFocusMinY and UiFocusMaxY screen pixels above the bottom edge (clear of the window
+        /// below and the top bar above), and eases back after.
+        /// </summary>
+        public Vector2? UiFocus { get; set; }
+        public float UiFocusMinY { get; set; }
+        public float UiFocusMaxY { get; set; } = float.MaxValue;
+        float uiShiftPx;
         public void DragCamera(Vector2 screenDelta)
         {
             if (!InMatch || Cam == null) return;
@@ -210,8 +220,29 @@ namespace BadAppleHotel.Game
                     : HotelView3D.Clamp(cameraPosition, size, aspect, Map.W, Map.H);
             }
             Cam.orthographicSize = size;
+            target += UiFocusShift(target, size, dt);
             Cam.transform.position = new Vector3(target.x, target.y, 0) - HotelView3D.Forward * 100f;
             if (!Simulation) { UpdateWallOcclusion(); UpdateDoorViews(); }
+        }
+
+        /// <summary>The ground offset that lifts UiFocus above the HUD window (smoothed in screen pixels).</summary>
+        Vector2 UiFocusShift(Vector2 target, float size, float dt)
+        {
+            float pixelsPerUnit = Screen.height / (2f * size);
+            var up = Cam.transform.up;
+            var upGround = new Vector2(up.x, up.y);
+            float want = 0f;
+            if (UiFocus.HasValue && !HotelView && upGround.sqrMagnitude > 1e-4f)
+            {
+                // Screen height of the focus with the camera centred on target, without any shift.
+                float y = Screen.height / 2f + Vector2.Dot(UiFocus.Value - target, upGround) * pixelsPerUnit;
+                want = y < UiFocusMinY ? UiFocusMinY - y : y > UiFocusMaxY ? UiFocusMaxY - y : 0f;
+            }
+            uiShiftPx = Mathf.Lerp(uiShiftPx, want, 1f - Mathf.Exp(-9f * dt));
+            if (Mathf.Abs(uiShiftPx) < .5f && want == 0f) uiShiftPx = 0f;
+            if (uiShiftPx == 0f || upGround.sqrMagnitude <= 1e-4f) return Vector2.zero;
+            // Moving the camera down the screen lifts everything in view.
+            return -upGround / upGround.sqrMagnitude * (uiShiftPx / pixelsPerUnit);
         }
 
         public bool HotelViewAvailable =>
@@ -256,6 +287,7 @@ namespace BadAppleHotel.Game
             Endless = false;
             Now = 0;
             Metrics = new MatchMetrics();
+            System.Array.Clear(KnownDamageTypes, 0, KnownDamageTypes.Length);
             HotelView = false;
 
             var defs = Cfg.monsters.monsters;

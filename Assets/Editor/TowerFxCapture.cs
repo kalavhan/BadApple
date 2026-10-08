@@ -75,7 +75,7 @@ namespace BadAppleHotel.EditorTools
                     if (!game.CanBuildAt(room, slot)) continue;
                     Invoke(game, "PlaceTower", room, slot, tower);
                     var t = room.Slots[slot];
-                    SetLevel(t, 1 + k % 4);
+                    SetForm(game, t, 1 + k % 4);
                     placed.Add(t);
                 }
 
@@ -114,7 +114,7 @@ namespace BadAppleHotel.EditorTools
                     if (attack >= 0 && attack % 9 == 0 && attack / 9 < weapons.Count) Fire(game, weapons[attack / 9], m, frame, stills);
                     if (frame == 210) foreach (var t in weapons) Fire(game, t, m, -1, null);
                     if (frame == 222) stills[frame] = "volley";
-                    if (frame == 250 && placed.Count > 0) { SetLevel(placed[0], placed[0].Level + 1); stills[frame + 4] = "evolve"; stills[frame + 12] = "evolve-late"; }
+                    if (frame == 250 && placed.Count > 0) { SetForm(game, placed[0], game.TowerForm(placed[0]) + 1); stills[frame + 4] = "evolve"; stills[frame + 12] = "evolve-late"; }
                     if (frame == 290 && placed.Count > 1)
                     {
                         var gone = placed[placed.Count - 1];
@@ -155,10 +155,11 @@ namespace BadAppleHotel.EditorTools
             stills[frame + 7] = "impact-" + t.Def.id;
         }
 
-        static void SetLevel(TowerInstance t, int level)
+        /// <summary>Puts a tower at the first level of a form (1-4), as an evolve would.</summary>
+        static void SetForm(GameManager game, TowerInstance t, int form)
         {
-            t.Level = Mathf.Clamp(level, 1, 4);
-            t.Sr.sprite = TowerDirections.Get(t.Def.id, t.Level, Vector2.down) ?? Sprites.Tower(t.Def, t.Level);
+            t.Level = BadAppleHotel.Rules.UpgradeRules.FormStart(game.Cfg.towers, t.Def, Mathf.Clamp(form, 1, 4));
+            t.Sr.sprite = GameManager.TowerSprite(t.Def, game.TowerForm(t));
             HotelView3D.Billboard(t.Sr, HotelMap.Center(t.Tile));
         }
 

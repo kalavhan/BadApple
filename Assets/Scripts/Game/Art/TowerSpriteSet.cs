@@ -30,10 +30,10 @@ namespace BadAppleHotel.Game
         public bool HasFire => fire != null;
         public float FireDuration => fire == null ? 0 : fire[0].Length / fireFps;
 
-        public static TowerSpriteSet Load(string id, int level)
+        public static TowerSpriteSet Load(string id, int form)
         {
             if (!Sprites.UseArt) return null;
-            string key = id + "_" + level;
+            string key = id + "_" + form;
             if (cache.TryGetValue(key, out var hit)) return hit;
             TowerSpriteSet set = null;
             var meta = Resources.Load<TextAsset>("Art/TowerAnim/" + key + "/anim");

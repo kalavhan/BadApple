@@ -297,7 +297,7 @@ namespace BadAppleHotel.Game
             float f = 0f;
             foreach (var t in room.Slots)
                 if (t != null && t.IsDreamGen)
-                    f += UpgradeRules.DreamRate(t.Def, t.Level);
+                    f += UpgradeRules.DreamRate(Cfg.towers, t.Def, t.Level);
             return f;
         }
 
@@ -306,7 +306,7 @@ namespace BadAppleHotel.Game
             float f = 0f;
             foreach (var t in room.Slots)
                 if (t != null && t.IsFaith)
-                    f += UpgradeRules.FaithRate(t.Def, t.Level);
+                    f += UpgradeRules.FaithRate(Cfg.towers, t.Def, t.Level);
             return room.Owner.IsMonster ? 0f : Income(f);
         }
 
@@ -367,7 +367,7 @@ namespace BadAppleHotel.Game
 
         public DoorUpgradeResult CheckDoor(Room room)
         {
-            var levels = Weapons(room).Select(w => UpgradeRules.DoorSupportLevel(w.Def, w.Level)).ToArray();
+            var levels = Weapons(room).Select(w => UpgradeRules.DoorSupportLevel(Cfg.towers, w.Def, w.Level)).ToArray();
             return UpgradeRules.CanUpgradeDoor(Cfg.doors, room.DoorLevel, levels);
         }
 
@@ -393,7 +393,7 @@ namespace BadAppleHotel.Game
             if (!CanAct(r)) return ActionResult.Invalid;
             var room = r.Room;
             var weapons = Weapons(room);
-            var check = UpgradeRules.CanUpgradeDoor(Cfg.doors, room.DoorLevel, weapons.Select(w => UpgradeRules.DoorSupportLevel(w.Def, w.Level)).ToArray());
+            var check = UpgradeRules.CanUpgradeDoor(Cfg.doors, room.DoorLevel, weapons.Select(w => UpgradeRules.DoorSupportLevel(Cfg.towers, w.Def, w.Level)).ToArray());
 
             if (check.AtMaxLevel)
             {
@@ -473,7 +473,7 @@ namespace BadAppleHotel.Game
             var tile = room.Def.BuildTiles[slot];
             var pos = HotelMap.Center(tile);
             var t = new TowerInstance { Def = def, Level = 1, SlotIndex = slot, Tile = tile };
-            t.Sr = MakeSprite(def.name, TowerDirections.Get(def.id,1,Vector2.down) ?? Sprites.Tower(def, 1), pos, OrderFor(pos.y), matchRoot);
+            t.Sr = MakeSprite(def.name, TowerSprite(def, 1), pos, OrderFor(pos.y), matchRoot);
             if (!Simulation)
             {
                 HotelView3D.Billboard(t.Sr, pos);
@@ -494,6 +494,11 @@ namespace BadAppleHotel.Game
         }
 
         public int TowerMaxLevel(TowerInstance t) => UpgradeRules.TowerMaxLevel(Cfg.towers, t.Def);
+        /// <summary>The tier art and name a tower shows (forms span several levels).</summary>
+        public int TowerForm(TowerInstance t) => UpgradeRules.Form(Cfg.towers, t.Def, t.Level);
+        public UpgradeRules.Step TowerNextStep(TowerInstance t) => UpgradeRules.NextStep(Cfg.towers, t.Def, t.Level);
+        public string TowerName(TowerInstance t) => UpgradeRules.TowerName(Cfg.towers, t.Def, t.Level);
+        public static Sprite TowerSprite(TowerDef def, int form) => TowerDirections.Get(def.id, form, Vector2.down) ?? Sprites.Tower(def, form);
 
         public float TowerUpgradeCost(TowerInstance t) =>
             t.Level >= TowerMaxLevel(t) ? -1f : UpgradeRules.TowerUpgradeCost(Cfg.towers, t.Def, t.Level);
@@ -509,10 +514,15 @@ namespace BadAppleHotel.Game
             float cost = TowerUpgradeCost(t);
             if (cost < 0f) return ActionResult.MaxLevel;
             if (!Spend(r, t.Def.costResource, cost)) return ActionResult.NoMoney;
+            int form = TowerForm(t);
             t.Level++;
-            t.Sr.sprite = TowerDirections.Get(t.Def.id,t.Level,Vector2.down) ?? Sprites.Tower(t.Def, t.Level);
-            if(!Simulation)HotelView3D.Billboard(t.Sr,HotelMap.Center(t.Tile));
-            AddFloater(HotelMap.Center(t.Tile) + Vector2.up * 0.8f, "Lv " + t.Level, (Color)Palette.Bone);
+            if (TowerForm(t) != form)
+            {
+                t.Sr.sprite = TowerSprite(t.Def, TowerForm(t));
+                if (!Simulation) HotelView3D.Billboard(t.Sr, HotelMap.Center(t.Tile));
+            }
+            // The player's own windows show their own level-up mark.
+            if (!r.IsHuman) AddFloater(HotelMap.Center(t.Tile) + Vector2.up * 0.8f, "Lv " + t.Level, (Color)Palette.Bone);
             return ActionResult.Ok;
         }
 

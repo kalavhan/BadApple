@@ -96,6 +96,16 @@ namespace BadAppleHotel.Config
             Require(c.towers.towers != null && c.towers.towers.Length > 0, "towers.json: no towers");
             Require(c.towers.rangeTiles != null && c.towers.rangeTiles.@short > 0 && c.towers.rangeTiles.mid > 0 && c.towers.rangeTiles.@long > 0,
                 "towers.json: rangeTiles needs short, mid and long");
+            var forms = c.towers.levels?.formStartLevels;
+            if (forms != null && forms.Length > 0)
+            {
+                Require(forms[0] == 1, "towers.json: levels.formStartLevels must start at 1");
+                for (int i = 1; i < forms.Length; i++)
+                    Require(forms[i] > forms[i - 1] + 1, "towers.json: every form needs at least two levels");
+                Require(c.towers.levels.maxLevel > forms[forms.Length - 1], "towers.json: levels.maxLevel must leave the final form a level-up");
+                Require(c.towers.levels.inFormGrowth >= 0 && c.towers.levels.inFormGrowth <= 1 && c.towers.levels.levelUpShare > 0 && c.towers.levels.levelUpShare < 1 &&
+                    c.towers.levels.levelUpCostGrowth >= 1 && c.towers.levels.finalFormCostMultiplier > 0, "towers.json: invalid level growth or costs");
+            }
             foreach (var t in c.towers.towers)
             {
                 if (t.tiers != null && t.tiers.Length > 0)

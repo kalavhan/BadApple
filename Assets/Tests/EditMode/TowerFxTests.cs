@@ -158,6 +158,9 @@ namespace BadAppleHotel.Tests
 
                 tower.Level = 2;
                 Frame(1 / 30f);
+                Assert.AreEqual(1f, Materialize(tower), .001f, "A level-up inside a form keeps the creature.");
+                tower.Level = BadAppleHotel.Rules.UpgradeRules.FormStart(game.Cfg.towers, tower.Def, 2);
+                Frame(1 / 30f);
                 Assert.Less(Materialize(tower), 1f, "Evolving re-forms the creature.");
                 Assert.Greater(game.Effects.ParticleCount, 0);
 
