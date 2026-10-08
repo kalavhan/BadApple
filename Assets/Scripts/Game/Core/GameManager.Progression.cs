@@ -5,6 +5,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 namespace BadAppleHotel.Game
 {
+    /// <summary>A pick the monster owes after a level: a stat track ("Stat"), a kit ability rank ("Rank") or a utility ability ("Utility").</summary>
     public class ProgressChoice
     {
         public string Kind;
@@ -16,63 +17,143 @@ namespace BadAppleHotel.Game
         public bool Endless { get; private set; }
         public float Now { get; private set; }
         float nextPartSpawn;
-        public double NextMonsterLevelXp(Monster m) => Cfg.progression.baseXp * Math.Pow(Cfg.progression.growth, m.Level - 1);
-        public EvolutionDef Evolution(Monster m) => Cfg.progression.evolutions.LastOrDefault(e => e.monster == m.Def.id && e.branch == m.Branch && e.level <= m.EvolutionStage*5);
         public float Income(float raw) => Mathf.Min(raw, Cfg.progression.incomeThreshold) + Mathf.Max(0, raw-Cfg.progression.incomeThreshold)*Cfg.progression.incomeExcessMultiplier;
         public void StartEndless(Role role, string pick) { StartMatch(role, pick); Endless = true; }
         public static int PersonalBest(Role role) => PlayerPrefs.GetInt("bah_endless_" + role, 0);
 
+        static readonly string[] KitSlots = { "attack", "area", "special" };
+
         void InitializeProgression(Monster m)
         {
-            m.AccountLevel = m.IsHuman ? AccountProgress.Level(Cfg, Role.Monster) : 20;
             m.LastDamageAt = m.LastKillAt = Now;
-            OfferSkill(m, 1);
-            if (!m.IsHuman) AutoChoose(m);
+            m.StatRanks = new int[Cfg.progression.statTracks.Length];
+            m.MinionRanks = new int[Cfg.minions.upgrades.Length];
+            var area = Cfg.abilities.abilities.First(a => a.id == m.Def.area);
+            m.Loadout = new[] { area };
+            m.Cooldowns = new float[1];
             nextPartSpawn = Now + Cfg.progression.partSpawnSeconds;
         }
-        void OfferSkill(Monster m, int level)
+
+        // ------------------------------------------------------------------ Fear
+
+        /// <summary>Fear is the monster's only currency: it buys levels and minion upgrades.</summary>
+        public void AddFear(Monster m, float amount)
         {
-            var pool = Cfg.progression.pools.First(p => p.monster == m.Def.id);
-            var used = m.Loadout.Select(a => a.id).ToArray();
-            var options = pool.abilities.Where(id => !used.Contains(id) && Cfg.abilities.abilities.Any(a => a.id == id && a.unlockMonsterLevel <= m.AccountLevel))
-                .OrderBy(_ => Random.value).Take(3).ToArray();
-            if (options.Length > 0) m.Choices.Enqueue(new ProgressChoice { Kind = "Skill", Level = level, Options = options });
+            if (m == null || amount <= 0f || float.IsNaN(amount) || float.IsInfinity(amount)) return;
+            m.Fear += amount; m.FearEarned += amount;
         }
-        public void GainMonsterXp(Monster m, double amount)
+
+        /// <summary>Fear price of the monster's next level, or -1 at the cap.</summary>
+        public float LevelPrice(Monster m) => LevelPrice(Cfg.progression, m.Level);
+        public static float LevelPrice(MonsterProgressionConfig p, int level) =>
+            level >= p.maxLevel ? -1f : p.levelPriceBase + p.levelPriceStep * (level - 1);
+
+        public ActionResult TryBuyLevel(Monster m)
         {
-            if (amount <= 0 || double.IsNaN(amount) || double.IsInfinity(amount)) return;
-            m.MatchXp += amount; m.LevelXp += amount;
-            while (m.LevelXp >= NextMonsterLevelXp(m))
-            {
-                m.LevelXp -= NextMonsterLevelXp(m); LevelUp(m);
-            }
+            if (m == null) return ActionResult.Invalid;
+            float price = LevelPrice(m);
+            if (price < 0f) return ActionResult.MaxLevel;
+            if (m.Fear + 0.001f < price) return ActionResult.NoMoney;
+            m.Fear -= price;
+            LevelUp(m);
+            return ActionResult.Ok;
         }
+
         void LevelUp(Monster m)
         {
-            float before = MaxHp(m); m.Level++; m.Hp += MaxHp(m)-before;
-            AddFloater(m.Pos + Vector2.up * 2, "LEVEL " + m.Level, (Color)Palette.Candle);
+            var p = Cfg.progression;
+            if (m.Level >= p.maxLevel) return;
+            float before = MaxHp(m); m.Level++; m.Hp += MaxHp(m) - before;
+            AddFloater(m.Pos + Vector2.up * 2, "LEVEL " + m.Level, ColorOf(m));
             Roar();
-            if (Cfg.progression.slotLevels.Contains(m.Level)) OfferSkill(m, m.Level);
-            if (Cfg.progression.evolutionLevels.Contains(m.Level))
-            {
-                var options = Cfg.progression.evolutions.Where(e => e.monster == m.Def.id && e.level == m.Level && e.accountLevel <= m.AccountLevel).Select(e => e.branch).ToArray();
-                if (options.Length > 0) m.Choices.Enqueue(new ProgressChoice { Kind = "Evolution", Level = m.Level, Options = options });
-            }
-            else if (m.Level > 20 && (m.Level-20) % Cfg.progression.ascensionEvery == 0)
-                m.Choices.Enqueue(new ProgressChoice { Kind = "Ascension", Level = m.Level, Options = Cfg.progression.ascensionPerks.OrderBy(_ => Random.value).Take(3).ToArray() });
+            var stats = Enumerable.Range(0, p.statTracks.Length).Where(i => m.StatRanks[i] < p.statTracks[i].maxRank).Select(i => p.statTracks[i].id).ToArray();
+            if (stats.Length > 0) m.Choices.Enqueue(new ProgressChoice { Kind = "Stat", Level = m.Level, Options = stats });
+            if (m.Level == p.specialLevel) AddToLoadout(m, Cfg.abilities.abilities.First(a => a.id == m.Def.special));
+            if (p.abilityRankLevels.Contains(m.Level)) OfferRank(m);
+            if (p.utilityLevels.Contains(m.Level)) OfferUtility(m);
             if (!m.IsHuman) AutoChoose(m);
         }
-        void AutoChoose(Monster m) { while (m.Choices.Count > 0) ChooseProgression(Random.Range(0, m.Choices.Peek().Options.Length)); }
+
+        void AddToLoadout(Monster m, AbilityDef a)
+        {
+            if (m.Loadout.Any(x => x.id == a.id) || m.Loadout.Length >= 5) return;
+            m.Loadout = m.Loadout.Concat(new[] { a }).ToArray();
+            var cds = m.Cooldowns; Array.Resize(ref cds, m.Loadout.Length); m.Cooldowns = cds;
+        }
+
+        void OfferRank(Monster m)
+        {
+            var options = Enumerable.Range(0, 3).Where(k => m.KitRanks[k] < 3 && (k < 2 || m.Level >= Cfg.progression.specialLevel)).Select(k => KitSlots[k]).ToArray();
+            if (options.Length > 0) m.Choices.Enqueue(new ProgressChoice { Kind = "Rank", Level = m.Level, Options = options });
+        }
+
+        void OfferUtility(Monster m)
+        {
+            var used = m.Loadout.Select(a => a.id).ToArray();
+            var options = Cfg.progression.utilityAbilities.Where(id => !used.Contains(id)).OrderBy(_ => Random.value).Take(3).ToArray();
+            if (options.Length > 0) m.Choices.Enqueue(new ProgressChoice { Kind = "Utility", Level = m.Level, Options = options });
+        }
+
+        /// <summary>Bots pick by their monster's role: a bruiser leans on health and damage, an assassin on speed.</summary>
+        void AutoChoose(Monster m)
+        {
+            while (m.Choices.Count > 0)
+            {
+                var choice = m.Choices.Peek();
+                int pick = Random.Range(0, choice.Options.Length);
+                if (choice.Kind == "Stat")
+                {
+                    string[] order = m.Def.id == "bellhop_wraith" ? new[] { "frenzy", "stride", "maw", "vitality", "hide" }
+                        : m.Def.id == "moldy_matron" ? new[] { "vitality", "hide", "frenzy", "maw", "stride" }
+                        : new[] { "maw", "vitality", "hide", "frenzy", "stride" };
+                    // Mostly the favourite still open, sometimes anything, so bots differ match to match.
+                    var favourite = order.FirstOrDefault(id => choice.Options.Contains(id) && Random.value < 0.6f);
+                    if (favourite != null) pick = Array.IndexOf(choice.Options, favourite);
+                }
+                ChooseProgression(pick);
+            }
+        }
+
+        public string ChoiceTitle(ProgressChoice choice)
+        {
+            switch (choice.Kind)
+            {
+                case "Stat": return "Level " + choice.Level + " · grow a stat";
+                case "Rank": return "Level " + choice.Level + " · sharpen an ability";
+                default: return "Level " + choice.Level + " · learn a trick";
+            }
+        }
+
         public string ChoiceLabel(ProgressChoice choice, string option)
         {
-            if (choice.Kind == "Skill") return Cfg.abilities.abilities.First(a => a.id == option).name;
-            if (choice.Kind == "Evolution")
+            var m = Monster;
+            switch (choice.Kind)
             {
-                var e = Cfg.progression.evolutions.First(v => v.monster == Monster.Def.id && v.level == choice.Level && v.branch == option);
-                return e.name + " · " + e.passive;
+                case "Stat":
+                {
+                    int i = Array.FindIndex(Cfg.progression.statTracks, s => s.id == option);
+                    var s2 = Cfg.progression.statTracks[i];
+                    string sign = s2.id == "hide" ? "−" : "+";
+                    return s2.name + "\n" + sign + Mathf.RoundToInt(s2.perRank * 100) + "% " + s2.stat.ToLower() + "\nrank " + (m.StatRanks[i] + 1) + "/" + s2.maxRank;
+                }
+                case "Rank":
+                {
+                    int k = Array.IndexOf(KitSlots, option);
+                    return KitName(m, k) + "\nrank " + (m.KitRanks[k] + 1) + "\n+" + Mathf.RoundToInt((RankDamage(m.KitRanks[k] + 1) / RankDamage(m.KitRanks[k]) - 1) * 100) + "% damage";
+                }
+                default:
+                    return Cfg.abilities.abilities.First(a => a.id == option).name;
             }
-            return option;
         }
+
+        /// <summary>Kit slot name: 0 single target, 1 area, 2 special.</summary>
+        public string KitName(Monster m, int k)
+        {
+            if (k == 0) return m.Def.attackName;
+            string id = k == 1 ? m.Def.area : m.Def.special;
+            return Cfg.abilities.abilities.First(a => a.id == id).name;
+        }
+
         public void ChooseProgression(int index)
         {
             var m = Monster;
@@ -80,55 +161,43 @@ namespace BadAppleHotel.Game
             var choice = m.Choices.Peek();
             if (index < 0 || index >= choice.Options.Length) return;
             m.Choices.Dequeue(); string option = choice.Options[index];
-            if (choice.Kind == "Skill")
+            switch (choice.Kind)
             {
-                var ability = Cfg.abilities.abilities.First(a => a.id == option);
-                if (m.Loadout.Any(a => a.id == option))
+                case "Stat":
                 {
-                    OfferSkill(m, choice.Level);
-                    return;
+                    int i = Array.FindIndex(Cfg.progression.statTracks, s => s.id == option);
+                    float before = MaxHp(m);
+                    m.StatRanks[i] = Mathf.Min(Cfg.progression.statTracks[i].maxRank, m.StatRanks[i] + 1);
+                    m.Hp += MaxHp(m) - before;
+                    break;
                 }
-                if (m.Loadout.Length < 5)
+                case "Rank":
                 {
-                    m.Loadout = m.Loadout.Concat(new[] { ability }).ToArray();
-                    Array.Resize(ref m.Cooldowns, m.Loadout.Length);
+                    int k = Array.IndexOf(KitSlots, option);
+                    if (k >= 0) m.KitRanks[k] = Mathf.Min(3, m.KitRanks[k] + 1);
+                    break;
                 }
-            }
-            else if (choice.Kind == "Evolution")
-            {
-                m.Branch = option; m.EvolutionStage = choice.Level / 5;
-                var evo = Evolution(m);
-                if (!string.IsNullOrEmpty(evo.art) && m.Sr != null)
-                    m.Anim = CharacterAnimator.Attach(m.Sr, CharacterSet.Load(evo.art, 2.1f));
-                Announce(evo.name + " awakens!", 3f); Roar();
-            }
-            else
-            {
-                float before = MaxHp(m); m.Ascensions++;
-                switch (option)
-                {
-                    case "Vitality": m.BonusHp += 0.15f; break;
-                    case "Haste": m.BonusSpeed += 0.03f; break;
-                    case "Quickening": m.CooldownReduction = 1f-(1f-m.CooldownReduction)*0.95f; break;
-                    case "Disruption": m.JamAura += 0.05f; break;
-                    case "Sight": m.BonusReveal += 2f; break;
-                }
-                m.Hp += MaxHp(m)-before;
+                default:
+                    AddToLoadout(m, Cfg.abilities.abilities.First(a => a.id == option));
+                    break;
             }
         }
+
         void UpdateProgression(float dt, float now)
         {
             var m = Monster;
             if (m == null || Phase != Phase.Night) return;
             if (!m.Dead)
             {
-                GainMonsterXp(m, Cfg.progression.aliveXpPerSecond * dt);
+                var fear = Cfg.progression.fear;
+                if (now - m.LastDamageAt >= fear.idleAfterSeconds) AddFear(m, fear.idlePerSecond * dt);
                 m.Frenzy = now - m.LastDamageAt >= Cfg.progression.hungerSeconds;
                 if (now >= m.NextSprint && Residents.Any(r => r.Alive && Map.Get(HotelMap.ToTile(r.Pos).x, HotelMap.ToTile(r.Pos).y) == Tile.Corridor && Vector2.Distance(m.Pos,r.Pos)<12 && ClearLine(m.Pos,r.Pos)))
                 { m.SprintUntil = now + Cfg.monsters.sprintSeconds; m.NextSprint = now + Cfg.monsters.sprintCooldown; }
                 if (m.Lair != null && m.Lair.Def.ContainsInterior(HotelMap.ToTile(m.Pos)))
                     m.Hp = Mathf.Min(MaxHp(m), m.Hp + MaxHp(m)*Cfg.progression.lairHealPerSecond*dt);
-                EvolutionPassive(m, dt, now);
+                if (now < m.SlowZoneUntil)
+                    foreach (var r in Residents) if (Vector2.Distance(r.Pos,m.Pos)<4) r.SlowUntil = now+0.2f;
             }
             if (now >= nextPartSpawn)
             {
@@ -142,61 +211,16 @@ namespace BadAppleHotel.Game
             foreach (var tile in options)
             {
                 if (Parts.Any(p => Vector2Int.Distance(p.Tile,tile)<Cfg.bodyParts.minSpacingTiles)) continue;
-                int type = Random.Range(0,Cfg.bodyParts.parts.Length); var def = Cfg.bodyParts.parts[type];
-                var p = new BodyPart { Def=def, TypeIndex=type, Tile=tile };
-                p.Sr = MakeSprite("part", Sprites.Part(def.id), HotelMap.Center(tile), OrderFor(tile.y), matchRoot);
-                Parts.Add(p); break;
+                AddPartAt(tile);
+                break;
             }
         }
-        void EvolutionPassive(Monster m, float dt, float now)
+        void AddPartAt(Vector2Int tile)
         {
-            if (m.Branch == "spore" || now < m.SlowZoneUntil)
-                foreach (var r in Residents) if (Vector2.Distance(r.Pos,m.Pos)<4) r.SlowUntil = now+0.2f;
-            if (m.Branch == "rot")
-                foreach (var room in RoomsByDef.Values) for (int i=0; i<room.Slots.Length; i++)
-                {
-                    var t=room.Slots[i];
-                    if (t==null || Vector2.Distance(HotelMap.Center(t.Tile),m.Pos)>4) continue;
-                    t.Decay += dt;
-                    if (t.Decay < 20f / Mathf.Max(1,m.EvolutionStage)) continue;
-                    if (t.Sr!=null) RemoveObject(t.Sr.gameObject); room.Slots[i]=null;
-                }
-            if (m.IsHuman || now < m.EvolutionUntil || string.IsNullOrEmpty(m.Branch)) return;
-            if (m.AttackingRoom != null || m.Biting != null) UseEvolution();
-        }
-        public void UseEvolution()
-        {
-            var m=Monster;
-            if (m==null || m.Dead || Phase!=Phase.Night || string.IsNullOrEmpty(m.Branch) || Now<m.EvolutionUntil) return;
-            var room=m.AttackingRoom;
-            switch (m.Branch)
-            {
-                case "butcher":
-                    if (room==null) return;
-                    room.DoorHp = Mathf.Max(1,room.DoorHp-m.Def.doorDamagePerSecond*AttackMult(m)*3); break;
-                case "glutton": m.Hp=Mathf.Min(MaxHp(m),m.Hp+MaxHp(m)*0.2f); break;
-                case "spore": m.SlowZoneUntil=Now+10; break;
-                case "rot":
-                case "poltergeist":
-                    foreach (var r in RoomsByDef.Values) foreach(var t in r.Slots)
-                        if (t!=null && Vector2.Distance(HotelMap.Center(t.Tile),m.Pos)<8) t.DisabledUntil=Now+6;
-                    break;
-                case "phantom":
-                    if (room==null || m.PhasedNight==Night || !TileMovement.CanStand(HotelMap.Center(room.Def.DoorInside),MonsterWalkable,MonsterRadius,Walls)) return;
-                    m.Pos=HotelMap.Center(room.Def.DoorInside); m.PhasedNight=Night; break;
-            }
-            m.EvolutionUntil=Now+25*(1-m.CooldownReduction);
-            AddFloater(m.Pos+Vector2.up*2,Evolution(m).ability,(Color)Palette.Mint);
-        }
-        SpriteRenderer ascensionAura;
-        void DrawAscensionAura(Monster m)
-        {
-            if (m.Ascensions == 0) return;
-            if (ascensionAura == null) ascensionAura = MakeSprite("Ascension aura", Sprites.Ring, m.Pos, OrderFor(m.Pos.y)-1, matchRoot);
-            ascensionAura.enabled = m.Sr.enabled;
-            ascensionAura.transform.position = m.Sr.transform.position + Vector3.up*0.5f;
-            ascensionAura.transform.localScale = Vector3.one*(1.5f+0.2f*Mathf.Sin(Now*3));
-            ascensionAura.color = new Color(0.5f,0.9f,1f,0.15f+Mathf.Min(0.35f,m.Ascensions*0.04f));
+            int type = Random.Range(0,Cfg.bodyParts.parts.Length); var def = Cfg.bodyParts.parts[type];
+            var p = new BodyPart { Def=def, TypeIndex=type, Tile=tile };
+            p.Sr = MakeSprite("part", Sprites.Part(def.id), HotelMap.Center(tile), OrderFor(tile.y), matchRoot);
+            Parts.Add(p);
         }
         AudioClip roar;
         void Roar()

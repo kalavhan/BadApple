@@ -166,7 +166,7 @@ namespace BadAppleHotel.Tests
 
                 Invoke(game, "BeginNights");
                 var projectiles = (IList)typeof(GameManager).GetField("projectiles", Private).GetValue(game);
-                Invoke(game, "SpawnProjectile", HotelMap.Center(tower.Tile), game.Monster.Pos, gun.damageType);
+                Invoke(game, "SpawnProjectile", HotelMap.Center(tower.Tile), game.Monster.Pos, gun.damageType, game.Monster, null);
                 Assert.AreEqual(0, projectiles.Count, "Dream creatures no longer fire the legacy sprite shot.");
                 Assert.AreEqual(1, game.TowerShotCount);
 
@@ -189,7 +189,7 @@ namespace BadAppleHotel.Tests
 
         static object Invoke(GameManager game, string method, params object[] args)
         {
-            var info = typeof(GameManager).GetMethod(method, Private, null, args.Select(a => a.GetType()).ToArray(), null)
+            var info = (args.Contains(null) ? null : typeof(GameManager).GetMethod(method, Private, null, args.Select(a => a.GetType()).ToArray(), null))
                 ?? typeof(GameManager).GetMethod(method, Private);
             return info.Invoke(game, args);
         }

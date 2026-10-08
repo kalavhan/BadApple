@@ -65,6 +65,7 @@ namespace BadAppleHotel.Game
         public int BedLevel = 1;
         public readonly TowerInstance[] Slots;
         public float LastAttackedTime = -99f;
+        public float RotUntil;             // Widow Mildred's rot: the door cannot be repaired or upgraded
         public float NoWeaponBlinkUntil;
         public SpriteRenderer DoorSr;
         public SpriteRenderer BedSr;
@@ -131,6 +132,7 @@ namespace BadAppleHotel.Game
         public bool SleepRequested;
         public readonly Navigator Navigator = new Navigator();
         public float SlowUntil;
+        public float StunUntil;            // the Night Porter's every-third-hit stun, the Meat Hook yank
         public float SleepBlend = 1f;      // 0..1: how far the sprite has glided onto the bed
         public Vector2 SleepFrom;          // where the glide started
         public SpriteRenderer Sr;
@@ -156,28 +158,38 @@ namespace BadAppleHotel.Game
         public float Hp;
         public float DreamPower;
         public float Faith;
-        public readonly int[] ResistLevels = new int[4];
         public readonly int[] Parts = new int[4]; // arm, leg, torso, eye
-        public AbilityDef[] Loadout;
+        public AbilityDef[] Loadout;               // [area, special (from specialLevel), utility picks...]
         public float[] Cooldowns;
         public bool Dead;
         public float RespawnAt;
         public int Kills;
-        public double MatchXp;
-        public int Level = 1, AccountLevel = 1, EvolutionStage, Ascensions;
-        public double LevelXp;
-        public float SprintUntil, NextSprint, LastDamageAt, LastKillAt, SlowZoneUntil;
+        public int Level = 1;
+        public float LastDamageAt, LastKillAt, SprintUntil, NextSprint, SlowZoneUntil;
         public bool Frenzy, Retreating;
-        public string Branch;
-        public float BonusHp, BonusSpeed, CooldownReduction, JamAura, BonusReveal;
-        public int PhasedNight;
-        public float EvolutionUntil;
         public readonly System.Collections.Generic.Queue<ProgressChoice> Choices = new System.Collections.Generic.Queue<ProgressChoice>();
         public Room AttackingRoom;
         public Resident Biting;
         public Resident LastDamager;
         public BodyPart EatingPart;
         public float EatProgress;
+
+        // Fear economy and growth
+        public float Fear, FearEarned;
+        public int[] StatRanks;                    // one per progression.statTracks entry
+        public readonly int[] KitRanks = { 1, 1, 1 }; // single target, area, special
+        public float NextAttackAt;
+        public int HitCount;
+
+        // minions
+        public int[] MinionRanks;                  // one per minions.upgrades entry
+        public int MinionResist = -1;              // damage type index the horde resists; -1 before the horde awakens
+        public int ResistChosenNight;
+        public readonly System.Collections.Generic.HashSet<Room> Scouted = new System.Collections.Generic.HashSet<Room>();
+
+        // signature specials
+        public Room PhasedRoom;
+        public float PhaseUntil;
 
         // timed effects
         public float SlowPct, SlowUntil, StunUntil, StunImmuneUntil;
@@ -192,6 +204,47 @@ namespace BadAppleHotel.Game
         public SpriteRenderer Sr;
         public CharacterAnimator Anim;
         public MonsterAI Ai;
+    }
+
+    /// <summary>A minion: walks from its rift to its resident's door, chews through it, then attacks the resident.</summary>
+    public class Minion
+    {
+        public MinionFormDef Form;
+        public int FormIndex;
+        public Rift Rift;
+        public Vector2 Pos;
+        public Vector2 Facing = Vector2.down;
+        public float Hp, MaxHp;
+        public int Resist;
+        public float NextAttackAt;
+        public bool ShotSwallowed;
+        public float SlowPct, SlowUntil, StunUntil, BurnDps, BurnUntil;
+        public Resident BurnSource;
+        public bool Dead;
+        public readonly Navigator Navigator = new Navigator();
+        public SpriteRenderer Sr;
+    }
+
+    /// <summary>A spectral tear in the hallway outside a living resident's door; minions crawl out of it each night.</summary>
+    public class Rift
+    {
+        public Room Room;
+        public Vector2 Pos;
+        public int Pending;                  // minions still to release tonight
+        public int ReleasedTonight;
+        public bool Shrine;                  // Widow Mildred's Graveroot: heals minions around the rift
+        public bool Boost;                   // ...and doubles the rift's next pulse
+        public SpriteRenderer Sr;
+    }
+
+    /// <summary>A lingering hazard left by an area attack (ember ground, spore cloud).</summary>
+    public class HazardZone
+    {
+        public Vector2 Pos;
+        public float Radius, Until, Dps, SlowPct;
+        public bool NoDreams;
+        public Color Color;
+        public SpriteRenderer Sr;
     }
 
     public class BodyPart

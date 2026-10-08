@@ -14,12 +14,15 @@ namespace BadAppleHotel.Game
         public float OwnerDamageMult(Room room) =>
             room.Owner != null && room.Owner.Alive && !room.Owner.Asleep ? Cfg.residents.awakeWeaponDamageMultiplier : 1f;
 
-        /// <summary>Every weapon fires on its own as soon as the monster is within range, wherever it is.</summary>
+        /// <summary>Monster targets count this much closer than they are, so towers favour the monster over a minion beside it.</summary>
+        const float MonsterPriorityTiles = 1.5f;
+
+        /// <summary>Every weapon fires on its own at the nearest target in range: the monster, or one of its minions.</summary>
         void UpdateTowers(float dt, float now)
         {
             var m = Monster;
-            bool active = m != null && !m.Dead && Phase == Phase.Night;
-            bool cloaked = active && now < m.CloakUntil;
+            bool night = Phase == Phase.Night;
+            bool monsterActive = night && m != null && !m.Dead && now >= m.CloakUntil;
 
             foreach (var room in RoomsByDef.Values)
             {
@@ -29,19 +32,47 @@ namespace BadAppleHotel.Game
                 {
                     if (t == null || t.Decoy || !t.IsWeapon) continue;
                     t.Cooldown = Mathf.Max(0f, t.Cooldown - dt);
-                    if (!active || cloaked || now < t.DisabledUntil) continue;
+                    if (!night || now < t.DisabledUntil) continue;
                     var tpos = HotelMap.Center(t.Tile);
-                    if (!UpgradeRules.InRange(Cfg.towers,t.Def,t.Level,Vector2.Distance(tpos,m.Pos))) continue;
+                    float best = float.MaxValue;
+                    bool monsterInRange = false;
+                    if (monsterActive)
+                    {
+                        float d = Vector2.Distance(tpos, m.Pos);
+                        if (UpgradeRules.InRange(Cfg.towers, t.Def, t.Level, d)) { monsterInRange = true; best = d - MonsterPriorityTiles; }
+                    }
+                    Minion minion = null;
+                    foreach (var n in Minions)
+                    {
+                        if (n.Dead) continue;
+                        float d = Vector2.Distance(tpos, n.Pos);
+                        if (d < best && UpgradeRules.InRange(Cfg.towers, t.Def, t.Level, d)) { best = d; minion = n; }
+                    }
+                    if (minion == null && !monsterInRange) continue;
+                    var aim = minion != null ? minion.Pos : m.Pos;
                     if (!Simulation && t.Sr != null)
                     {
-                        var facing = TowerDirections.Get(t.Def.id,TowerForm(t),m.Pos-tpos);
+                        var facing = TowerDirections.Get(t.Def.id,TowerForm(t),aim-tpos);
                         if(facing!=null)t.Sr.sprite=facing;
                     }
                     if(t.Cooldown>0f)continue;
-                    Fire(t, room, tpos, m, now, mult);
-                    if (m.Dead) return;
+                    if (minion != null) FireAtMinion(t, room, tpos, minion, now, mult);
+                    else
+                    {
+                        Fire(t, room, tpos, m, now, mult);
+                        if (m.Dead) monsterActive = false;
+                    }
                 }
             }
+        }
+
+        void JoinTowerAttack(Room room, Vector2 target)
+        {
+            var owner = room.Owner;
+            if (owner == null || !owner.Alive || owner.Asleep || owner.IsHuman) return;
+            owner.AttackUntil = Now + 0.45f;   // bots join in; the player's attack is an explicit action
+            var to = target - owner.Pos;
+            if (to.sqrMagnitude > 0.01f) owner.Facing = to.normalized;
         }
 
         void Fire(TowerInstance t, Room room, Vector2 tpos, Monster m, float now, float ownerMult)
@@ -50,15 +81,9 @@ namespace BadAppleHotel.Game
             t.Cooldown = rate > 0f ? 1f / rate : 1f;
             int type = DamageTypes.Index(t.Def.damageType);
             if (room.Owner != null && room.Owner.IsHuman) LearnDamageType(type);
-            float mult = DamageTaken(m, type) * UpgradeRules.DistanceBonus(t.Def,Vector2.Distance(tpos,m.Pos));
-            SpawnProjectile(tpos, m.Pos + Vector2.up * 0.5f, t.Def.damageType);
-            var owner = room.Owner;
-            if (owner != null && owner.Alive && !owner.Asleep && !owner.IsHuman)
-            {
-                owner.AttackUntil = Now + 0.45f;   // bots join in; the player's attack is an explicit action
-                var toMonster = m.Pos - owner.Pos;
-                if (toMonster.sqrMagnitude > 0.01f) owner.Facing = toMonster.normalized;
-            }
+            float mult = DamageTaken(m, type) * UpgradeRules.DistanceBonus(t.Def,Vector2.Distance(tpos,m.Pos)) * PhaseBonus(m, room);
+            SpawnProjectile(tpos, m.Pos + Vector2.up * 0.5f, t.Def.damageType, m);
+            JoinTowerAttack(room, m.Pos);
 
             if (type == DamageTypes.Slow)
             {
@@ -68,7 +93,6 @@ namespace BadAppleHotel.Game
             }
 
             float dmg = UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * mult * ownerMult;
-            if (m.JamAura > 0 && Vector2.Distance(tpos,m.Pos)<5) dmg *= 1f/(1+m.JamAura);
             if (type == DamageTypes.Bullet && now < m.JamUntil && Vector2.Distance(tpos, m.Pos) <= m.JamRadius)
                 dmg *= m.JamValue;
             if (type == DamageTypes.Electric && now >= m.StunImmuneUntil && (UpgradeRules.Tier(Cfg.towers, t.Def, t.Level)?.stunSeconds ?? t.Def.stunSeconds) > 0f)
@@ -83,6 +107,42 @@ namespace BadAppleHotel.Game
                 m.BurnSource = room.Owner;
             }
             DamageMonster(dmg, room.Owner);
+        }
+
+        /// <summary>A tower shot at a minion, after the horde's chosen resistance (and its weakness).</summary>
+        void FireAtMinion(TowerInstance t, Room room, Vector2 tpos, Minion n, float now, float ownerMult)
+        {
+            float rate = UpgradeRules.FireRate(Cfg.towers, t.Def, t.Level);
+            t.Cooldown = rate > 0f ? 1f / rate : 1f;
+            int type = DamageTypes.Index(t.Def.damageType);
+            if (room.Owner != null && room.Owner.IsHuman && type >= 0) KnownMinionTypes[type] = true;
+            SpawnProjectile(tpos, n.Pos + Vector2.up * 0.3f, t.Def.damageType, null, n);
+            JoinTowerAttack(room, n.Pos);
+            if (n.Form.trait == "swallowShot" && !n.ShotSwallowed)
+            {
+                n.ShotSwallowed = true;
+                if (IsVisible(n.Pos)) AddFloater(n.Pos + Vector2.up, "gulp!", (Color)Palette.Bone);
+                return;
+            }
+            float mult = MinionDamageTaken(n, type) * UpgradeRules.DistanceBonus(t.Def, Vector2.Distance(tpos, n.Pos));
+            var tier = UpgradeRules.Tier(Cfg.towers, t.Def, t.Level);
+            if (type == DamageTypes.Slow)
+            {
+                n.SlowPct = Mathf.Clamp(UpgradeRules.SlowPct(Cfg.towers, t.Def, t.Level), 0f, 0.75f);
+                n.SlowUntil = now + (tier?.slowSeconds ?? t.Def.slowSeconds);
+                return;
+            }
+            float dmg = UpgradeRules.Damage(Cfg.towers, t.Def, t.Level) * mult * ownerMult;
+            float stun = tier?.stunSeconds ?? t.Def.stunSeconds;
+            if (type == DamageTypes.Electric && stun > 0f) n.StunUntil = now + Mathf.Min(Cfg.progression.maxStunSeconds, stun);
+            float burn = tier?.burnSeconds ?? t.Def.burnSeconds;
+            if (type == DamageTypes.Fire && burn > 0f)
+            {
+                n.BurnDps = UpgradeRules.BurnDamage(Cfg.towers, t.Def, t.Level) * mult * ownerMult;
+                n.BurnUntil = now + burn;
+                n.BurnSource = room.Owner;
+            }
+            DamageMinion(n, dmg, room.Owner);
         }
 
         /// <summary>
@@ -125,10 +185,10 @@ namespace BadAppleHotel.Game
                 }
         }
 
-        void SpawnProjectile(Vector2 from, Vector2 to, string type)
+        void SpawnProjectile(Vector2 from, Vector2 to, string type, Monster target, Minion minion = null)
         {
             if (Simulation || matchRoot == null) return;
-            if (TowerAttackFx(from, type)) return;
+            if (TowerAttackFx(from, type, target, minion)) return;
             var sr = MakeSprite("shot", Sprites.Projectile(type), from, 6000, matchRoot);
             projectiles.Add(new Projectile { T = sr.transform, From = from, To = to, Born = Now, Duration = 0.15f });
         }

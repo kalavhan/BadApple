@@ -6,8 +6,8 @@ namespace BadAppleHotel.Game
     /// <summary>
     /// Bot monster. Every 1.5 s it scores every living resident (walk in through an open or broken door, smash a shut
     /// one, or grab someone in the hallway) and every body part, weighting travel time, work and the tower fire it
-    /// would stand in. It walks a BFS path, fires abilities when they pay off, and buys resistance against whatever
-    /// damage type the hotel builds most.
+    /// would stand in. It walks a BFS path, fires abilities when they pay off, spends Fear on levels and its horde,
+    /// and sets the horde's resistance from the towers it has actually seen.
     /// </summary>
     public class MonsterAI
     {
@@ -54,6 +54,13 @@ namespace BadAppleHotel.Game
                 }
             }
             ThinkAbilities();
+            // Phased into a room: go straight for its resident before the phase runs out.
+            if (me.PhasedRoom != null && me.PhasedRoom.Owner != null && me.PhasedRoom.Owner.Alive)
+            {
+                var prey = me.PhasedRoom.Owner;
+                if (Vector2.Distance(me.Pos, prey.Pos) <= gm.Cfg.monsters.attackReachTiles * 0.8f) return Vector2.zero;
+                return navigator.Steer(ref me.Pos, HotelMap.ToTile(prey.Pos), gm.MonsterWalkable, GameManager.MonsterRadius, dt, now, gm.Walls);
+            }
             nextUpgrade -= dt;
             if (nextUpgrade <= 0f) { nextUpgrade = 2f; ThinkUpgrades(); }
 
@@ -109,7 +116,7 @@ namespace BadAppleHotel.Game
         {
             var start = HotelMap.ToTile(me.Pos);
             float speed = Mathf.Max(0.5f, gm.MonsterSpeed(me, gm.Now));
-            float bite = Mathf.Max(1f, me.Def.residentDamagePerSecond * gm.AttackMult(me));
+            float bite = Mathf.Max(1f, gm.ResidentDps(me));
             float bestCost = float.MaxValue;
             Resident bestRes = null;
             BodyPart bestPart = null;
@@ -131,7 +138,7 @@ namespace BadAppleHotel.Game
                     {
                         g = room.Def.DoorOutside;
                         float resist = gm.Cfg.doors.levels[room.DoorLevel - 1].damageResistancePct;
-                        float dps = Mathf.Max(1f, me.Def.doorDamagePerSecond * gm.AttackMult(me) * (1f - resist));
+                        float dps = Mathf.Max(1f, gm.DoorDps(me) * (1f - resist));
                         work += room.DoorHp / dps;
                     }
                     else
@@ -249,6 +256,26 @@ namespace BadAppleHotel.Game
                     case "dash":
                         use = targetRes != null && !GoalIsDoor() && gm.ClearLine(me.Pos, targetRes.Pos) && Vector2.Distance(me.Pos,targetRes.Pos)>4;
                         break;
+                    case "flambe":
+                        use = ResidentsNear(a.radius) > 0 || (room != null && room.DoorBlocks && Vector2.Distance(me.Pos, HotelMap.Center(room.Def.DoorTile)) <= a.radius);
+                        break;
+                    case "sporeBloom":
+                        use = ResidentsNear(a.radius) > 0;
+                        break;
+                    case "lastCall":
+                        use = TowersNear(a.radius) >= 2 || (ResidentsNear(a.radius) > 0 && gm.ThreatAt(me.Pos, me) > 20f);
+                        break;
+                    case "meatHook":
+                        use = HookTarget(a.radius);
+                        break;
+                    case "graveroot":
+                        use = gm.Rifts.Exists(r => Vector2.Distance(r.Pos, me.Pos) < 8f);
+                        break;
+                    case "doNotDisturb":
+                        // Worth it when the resident is close enough to reach and hurt inside the phase.
+                        use = room != null && room.DoorBlocks && room.DoorHp > gm.DoorDps(me) * 3f && room.Owner != null &&
+                              Vector2.Distance(HotelMap.Center(room.Def.DoorInside), room.Owner.Pos) < gm.MonsterSpeed(me, gm.Now) * a.durationSeconds * 0.5f;
+                        break;
                 }
                 if (use) gm.UseAbility(i);
             }
@@ -267,24 +294,68 @@ namespace BadAppleHotel.Game
             return n;
         }
 
-        void ThinkUpgrades()
+        int ResidentsNear(float radius)
         {
-            var share = new float[4];
+            int n = 0;
+            foreach (var r in gm.Residents) if (r.Alive && Vector2.Distance(r.Pos, me.Pos) <= radius && gm.ClearLine(me.Pos, r.Pos)) n++;
+            return n;
+        }
+
+        int TowersNear(float radius)
+        {
+            int n = 0;
             foreach (var room in gm.RoomsByDef.Values)
             {
                 if (room.Owner == null || !room.Owner.Alive) continue;
-                foreach (var t in room.Slots)
-                {
-                    if (t == null || !t.IsWeapon) continue;
-                    int type = DamageTypes.Index(t.Def.damageType);
-                    if (type >= 0) share[type] += t.Level;
-                }
+                foreach (var t in room.Slots) if (t != null && t.IsWeapon && Vector2.Distance(HotelMap.Center(t.Tile), me.Pos) <= radius) n++;
             }
-            int best = -1;
-            float bestShare = 0f;
-            for (int i = 0; i < 4; i++)
-                if (share[i] > bestShare && gm.ResistCost(me, i) >= 0f) { bestShare = share[i]; best = i; }
-            if (best >= 0) gm.TryUpgradeResist(me, best);
+            return n;
+        }
+
+        bool HookTarget(float range)
+        {
+            foreach (var p in gm.Parts)
+                if (me.Parts[p.TypeIndex] < gm.Cfg.bodyParts.maxPartsPerType && Vector2.Distance(me.Pos, HotelMap.Center(p.Tile)) <= range && gm.ClearLine(me.Pos, HotelMap.Center(p.Tile))) return true;
+            foreach (var r in gm.Residents)
+            {
+                float d = Vector2.Distance(me.Pos, r.Pos);
+                if (r.Alive && d > 2f && d <= range && gm.ClearLine(me.Pos, r.Pos)) return true;
+            }
+            return false;
+        }
+
+        static readonly string[] MinionOrder = { "evolve", "horde", "fangs", "toughness", "frenzy", "hide", "scurry" };
+
+        /// <summary>Picks the horde's resistance from scouted towers, then spends Fear: the horde wakes on night 1, after
+        /// that levels and minion ranks alternate so neither side of the tree is ignored.</summary>
+        void ThinkUpgrades()
+        {
+            if (gm.HordeAwake(me) && gm.CanSwapMinionResist(me))
+            {
+                var tally = gm.ScoutTally(me, out _);
+                int best = me.MinionResist;
+                for (int i = 0; i < 3; i++) if (best < 0 || tally[i] > tally[best] * 1.3f + 0.5f) best = i;
+                if (best != me.MinionResist) gm.TrySetMinionResist(me, best);
+            }
+            for (int k = 0; k < 3 && SpendOnce(); k++) { }
+        }
+
+        bool SpendOnce()
+        {
+            if (gm.Phase != Phase.Night) return false;
+            if (!gm.HordeAwake(me)) return gm.TryBuyMinionUpgrade(me, "awaken") == ActionResult.Ok;
+            int minionRanks = 0;
+            foreach (int rank in me.MinionRanks) minionRanks += rank;
+            string minion = null;
+            foreach (var id in MinionOrder)
+            {
+                if (gm.MinionUpgradeCost(me, id) < 0f || gm.MinionUpgradeLock(me, id) != null) continue;
+                if (minion == null || gm.MinionUpgradeCost(me, id) < gm.MinionUpgradeCost(me, minion) * 0.7f || id == "evolve") minion = id;
+                if (id == "evolve") break;
+            }
+            bool level = gm.LevelPrice(me) >= 0f && (minion == null || me.Level < 2 + 2 * minionRanks);
+            if (level) return gm.TryBuyLevel(me) == ActionResult.Ok;
+            return minion != null && gm.TryBuyMinionUpgrade(me, minion) == ActionResult.Ok;
         }
     }
 }

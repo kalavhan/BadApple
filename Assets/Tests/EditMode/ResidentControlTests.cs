@@ -21,8 +21,6 @@ namespace BadAppleHotel.Tests
             GameInput.ClearAll();
             game = new GameObject("Resident controls test").AddComponent<GameManager>();
             var config = ConfigLoader.Load();
-            // Keep damage measurements independent of level-up health growth.
-            config.progression.aliveXpPerSecond = config.progression.biteDamageXp = config.progression.doorDamageXp = 0;
             game.StartSimulation(config, 241, false);
             player = game.Human; player.IsHuman = true; player.Ai = null;
             var room = game.Map.Rooms[0]; room.Isolated = false;
@@ -60,7 +58,8 @@ namespace BadAppleHotel.Tests
 
             game.Monster.Pos = HotelMap.Center(player.Room.Def.BedHeadTile);
             float health = player.Health;
-            game.StepMatch(.1f);
+            // The monster hits once per attack interval, so give it one full swing.
+            for (int i = 0; i * .1f <= game.AttackInterval(game.Monster) && player.Health >= health; i++) game.StepMatch(.1f);
             Assert.Less(player.Health, health, "A monster inside the room must still damage a sleeping player.");
             Assert.IsTrue(player.Alive);
             Assert.IsTrue(player.Asleep);

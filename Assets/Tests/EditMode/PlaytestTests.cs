@@ -119,12 +119,14 @@ namespace BadAppleHotel.Tests
                 gm.StartSimulation(ConfigLoader.Load(),88,false);
                 while(gm.Phase==Phase.Setup)gm.StepMatch(1f/30);
                 var victim=gm.Residents.First();victim.Room.DoorOpen=false;
-                gm.Monster.Pos=victim.Pos;gm.Monster.Branch="phantom";gm.Monster.PhasedNight=gm.Night;
-                typeof(GameManager).GetMethod("KillResident",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(gm,new object[]{victim});
+                gm.Monster.Pos=victim.Pos;gm.Monster.PhasedRoom=victim.Room;gm.Monster.PhaseUntil=gm.Now+4;
+                typeof(GameManager).GetMethod("KillResident",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(gm,new object[]{victim,true});
                 Assert.IsTrue(victim.Room.DoorOpen);
                 Assert.IsNotNull(Pathfinding.FindPath(HotelMap.ToTile(gm.Monster.Pos),gm.Monster.Lair.Def.BedTile,gm.MonsterWalkable));
-                gm.GainMonsterXp(gm.Monster,5000);
-                Assert.AreEqual(5,gm.Monster.Loadout.Length);
+                gm.Monster.Fear=100000;
+                while(gm.TryBuyLevel(gm.Monster)==ActionResult.Ok){}
+                // Area attack, the signature special at level 3 and two utility picks (levels 6 and 12).
+                Assert.AreEqual(4,gm.Monster.Loadout.Length);
             }
             finally { gm.DisposeSimulation(); }
         }
@@ -158,8 +160,10 @@ namespace BadAppleHotel.Tests
                         Assert.AreEqual(3,gm.Map.Rooms.Count(gm.IsRoomFree));
                         Assert.IsTrue(hidden.Room.Slots.All(t=>t==null));Assert.IsTrue(hidden.Room.DoorOpen);
                         Assert.AreEqual(0,gm.Monster.Kills);
-                        gm.GainMonsterXp(gm.Monster,100000);
-                        Assert.Greater(gm.Monster.Level,20);Assert.Greater(gm.Monster.Ascensions,0);
+                        gm.Monster.Fear=100000;
+                        while(gm.TryBuyLevel(gm.Monster)==ActionResult.Ok){}
+                        Assert.AreEqual(gm.Cfg.progression.maxLevel,gm.Monster.Level);
+                        Assert.AreEqual(gm.Cfg.progression.maxLevel-1,gm.Monster.StatRanks.Sum(),"Every bought level gives one stat rank.");
                     }
                     finally { gm.DisposeSimulation(); }
                 }

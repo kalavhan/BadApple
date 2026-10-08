@@ -42,7 +42,6 @@ namespace BadAppleHotel.Game
             var guest = HiddenMonster;
             var m = new Monster { Def = hiddenDefinition, IsHuman = HumanRole == Role.Monster, Pos = guest.Pos, Lair = guest.Room, RevealedAt = Now };
             Monster = m;
-            m.Loadout = new AbilityDef[0]; m.Cooldowns = new float[0];
             InitializeProgression(m);
             m.Hp = MaxHp(m);
             m.Sr = MakeSprite("Monster", Sprites.Monster(m.Def.id), m.Pos, OrderFor(m.Pos.y), matchRoot);
@@ -64,7 +63,7 @@ namespace BadAppleHotel.Game
                 lair.Slots[i] = null;
             }
             lair.DoorOpen = true; lair.CloseWhenClear = false; RefreshDoor(lair);
-            Announce(guest.Char.name + " was the " + m.Def.name + "!", 4f);
+            Announce(guest.Char.name + " was " + m.Def.name + "!", 4f);
             AddLog(guest.Char.name + " transformed. Room " + (lair.Def.Index + 1) + " is its lair.");
             AddFloater(m.Pos + Vector2.up, "REVEALED!", (Color)Palette.Candle);
         }

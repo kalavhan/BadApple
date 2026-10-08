@@ -1,0 +1,243 @@
+using System.Linq;
+using System.Reflection;
+using BadAppleHotel.Config;
+using BadAppleHotel.Game;
+using NUnit.Framework;
+using UnityEngine;
+
+namespace BadAppleHotel.Tests
+{
+    public class MonsterKitTests
+    {
+        const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
+        GameManager gm;
+        Random.State randomState;
+
+        [SetUp] public void SetUp()
+        {
+            randomState = Random.state;
+            gm = new GameObject("Monster kit test").AddComponent<GameManager>();
+            gm.StartSimulation(ConfigLoader.Load(), 512, false);
+            while (gm.Phase == Phase.Setup) gm.StepMatch(1f / 30);
+            foreach (var r in gm.Residents) r.Ai = null;
+            gm.Monster.Ai = null;
+        }
+
+        [TearDown] public void TearDown()
+        {
+            if (gm != null) gm.DisposeSimulation();
+            Random.state = randomState;
+        }
+
+        void Call(string name, params object[] args) => typeof(GameManager).GetMethod(name, Private).Invoke(gm, args);
+
+        /// <summary>Turns the revealed monster into a specific one, with a fresh kit.</summary>
+        Monster Become(string id)
+        {
+            var m = gm.Monster;
+            m.Def = gm.Cfg.monsters.monsters.First(d => d.id == id);
+            Call("InitializeProgression", m);
+            m.Hp = gm.MaxHp(m);
+            return m;
+        }
+
+        Resident Victim() => gm.Residents.First(r => r.Alive && r.Room != null && r.Room != gm.Monster.Lair);
+
+        [Test] public void Level_prices_climb_by_a_fixed_step_and_the_whole_climb_costs_about_1400_fear()
+        {
+            var p = gm.Cfg.progression;
+            Assert.AreEqual(20f, GameManager.LevelPrice(p, 1));
+            Assert.AreEqual(38f, GameManager.LevelPrice(p, 4), "Level 5 costs 38 Fear.");
+            Assert.AreEqual(-1f, GameManager.LevelPrice(p, p.maxLevel));
+            float total = 0;
+            for (int level = 1; level < p.maxLevel; level++) total += GameManager.LevelPrice(p, level);
+            Assert.AreEqual(1406f, total);
+        }
+
+        [Test] public void Levels_cost_fear_and_each_one_gives_a_stat_rank()
+        {
+            var m = gm.Monster;
+            m.Fear = 10;
+            Assert.AreEqual(ActionResult.NoMoney, gm.TryBuyLevel(m));
+            m.Fear = 20;
+            float hp = gm.MaxHp(m);
+            Assert.AreEqual(ActionResult.Ok, gm.TryBuyLevel(m));
+            Assert.AreEqual(2, m.Level);
+            Assert.AreEqual(0f, m.Fear, .001f);
+            Assert.AreEqual(1, m.StatRanks.Sum());
+            Assert.Greater(gm.MaxHp(m), hp - .01f);
+        }
+
+        [Test] public void Hitting_residents_and_eating_parts_earn_fear_and_idling_earns_a_little()
+        {
+            var m = gm.Monster;
+            var victim = Victim();
+            victim.Room.DoorOpen = true;
+            m.Pos = victim.Pos + Vector2.right * .5f;
+            m.NextAttackAt = 0;
+            float before = m.Fear;
+            gm.StepMatch(1f / 30);
+            Assert.Greater(m.Fear, before, "A hit on a resident earns Fear.");
+
+            // Somewhere quiet: the corridor tile farthest from every resident and door.
+            m.Pos = HotelMap.Center(gm.Map.CorridorTiles().OrderByDescending(tile =>
+                gm.Residents.Select(r => Vector2.Distance(r.Pos, HotelMap.Center(tile)))
+                    .Concat(gm.Map.Rooms.Select(def => Vector2.Distance(HotelMap.Center(def.DoorTile), HotelMap.Center(tile)))).Min()).First());
+            m.LastDamageAt = gm.Now - 60;
+            m.Frenzy = false;
+            before = m.Fear;
+            for (int i = 0; i < 30; i++) gm.StepMatch(1f / 30);
+            Assert.AreEqual(before + gm.Cfg.progression.fear.idlePerSecond, m.Fear, .2f, "One idle second.");
+        }
+
+        [Test] public void Rift_batches_shrink_in_total_but_grow_per_survivor_as_residents_die()
+        {
+            float exponent = gm.Cfg.minions.aliveExponent;
+            Assert.AreEqual(3, GameManager.RiftBatch(3, 1, 6, 6, exponent));
+            Assert.AreEqual(6, GameManager.RiftBatch(3, 1, 6, 1, exponent));
+            Assert.AreEqual(10, GameManager.RiftBatch(5, 1, 6, 1, exponent), "The last resident faces about 10 a night, not 30.");
+            int lastPer = 0, lastTotal = int.MaxValue;
+            for (int alive = 6; alive >= 1; alive--)
+            {
+                int per = GameManager.RiftBatch(4, 1, 6, alive, exponent);
+                Assert.GreaterOrEqual(per, lastPer);
+                Assert.LessOrEqual(per * alive, lastTotal);
+                lastPer = per; lastTotal = per * alive;
+            }
+        }
+
+        [Test] public void Resistances_cycle_through_one_weakness_each()
+        {
+            Assert.AreEqual(DamageTypes.Fire, GameManager.Weakness(DamageTypes.Bullet));
+            Assert.AreEqual(DamageTypes.Electric, GameManager.Weakness(DamageTypes.Fire));
+            Assert.AreEqual(DamageTypes.Bullet, GameManager.Weakness(DamageTypes.Electric));
+        }
+
+        [Test] public void Awakened_horde_opens_a_rift_per_living_resident_and_spawns_in_pulses()
+        {
+            var m = gm.Monster;
+            m.Fear = 1000;
+            Assert.AreEqual(ActionResult.Blocked, gm.TryBuyMinionUpgrade(m, "horde"), "Everything waits for the awakening.");
+            Assert.AreEqual(ActionResult.Ok, gm.TryBuyMinionUpgrade(m, "awaken"));
+            int living = gm.Residents.Count(r => r.Alive && r.Room != null && r.Room != m.Lair);
+            Assert.AreEqual(living, gm.Rifts.Count);
+            Assert.GreaterOrEqual(m.MinionResist, DamageTypes.Bullet);
+            for (int i = 0; i < 90; i++) gm.StepMatch(1f / 30);
+            Assert.Greater(gm.Minions.Count, 0);
+            Assert.IsTrue(gm.Minions.All(n => n.Resist == m.MinionResist));
+        }
+
+        [Test] public void Killing_a_resident_closes_their_rift_and_their_minions_crumble()
+        {
+            var m = gm.Monster;
+            m.Fear = 1000;
+            gm.TryBuyMinionUpgrade(m, "awaken");
+            for (int i = 0; i < 90; i++) gm.StepMatch(1f / 30);
+            var victim = gm.Rifts[0].Room.Owner;
+            Assert.IsTrue(gm.Minions.Any(n => n.Rift.Room == victim.Room));
+            Call("KillResident", victim, true);
+            gm.StepMatch(1f / 30);
+            Assert.IsFalse(gm.Rifts.Any(r => r.Room == victim.Room));
+            Assert.IsFalse(gm.Minions.Any(n => n.Rift.Room == victim.Room));
+        }
+
+        [Test] public void The_resistance_can_only_change_every_four_nights()
+        {
+            var m = gm.Monster;
+            m.Fear = 1000;
+            gm.TryBuyMinionUpgrade(m, "awaken");
+            int other = (m.MinionResist + 1) % 3;
+            Assert.AreEqual(ActionResult.Blocked, gm.TrySetMinionResist(m, other));
+            Assert.AreEqual(gm.Cfg.minions.swapEveryNights, gm.NightsUntilSwap(m));
+            m.ResistChosenNight = gm.Night - gm.Cfg.minions.swapEveryNights;
+            Assert.AreEqual(ActionResult.Ok, gm.TrySetMinionResist(m, other));
+            Assert.AreEqual(other, m.MinionResist);
+        }
+
+        [Test] public void Towers_shoot_minions_and_their_resistance_cuts_the_damage()
+        {
+            var m = gm.Monster;
+            m.Fear = 1000;
+            gm.TryBuyMinionUpgrade(m, "awaken");
+            for (int i = 0; i < 90; i++) gm.StepMatch(1f / 30);
+            var minion = gm.Minions[0];
+            var owner = minion.Rift.Room.Owner;
+            owner.DreamPower = 10000;
+            int slot = Enumerable.Range(0, owner.Room.Slots.Length).First(i => gm.CanBuildAt(owner.Room, i));
+            Assert.AreEqual(ActionResult.Ok, gm.TryBuildTower(owner, slot, "gun_turret"));
+            var tower = owner.Room.Slots[slot];
+            // Only this tower may fire, and only at this minion.
+            foreach (var room in gm.RoomsByDef.Values)
+                for (int i = 0; i < room.Slots.Length; i++) if (room.Slots[i] != tower) room.Slots[i] = null;
+            m.CloakUntil = gm.Now + 100;
+            foreach (var n in gm.Minions.ToArray()) if (n != minion) n.Dead = true;
+            gm.Minions.RemoveAll(n => n.Dead);
+            minion.Pos = HotelMap.Center(tower.Tile) + Vector2.right;
+
+            minion.Resist = DamageTypes.Fire;   // neither resists nor fears bullets
+            minion.Hp = minion.MaxHp = 10000;
+            float hp = minion.Hp;
+            Call("UpdateTowers", .1f, gm.Now);
+            float neutral = hp - minion.Hp;
+            Assert.Greater(neutral, 0f);
+
+            minion.Resist = DamageTypes.Bullet;
+            hp = minion.Hp; tower.Cooldown = 0;
+            Call("UpdateTowers", .1f, gm.Now);
+            Assert.AreEqual(neutral * (1f - gm.MinionResistance(m)), hp - minion.Hp, .01f);
+
+            minion.Resist = DamageTypes.Electric;   // electric-proof minions are weak to bullets
+            hp = minion.Hp; tower.Cooldown = 0;
+            Call("UpdateTowers", .1f, gm.Now);
+            Assert.AreEqual(neutral * (1f + gm.Cfg.minions.weaknessBonus), hp - minion.Hp, .01f);
+        }
+
+        [Test] public void Flambe_burns_residents_in_the_ring()
+        {
+            var m = Become("stitchwork_chef");
+            var victim = Victim();
+            victim.Room.DoorOpen = true;
+            m.Pos = Vector2.MoveTowards(victim.Pos, HotelMap.Center(victim.Room.Def.DoorInside), 1.2f);
+            Assume.That(gm.ClearLine(m.Pos, victim.Pos));
+            float hp = victim.Health;
+            Assert.IsTrue(gm.UseAbility(0));
+            Assert.Less(victim.Health, hp);
+            Assert.AreEqual(1, gm.Hazards.Count);
+            Assert.IsFalse(gm.UseAbility(0), "On cooldown.");
+        }
+
+        [Test] public void Do_not_disturb_slips_through_a_shut_door_and_out_again()
+        {
+            var m = Become("bellhop_wraith");
+            m.Fear = 1000;
+            while (m.Level < gm.Cfg.progression.specialLevel) gm.TryBuyLevel(m);
+            while (m.Choices.Count > 0) gm.ChooseProgression(0);
+            var room = Victim().Room;
+            room.DoorOpen = false;
+            m.Pos = HotelMap.Center(room.Def.DoorOutside);
+            Assert.IsTrue(gm.UseAbility(1));
+            Assert.IsTrue(room.Def.ContainsInterior(HotelMap.ToTile(m.Pos)));
+            Assert.IsTrue(room.DoorBlocks, "The door stays intact.");
+            for (int i = 0; i < 5 * 30 && m.PhasedRoom != null; i++) gm.StepMatch(1f / 30);
+            if (room.DoorBlocks && room.Owner.Alive) Assert.IsFalse(room.Def.ContainsInterior(HotelMap.ToTile(m.Pos)), "Back out when the phase ends.");
+        }
+
+        [Test] public void Meat_hook_eats_a_body_part_from_across_the_hall()
+        {
+            var m = Become("stitchwork_chef");
+            m.Fear = 1000;
+            while (m.Level < gm.Cfg.progression.specialLevel) gm.TryBuyLevel(m);
+            while (m.Choices.Count > 0) gm.ChooseProgression(0);
+            var part = gm.Parts.FirstOrDefault();
+            Assume.That(part, Is.Not.Null);
+            var spot = gm.Map.CorridorTiles().Where(t => Vector2Int.Distance(t, part.Tile) is var d && d > 3 && d < 6)
+                .FirstOrDefault(t => gm.ClearLine(HotelMap.Center(t), HotelMap.Center(part.Tile)));
+            Assume.That(spot, Is.Not.EqualTo(default(Vector2Int)));
+            m.Pos = HotelMap.Center(spot);
+            int eaten = m.Parts.Sum();
+            Assert.IsTrue(gm.UseAbility(1));
+            Assert.AreEqual(eaten + 1, m.Parts.Sum());
+            Assert.IsFalse(gm.Parts.Contains(part));
+        }
+    }
+}

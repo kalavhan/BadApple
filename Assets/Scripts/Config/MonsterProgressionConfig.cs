@@ -7,24 +7,34 @@ namespace BadAppleHotel.Config
         public int freeLevelsPerNight = 1;
         public float healthPerNight = 0.04f, damagePerNight = 0.04f;
     }
-    [Serializable] public class AbilityPool { public string monster; public string[] abilities; }
-    [Serializable] public class EvolutionDef
+    /// <summary>Where the monster's Fear comes from.</summary>
+    [Serializable] public class FearConfig
     {
-        public string monster, branch, name, tint, passive, ability, art;
-        public int level, accountLevel;
+        public float perResidentDamage, perDoorDamage, perKill, perPart, idlePerSecond, idleAfterSeconds;
+    }
+    /// <summary>One of the five stat tracks a level point can go into.</summary>
+    [Serializable] public class StatTrackDef
+    {
+        public string id, name, stat;
+        public float perRank;
+        public int maxRank;
     }
     [Serializable] public class MonsterProgressionConfig
     {
-        public float baseXp, growth, aliveXpPerSecond, doorDamageXp, biteDamageXp, partXp, killXp;
-        public float healthPerLevel, attackPerLevel, speedPerLevel, speedBonusCap;
-        public int[] slotLevels, evolutionLevels;
-        public int ascensionEvery;
+        public FearConfig fear;
+        /// <summary>Level n costs levelPriceBase + levelPriceStep * (n - 2) Fear.</summary>
+        public int maxLevel = 20;
+        public float levelPriceBase, levelPriceStep;
+        public float autoHealthPerLevel, autoAttackPerLevel;
+        public StatTrackDef[] statTracks;
+        public int specialLevel = 3;
+        public int[] abilityRankLevels, utilityLevels, growthLevels;
+        /// <summary>Kit ability rank I/II/III multipliers.</summary>
+        public float[] rankDamage, rankCooldown;
+        public string[] utilityAbilities;
         public float hungerSeconds, frenzyMultiplier, incomeThreshold, incomeExcessMultiplier;
         public float partSpawnSeconds, partSpawnReductionPerNight, partSpawnMinSeconds, lairHealPerSecond;
         public float maxStunSeconds = 0.3f, stunRecoverySeconds = 1.2f;
         public float commitAfterSeconds, riskPerNight, riskPerMinuteWithoutKill, retreatHealth;
-        public AbilityPool[] pools;
-        public EvolutionDef[] evolutions;
-        public string[] ascensionPerks;
     }
 }

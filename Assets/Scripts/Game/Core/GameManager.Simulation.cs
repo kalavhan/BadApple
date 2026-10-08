@@ -8,6 +8,7 @@ namespace BadAppleHotel.Game
     {
         public float FirstAttackSeconds = -1;
         public int DoorBreaks;
+        public int MinionsSpawned, MinionsKilled, KillsByMinions;
         public readonly Dictionary<int,int> AttacksPerNight = new Dictionary<int,int>();
         public readonly Dictionary<int,int> DoorAssaultsPerNight = new Dictionary<int,int>();
         public readonly List<int> LevelPerNight = new List<int>();
@@ -47,6 +48,7 @@ namespace BadAppleHotel.Game
             UpdateDisguise(dt);
             UpdateProgression(dt, Now);
             UpdateMonster(dt, Now);
+            UpdateMinions(dt, Now);
             UpdateTowers(dt, Now);
             if (PendingHelpFrom != null && Now > PendingHelpUntil) PendingHelpFrom = null;
             if (Phase == Phase.Setup && PhaseTimer > 3f && Residents.All(r => !r.Alive || r.Room != null))

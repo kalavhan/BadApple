@@ -1,0 +1,231 @@
+{
+  "pulseSeconds": [
+    2,
+    30,
+    60
+  ],
+  "baseHorde": 2,
+  "maxHorde": 5,
+  "aliveExponent": 0.4,
+  "nightCeiling": 40,
+  "swapEveryNights": 4,
+  "resistByRank": [
+    0.4,
+    0.55,
+    0.7
+  ],
+  "weaknessBonus": 0.25,
+  "reachTiles": 0.85,
+  "radius": 0.24,
+  "upgrades": [
+    {
+      "id": "awaken",
+      "name": "Awaken the horde",
+      "description": "Rifts open: 2 minions per rift each night",
+      "costs": [
+        30
+      ],
+      "perRank": 0,
+      "requiresRanks": []
+    },
+    {
+      "id": "horde",
+      "name": "Horde size",
+      "description": "+1 minion per rift each night",
+      "costs": [
+        50,
+        90,
+        150
+      ],
+      "perRank": 1,
+      "requiresRanks": []
+    },
+    {
+      "id": "toughness",
+      "name": "Toughness",
+      "description": "+20% minion HP",
+      "costs": [
+        25,
+        50,
+        80
+      ],
+      "perRank": 0.2,
+      "requiresRanks": []
+    },
+    {
+      "id": "fangs",
+      "name": "Fangs",
+      "description": "+20% minion damage",
+      "costs": [
+        25,
+        50,
+        80
+      ],
+      "perRank": 0.2,
+      "requiresRanks": []
+    },
+    {
+      "id": "scurry",
+      "name": "Scurry",
+      "description": "+10% minion speed",
+      "costs": [
+        20,
+        40,
+        60
+      ],
+      "perRank": 0.1,
+      "requiresRanks": []
+    },
+    {
+      "id": "frenzy",
+      "name": "Frenzy",
+      "description": "+15% minion attack speed",
+      "costs": [
+        25,
+        50,
+        80
+      ],
+      "perRank": 0.15,
+      "requiresRanks": []
+    },
+    {
+      "id": "hide",
+      "name": "Thick hide",
+      "description": "Resistance 40% to 55% to 70%",
+      "costs": [
+        30,
+        60,
+        100
+      ],
+      "perRank": 0,
+      "requiresRanks": []
+    },
+    {
+      "id": "evolve",
+      "name": "Evolve",
+      "description": "Next minion form",
+      "costs": [
+        120,
+        220
+      ],
+      "perRank": 0,
+      "requiresRanks": [
+        4,
+        8
+      ]
+    }
+  ],
+  "lines": [
+    {
+      "id": "cloche",
+      "monster": "stitchwork_chef",
+      "spawnMultiplier": 1,
+      "forms": [
+        {
+          "name": "Cloche Biter",
+          "trait": "",
+          "health": 60,
+          "damage": 7,
+          "interval": 1.0,
+          "speed": 3.0,
+          "doorMultiplier": 1.5,
+          "scale": 0.42
+        },
+        {
+          "name": "Carving Cloche",
+          "trait": "",
+          "health": 85,
+          "damage": 9,
+          "interval": 1.0,
+          "speed": 3.0,
+          "doorMultiplier": 1.5,
+          "scale": 0.5
+        },
+        {
+          "name": "Banquet Trolley",
+          "trait": "dropPart",
+          "health": 120,
+          "damage": 11,
+          "interval": 1.0,
+          "speed": 3.1,
+          "doorMultiplier": 1.7,
+          "scale": 0.6
+        }
+      ]
+    },
+    {
+      "id": "puffcap",
+      "monster": "moldy_matron",
+      "spawnMultiplier": 1.5,
+      "forms": [
+        {
+          "name": "Puffcap",
+          "trait": "deathSlow",
+          "health": 35,
+          "damage": 5,
+          "interval": 0.9,
+          "speed": 3.2,
+          "doorMultiplier": 1,
+          "scale": 0.38
+        },
+        {
+          "name": "Mourning Morel",
+          "trait": "deathBlind",
+          "health": 50,
+          "damage": 6,
+          "interval": 0.9,
+          "speed": 3.3,
+          "doorMultiplier": 1,
+          "scale": 0.46
+        },
+        {
+          "name": "Funeral Shroom",
+          "trait": "split",
+          "health": 70,
+          "damage": 7,
+          "interval": 0.9,
+          "speed": 3.3,
+          "doorMultiplier": 1,
+          "scale": 0.55
+        }
+      ]
+    },
+    {
+      "id": "mimic",
+      "monster": "bellhop_wraith",
+      "spawnMultiplier": 1,
+      "forms": [
+        {
+          "name": "Luggage Mimic",
+          "trait": "",
+          "health": 40,
+          "damage": 8,
+          "interval": 0.7,
+          "speed": 4.2,
+          "doorMultiplier": 1,
+          "scale": 0.4
+        },
+        {
+          "name": "Steamer Trunk",
+          "trait": "swallowShot",
+          "health": 55,
+          "damage": 10,
+          "interval": 0.7,
+          "speed": 4.2,
+          "doorMultiplier": 1,
+          "scale": 0.48
+        },
+        {
+          "name": "Wardrobe Mimic",
+          "trait": "releaseTwo",
+          "health": 80,
+          "damage": 12,
+          "interval": 0.7,
+          "speed": 4.0,
+          "doorMultiplier": 1,
+          "scale": 0.6
+        }
+      ]
+    }
+  ]
+}

@@ -402,6 +402,8 @@ namespace BadAppleHotel.Game
             Residents.Clear();
             RoomsByDef.Clear();
             Parts.Clear();
+            ClearMinions();
+            ClearHazards();
             Log.Clear();
             Floaters.Clear();
             Monster = null;
@@ -517,6 +519,7 @@ namespace BadAppleHotel.Game
             Residents.Clear();
             RoomsByDef.Clear();
             Parts.Clear();
+            Minions.Clear(); Rifts.Clear(); Hazards.Clear();
             Floaters.Clear();
             Monster = null;
             HiddenMonster = null;
@@ -536,6 +539,7 @@ namespace BadAppleHotel.Game
             HotelView = false;
             RevealMonster();
             SpawnParts();
+            StartNightRifts();
 
         }
 
@@ -545,9 +549,10 @@ namespace BadAppleHotel.Game
             if (!Endless && Night >= Cfg.match.nightCount) { EndMatch(); return; }
             Metrics.LevelPerNight.Add(Monster.Level);
             Night++;
-            for (int i = 0; i < (Endless ? Cfg.match.endless.freeLevelsPerNight : 1); i++) LevelUp(Monster);
+            if (Endless) for (int i = 0; i < Cfg.match.endless.freeLevelsPerNight; i++) LevelUp(Monster);
             PhaseTimer = Cfg.match.nightSeconds + Cfg.match.nightBreakSeconds;
             SpawnParts();
+            StartNightRifts();
             Announce("Night " + Night + " of " + Cfg.match.nightCount + ".", 3f);
         }
 
