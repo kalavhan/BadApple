@@ -512,6 +512,20 @@ namespace BadAppleHotel.Game
             GameInput.Joystick = Vector2.zero;
         }
 
+        /// <summary>A world-space box as a GUI rect (all eight corners projected), padded for fingers.</summary>
+        Rect ScreenBox(Bounds b, float pad)
+        {
+            float xMin = float.MaxValue, xMax = float.MinValue, yMin = float.MaxValue, yMax = float.MinValue;
+            for (int i = 0; i < 8; i++)
+            {
+                var corner = new Vector3((i & 1) == 0 ? b.min.x : b.max.x, (i & 2) == 0 ? b.min.y : b.max.y, (i & 4) == 0 ? b.min.z : b.max.z);
+                var sp = gm.Cam.WorldToScreenPoint(corner);
+                var gp = new Vector2(sp.x / scale, (Screen.height - sp.y) / scale);
+                xMin = Mathf.Min(xMin, gp.x); xMax = Mathf.Max(xMax, gp.x); yMin = Mathf.Min(yMin, gp.y); yMax = Mathf.Max(yMax, gp.y);
+            }
+            return Rect.MinMaxRect(xMin - pad, yMin - pad, xMax + pad, yMax + pad);
+        }
+
         void WorldTap(Vector2 g)
         {
             if (gm.Cam == null) return;
@@ -528,7 +542,10 @@ namespace BadAppleHotel.Game
                 ClearSelection();
                 return;
             }
-            // The square under the finger wins: a tall tower's sprite must not hide the plates behind it.
+            // The door and the bed are the only things picked by their whole object; everything else by its square,
+            // so a tall tower never hides the plates, door or bed behind it.
+            if (gm.DoorBounds(room.Def) is Bounds door && ScreenBox(door, 10f).Contains(g)) { OpenWindow(Sel.Door, -1); return; }
+            if (gm.BedBounds(room) is Bounds bed && ScreenBox(bed, 6f).Contains(g)) { OpenWindow(Sel.Bed, -1); return; }
             int slot = room.Def.BuildIndex(tile);
             if (slot >= 0)
             {
@@ -538,9 +555,6 @@ namespace BadAppleHotel.Game
             }
             if (room.Def.IsBedTile(tile)) { OpenWindow(Sel.Bed, -1); return; }
             if (tile == room.Def.DoorTile) { OpenWindow(Sel.Door, -1); return; }
-            // Off the plates, bed and door (a wall or bare floor), a tap on a tower's body still selects it.
-            int body = TowerAt(room, g);
-            if (body >= 0) { TowerTapped(me, room, body); return; }
             if (tile == room.Def.DoorInside) gm.Toast("The doorway square stays clear.");
             if (sel != Sel.None) CloseWindow();
         }
@@ -674,6 +688,7 @@ namespace BadAppleHotel.Game
             GUI.color = new Color(0.106f, 0.086f, 0.141f, 0.82f);
             GUI.DrawTexture(new Rect(0, 0, vw, VH), Sprites.White);
             GUI.color = dim;
+            DrawDifficultyPicker(cfg);
             GUI.Label(new Rect(0, 70, vw, 70), "BAD APPLE HOTEL", title);
             GUI.Label(new Rect(0, 140, vw, 30), "Six nights. Seven guests. One of them is a monster.", subtitle);
 
@@ -749,6 +764,25 @@ namespace BadAppleHotel.Game
                 "Residents: walk into a free room in the first " + cfg.match.setupSeconds + " s, shut the door, sleep for Dream Power and tap the floor to build. " +
                 "Stay awake when the monster is near: towers hit x" + cfg.residents.awakeWeaponDamageMultiplier + ".  " +
                 "Monster: joystick / WASD to move, smash doors, eat body parts, 1 / 2 / 3 for abilities.", small);
+        }
+
+        /// <summary>Top right of the menu: how well the bots play (they still start weaker and improve each night).</summary>
+        void DrawDifficultyPicker(Config.GameConfig cfg)
+        {
+            var all = cfg.match.difficulties;
+            if (all == null || all.Length == 0) return;
+            float w = 104f, gap = 6f, total = all.Length * w + (all.Length - 1) * gap;
+            float x = vw - total - 16f - (Screen.width - Screen.safeArea.xMax) / scale, y = 14f + Screen.safeArea.yMin / scale;
+            GUI.Label(new Rect(x, y, total, 20), "Bot difficulty", small);
+            string current = gm.Difficulty.id;
+            for (int i = 0; i < all.Length; i++)
+            {
+                var b = new Rect(x + i * (w + gap), y + 22f, w, 34f);
+                var old = GUI.backgroundColor;
+                GUI.backgroundColor = all[i].id == current ? Candle : Color.white;
+                if (GUI.Button(b, all[i].id == current ? "<b>" + all[i].name + "</b>" : all[i].name, centerButton)) gm.DifficultyId = all[i].id;
+                GUI.backgroundColor = old;
+            }
         }
 
         /// <summary>Portrait for menus: the first idle frame facing the camera, else the legacy static sprite.</summary>
@@ -1246,7 +1280,7 @@ namespace BadAppleHotel.Game
                 (res.LevelAfter > res.LevelBefore ? " -> <color=#F2C14E>" + res.LevelAfter + "</color>" : "") + ")", label);
             y += 36;
 
-            GUI.Label(new Rect(r.x+30,y,r.width-60,24), (gm.Endless ? "Endless" : "Standard") + " · night " + gm.Night + " · monster level " + gm.Monster.Level +
+            GUI.Label(new Rect(r.x+30,y,r.width-60,24), (gm.Endless ? "Endless" : "Standard") + " · " + gm.Difficulty.name + " · night " + gm.Night + " · monster level " + gm.Monster.Level +
                 (gm.Endless ? " · personal best " + GameManager.PersonalBest(res.Role) : ""), small);
             y += 26;
             foreach (var rr in gm.Residents)

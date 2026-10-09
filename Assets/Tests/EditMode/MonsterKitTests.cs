@@ -45,7 +45,8 @@ namespace BadAppleHotel.Tests
 
         [Test] public void Bots_climb_from_novice_on_night_one_to_expert_on_the_last_night_and_over_longer_in_endless()
         {
-            var s = gm.Cfg.match.botSkill;
+            Assert.AreEqual("hard", gm.DifficultyId, "Simulations play hard.");
+            var s = gm.Difficulty;
             var night = typeof(GameManager).GetProperty(nameof(GameManager.Night));
             var endless = typeof(GameManager).GetProperty(nameof(GameManager.Endless));
             night.SetValue(gm, 1);
@@ -66,6 +67,24 @@ namespace BadAppleHotel.Tests
             Assert.AreEqual(s.end, gm.BotSkill, .001f);
             gm.BotSkillOverride = .5f;
             Assert.AreEqual(.5f, gm.BotSkill);
+        }
+
+        [Test] public void Difficulties_get_harder_from_easy_to_extra_hard_and_hard_is_the_old_ramp()
+        {
+            var d = gm.Cfg.match.difficulties;
+            CollectionAssert.AreEqual(new[] { "easy", "normal", "hard", "extraHard" }, d.Select(x => x.id).ToArray());
+            for (int i = 1; i < d.Length; i++)
+            {
+                Assert.GreaterOrEqual(d[i].start, d[i - 1].start);
+                Assert.GreaterOrEqual(d[i].end, d[i - 1].end);
+            }
+            var hard = d.First(x => x.id == "hard");
+            Assert.AreEqual(.15f, hard.start, .001f); Assert.AreEqual(1f, hard.end, .001f);
+            var night = typeof(GameManager).GetProperty(nameof(GameManager.Night));
+            night.SetValue(gm, 3);
+            gm.DifficultyId = "easy"; float easy = gm.BotSkill;
+            gm.DifficultyId = "extraHard"; float extra = gm.BotSkill;
+            Assert.Less(easy, extra);
         }
 
         [Test] public void Level_prices_climb_by_a_fixed_step_and_the_whole_climb_costs_about_1400_fear()

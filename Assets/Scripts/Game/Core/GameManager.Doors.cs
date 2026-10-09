@@ -93,6 +93,28 @@ namespace BadAppleHotel.Game
             }
         }
 
+        /// <summary>World bounds of a room's visible door (3D leaf or legacy sprite), for tapping the door itself.</summary>
+        public Bounds? DoorBounds(RoomDef def)
+        {
+            if (doorModels.TryGetValue(def, out var model) && model != null && model.gameObject.activeInHierarchy)
+            {
+                Bounds? b = null;
+                foreach (var r in model.GetComponentsInChildren<Renderer>())
+                    if (r.enabled) { if (b == null) b = r.bounds; else { var e = b.Value; e.Encapsulate(r.bounds); b = e; } }
+                if (b != null) return b;
+            }
+            if (doorSprites.TryGetValue(def, out var sprite) && sprite != null && sprite.enabled && sprite.sprite != null) return sprite.bounds;
+            return null;
+        }
+
+        /// <summary>World bounds of a room's bed (3D model or sprite), for tapping the bed itself.</summary>
+        public Bounds? BedBounds(Room room)
+        {
+            if (room.BedModel != null && room.BedModel.gameObject.activeInHierarchy && room.BedModel.enabled) return room.BedModel.bounds;
+            if (room.BedSr != null && room.BedSr.enabled && room.BedSr.sprite != null) return room.BedSr.bounds;
+            return null;
+        }
+
         void ResetDoorViews()
         {
             foreach (var def in doorSprites.Keys) ApplyDoorLook(def);

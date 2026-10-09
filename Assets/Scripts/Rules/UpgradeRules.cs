@@ -16,7 +16,7 @@ namespace BadAppleHotel.Rules
     {
         /// <summary>
         /// Door upgrade rule: the NEW door level may be at most maxLevelGapOverLowestWeapon levels
-        /// above the lowest-level weapon. An empty weapon list counts as level emptyWeaponSlotCountsAsLevel.
+        /// above the lowest-level weapon (0 or less: no limit). An empty weapon list counts as level emptyWeaponSlotCountsAsLevel.
         /// </summary>
         public static DoorUpgradeResult CanUpgradeDoor(DoorsConfig doors, int currentDoorLevel, int[] weaponLevels)
         {
@@ -37,7 +37,7 @@ namespace BadAppleHotel.Rules
             }
 
             int newLevel = currentDoorLevel + 1;
-            bool allowed = newLevel - lowest <= doors.maxLevelGapOverLowestWeapon;
+            bool allowed = doors.maxLevelGapOverLowestWeapon <= 0 || newLevel - lowest <= doors.maxLevelGapOverLowestWeapon;
             float cost = doors.levels[currentDoorLevel - 1].upgradeCost; // cost to go from current to next
 
             return new DoorUpgradeResult

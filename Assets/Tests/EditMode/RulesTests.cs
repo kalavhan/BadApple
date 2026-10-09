@@ -26,27 +26,25 @@ namespace BadAppleHotel.Tests
         }
 
         [Test]
-        public void Door_upgrade_allowed_when_gap_stays_within_four()
+        public void Doors_upgrade_regardless_of_weapon_levels()
         {
-            // door 4 -> 5, lowest weapon 1: gap 4, allowed
-            var r = UpgradeRules.CanUpgradeDoor(cfg.doors, 4, new[] { 3, 1 });
-            Assert.IsTrue(r.Allowed);
+            Assert.IsTrue(UpgradeRules.CanUpgradeDoor(cfg.doors, 5, new[] { 3, 1 }).Allowed);
+            Assert.IsTrue(UpgradeRules.CanUpgradeDoor(cfg.doors, 8, new int[0]).Allowed);
         }
 
         [Test]
-        public void Door_upgrade_blocked_at_gap_five_and_lowest_weapon_blinks()
+        public void A_configured_gap_still_blocks_and_blinks_the_lowest_weapon()
         {
-            // door 5 -> 6, lowest weapon 1: gap 5, blocked, weapon index 1 blinks
-            var r = UpgradeRules.CanUpgradeDoor(cfg.doors, 5, new[] { 3, 1 });
-            Assert.IsFalse(r.Allowed);
-            Assert.AreEqual(1, r.BlinkWeaponIndex);
-        }
-
-        [Test]
-        public void Door_with_no_weapons_caps_at_level_four()
-        {
-            Assert.IsTrue(UpgradeRules.CanUpgradeDoor(cfg.doors, 3, new int[0]).Allowed);   // -> 4
-            Assert.IsFalse(UpgradeRules.CanUpgradeDoor(cfg.doors, 4, new int[0]).Allowed);  // -> 5
+            int gap = cfg.doors.maxLevelGapOverLowestWeapon;
+            cfg.doors.maxLevelGapOverLowestWeapon = 4;
+            try
+            {
+                Assert.IsTrue(UpgradeRules.CanUpgradeDoor(cfg.doors, 4, new[] { 3, 1 }).Allowed);   // 4 -> 5, gap 4
+                var r = UpgradeRules.CanUpgradeDoor(cfg.doors, 5, new[] { 3, 1 });                // 5 -> 6, gap 5
+                Assert.IsFalse(r.Allowed);
+                Assert.AreEqual(1, r.BlinkWeaponIndex);
+            }
+            finally { cfg.doors.maxLevelGapOverLowestWeapon = gap; }
         }
 
         [Test]
