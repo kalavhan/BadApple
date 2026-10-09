@@ -528,9 +528,7 @@ namespace BadAppleHotel.Game
                 ClearSelection();
                 return;
             }
-            // A tap on a tower's body counts too, not only on the square it stands on.
-            int body = TowerAt(room, g);
-            if (body >= 0) { TowerTapped(me, room, body); return; }
+            // The square under the finger wins: a tall tower's sprite must not hide the plates behind it.
             int slot = room.Def.BuildIndex(tile);
             if (slot >= 0)
             {
@@ -540,6 +538,9 @@ namespace BadAppleHotel.Game
             }
             if (room.Def.IsBedTile(tile)) { OpenWindow(Sel.Bed, -1); return; }
             if (tile == room.Def.DoorTile) { OpenWindow(Sel.Door, -1); return; }
+            // Off the plates, bed and door (a wall or bare floor), a tap on a tower's body still selects it.
+            int body = TowerAt(room, g);
+            if (body >= 0) { TowerTapped(me, room, body); return; }
             if (tile == room.Def.DoorInside) gm.Toast("The doorway square stays clear.");
             if (sel != Sel.None) CloseWindow();
         }

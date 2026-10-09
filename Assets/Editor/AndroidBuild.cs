@@ -26,8 +26,8 @@ namespace BadAppleHotel.EditorTools
             PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
             PlayerSettings.Android.useCustomKeystore = false;
-            PlayerSettings.bundleVersion = "1.28-bot-ramp";
-            PlayerSettings.Android.bundleVersionCode = 29;
+            PlayerSettings.bundleVersion = "1.29-plate-taps";
+            PlayerSettings.Android.bundleVersionCode = 30;
             EditorUserBuildSettings.buildAppBundle = false;
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
