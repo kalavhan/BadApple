@@ -43,6 +43,31 @@ namespace BadAppleHotel.Tests
 
         Resident Victim() => gm.Residents.First(r => r.Alive && r.Room != null && r.Room != gm.Monster.Lair);
 
+        [Test] public void Bots_climb_from_novice_on_night_one_to_expert_on_the_last_night_and_over_longer_in_endless()
+        {
+            var s = gm.Cfg.match.botSkill;
+            var night = typeof(GameManager).GetProperty(nameof(GameManager.Night));
+            var endless = typeof(GameManager).GetProperty(nameof(GameManager.Endless));
+            night.SetValue(gm, 1);
+            Assert.AreEqual(s.start, gm.BotSkill, .001f);
+            night.SetValue(gm, gm.Cfg.match.nightCount);
+            Assert.AreEqual(s.end, gm.BotSkill, .001f);
+            float last = -1f;
+            endless.SetValue(gm, true);
+            for (int n = 1; n <= s.endlessRampNights + 3; n++)
+            {
+                night.SetValue(gm, n);
+                Assert.GreaterOrEqual(gm.BotSkill, last);
+                last = gm.BotSkill;
+            }
+            night.SetValue(gm, gm.Cfg.match.nightCount);
+            Assert.Less(gm.BotSkill, s.end, "Endless ramps more slowly than a standard match.");
+            night.SetValue(gm, s.endlessRampNights);
+            Assert.AreEqual(s.end, gm.BotSkill, .001f);
+            gm.BotSkillOverride = .5f;
+            Assert.AreEqual(.5f, gm.BotSkill);
+        }
+
         [Test] public void Level_prices_climb_by_a_fixed_step_and_the_whole_climb_costs_about_1400_fear()
         {
             var p = gm.Cfg.progression;
@@ -189,6 +214,8 @@ namespace BadAppleHotel.Tests
             var m = gm.Monster;
             m.Fear = 1000;
             gm.TryUnlockMinion(m, 0);
+            // No towers, so nothing kills the minions before the resident dies.
+            foreach (var room in gm.RoomsByDef.Values) for (int i = 0; i < room.Slots.Length; i++) room.Slots[i] = null;
             for (int i = 0; i < 90; i++) gm.StepMatch(1f / 30);
             var victim = gm.Rifts[0].Room.Owner;
             Assert.IsTrue(gm.Minions.Any(n => n.Rift.Room == victim.Room));

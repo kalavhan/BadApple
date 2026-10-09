@@ -7,7 +7,8 @@ namespace BadAppleHotel.Game
     /// Bot monster. Every 1.5 s it scores every living resident (walk in through an open or broken door, smash a shut
     /// one, or grab someone in the hallway) and every body part, weighting travel time, work and the tower fire it
     /// would stand in. It walks a BFS path, fires abilities when they pay off, spends Fear on levels and its horde,
-    /// and sets the horde's resistance from the towers it has actually seen.
+    /// and sets the horde's resistance from the towers it has actually seen. GameManager.BotSkill scales all of it: a
+    /// novice replans slowly, picks targets carelessly, sits on its abilities and its Fear, and never retreats.
     /// </summary>
     public class MonsterAI
     {
@@ -17,7 +18,7 @@ namespace BadAppleHotel.Game
         List<Vector2Int> path;
         int pathIdx;
         float nextPlan;
-        float nextUpgrade = 3f;
+        float nextUpgrade = 3f, nextAbilityThink;
         Resident targetRes;
         BodyPart targetPart;
         Vector2Int goal;
@@ -41,7 +42,7 @@ namespace BadAppleHotel.Game
             tickDt = dt; tickNow = now;
             bool assaulted = gm.Metrics.DoorAssaultsPerNight.ContainsKey(gm.Night);
             if (!assaulted) me.Retreating = false;
-            else if (me.Hp < gm.MaxHp(me) * gm.Cfg.progression.retreatHealth) me.Retreating = true;
+            else if (me.Hp < gm.MaxHp(me) * gm.Cfg.progression.retreatHealth * gm.BotSkill) me.Retreating = true;
             if (me.Retreating && me.Lair != null)
             {
                 if (me.Hp >= gm.MaxHp(me) * 0.85f) { me.Retreating = false; nextPlan = 0; }
@@ -53,7 +54,7 @@ namespace BadAppleHotel.Game
                     return navigator.Steer(ref me.Pos, escape, gm.MonsterWalkable, GameManager.MonsterRadius, dt, now, gm.Walls);
                 }
             }
-            ThinkAbilities();
+            if (now >= nextAbilityThink) { nextAbilityThink = now + Mathf.Lerp(3.5f, 0f, gm.BotSkill); ThinkAbilities(); }
             // Phased into a room: go straight for its resident before the phase runs out.
             if (me.PhasedRoom != null && me.PhasedRoom.Owner != null && me.PhasedRoom.Owner.Alive)
             {
@@ -62,7 +63,7 @@ namespace BadAppleHotel.Game
                 return navigator.Steer(ref me.Pos, HotelMap.ToTile(prey.Pos), gm.MonsterWalkable, GameManager.MonsterRadius, dt, now, gm.Walls);
             }
             nextUpgrade -= dt;
-            if (nextUpgrade <= 0f) { nextUpgrade = 2f; ThinkUpgrades(); }
+            if (nextUpgrade <= 0f) { nextUpgrade = Mathf.Lerp(8f, 2f, gm.BotSkill); ThinkUpgrades(); }
 
             bool busy = me.Biting != null || me.EatingPart != null ||
                         (me.AttackingRoom != null && targetRes != null && me.AttackingRoom == targetRes.Room);
@@ -75,7 +76,7 @@ namespace BadAppleHotel.Game
             if (nextPlan <= 0f || stuckTime > 1.2f || path == null || TargetGone() || targetMoved)
             {
                 if (now >= commitUntil || TargetGone() || targetRes?.Room == null || targetRes.Room.DoorBroken) Plan();
-                nextPlan = 1.5f;
+                nextPlan = Mathf.Lerp(4f, 1.5f, gm.BotSkill);
                 stuckTime = 0f;
             }
 
@@ -161,6 +162,7 @@ namespace BadAppleHotel.Game
                     if (!gm.Metrics.DoorAssaultsPerNight.ContainsKey(gm.Night) && rInside && room.DoorBlocks)
                         cost = travel*3f + work*0.15f + threat*0.02f;
                     if (!rInside) cost -= 6f;                                     // a resident in the hallway is a gift
+                    cost += Random.Range(0f, (1f - gm.BotSkill) * 20f);   // a novice picks its prey carelessly
                     if (r == targetRes) { keepCost = cost; keepGoal = g; }
                     if (cost < bestCost) { bestCost = cost; bestRes = r; bestPart = null; bestGoal = g; }
                 }
@@ -336,7 +338,7 @@ namespace BadAppleHotel.Game
         /// escort when the monster itself is under heavy fire.</summary>
         void ChooseActiveMinion()
         {
-            if (!gm.HordeAwake(me) || !gm.CanSwitchMinion(me)) return;
+            if (!gm.HordeAwake(me) || !gm.CanSwitchMinion(me) || Random.value > gm.BotSkill) return;
             var tally = gm.ScoutTally(me, out _);
             float doors = 0f; int rooms = 0;
             foreach (var room in gm.RoomsByDef.Values)

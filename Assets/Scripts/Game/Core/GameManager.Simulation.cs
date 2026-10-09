@@ -21,6 +21,26 @@ namespace BadAppleHotel.Game
             if (Application.isPlaying) Destroy(obj); else DestroyImmediate(obj);
         }
         public bool Simulation { get; private set; }
+
+        /// <summary>Forces every bot's skill (0..1) when set, e.g. the bot sim measuring expert play.</summary>
+        public float? BotSkillOverride { get; set; }
+
+        /// <summary>
+        /// How well the bots play right now, 0 (novice) to 1 (expert). A standard match climbs from botSkill.start on
+        /// night 1 to botSkill.end on the last night; endless climbs over botSkill.endlessRampNights nights and stays there.
+        /// Bots of both sides use it: a human monster faces novice residents early, a human resident a novice monster.
+        /// </summary>
+        public float BotSkill
+        {
+            get
+            {
+                if (BotSkillOverride.HasValue) return Mathf.Clamp01(BotSkillOverride.Value);
+                var s = Cfg.match.botSkill;
+                int nights = Endless ? Mathf.Max(2, s.endlessRampNights) : Mathf.Max(2, Cfg.match.nightCount);
+                float k = Mathf.Clamp01((Mathf.Max(1, Night) - 1) / (float)(nights - 1));
+                return Mathf.Lerp(s.start, s.end, k);
+            }
+        }
         public MatchMetrics Metrics { get; private set; } = new MatchMetrics();
         Room lastAssault;
         float lastAssaultTime;

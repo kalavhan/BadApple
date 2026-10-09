@@ -22,5 +22,10 @@
     "damagePerNight": 0.04,
     "healthMultiplier": 0.716053748231966,
     "damageMultiplier": 0.6
+  },
+  "botSkill": {
+    "start": 0.15,
+    "end": 1.0,
+    "endlessRampNights": 12
   }
 }

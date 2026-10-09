@@ -20,9 +20,19 @@ namespace BadAppleHotel.Config
         public float monsterRespawnSeconds;
         public int bodyPartsPerNight;
         public EndlessConfig endless = new EndlessConfig();
+        public BotSkillConfig botSkill = new BotSkillConfig();
         public bool deadResidentsSpectate;
         public float[] disguiseBuildEverySeconds = { 6f, 14f };
         public int disguiseMaxBuildings = 4;
+    }
+
+    /// <summary>How well bots play: start on night 1 (and during setup), end on the last night of a standard match.
+    /// Endless climbs from start to end over endlessRampNights nights and then stays there.</summary>
+    [Serializable]
+    public class BotSkillConfig
+    {
+        public float start = .15f, end = 1f;
+        public int endlessRampNights = 12;
     }
 
     [Serializable]

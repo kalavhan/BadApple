@@ -9,7 +9,8 @@ namespace BadAppleHotel.Game
     /// and wakes up (towers hit harder) when the monster comes close. About once a second it picks one thing to spend
     /// on: bed, door, a new tower placed where its range covers the door, or an upgrade. It respects the 4-level gap
     /// rule, saves up when it cannot afford its pick, prefers towers the monster is weak to, and begs a neighbour for
-    /// help when its door is failing.
+    /// help when its door is failing. How well it does all this follows GameManager.BotSkill: a novice thinks slowly,
+    /// sleeps through the monster's approach, misses emergencies and builds the wrong tower in the wrong place.
     /// </summary>
     public class ResidentAI
     {
@@ -39,7 +40,7 @@ namespace BadAppleHotel.Game
             nextThink -= dt;
             if (nextThink <= 0f)
             {
-                nextThink = Random.Range(0.7f, 1.3f);
+                nextThink = Random.Range(0.7f, 1.3f) * Mathf.Lerp(2.5f, 1f, gm.BotSkill);
                 Think(now);
             }
             var move = Steer(dt, now);
@@ -81,7 +82,7 @@ namespace BadAppleHotel.Game
             bool danger = room.UnderAttack(now) || room.DoorBroken;
             var m = gm.Monster;
             if (gm.Phase == Phase.Night && m != null && !m.Dead &&
-                Vector2.Distance(m.Pos, HotelMap.Center(room.Def.DoorOutside)) <= gm.Cfg.residents.botWakeRadiusTiles)
+                Vector2.Distance(m.Pos, HotelMap.Center(room.Def.DoorOutside)) <= gm.Cfg.residents.botWakeRadiusTiles * Mathf.Lerp(.35f, 1f, gm.BotSkill))
                 danger = true;
             if (danger && me.Asleep) gm.Wake(me);
             else if (!danger && !me.Asleep) gm.TrySleep(me);
@@ -122,8 +123,8 @@ namespace BadAppleHotel.Game
             if (room == null || !me.Alive || me.IsMonster) return;
             bool attacked = room.UnderAttack(now);
 
-            // 1) emergency: door failing
-            if (attacked && (room.DoorBroken || room.DoorHp < gm.MaxDoorHp(room) * 0.5f))
+            // 1) emergency: door failing (a novice often freezes instead)
+            if (attacked && (room.DoorBroken || room.DoorHp < gm.MaxDoorHp(room) * 0.5f) && Random.value < Mathf.Lerp(.4f, 1f, gm.BotSkill))
             {
                 var r = gm.TryUpgradeDoor(me);
                 if (r == ActionResult.Ok) return;
@@ -246,13 +247,21 @@ namespace BadAppleHotel.Game
             var affordable = weapons.Where(t => gm.Wallet(me, t.costResource) >= t.buildCost).ToList();
             if (affordable.Count == 0) return ActionResult.NoMoney;
 
+            // A novice often just grabs any weapon and drops it on any free plate.
+            float skill = gm.BotSkill;
+            if (Random.value < (1f - skill) * .7f)
+            {
+                var free = Enumerable.Range(0, room.Slots.Length).Where(i => room.Slots[i] == null && gm.CanBuildAt(room, i)).ToList();
+                if (free.Count > 0) return gm.TryBuildTower(me, free[Random.Range(0, free.Count)], affordable[Random.Range(0, affordable.Count)].id);
+            }
+
             var choices = new List<(Config.TowerDef def, int slot, float w)>();
             foreach (var t in affordable)
             {
                 int slot = BestSlotFor(room, t, door, out float coverage);
                 if (slot < 0) continue;
                 float mult = m != null ? gm.DamageTaken(m, DamageTypes.Index(t.damageType)) : 1f;
-                float w = Mathf.Pow(mult, 3f) * coverage;
+                float w = Mathf.Pow(mult, 3f * skill) * coverage;   // only skilled bots play the weakness
                 if (t.damageType == "slow" && room.CountTowers(t.id) > 0) w *= 0.3f; // one slow totem is plenty
                 if (t.id == "gun_turret") w *= 1.3f; // cheap, reliable
                 choices.Add((t, slot, w));
