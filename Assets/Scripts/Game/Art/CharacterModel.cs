@@ -28,6 +28,12 @@ namespace BadAppleHotel.Game
         Vector3 lyingPosition, lyingFrom;
         Quaternion lyingRotation, lyingFromRotation;
 
+        /// <summary>Lift above the floor in tiles (the Night Porter floats).</summary>
+        public float Hover;
+        /// <summary>Plays the idle in place of walk and run, for bodies that glide (Widow Mildred's gown).</summary>
+        public bool Glide;
+        int actionState;
+
         public float Height => model.Height * scale;
         public float HalfDepth => model.HalfDepth * scale;
         public bool Animated => animator != null;
@@ -87,14 +93,41 @@ namespace BadAppleHotel.Game
             }
             // Body axes: +Y face, -Z up. Lean tips the head toward the face; sway rolls side to side.
             var body = Quaternion.Euler(0f, 0f, yaw) * Quaternion.Euler(lean, sway, 0f);
-            transform.SetPositionAndRotation(new Vector3(ground.x, ground.y, .06f - bob), body);
+            if (Glide) bob = Mathf.Sin(Time.time * 2.4f) * .04f;
+            transform.SetPositionAndRotation(new Vector3(ground.x, ground.y, .06f - bob - Hover), body);
         }
+
+        /// <summary>Grows or shrinks the model from its created size (the monster's growth stages).</summary>
+        public void SetSize(float multiplier) => transform.localScale = Vector3.one * scale * multiplier;
+
+        /// <summary>Plays a one-shot or held state (Cast, Special, Eat) when the controller has it; the next
+        /// Drive returns to locomotion once a one-shot finishes. False when there is no such state.</summary>
+        public bool PlayAction(string state)
+        {
+            if (animator == null) return false;
+            int hash = Animator.StringToHash("Base Layer." + state);
+            if (!animator.HasState(0, hash)) return false;
+            actionState = hash; playing = 0; Play(hash); animator.speed = 1f;
+            return true;
+        }
+
+        public void StopAction() { actionState = 0; }
+
+        /// <summary>Scales the model's colour (this instance's own material only).</summary>
+        public void Brighten(float k) { if (material != null) material.color = new Color(k, k, k, 1f); }
 
         void Animate(bool moving, float speed, bool scared, bool attack)
         {
             bool canAttack = animator.HasState(0, AttackState);
-            if (attack && canAttack && playing != AttackState) { Play(AttackState); return; }
+            if (attack && canAttack && playing != AttackState) { actionState = 0; Play(AttackState); return; }
             if (playing == AttackState && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f) return;
+            if (actionState != 0)
+            {
+                var info = animator.GetCurrentAnimatorStateInfo(0);
+                if (info.loop || info.normalizedTime < 1f || animator.IsInTransition(0)) return;
+                actionState = 0;
+            }
+            if (Glide) { moving = false; speed = 0f; }
             int want = IdleState; float natural = 1f;
             if (moving)
             {

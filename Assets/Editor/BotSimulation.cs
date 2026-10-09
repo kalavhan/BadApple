@@ -13,6 +13,9 @@ namespace BadAppleHotel.EditorTools
         [Serializable] public class Row
         {
             public int seed, night, kills, doorBreaks, monsterLevel;
+            public string monster;
+            public float fearEarned;
+            public int minionRanks, minionsSpawned, minionsKilled, killsByMinions;
             public bool endless, residentsWin, censored;
             public float firstAttackSeconds;
             public int[] attacksPerNight, doorAssaultsPerNight, levelPerNight;
@@ -43,6 +46,8 @@ namespace BadAppleHotel.EditorTools
                         try
                         {
                             gm.StartSimulation(cfg,seed+i,endless);
+                            // BADAPPLE_SIM_SKILL=0..1 pins every bot's skill (e.g. 1 for expert play); unset follows the nightly ramp.
+                            if (float.TryParse(Environment.GetEnvironmentVariable("BADAPPLE_SIM_SKILL"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float skill)) gm.BotSkillOverride=skill;
                             // 16 simulation ticks per batch; identical 30 Hz physics/combat to the player.
                             int steps=0,maxSteps=(int)((cfg.match.setupSeconds+cfg.match.nightSeconds*30)*30);
                             while(gm.InMatch && steps<maxSteps)
@@ -52,7 +57,9 @@ namespace BadAppleHotel.EditorTools
                                 firstAttackSeconds=gm.Metrics.FirstAttackSeconds,
                                 attacksPerNight=Enumerable.Range(1,gm.Night).Select(night=>gm.Metrics.AttacksPerNight.TryGetValue(night,out int attacks)?attacks:0).ToArray(),
                                 doorAssaultsPerNight=Enumerable.Range(1,gm.Night).Select(night=>gm.Metrics.DoorAssaultsPerNight.TryGetValue(night,out int attacks)?attacks:0).ToArray(),
-                                levelPerNight=gm.Metrics.LevelPerNight.ToArray() };
+                                levelPerNight=gm.Metrics.LevelPerNight.ToArray(),
+                                monster=gm.Monster.Def.id, fearEarned=gm.Monster.FearEarned, minionRanks=gm.Monster.HordeStrength + gm.Monster.MinionOwned.Count(o=>o) + gm.Monster.MinionEvolved.Count(e=>e),
+                                minionsSpawned=gm.Metrics.MinionsSpawned, minionsKilled=gm.Metrics.MinionsKilled, killsByMinions=gm.Metrics.KillsByMinions };
                             report.matches.Add(row);
                             Debug.Log("SIM "+(endless?"endless":"standard")+" "+(i+1)+"/"+count+" seed="+row.seed+" night="+row.night+" kills="+row.kills+" first="+row.firstAttackSeconds+" level="+row.monsterLevel);
                         }

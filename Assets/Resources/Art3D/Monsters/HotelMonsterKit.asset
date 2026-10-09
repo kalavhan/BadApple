@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e170e55ae0534679b4dd61ca9a0844e, type: 3}
+  m_Name: HotelMonsterKit
+  m_EditorClassIdentifier: BadAppleHotel::BadAppleHotel.Game.CharacterKit
+  Models:
+  - Id: stitchwork_chef
+    Mesh: {fileID: 4300000, guid: 9446c723ff3e843ec91928eef6d5cc14, type: 2}
+    Albedo: {fileID: 2800000, guid: 3df173b2964858857bda7260d02b6097, type: 3}
+    Height: 1
+    HalfDepth: 0.25
+    Source: stylized_pig_humanoid_3d_model
+    SourceTriangles: 15756
+    Rig: {fileID: 3318101576563656091, guid: 9dde6810a0bf373639301b5ed8850490, type: 3}
+    RigHeight: 0.96551645
+    RigSource: stylized_pig_humanoid_3d_model
+  - Id: moldy_matron
+    Mesh: {fileID: 4300000, guid: 0de33dcf677d14066b3c1a7e37299bec, type: 2}
+    Albedo: {fileID: 2800000, guid: ec44a40f77590c2e3bbddb0d1ca76c70, type: 3}
+    Height: 1
+    HalfDepth: 0.25
+    Source: mushroom_lady_3d_model
+    SourceTriangles: 13958
+    Rig: {fileID: 1594035542539662649, guid: 0de52854ce06e885f8a956d0f40ba992, type: 3}
+    RigHeight: 1.0607178
+    RigSource: mushroom_lady_3d_model
+  - Id: bellhop_wraith
+    Mesh: {fileID: 4300000, guid: ecb2e21b210871baa8eb917a8d19180c, type: 2}
+    Albedo: {fileID: 2800000, guid: 8d1ab51c5909b7a87824b3121a24eeed, type: 3}
+    Height: 1
+    HalfDepth: 0.25
+    Source: stylized_ghost_officer_3d_model
+    SourceTriangles: 13710
+    Rig: {fileID: 8817578813179131818, guid: 8ed65a4a79c0b2c12bb070936ea6d78a, type: 3}
+    RigHeight: 0.98158735
+    RigSource: stylized_ghost_officer_3d_model

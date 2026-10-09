@@ -42,12 +42,12 @@ namespace BadAppleHotel.Game
             var guest = HiddenMonster;
             var m = new Monster { Def = hiddenDefinition, IsHuman = HumanRole == Role.Monster, Pos = guest.Pos, Lair = guest.Room, RevealedAt = Now };
             Monster = m;
-            m.Loadout = new AbilityDef[0]; m.Cooldowns = new float[0];
             InitializeProgression(m);
             m.Hp = MaxHp(m);
             m.Sr = MakeSprite("Monster", Sprites.Monster(m.Def.id), m.Pos, OrderFor(m.Pos.y), matchRoot);
             if (!Simulation) ContactShadow.Attach(m.Sr, m.Pos, new Vector2(.8f, .56f));
-            if (Sprites.UseArt) m.Anim = CharacterAnimator.Attach(m.Sr, CharacterSet.Load(m.Def.id, 2.1f));
+            m.Model = MonsterModel(m);
+            if (m.Model == null && Sprites.UseArt) m.Anim = CharacterAnimator.Attach(m.Sr, CharacterSet.Load(m.Def.id, 2.1f));
             if (!m.IsHuman) m.Ai = new MonsterAI(this, m);
             guest.Alive = false;
             guest.Asleep = false;
@@ -64,7 +64,7 @@ namespace BadAppleHotel.Game
                 lair.Slots[i] = null;
             }
             lair.DoorOpen = true; lair.CloseWhenClear = false; RefreshDoor(lair);
-            Announce(guest.Char.name + " was the " + m.Def.name + "!", 4f);
+            Announce(guest.Char.name + " was " + m.Def.name + "!", 4f);
             AddLog(guest.Char.name + " transformed. Room " + (lair.Def.Index + 1) + " is its lair.");
             AddFloater(m.Pos + Vector2.up, "REVEALED!", (Color)Palette.Candle);
         }

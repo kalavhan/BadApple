@@ -22,5 +22,40 @@
     "damagePerNight": 0.04,
     "healthMultiplier": 0.716053748231966,
     "damageMultiplier": 0.6
-  }
+  },
+  "difficulties": [
+    {
+      "id": "easy",
+      "name": "Easy",
+      "start": 0.0,
+      "end": 0.45,
+      "curve": 1.6,
+      "endlessRampNights": 16
+    },
+    {
+      "id": "normal",
+      "name": "Normal",
+      "start": 0.05,
+      "end": 0.7,
+      "curve": 1.4,
+      "endlessRampNights": 14
+    },
+    {
+      "id": "hard",
+      "name": "Hard",
+      "start": 0.15,
+      "end": 1.0,
+      "curve": 1.0,
+      "endlessRampNights": 12
+    },
+    {
+      "id": "extraHard",
+      "name": "Extra hard",
+      "start": 0.55,
+      "end": 1.0,
+      "curve": 1.0,
+      "endlessRampNights": 8
+    }
+  ],
+  "defaultDifficulty": "normal"
 }

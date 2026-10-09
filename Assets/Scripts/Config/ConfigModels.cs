@@ -20,9 +20,21 @@ namespace BadAppleHotel.Config
         public float monsterRespawnSeconds;
         public int bodyPartsPerNight;
         public EndlessConfig endless = new EndlessConfig();
+        public DifficultyDef[] difficulties;
+        public string defaultDifficulty = "normal";
         public bool deadResidentsSpectate;
         public float[] disguiseBuildEverySeconds = { 6f, 14f };
         public int disguiseMaxBuildings = 4;
+    }
+
+    /// <summary>A difficulty: how well bots play, from start on night 1 (and during setup) to end on the last night of
+    /// a standard match, along k^curve (above 1 stays easy longer). Endless climbs over endlessRampNights nights.</summary>
+    [Serializable]
+    public class DifficultyDef
+    {
+        public string id, name;
+        public float start = .15f, end = 1f, curve = 1f;
+        public int endlessRampNights = 12;
     }
 
     [Serializable]
@@ -245,23 +257,23 @@ namespace BadAppleHotel.Config
     }
 
     [Serializable]
-    public class ResistanceTracks
-    {
-        public int maxLevel;
-        public float[] damageTakenMultiplierByLevel;
-        public float[] upgradeCostByLevel;
-        public string costResource;
-    }
-
-    [Serializable]
     public class MonsterDef
     {
         public string id;
         public string name;
+        public string title;
+        public string color;
         public float baseHealth;
         public float moveSpeed;
         public float doorDamagePerSecond;
-        public float residentDamagePerSecond;
+        /// <summary>The single-target attack: one hit every attackInterval seconds on a resident or a shut door.</summary>
+        public string attackName;
+        public float attackDamage, attackInterval = 1f, attackDoorMultiplier = 1f;
+        /// <summary>Every Nth hit stuns the resident (0 = never); rotSeconds stops healing and door repairs.</summary>
+        public int stunEveryHits;
+        public float stunSeconds, rotSeconds;
+        /// <summary>Ability ids (abilities.json) for the area attack and the signature special; the minion line id (minions.json).</summary>
+        public string area, special, minionLine;
         public DamageTakenMultiplier damageTakenMultiplier;
     }
 
@@ -270,7 +282,6 @@ namespace BadAppleHotel.Config
     {
         public float sprintMultiplier = 1.25f, sprintSeconds = 2f, sprintCooldown = 8f;
         public float attackReachTiles;
-        public ResistanceTracks resistanceTracks;
         public MonsterDef[] monsters;
     }
 
@@ -305,6 +316,8 @@ namespace BadAppleHotel.Config
         public string damageType;
         public float value;
         public float radius;
+        /// <summary>Kit abilities: hit damage, door damage, damage per second of a lingering zone.</summary>
+        public float damage, doorDamage, dps;
     }
 
     [Serializable]
@@ -392,5 +405,6 @@ namespace BadAppleHotel.Config
         public MapConfig map;
         public ResidentsConfig residents;
         public MonsterProgressionConfig progression;
+        public MinionsConfig minions;
     }
 }

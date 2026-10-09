@@ -350,7 +350,12 @@ namespace BadAppleHotel.Game
             }
             if (GameInput.ConsumePressed(KeyCode.M) && gm.HotelViewAvailable) gm.HotelView = !gm.HotelView;
             if (GameInput.ConsumePressed(KeyCode.R)) gm.RecenterCamera();
-            if (GameInput.ConsumePressed(KeyCode.Escape)) CloseWindow();
+            if (GameInput.ConsumePressed(KeyCode.Escape)) { CloseWindow(); ToggleMonsterRing(false); ToggleHorde(false); }
+            if (gm.HumanRole == Role.Monster && gm.Monster != null)
+            {
+                if (GameInput.ConsumePressed(KeyCode.L)) ToggleMonsterRing(!monsterRing);
+                if (GameInput.ConsumePressed(KeyCode.H)) ToggleHorde(!hordeOpen);
+            }
         }
 
         void ShootResident()
@@ -507,9 +512,25 @@ namespace BadAppleHotel.Game
             GameInput.Joystick = Vector2.zero;
         }
 
+        /// <summary>A world-space box as a GUI rect (all eight corners projected), padded for fingers.</summary>
+        Rect ScreenBox(Bounds b, float pad)
+        {
+            float xMin = float.MaxValue, xMax = float.MinValue, yMin = float.MaxValue, yMax = float.MinValue;
+            for (int i = 0; i < 8; i++)
+            {
+                var corner = new Vector3((i & 1) == 0 ? b.min.x : b.max.x, (i & 2) == 0 ? b.min.y : b.max.y, (i & 4) == 0 ? b.min.z : b.max.z);
+                var sp = gm.Cam.WorldToScreenPoint(corner);
+                var gp = new Vector2(sp.x / scale, (Screen.height - sp.y) / scale);
+                xMin = Mathf.Min(xMin, gp.x); xMax = Mathf.Max(xMax, gp.x); yMin = Mathf.Min(yMin, gp.y); yMax = Mathf.Max(yMax, gp.y);
+            }
+            return Rect.MinMaxRect(xMin - pad, yMin - pad, xMax + pad, yMax + pad);
+        }
+
         void WorldTap(Vector2 g)
         {
-            if (gm.Cam == null || gm.Human == null) return;
+            if (gm.Cam == null) return;
+            if (gm.HumanRole == Role.Monster && gm.Monster != null) { MonsterWorldTap(g); return; }
+            if (gm.Human == null) return;
             var me = gm.Human;
             if (me == null || !me.Alive) return;
             var tile = HotelMap.ToTile(GuiToWorld(g));
@@ -521,9 +542,10 @@ namespace BadAppleHotel.Game
                 ClearSelection();
                 return;
             }
-            // A tap on a tower's body counts too, not only on the square it stands on.
-            int body = TowerAt(room, g);
-            if (body >= 0) { TowerTapped(me, room, body); return; }
+            // The door and the bed are the only things picked by their whole object; everything else by its square,
+            // so a tall tower never hides the plates, door or bed behind it.
+            if (gm.DoorBounds(room.Def) is Bounds door && ScreenBox(door, 10f).Contains(g)) { OpenWindow(Sel.Door, -1); return; }
+            if (gm.BedBounds(room) is Bounds bed && ScreenBox(bed, 6f).Contains(g)) { OpenWindow(Sel.Bed, -1); return; }
             int slot = room.Def.BuildIndex(tile);
             if (slot >= 0)
             {
@@ -637,7 +659,6 @@ namespace BadAppleHotel.Game
                     if (repaint) hudRects = new List<Rect>(nextUiRects);
                     if (gm.Human != null && gm.Human.Alive && gm.Human.Room != null) DrawSelection(gm.Human);
                     if (gm.PendingHelpFrom != null) DrawHelpPopup();
-                    DrawProgressChoice();
                     if (repaint) popupRects = nextUiRects.Skip(popupStart).ToList();
                 }
                 fxFront.Draw(scale);
@@ -667,6 +688,7 @@ namespace BadAppleHotel.Game
             GUI.color = new Color(0.106f, 0.086f, 0.141f, 0.82f);
             GUI.DrawTexture(new Rect(0, 0, vw, VH), Sprites.White);
             GUI.color = dim;
+            DrawDifficultyPicker(cfg);
             GUI.Label(new Rect(0, 70, vw, 70), "BAD APPLE HOTEL", title);
             GUI.Label(new Rect(0, 140, vw, 30), "Six nights. Seven guests. One of them is a monster.", subtitle);
 
@@ -742,6 +764,25 @@ namespace BadAppleHotel.Game
                 "Residents: walk into a free room in the first " + cfg.match.setupSeconds + " s, shut the door, sleep for Dream Power and tap the floor to build. " +
                 "Stay awake when the monster is near: towers hit x" + cfg.residents.awakeWeaponDamageMultiplier + ".  " +
                 "Monster: joystick / WASD to move, smash doors, eat body parts, 1 / 2 / 3 for abilities.", small);
+        }
+
+        /// <summary>Top right of the menu: how well the bots play (they still start weaker and improve each night).</summary>
+        void DrawDifficultyPicker(Config.GameConfig cfg)
+        {
+            var all = cfg.match.difficulties;
+            if (all == null || all.Length == 0) return;
+            float w = 104f, gap = 6f, total = all.Length * w + (all.Length - 1) * gap;
+            float x = vw - total - 16f - (Screen.width - Screen.safeArea.xMax) / scale, y = 14f + Screen.safeArea.yMin / scale;
+            GUI.Label(new Rect(x, y, total, 20), "Bot difficulty", small);
+            string current = gm.Difficulty.id;
+            for (int i = 0; i < all.Length; i++)
+            {
+                var b = new Rect(x + i * (w + gap), y + 22f, w, 34f);
+                var old = GUI.backgroundColor;
+                GUI.backgroundColor = all[i].id == current ? Candle : Color.white;
+                if (GUI.Button(b, all[i].id == current ? "<b>" + all[i].name + "</b>" : all[i].name, centerButton)) gm.DifficultyId = all[i].id;
+                GUI.backgroundColor = old;
+            }
         }
 
         /// <summary>Portrait for menus: the first idle frame facing the camera, else the legacy static sprite.</summary>
@@ -906,10 +947,21 @@ namespace BadAppleHotel.Game
             if (m != null && !m.Dead && gm.IsVisible(m.Pos))
             {
                 var g = WorldToGui(m.Pos) + Vector2.up * -2.2f * GuiPerTile;
-                Bar(new Rect(g.x - 30, g.y, 60, 7), m.Hp / gm.MaxHp(m), Red);
-                Shadowed(new Rect(g.x - 80, g.y - 18, 160, 18), m.Def.name, Bone);
+                // The monster player reads its own health in the corner chip, and its windows open over its head.
+                if (!m.IsHuman)
+                {
+                    Bar(new Rect(g.x - 30, g.y, 60, 7), m.Hp / gm.MaxHp(m), Red);
+                    Shadowed(new Rect(g.x - 80, g.y - 18, 160, 18), m.Def.name, Bone);
+                }
                 if (m.EatingPart != null)
                     Bar(new Rect(g.x - 20, g.y + 10, 40, 5), m.EatProgress / gm.Cfg.bodyParts.eatSeconds, (Color)Palette.Moss);
+            }
+
+            foreach (var n in gm.Minions)
+            {
+                if (n.Dead || n.Hp >= n.MaxHp || !gm.IsVisible(n.Pos)) continue;
+                var g = WorldToGui(n.Pos) + Vector2.up * -1.0f * GuiPerTile;
+                Bar(new Rect(g.x - 14, g.y, 28, 4), n.Hp / n.MaxHp, Red);
             }
 
             // the monster's eyes reveal body parts nearby
@@ -957,7 +1009,7 @@ namespace BadAppleHotel.Game
             float now = gm.Now;
 
             DrawResources(me, now);
-            DrawMonsterIntel(new Rect(vw - 270, 92, 260, 70));
+            DrawMonsterIntel(new Rect(vw - 270, 92, 260, gm.Monster != null && gm.HordeAwake(gm.Monster) ? 86 : 70));
 
             if (!me.Alive)
             {
@@ -1061,6 +1113,19 @@ namespace BadAppleHotel.Game
             GUI.Label(new Rect(r.x + 8, r.y + 22, r.width - 16, 20), line, small);
             GUI.Label(new Rect(r.x + 8, r.y + 42, r.width - 16, 20), "Ate: arm " + gm.PartCount(m, "arm") + "  leg " + gm.PartCount(m, "leg") +
                 "  torso " + gm.PartCount(m, "torso") + "  eye " + gm.PartCount(m, "eye"), small);
+            if (!gm.HordeAwake(m)) return;
+            // Minion multipliers stay hidden too, until one of your towers lands that type on that creature.
+            var creature = gm.Creature(m, m.ActiveMinion);
+            string minions = creature.name + ": ";
+            for (int i = 0; i < 3; i++)
+            {
+                if (!gm.KnownMinion(m.ActiveMinion, i)) { minions += "<color=#8A8070>" + DamageTypes.Label(i) + " ?</color>  "; continue; }
+                int resist = gm.ResistOf(creature);
+                float mult = i == resist ? 1f - gm.Cfg.minions.resistPct : i == GameManager.Weakness(resist) ? 1f + gm.Cfg.minions.weaknessBonus : 1f;
+                string col = mult > 1.05f ? "#9FE3C8" : mult < 0.95f ? "#D7263D" : "#E8DCC0";
+                minions += "<color=" + col + ">" + DamageTypes.Label(i) + " x" + mult.ToString("0.0#") + "</color>  ";
+            }
+            GUI.Label(new Rect(r.x + 8, r.y + 60, r.width - 16, 20), minions, small);
         }
 
         // ------------------------------------------------------------ selection popups
@@ -1166,77 +1231,6 @@ namespace BadAppleHotel.Game
 
         // ------------------------------------------------------------ monster
 
-        void DrawMonsterUI()
-        {
-            var m = gm.Monster;
-            if (m == null) return;
-
-            float w = 300;
-            var panel = new Rect(10, 150, w, 264);
-            Panel(panel);
-            float x = panel.x, y = panel.y;
-            GUI.Label(new Rect(x + 10, y + 6, w - 20, 22), "<b>Lv " + m.Level + " " + (gm.Evolution(m)?.name ?? m.Def.name) + "</b>", label);
-            Bar(new Rect(x + 10, y + 30, w - 20, 10), m.Dead ? 0f : m.Hp / gm.MaxHp(m), Red);
-            GUI.Label(new Rect(x + 10, y + 44, w - 20, 22), "<color=#F2C14E>Dream Power</color> " + Mathf.FloorToInt(m.DreamPower) +
-                "    <color=#D7263D>Faith</color> " + Mathf.FloorToInt(m.Faith), small);
-            GUI.Label(new Rect(x + 10, y + 62, w - 20, 22), "Arm " + gm.PartCount(m, "arm") + "  Leg " + gm.PartCount(m, "leg") +
-                "  Torso " + gm.PartCount(m, "torso") + "  Eye " + gm.PartCount(m, "eye") + "   (max " + gm.Cfg.bodyParts.maxPartsPerType + ")", small);
-
-            GUI.Label(new Rect(x + 10, y + 80, w - 20, 20), m.LevelXp.ToString("0") + "/" + gm.NextMonsterLevelXp(m).ToString("0") + " XP" + (m.Frenzy ? " · FRENZY" : "") + " · kills " + m.Kills, small);
-            float yy = y + 104;
-            GUI.Label(new Rect(x + 10, yy, w - 20, 20), "<b>Thicken hide</b> (damage taken)", small);
-            yy += 22;
-            for (int i = 0; i < 4; i++)
-            {
-                float mult = gm.DamageTaken(m, i);
-                float cost = gm.ResistCost(m, i);
-                GUI.Label(new Rect(x + 10, yy + 5, 170, 22), DamageTypes.Label(i) + "  x" + mult.ToString("0.00") + "  (lv " + m.ResistLevels[i] + ")", small);
-                if (GUI.Button(new Rect(x + w - 120, yy, 110, 28), cost < 0 ? "MAX" : "Buy " + cost + " DP", centerButton) && cost >= 0)
-                    Report(gm.TryUpgradeResist(m, i));
-                yy += 30;
-            }
-
-            if (m.Dead)
-            {
-                var r = new Rect(vw / 2 - 200, VH / 2 - 30, 400, 60);
-                GUI.Box(r, GUIContent.none, box);
-            Ui(r);
-                GUI.Label(r, "Banished! Back in " + Mathf.CeilToInt(Mathf.Max(0f, m.RespawnAt - gm.Now)) + " s", center);
-            }
-
-            DrawJoystick();
-
-            // abilities as round buttons, right side
-            bool night = gm.Phase == Phase.Night;
-            for (int i = 0; i < m.Loadout.Length; i++)
-            {
-                var a = m.Loadout[i];
-                float cd = m.Cooldowns[i];
-                int idx = i;
-                var c = new Vector2(vw - 75f - (i % 3) * 110f, VH - 75f - (i / 3) * 108f);
-                string text = a.name + "\n<size=11>" + AbilityHint(a) + "</size>" + (cd > 0 ? "\n" + Mathf.CeilToInt(cd) + "s" : "\n[" + (i + 1) + "]");
-                RoundButton(c, 100f, text, Mint, cd <= 0f && night && !m.Dead, () => gm.UseAbility(idx), roundSmall);
-            }
-            if (!string.IsNullOrEmpty(m.Branch))
-                RoundButton(new Vector2(vw - 410f, VH - 80f), 94f, gm.Evolution(m).ability, Candle, gm.Now >= m.EvolutionUntil, gm.UseEvolution, roundSmall);
-            if (gm.HotelViewAvailable)
-                RoundButton(new Vector2(vw - 80f, VH - 310f), 72f, gm.HotelView ? "Back" : "Hotel\nview", Bone, true, () => gm.HotelView = !gm.HotelView, roundSmall);
-        }
-
-        void DrawProgressChoice()
-        {
-            var m = gm.Monster;
-            if (m == null || !m.IsHuman || m.Choices.Count == 0) return;
-            var choice = m.Choices.Peek();
-            float width = Mathf.Min(660,vw-40);
-            var r = new Rect((vw-width)/2, 220, width, 165); Panel(r);
-            GUI.Label(new Rect(r.x+10,r.y+10,r.width-20,35), choice.Kind + " · level " + choice.Level, subtitle);
-            float w = (width-30)/choice.Options.Length;
-            for (int i=0;i<choice.Options.Length;i++)
-                if (GUI.Button(new Rect(r.x+15+i*w,r.y+60,w-8,85),gm.ChoiceLabel(choice,choice.Options[i]),centerButton))
-                { gm.ChooseProgression(i); break; }
-        }
-
         static string AbilityHint(Config.AbilityDef a)
         {
             switch (a.effect)
@@ -1247,6 +1241,13 @@ namespace BadAppleHotel.Game
                 case "bedIncomeMultiplier": return "Beds pay less";
                 case "dash": return "Dash";
                 case "towerUntargetable": return "Unseen";
+                case "residentSlowZone": return "Slow zone";
+                case "flambe": return "Fire ring";
+                case "sporeBloom": return "Spore cloud";
+                case "lastCall": return "Silence towers";
+                case "meatHook": return "Hook & eat";
+                case "graveroot": return "Rift shrine";
+                case "doNotDisturb": return "Phase in";
                 default: return a.effect;
             }
         }
@@ -1279,7 +1280,7 @@ namespace BadAppleHotel.Game
                 (res.LevelAfter > res.LevelBefore ? " -> <color=#F2C14E>" + res.LevelAfter + "</color>" : "") + ")", label);
             y += 36;
 
-            GUI.Label(new Rect(r.x+30,y,r.width-60,24), (gm.Endless ? "Endless" : "Standard") + " · night " + gm.Night + " · monster level " + gm.Monster.Level +
+            GUI.Label(new Rect(r.x+30,y,r.width-60,24), (gm.Endless ? "Endless" : "Standard") + " · " + gm.Difficulty.name + " · night " + gm.Night + " · monster level " + gm.Monster.Level +
                 (gm.Endless ? " · personal best " + GameManager.PersonalBest(res.Role) : ""), small);
             y += 26;
             foreach (var rr in gm.Residents)

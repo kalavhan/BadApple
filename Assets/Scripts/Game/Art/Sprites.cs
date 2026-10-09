@@ -402,6 +402,24 @@ namespace BadAppleHotel.Game
             return c.ToSprite(new Vector2(0.5f, 0.06f));
         });
 
+        // ---------- Minions ----------
+
+        /// <summary>A minion's card art (Assets/Resources/Art/Minions/&lt;line&gt;_&lt;role&gt;.png), or null when it is missing.</summary>
+        public static Texture2D MinionArt(string line, string role) => Resources.Load<Texture2D>("Art/Minions/" + line + "_" + role);
+
+        /// <summary>The same art as a one-tile world sprite standing on its feet; null when there is no art.</summary>
+        public static Sprite Minion(string line, string role)
+        {
+            string key = "minion:" + line + "_" + role;
+            if (cache.TryGetValue(key, out var hit) && hit != null) return hit;
+            var tex = MinionArt(line, role);
+            if (tex == null) return null;
+            tex.wrapMode = TextureWrapMode.Clamp;
+            var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .02f), Mathf.Max(tex.width, tex.height), 0, SpriteMeshType.FullRect);
+            cache[key] = sprite;
+            return sprite;
+        }
+
         // ---------- Towers ----------
 
         /// <summary>Static art of one form (tier, 1-based) of a tower family.</summary>

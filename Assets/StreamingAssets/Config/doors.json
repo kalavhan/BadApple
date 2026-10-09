@@ -1,5 +1,5 @@
 {
-  "maxLevelGapOverLowestWeapon": 4,
+  "maxLevelGapOverLowestWeapon": 0,
   "blockedBlinkSeconds": 3,
   "emptyWeaponSlotCountsAsLevel": 0,
   "levels": [

@@ -8,6 +8,7 @@ namespace BadAppleHotel.Game
     {
         public float FirstAttackSeconds = -1;
         public int DoorBreaks;
+        public int MinionsSpawned, MinionsKilled, KillsByMinions;
         public readonly Dictionary<int,int> AttacksPerNight = new Dictionary<int,int>();
         public readonly Dictionary<int,int> DoorAssaultsPerNight = new Dictionary<int,int>();
         public readonly List<int> LevelPerNight = new List<int>();
@@ -20,6 +21,45 @@ namespace BadAppleHotel.Game
             if (Application.isPlaying) Destroy(obj); else DestroyImmediate(obj);
         }
         public bool Simulation { get; private set; }
+
+        /// <summary>Forces every bot's skill (0..1) when set, e.g. the bot sim measuring expert play.</summary>
+        public float? BotSkillOverride { get; set; }
+
+        /// <summary>The chosen difficulty id (saved between sessions). Simulations play "hard" unless told otherwise.</summary>
+        public string DifficultyId
+        {
+            get => difficultyId ?? (Simulation ? "hard" : PlayerPrefs.GetString("bah_difficulty", Cfg?.match.defaultDifficulty ?? "normal"));
+            set { difficultyId = value; if (!Simulation) { PlayerPrefs.SetString("bah_difficulty", value); PlayerPrefs.Save(); } }
+        }
+        string difficultyId;
+
+        public DifficultyDef Difficulty
+        {
+            get
+            {
+                var all = Cfg.match.difficulties;
+                if (all == null || all.Length == 0) return new DifficultyDef();
+                return System.Array.Find(all, d => d.id == DifficultyId) ?? System.Array.Find(all, d => d.id == Cfg.match.defaultDifficulty) ?? all[0];
+            }
+        }
+
+        /// <summary>
+        /// How well the bots play right now, 0 (novice) to 1 (expert). A standard match climbs from the difficulty's
+        /// start on night 1 to its end on the last night; endless climbs over its endlessRampNights nights and stays there.
+        /// Bots of both sides use it: a human monster faces weak residents early, a human resident a weak monster.
+        /// </summary>
+        public float BotSkill
+        {
+            get
+            {
+                if (BotSkillOverride.HasValue) return Mathf.Clamp01(BotSkillOverride.Value);
+                var s = Difficulty;
+                int nights = Endless ? Mathf.Max(2, s.endlessRampNights) : Mathf.Max(2, Cfg.match.nightCount);
+                float k = Mathf.Clamp01((Mathf.Max(1, Night) - 1) / (float)(nights - 1));
+                return Mathf.Lerp(s.start, s.end, Mathf.Pow(k, Mathf.Max(.1f, s.curve)));
+            }
+        }
+
         public MatchMetrics Metrics { get; private set; } = new MatchMetrics();
         Room lastAssault;
         float lastAssaultTime;
@@ -47,6 +87,7 @@ namespace BadAppleHotel.Game
             UpdateDisguise(dt);
             UpdateProgression(dt, Now);
             UpdateMonster(dt, Now);
+            UpdateMinions(dt, Now);
             UpdateTowers(dt, Now);
             if (PendingHelpFrom != null && Now > PendingHelpUntil) PendingHelpFrom = null;
             if (Phase == Phase.Setup && PhaseTimer > 3f && Residents.All(r => !r.Alive || r.Room != null))

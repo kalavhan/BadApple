@@ -34,7 +34,7 @@ namespace BadAppleHotel.Config
                 yield break;
             }
             var texts = new Dictionary<string, string>();
-            foreach (var name in new[] { "match", "economy", "beds", "doors", "towers", "monsters", "bodyparts", "abilities", "map", "residents", "monster_progression" })
+            foreach (var name in new[] { "match", "economy", "beds", "doors", "towers", "monsters", "bodyparts", "abilities", "map", "residents", "monster_progression", "minions" })
             {
                 string url = Application.streamingAssetsPath + "/" + Folder + "/" + name + ".json";
                 using (var request = UnityWebRequest.Get(url))
@@ -70,6 +70,7 @@ namespace BadAppleHotel.Config
                 map = Parse<MapConfig>(readText, "map"),
                 residents = Parse<ResidentsConfig>(readText, "residents"),
                 progression = Parse<MonsterProgressionConfig>(readText, "monster_progression"),
+                minions = Parse<MinionsConfig>(readText, "minions"),
             };
             Validate(cfg);
             return cfg;
@@ -149,20 +150,36 @@ namespace BadAppleHotel.Config
                 Require(Array.Exists(c.abilities.abilities, a => a.id == id),
                     $"abilities.json: starterLoadout references unknown ability '{id}'");
 
-            Require(c.progression != null && c.progression.baseXp > 0 && c.progression.growth > 1 &&
-                c.progression.slotLevels.Length == 5 && c.progression.ascensionEvery > 0,
-                "monster_progression.json: invalid level curve or milestones");
-            Require(c.progression.pools.Length == c.monsters.monsters.Length && c.progression.evolutions.Length > 0,
-                "monster_progression.json: missing ability pools or evolutions");
+            var p = c.progression;
+            Require(p != null && p.fear != null && p.maxLevel > 1 && p.levelPriceBase > 0 && p.levelPriceStep >= 0,
+                "monster_progression.json: invalid Fear or level prices");
+            Require(p.statTracks != null && p.statTracks.Length > 0 && Array.TrueForAll(p.statTracks, s => s.maxRank > 0),
+                "monster_progression.json: statTracks need at least one rank each");
+            Require(p.rankDamage != null && p.rankDamage.Length == 3 && p.rankCooldown != null && p.rankCooldown.Length == 3,
+                "monster_progression.json: rankDamage and rankCooldown need three ranks");
+            Require(p.abilityRankLevels != null && p.utilityLevels != null && p.growthLevels != null && p.utilityAbilities != null,
+                "monster_progression.json: missing level milestones");
+            foreach (var id in p.utilityAbilities)
+                Require(Array.Exists(c.abilities.abilities, a => a.id == id), $"monster_progression.json: unknown utility ability '{id}'");
+            var mc = c.minions;
+            Require(mc != null && mc.pulseSeconds != null && mc.pulseSeconds.Length > 0 && mc.roles != null && mc.lines != null &&
+                mc.unlockCosts != null && mc.unlockCosts.Length == 3 && mc.maxStrength > 1 && mc.strengthCostBase > 0 && mc.strengthCostGrowth >= 1,
+                "minions.json: invalid pulses, roles, unlock costs or Horde Strength");
+            foreach (var m in c.monsters.monsters)
+            {
+                Require(m.attackDamage > 0 && m.attackInterval > 0, $"monsters.json: '{m.id}' needs an attack");
+                foreach (var id in new[] { m.area, m.special })
+                    Require(Array.Exists(c.abilities.abilities, a => a.id == id), $"monsters.json: '{m.id}' uses unknown ability '{id}'");
+                var line = Array.Find(mc.lines, l => l.id == m.minionLine);
+                Require(line != null && line.creatures != null && line.creatures.Length == 3 &&
+                    Array.TrueForAll(line.creatures, f => f.health > 0 && f.speed > 0 && f.interval > 0 && f.evolveCost > 0 && Array.Exists(mc.roles, r => r.id == f.role) &&
+                        (f.resist == "bullet" || f.resist == "electric" || f.resist == "fire")),
+                    $"minions.json: '{m.id}' needs a minion line '{m.minionLine}' with three creatures");
+            }
             foreach (var m in c.monsters.monsters)
                 Require(m.moveSpeed >= c.residents.moveSpeed * 1.1f, "monsters.json: every monster must outrun residents by at least 10%");
             Require(c.match.disguiseBuildEverySeconds.Length == 2 && c.match.disguiseBuildEverySeconds[0] > 0 &&
                 c.match.disguiseBuildEverySeconds[1] >= c.match.disguiseBuildEverySeconds[0], "match.json: invalid disguise build interval");
-
-            Require(c.monsters.resistanceTracks.damageTakenMultiplierByLevel.Length == c.monsters.resistanceTracks.maxLevel + 1,
-                "monsters.json: damageTakenMultiplierByLevel needs maxLevel + 1 entries");
-            Require(c.monsters.resistanceTracks.upgradeCostByLevel.Length == c.monsters.resistanceTracks.maxLevel + 1,
-                "monsters.json: upgradeCostByLevel needs maxLevel + 1 entries");
         }
 
         static void Require(bool ok, string message)

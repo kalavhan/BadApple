@@ -34,6 +34,7 @@ namespace BadAppleHotel.Game
             public ShotStyle Style;
             public Vector3 From, To;
             public Monster Target;
+            public Minion TargetMinion;
             public Resident Receiver;
             public float Born, Duration, Arc, Scale, NextTrail, NextJitter;
             public bool Launched;
@@ -364,34 +365,34 @@ namespace BadAppleHotel.Game
 
         // ------------------------------------------------------------------ attacks
 
-        /// <summary>Called when a tower fires at the monster. Returns false when no dream creature stands there.</summary>
-        bool TowerAttackFx(Vector2 from, string damageType)
+        /// <summary>Called when a tower fires at the monster or a minion. Returns false when no dream creature stands there.</summary>
+        bool TowerAttackFx(Vector2 from, string damageType, Monster target, Minion minion)
         {
-            if (Simulation || dreamFx == null || Monster == null) return false;
+            if (Simulation || dreamFx == null || (target == null && minion == null)) return false;
             var tile = HotelMap.ToTile(from);
             TowerFxState s = null;
             foreach (var state in towerFx.Values) if (state.Tile == tile) { s = state; break; }
             if (s == null) return false;
             float now = fxNow;
-            var m = Monster;
+            var aimAt = minion != null ? minion.Pos : target.Pos;
             var style = StyleFor(s.Tower.Def);
             float scale = (1f + .14f * (s.Form - 1)) * AttackSize;
             var muzzle = Lifted(from, MuzzleHeight * Mathf.Lerp(.85f, 1.1f, (s.Form - 1) / 3f));
-            var aim = Lifted(m.Pos, TargetHeight) - muzzle; aim.z = 0;
+            var aim = Lifted(aimAt, TargetHeight) - muzzle; aim.z = 0;
             if (aim.sqrMagnitude > .0001f) muzzle += aim.normalized * .22f;
             // With an attack clip, the shot leaves at the clip's release frame instead of instantly.
             float delay = 0;
             if (s.Art != null && s.Art.HasFire)
             {
-                if (s.Art.Directional) s.Dir = CharacterSet.DirIndex(HotelView3D.Facing(m.Pos - from));
+                if (s.Art.Directional) s.Dir = CharacterSet.DirIndex(HotelView3D.Facing(aimAt - from));
                 s.FireAt = now;
                 delay = s.Art.Release;
             }
-            bool seen = s.Visible || IsVisible(m.Pos);
+            bool seen = s.Visible || IsVisible(aimAt);
             if (!seen) { s.FlashAt = s.PulseAt = now + delay; s.FlashLength = .12f; return true; }
 
-            float dist = Vector2.Distance(from, m.Pos);
-            var shot = new TowerShot { Style = style, From = muzzle, Target = m, To = Lifted(m.Pos, TargetHeight), Born = now + delay, Color = s.Accent, Source = s, Scale = scale };
+            float dist = Vector2.Distance(from, aimAt);
+            var shot = new TowerShot { Style = style, From = muzzle, Target = target, TargetMinion = minion, To = Lifted(aimAt, TargetHeight), Born = now + delay, Color = s.Accent, Source = s, Scale = scale };
             switch (style)
             {
                 case ShotStyle.Beam: shot.Duration = .18f; break;
@@ -431,8 +432,9 @@ namespace BadAppleHotel.Game
         {
             float k = (now - shot.Born) / Mathf.Max(.01f, shot.Duration);
             if (shot.Target != null && !shot.Target.Dead) shot.To = Lifted(shot.Target.Pos, TargetHeight);
+            if (shot.TargetMinion != null && !shot.TargetMinion.Dead) shot.To = Lifted(shot.TargetMinion.Pos, TargetHeight * (shot.TargetMinion.IsEscort ? .7f : .45f));
             if (k < 0) return true;
-            if (!shot.Launched && shot.Target != null) Launch(shot, now);
+            if (!shot.Launched && (shot.Target != null || shot.TargetMinion != null)) Launch(shot, now);
             if (shot.Receiver != null && shot.Receiver.Alive) shot.To = Lifted(shot.Receiver.Pos, 1.1f);
             var fx = dreamFx;
             if (k >= 1f)

@@ -134,7 +134,7 @@ namespace BadAppleHotel.Game
                 {
                     move = Vector2.ClampMagnitude(move, 1f);
                     r.Facing = move.normalized;
-                    r.Pos = Slide(r.Pos, move * speed * (now < r.SlowUntil ? 0.5f : 1f) * dt, walk, ResidentRadius);
+                    r.Pos = Slide(r.Pos, move * speed * (now < r.StunUntil ? 0f : now < r.SlowUntil ? 0.5f : 1f) * dt, walk, ResidentRadius);
                 }
                 if (!r.Asleep)
                     foreach (var other in Residents)
@@ -392,6 +392,7 @@ namespace BadAppleHotel.Game
         {
             if (!CanAct(r)) return ActionResult.Invalid;
             var room = r.Room;
+            if (Now < room.RotUntil) return ActionResult.Blocked;   // rotting doors cannot be worked on
             var weapons = Weapons(room);
             var check = UpgradeRules.CanUpgradeDoor(Cfg.doors, room.DoorLevel, weapons.Select(w => UpgradeRules.DoorSupportLevel(Cfg.towers, w.Def, w.Level)).ToArray());
 
