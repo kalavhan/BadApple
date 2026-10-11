@@ -9,6 +9,7 @@ namespace BadAppleHotel.Game
     {
         [Header("Timing (seconds)")]
         public Vector2 RefillDuration, SwellDuration, NeckDuration;
+        public Vector2 SummonRefill, SummonSwell;
         public float RecoilDuration, ReleaseGap, RetractDuration, PressNeckDuration;
         [Header("Shape (canvas pixels)")]
         public float RestNeck, SwellNeck, ReleaseNeck, RestBulb, MaximumBulb;
@@ -27,6 +28,7 @@ namespace BadAppleHotel.Game
         public static EctoplasmTuning Default => new EctoplasmTuning
         {
             RefillDuration = new Vector2(1.6f, 4f), SwellDuration = new Vector2(1.1f, 2f), NeckDuration = new Vector2(.16f, .24f),
+            SummonRefill = new Vector2(1.1f, 1.3f), SummonSwell = new Vector2(.9f, 1.1f),
             RecoilDuration = .35f, ReleaseGap = .4f, RetractDuration = .5f, PressNeckDuration = .05f,
             RestNeck = 1.6f, SwellNeck = .9f, ReleaseNeck = .4f, RestBulb = 1.5f, MaximumBulb = 6f,
             RefillLength = .45f, SwellLength = 2.1f, NeckStretch = 1.08f, BulbWidth = .22f, Sway = .6f, SwaySpeed = 1.7f,

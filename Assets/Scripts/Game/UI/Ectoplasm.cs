@@ -105,10 +105,14 @@ namespace BadAppleHotel.Game
                 drips.Add(drip);
                 if (enabled)
                 {
-                    // Start throughout the cycle, including a thinning neck, without creating a phantom drop.
-                    int state = drip.Random.Next(4);
-                    Begin(drip, (DripState)state);
-                    drip.Age = Range(drip, 0, drip.Duration);
+                    if (drip.Summon) StartSummon(drip);
+                    else
+                    {
+                        // Lintel timing stays irregular; the two button drips have a deliberate alternating beat.
+                        int state = drip.Random.Next(4);
+                        Begin(drip, (DripState)state);
+                        drip.Age = Range(drip, 0, drip.Duration);
+                    }
                     Shape(drip);
                 }
                 else { drip.State = DripState.Paused; drip.Length = 0; }
@@ -120,7 +124,8 @@ namespace BadAppleHotel.Game
             if (drip.Enabled != enabled)
             {
                 drip.Enabled = enabled;
-                Begin(drip, enabled ? DripState.Refill : DripState.Retract);
+                if (enabled && drip.Summon) StartSummon(drip);
+                else Begin(drip, enabled ? DripState.Refill : DripState.Retract);
             }
         }
 
@@ -170,17 +175,17 @@ namespace BadAppleHotel.Game
                 if (drip.State == DripState.Paused) continue;
                 drip.Age += FixedStep;
                 Shape(drip);
-                if (drip.Enabled)
+                if (drip.Enabled && !drip.Summon)
                 {
                     active++;
                     if (drip.State == DripState.Swell) { swelling++; if (shortest == null || drip.Length < shortest.Length) shortest = drip; }
                 }
-                if (drip.Age < drip.Duration) continue;
+                if (drip.Age + .00001f < drip.Duration) continue;
                 switch (drip.State)
                 {
                     case DripState.Refill: Begin(drip, DripState.Swell); break;
                     case DripState.Swell:
-                        if (!closing && simulationTime - lastRelease >= Tuning.ReleaseGap && !AnotherNeck(drip)) Begin(drip, DripState.Neck);
+                        if (!closing && CanStartNeck(drip)) Begin(drip, DripState.Neck);
                         break;
                     case DripState.Neck:
                         if (!closing && (drip.Forced || simulationTime - lastRelease + .0001f >= Tuning.ReleaseGap)) Release(drip);
@@ -190,6 +195,37 @@ namespace BadAppleHotel.Game
                 }
             }
             if (active > 1 && swelling == active && shortest != null) Begin(shortest, DripState.Refill);
+        }
+
+        void StartSummon(Drip drip)
+        {
+            Begin(drip, DripState.Refill);
+            if (drip.Id == Summon2)
+                drip.Age = -.5f * (Tuning.RecoilDuration + (Tuning.SummonRefill.x + Tuning.SummonRefill.y
+                    + Tuning.SummonSwell.x + Tuning.SummonSwell.y + Tuning.NeckDuration.x + Tuning.NeckDuration.y) * .5f);
+        }
+
+        bool CanStartNeck(Drip drip)
+        {
+            if (AnotherNeck(drip) || simulationTime + Tuning.NeckDuration.x - lastRelease < Tuning.ReleaseGap) return false;
+            if (drip.Summon) return true;
+            // Reserve enough room for the earliest pending button beat, including this lintel's neck.
+            foreach (var other in drips)
+                if (other.Summon && other.Enabled && UntilRelease(other) < Tuning.NeckDuration.y + Tuning.ReleaseGap + FixedStep) return false;
+            return true;
+        }
+
+        float UntilRelease(Drip drip)
+        {
+            float remaining = Mathf.Max(0, drip.Duration - drip.Age);
+            switch (drip.State)
+            {
+                case DripState.Neck: return remaining;
+                case DripState.Swell: return remaining + Tuning.NeckDuration.x;
+                case DripState.Refill: return remaining + Tuning.SummonSwell.x + Tuning.NeckDuration.x;
+                case DripState.Recoil: return remaining + Tuning.SummonRefill.x + Tuning.SummonSwell.x + Tuning.NeckDuration.x;
+                default: return float.PositiveInfinity;
+            }
         }
 
         bool AnotherNeck(Drip except)
@@ -203,8 +239,8 @@ namespace BadAppleHotel.Game
             drip.State = state; drip.Age = 0; drip.StartLength = drip.Length; drip.StartBulb = drip.Bulb; drip.Forced = false;
             switch (state)
             {
-                case DripState.Refill: drip.Duration = Range(drip, Tuning.RefillDuration); break;
-                case DripState.Swell: drip.Duration = Range(drip, Tuning.SwellDuration); break;
+                case DripState.Refill: drip.Duration = Range(drip, drip.Summon ? Tuning.SummonRefill : Tuning.RefillDuration); break;
+                case DripState.Swell: drip.Duration = Range(drip, drip.Summon ? Tuning.SummonSwell : Tuning.SwellDuration); break;
                 case DripState.Neck: drip.Duration = Range(drip, Tuning.NeckDuration); break;
                 case DripState.Recoil: drip.Duration = Tuning.RecoilDuration; break;
                 case DripState.Retract: drip.Duration = Tuning.RetractDuration; break;
@@ -393,21 +429,34 @@ namespace BadAppleHotel.Game
             return true;
         }
 
+        /// <summary>The root is six pixels inside the button; the bead bridges the face and outer brass edge.</summary>
+        public bool TryGetLip(string id, out Rect lip)
+        {
+            var drip = Find(id);
+            if (drip == null || !drip.Summon) { lip = default; return false; }
+            float amount = Mathf.Clamp01(drip.Length / drip.Rest);
+            float width = drip.Width * 1.3f * amount;
+            lip = new Rect(drip.Root.x - width * .5f, drip.Root.y - amount, width, 9 * amount);
+            return true;
+        }
+
         public static Vector2 RootGlowSize(float rootWidth) => new Vector2(rootWidth * 3.2f, 16);
 
         // Fourteen contour rows when quiet. Under overlapping splashes the same contour is sampled more
         // sparsely so even all object caps together stay below 600 submitted (not just unique) vertices.
-        int GeometryRows(out int total)
+        int GeometryRows(out int total, out int dropSegments)
         {
             int active = 0, roots = 0;
-            foreach (var drip in drips) if (drip.Length > .05f) { active++; roots += drip.Summon ? 6 : 18; }
-            int particleVertices = droplets.Count * 25 + puddles.Count * 16 + specks.Count * 3;
-            int rows = active == 0 ? 14 : Mathf.Clamp((MaxVertices - particleVertices - active * 17 - roots) / (active * 6), 3, 14);
-            total = particleVertices + active * (rows * 6 + 17) + roots;
+            foreach (var drip in drips) if (drip.Length > .05f) { active++; roots += drip.Summon ? 24 : 18; }
+            int fixedVertices = puddles.Count * 16 + specks.Count * 3 + active * 17 + roots;
+            dropSegments = fixedVertices + droplets.Count * 25 + active * 24 <= MaxVertices ? 6 : 4;
+            int particleVertices = droplets.Count * (dropSegments * 3 + 7);
+            int rows = active == 0 ? 14 : Mathf.Clamp((MaxVertices - fixedVertices - particleVertices) / (active * 6), 4, 14);
+            total = fixedVertices + particleVertices + active * rows * 6;
             return rows;
         }
 
-        public int GeometryVertexCount { get { GeometryRows(out int total); return total; } }
+        public int GeometryVertexCount { get { GeometryRows(out int total, out _); return total; } }
 
         public void Draw(float scale)
         {
@@ -415,7 +464,7 @@ namespace BadAppleHotel.Game
             Step();
             if (!EnsureMaterials()) return;
             drawOpacity = GUI.color.a;
-            int rows = GeometryRows(out _);
+            int rows = GeometryRows(out _, out int dropSegments);
             GL.PushMatrix();
             try
             {
@@ -423,7 +472,7 @@ namespace BadAppleHotel.Game
                 bodyMaterial.SetPass(0);
                 GL.Begin(GL.TRIANGLES);
                 foreach (var drip in drips) if (drip.Length > .05f) DrawDrip(drip, rows, scale);
-                foreach (var drop in droplets) DrawDroplet(drop, scale);
+                foreach (var drop in droplets) DrawDroplet(drop, dropSegments, scale);
                 foreach (var puddle in puddles)
                 {
                     float t = Mathf.Clamp01(puddle.Age / Mathf.Max(FixedStep, Tuning.PuddleDuration));
@@ -497,11 +546,12 @@ namespace BadAppleHotel.Game
                 Quad(Contour(drip, f0, -1), Contour(drip, f0, 1), Contour(drip, f1, 1), Contour(drip, f1, -1), c0, c0, c1, c1, scale);
             }
             if (TryGetPool(drip.Id, out var pool)) Lens(pool, top, scale);
-            else
+            else if (TryGetLip(drip.Id, out var lip))
             {
-                float w = drip.Width * .8f;
-                Quad(drip.Root + new Vector2(-w, -3), drip.Root + new Vector2(w, -3), drip.Root + new Vector2(w * .7f, 0), drip.Root + new Vector2(-w * .7f, 0),
-                    WithAlpha(top, 0), WithAlpha(top, 0), top, top, scale);
+                Lens(lip, top, scale);
+                Color lipShine = WithAlpha(HauntedSkin.MintHi, .7f * visibility);
+                float x = lip.x + lip.width * .24f, y = lip.y + lip.height * .2f, width = lip.width * .28f;
+                Quad(new Vector2(x, y), new Vector2(x + width, y), new Vector2(x + width, y + 1), new Vector2(x, y + 1), lipShine, lipShine, lipShine, lipShine, scale);
             }
             var tip = drip.Root + new Vector2(Sway(drip), drip.Length);
             float cap = HalfWidth(drip, 1);
@@ -520,7 +570,7 @@ namespace BadAppleHotel.Game
         }
 
         float DropAlpha(Droplet drop) => !drop.Source.Summon ? 1 : Mathf.Clamp01((drop.Source.LandY - drop.Pos.y) / Mathf.Max(1, Tuning.FadeDistance));
-        void DrawDroplet(Droplet drop, float scale)
+        void DrawDroplet(Droplet drop, int segments, float scale)
         {
             if (drop.Delay > 0) return;
             float alpha = DropAlpha(drop), stretch = 1 + Mathf.Min(.6f, drop.Velocity.magnitude / 900f);
@@ -532,7 +582,7 @@ namespace BadAppleHotel.Game
                 rx = drop.Radius * Mathf.Lerp(1, 1.7f, t); ry = drop.Radius * Mathf.Lerp(1, .35f, t);
                 pos.y -= ry;
             }
-            Ellipse(pos, rx, ry, GooAt(.85f, .92f * alpha), 6, scale);
+            Ellipse(pos, rx, ry, GooAt(.85f, .92f * alpha), segments, scale);
             Vector2 highlight = pos + new Vector2(-rx * .25f, -ry * .4f);
             Color shine = WithAlpha(Highlight, .3f * alpha);
             Triangle(highlight + Vector2.left, highlight + Vector2.up, highlight + Vector2.right, shine, shine, shine, scale);

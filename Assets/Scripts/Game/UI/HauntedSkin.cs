@@ -35,8 +35,6 @@ namespace BadAppleHotel.Game
         public static readonly Color Mint = new Color32(0x7E, 0xF5, 0xD2, 255);
         public static readonly Color MintHi = new Color32(0xE6, 0xFF, 0xF7, 255);
         public static readonly Color MintDeep = new Color32(0x33, 0xA0, 0x88, 255);
-        public static readonly Color GooTop = new Color32(0xB9, 0xFF, 0xE9, 255);
-        public static readonly Color GooBottom = new Color32(0x5F, 0xD6, 0xB6, 255);
         public static readonly Color Violet = new Color32(0xA9, 0x8B, 0xFF, 255);
         public static readonly Color CostInk = new Color32(0x1B, 0x5E, 0x4E, 255);
         public static readonly Color FaithInk = new Color32(0x5B, 0x3F, 0xA8, 255);

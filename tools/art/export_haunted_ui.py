@@ -7,7 +7,7 @@ The supplied source paths are transcribed unchanged; CSS pieces use matching SVG
 fills. Fonts must already exist under Assets/Resources/Fonts (see their sources file).
 """
 from pathlib import Path
-import argparse, base64, json, shutil, subprocess, tempfile, uuid
+import argparse, base64, io, json, math, shutil, subprocess, tempfile, uuid
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -48,6 +48,21 @@ def tarnish(w,h):
     return f'<ellipse cx="{w*.12}" cy="{h*.8}" rx="{w*.18}" ry="{h*.3}" fill="url(#tarnish)"/><ellipse cx="{w*.85}" cy="{h*.2}" rx="{w*.14}" ry="{h*.24}" fill="url(#tarnish)"/>'
 def plate(w,h,rx=3):
     return f'<rect x=".5" y=".5" width="{w-1}" height="{h-1}" rx="{rx}" fill="url(#brass)" stroke="#241706"/>'+tarnish(w,h)+f'<rect x="1.5" y="1.5" width="{w-3}" height="{h-3}" rx="{rx}" fill="none" stroke="#fff5c8" stroke-opacity=".5"/>'
+
+def halo(size, inset, sigma, radius=6):
+    """White rounded rectangle with a Gaussian falloff outside its solid silhouette."""
+    image = Image.new('RGBA', (size, size))
+    pixels = []
+    half = size / 2 - inset
+    for y in range(size):
+        for x in range(size):
+            qx = abs(x + .5 - size / 2) - half + radius
+            qy = abs(y + .5 - size / 2) - half + radius
+            distance = math.hypot(max(qx, 0), max(qy, 0)) + min(max(qx, qy), 0) - radius
+            alpha = 255 if distance <= 0 else round(255 * math.exp(-.5 * (distance / sigma) ** 2))
+            pixels.append((255, 255, 255, alpha))
+    image.putdata(pixels)
+    return image
 
 def build():
     for name,horizontal in [('wood_v',False),('wood_h',True)]:
@@ -95,9 +110,14 @@ def build():
     add('body_shade',(64,128),'<rect width="64" height="128" fill="url(#shade)"/>')
     add('summon_unlit',(128,64),'<rect x="1" y="1" width="126" height="62" rx="8" fill="url(#unlit)" stroke="#b8923f" stroke-opacity=".25"/>')
     add('summon_core',(128,64),'<rect x="1" y="1" width="126" height="62" rx="8" fill="url(#mint)" stroke="#e6fff7" stroke-opacity=".6"/><path d="M10 60h108" stroke="#392050" stroke-opacity=".6" stroke-width="3"/>')
-    # Permanent lift housing: radius84 arch and200px sill, matched to the round2 mockup.
+    # Permanent lift housing: radius 84 arch and 200px sill, matched to the round 2 mockup.
     add('lift_housing',(400,192),'''<defs><linearGradient id="liftwood" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#2e1420"/><stop offset="1" stop-color="#1c0a12"/></linearGradient><linearGradient id="liftbrass" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#f0dc98"/><stop offset=".45" stop-color="#b8923f"/><stop offset=".8" stop-color="#8e6a26"/><stop offset="1" stop-color="#4a3410"/></linearGradient><clipPath id="liftarch"><path d="M16 84A84 84 0 0 1 184 84Z"/></clipPath><pattern id="liftgrain" width="19" height="128" patternUnits="userSpaceOnUse"><path d="M1 0v128" stroke="#000" stroke-opacity=".22"/><path d="M8 0v128" stroke="#ffbec8" stroke-opacity=".04"/></pattern></defs><path d="M16 84A84 84 0 0 1 184 84Z" fill="url(#liftwood)"/><rect width="200" height="84" fill="url(#liftgrain)" clip-path="url(#liftarch)"/><path d="M19 84A81 81 0 0 1 181 84" fill="none" stroke="url(#liftbrass)" stroke-width="6"/><path d="M19 84A81 81 0 0 1 181 84" fill="none" stroke="#50826e" stroke-opacity=".35" stroke-width="6" stroke-dasharray="2 9 1 14 3 22"/><rect x="0" y="84" width="200" height="8" rx="1.5" fill="url(#liftbrass)"/><circle cx="10" cy="88" r="2" fill="#4a3410"/><circle cx="190" cy="88" r="2" fill="#4a3410"/>''',(200,96))
     add('lift_wing',(200,84),'''<g transform="translate(-2 -94)"><path d="M110 128C80 96 40 92 4 104C20 112 24 122 22 132C34 124 44 126 52 136C58 126 70 124 80 130C86 122 98 122 110 128Z" fill="#14060c" stroke="url(#brass)" stroke-width="2"/></g>''',(110,44))
+
+    # Append new exports so adding art never changes the raster origins of older SVGs.
+    ASSETS['halo_tight_9'] = (96, 96, halo(96, 24, 8))
+    ASSETS['halo_wide_9'] = (160, 160, halo(160, 48, 16))
+    add('summon_bezel_lit_9',(76,76),'''<defs><linearGradient id="litbrass" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#e6fff7"/><stop offset=".22" stop-color="#b8923f"/><stop offset=".5" stop-color="#4a3410"/><stop offset=".72" stop-color="#b8923f"/><stop offset=".88" stop-color="#e6fff7"/><stop offset="1" stop-color="#8e6a26"/></linearGradient><filter id="bleed" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2"/></filter><mask id="litbezel"><rect width="76" height="76" fill="black"/><rect x="6" y="6" width="64" height="64" rx="6" fill="white"/><rect x="10" y="10" width="56" height="56" rx="3" fill="black"/></mask></defs><rect x="6" y="6" width="64" height="64" rx="6" fill="none" stroke="#7ef5d2" stroke-width="3" opacity=".8" filter="url(#bleed)"/><rect x="6" y="6" width="64" height="64" rx="6" fill="url(#litbrass)" mask="url(#litbezel)"/><rect x="10" y="10" width="56" height="56" rx="3" fill="none" stroke="#7ef5d2" stroke-width="1.5"/><path d="M12 7H64" stroke="#e6fff7" stroke-width="1" opacity=".7"/>''')
 
 def metadata(path, folder=False):
     meta=Path(str(path)+'.meta')
@@ -150,9 +170,15 @@ def main():
     for name,(w,h,svg) in ASSETS.items():
         if x+w>2048: x=0;y+=row+8;row=0
         layout[name]=(x,y,w,h);row=max(row,h)
-        (SOURCE/(name+'.svg')).write_text(svg)
-        # Data URLs isolate SVG ids (including masks) from other assets.
-        url='data:image/svg+xml;base64,'+base64.b64encode(svg.encode()).decode()
+        if isinstance(svg, Image.Image):
+            # Keep analytic alpha fields exact instead of rasterizing them a second time.
+            encoded = io.BytesIO(); svg.save(encoded, format='PNG', optimize=True)
+            (SOURCE/(name+'.png')).write_bytes(encoded.getvalue())
+            url='data:image/png;base64,'+base64.b64encode(encoded.getvalue()).decode()
+        else:
+            (SOURCE/(name+'.svg')).write_text(svg)
+            # Data URLs isolate SVG ids (including masks) from other assets.
+            url='data:image/svg+xml;base64,'+base64.b64encode(svg.encode()).decode()
         html.append(f'<img style="position:absolute;left:{x}px;top:{y}px;width:{w}px;height:{h}px" src="{url}">')
         x+=w+8
     height=y+row
@@ -163,7 +189,10 @@ def main():
         subprocess.run(command,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
     im=Image.open(atlas).convert('RGBA')
     for name,(x,y,w,h) in layout.items():
-        output=OUT/(name+'.png');im.crop((x,y,x+w,y+h)).save(output,optimize=True);metadata(output)
+        output=OUT/(name+'.png')
+        source = ASSETS[name][2]
+        rendered = source if isinstance(source, Image.Image) else im.crop((x,y,x+w,y+h))
+        rendered.save(output,optimize=True);metadata(output)
     metadata(OUT,True); metadata(FONT.parent,True)
     for f in FONT.parent.iterdir():
         if f.suffix!='.meta':metadata(f)

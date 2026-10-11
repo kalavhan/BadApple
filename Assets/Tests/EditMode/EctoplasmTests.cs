@@ -14,8 +14,8 @@ namespace BadAppleHotel.Tests
             goo.SetAnchor(Ectoplasm.LintelA, new Vector2(230, 66), 26, 16, 317, true);
             goo.SetAnchor(Ectoplasm.LintelB, new Vector2(600, 66), 18, 22, 317, true);
             goo.SetAnchor(Ectoplasm.LintelC, new Vector2(746, 66), 14, 12, 294, true);
-            goo.SetAnchor(Ectoplasm.Summon1, new Vector2(766, 344), 16, 10, 390, true);
-            goo.SetAnchor(Ectoplasm.Summon2, new Vector2(800, 344), 11, 7, 390, true);
+            goo.SetAnchor(Ectoplasm.Summon1, new Vector2(766, 338), 16, 16, 390, true);
+            goo.SetAnchor(Ectoplasm.Summon2, new Vector2(800, 338), 11, 13, 390, true);
             return goo;
         }
 
@@ -255,6 +255,47 @@ namespace BadAppleHotel.Tests
                     Assert.AreEqual(new Vector2(drip.RootWidth * 3.2f, 16), Ectoplasm.RootGlowSize(drip.RootWidth));
                 }
                 Assert.IsFalse(goo.TryGetPool(Ectoplasm.Summon1, out _));
+            }
+        }
+
+        [Test]
+        public void Summon_beats_alternate_every_two_and_a_half_to_three_seconds_with_all_five_anchors()
+        {
+            foreach (int seed in new[] { 3, 19, 73, 100, 281, 1401 })
+            using (var goo = Tray(seed))
+            {
+                var previous = new Dictionary<string, float>();
+                float last = -100; string lastButton = null; int buttons = 0;
+                goo.Released += (id, time, forced) =>
+                {
+                    Assert.GreaterOrEqual(time - last, .4f - .0001f, "Global release spacing, seed " + seed);
+                    last = time;
+                    if (id != Ectoplasm.Summon1 && id != Ectoplasm.Summon2) return;
+                    if (previous.TryGetValue(id, out var earlier)) Assert.That(time - earlier, Is.InRange(2.5f, 3.0001f), id + " seed " + seed);
+                    Assert.AreNotEqual(lastButton, id, "The two button drips should alternate.");
+                    previous[id] = time; lastButton = id; buttons++;
+                };
+                Run(goo, 60);
+                Assert.Greater(buttons, 30);
+            }
+        }
+
+        [Test]
+        public void Summon_lips_bridge_the_core_and_outer_bezel_then_retract_with_the_drip()
+        {
+            using (var goo = Tray())
+            {
+                Run(goo, 1.5f);
+                Assert.IsTrue(goo.TryGetLip(Ectoplasm.Summon1, out var lip));
+                goo.TryGetDrip(Ectoplasm.Summon1, out var drip);
+                Assert.AreEqual(drip.Root.y - 1, lip.yMin, .001f);
+                Assert.AreEqual(drip.Root.y + 8, lip.yMax, .001f);
+                Assert.AreEqual(drip.RootWidth * 1.3f, lip.width, .001f);
+                goo.SetAnchor(Ectoplasm.Summon1, drip.Root, drip.RootWidth, drip.RestLength, 390, false);
+                Run(goo, .6f);
+                Assert.IsTrue(goo.TryGetLip(Ectoplasm.Summon1, out lip));
+                Assert.AreEqual(0, lip.width); Assert.AreEqual(0, lip.height);
+                Assert.IsFalse(goo.TryGetLip(Ectoplasm.LintelA, out _));
             }
         }
 

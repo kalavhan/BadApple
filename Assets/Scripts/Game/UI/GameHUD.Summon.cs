@@ -122,6 +122,10 @@ namespace BadAppleHotel.Game
         // ------------------------------------------------------------ haunted tray
 
         [SerializeField] EctoplasmTuning ectoplasmTuning = EctoplasmTuning.Default;
+        [SerializeField] SummonGlowTuning summonGlowTuning = SummonGlowTuning.Default;
+        float summonGlow, lastSummon2Release = float.NegativeInfinity, summonPressedAtForGlow = float.NegativeInfinity;
+        int summonGlowFrame = -1;
+        bool summonGlowSubscribed;
         readonly Ectoplasm ectoplasm = new Ectoplasm();
         readonly HauntedGags hauntedGags = new HauntedGags();
         readonly List<Config.TowerDef> trayTowers = new List<Config.TowerDef>(4);
@@ -142,9 +146,34 @@ namespace BadAppleHotel.Game
         {
             ectoplasm.Tuning = ectoplasmTuning;
             ectoplasm.Open(Time.frameCount);
+            if (!summonGlowSubscribed) { ectoplasm.Released += OnTrayDripReleased; summonGlowSubscribed = true; }
+            summonGlow = 0; summonGlowFrame = -1;
+            lastSummon2Release = summonPressedAtForGlow = float.NegativeInfinity;
             hauntedGags.Open(Time.frameCount);
             lastTrayPick = null; oldRegisterPick = null; wasBlocked = false;
             summonPressedAt = -1f; closingSummonSlot = -1;
+        }
+
+        void OnTrayDripReleased(string id, float simulationTime, bool forced)
+        {
+            if (id == Ectoplasm.Summon2) lastSummon2Release = HauntedClock.Now;
+        }
+
+        void StepTrayGoo(HauntedTrayLayout layout, bool lit, float pressAge)
+        {
+            ectoplasm.Tuning = ectoplasmTuning;
+            ectoplasm.SetAnchor(Ectoplasm.LintelA, layout.LintelA.Root, 22, 16, layout.LintelA.LandingY, true);
+            ectoplasm.SetAnchor(Ectoplasm.LintelB, layout.LintelB.Root, 18, 22, layout.LintelB.LandingY, true);
+            ectoplasm.SetAnchor(Ectoplasm.LintelC, layout.LintelC.Root, 14, 12, layout.LintelC.LandingY, true);
+            float rootY = layout.Summon.yMax - 6 + (pressAge < .08f ? 2 : 0);
+            ectoplasm.SetAnchor(Ectoplasm.Summon1, new Vector2(layout.Summon.x + layout.Summon.width * .62f, rootY), 16, 16, layout.Frame.yMax + 30, lit);
+            ectoplasm.SetAnchor(Ectoplasm.Summon2, new Vector2(layout.Summon.x + layout.Summon.width * .82f, rootY), 11, 13, layout.Frame.yMax + 30, lit);
+            ectoplasm.Step();
+            if (summonGlowFrame == Time.frameCount) return;
+            summonGlowFrame = Time.frameCount;
+            ectoplasm.TryGetDrip(Ectoplasm.Summon1, out var primary);
+            float target = SummonGlow.Target(lit, primary, HauntedClock.Now - lastSummon2Release, HauntedClock.Now - summonPressedAtForGlow, summonGlowTuning);
+            summonGlow = lit ? SummonGlow.Smooth(summonGlow, target, HauntedClock.Delta, summonGlowTuning) : 0;
         }
 
         void UpdateSummonPress()
@@ -162,6 +191,7 @@ namespace BadAppleHotel.Game
         {
             if (summonPressedAt >= 0f || windowClosingAt >= 0f || selSlot != slot || !gm.CanBuildAt(room, slot) || gm.Wallet(me, pick.costResource) < pick.buildCost) return;
             summonPressedAt = HauntedClock.Now;
+            summonPressedAtForGlow = HauntedClock.Now;
             summonResident = me; summonRoom = room; summonSlot = slot; summonPick = pick;
             ectoplasm.PressSummon();
         }
@@ -208,6 +238,7 @@ namespace BadAppleHotel.Game
                 layout.Cancel.y += 12; layout.Cancel.height = 44;
                 layout.Summon.y += 12; layout.Summon.height = 44;
             }
+            StepTrayGoo(layout, lit, pressAge);
             Ui(r);
             var oldColor = GUI.color;
             GUI.color = new Color(1, 1, 1, k);
@@ -257,12 +288,6 @@ namespace BadAppleHotel.Game
             DrawTrayDetail(layout, pick, placeable, lit, me, room, slot, pressAge);
             DrawTypeRail(layout.Rail);
             hauntedGags.Draw(r, layout.SpiderX);
-            ectoplasm.Tuning = ectoplasmTuning;
-            ectoplasm.SetAnchor(Ectoplasm.LintelA, layout.LintelA.Root, 22, 16, layout.LintelA.LandingY, true);
-            ectoplasm.SetAnchor(Ectoplasm.LintelB, layout.LintelB.Root, 18, 22, layout.LintelB.LandingY, true);
-            ectoplasm.SetAnchor(Ectoplasm.LintelC, layout.LintelC.Root, 14, 12, layout.LintelC.LandingY, true);
-            ectoplasm.SetAnchor("Summon 1", new Vector2(layout.Summon.x + layout.Summon.width * .62f, layout.Summon.yMax + (pressAge < .08f ? 2 : 0)), 16, 10, r.yMax + 30, lit);
-            ectoplasm.SetAnchor("Summon 2", new Vector2(layout.Summon.x + layout.Summon.width * .82f, layout.Summon.yMax + (pressAge < .08f ? 2 : 0)), 11, 7, r.yMax + 30, lit);
             ectoplasm.Draw(scale);
             GUI.color = oldColor;
             if (cardDragging && cardDragId != null)
@@ -409,6 +434,16 @@ namespace BadAppleHotel.Game
                 HauntedSkin.Label(slip, "This square would wall off your bed.", HauntedSkin.Typed(11), HauntedSkin.BloodRed);
                 GUI.color = saved;
             }
+            var summon = layout.Summon;
+            bool down = pressAge < .08f;
+            if (down) summon.y += 2;
+            if (lit)
+            {
+                HauntedSkin.NineSlice(Grown(summon, summonGlowTuning.WideSpread), HauntedSkin.Texture("halo_wide_9"), WideHaloBorder,
+                    Alpha(HauntedSkin.Violet, Mathf.Clamp01(summonGlowTuning.WideAlpha * summonGlow)));
+                HauntedSkin.NineSlice(Grown(summon, summonGlowTuning.TightSpread), HauntedSkin.Texture("halo_tight_9"), TightHaloBorder,
+                    Alpha(HauntedSkin.Mint, Mathf.Clamp01(summonGlowTuning.TightAlpha * summonGlow)));
+            }
             var cancel = layout.Cancel;
             HauntedSkin.NineSlice(cancel, HauntedSkin.Texture("brass_9"), BrassBorder, Color.white);
             HauntedSkin.Tiled(new Rect(cancel.x + 3, cancel.y + 3, cancel.width - 6, cancel.height - 6), HauntedSkin.Texture("wood_v"), new Vector2(128, 128), Vector2.zero);
@@ -416,20 +451,17 @@ namespace BadAppleHotel.Game
             HauntedSkin.Label(cancel, "Cancel", HauntedSkin.Gothic(19), HauntedSkin.Bone);
             if (windowClosingAt < 0 && summonPressedAt < 0)
                 TapZone(cancel, () => { cancelPressedAt = HauntedClock.Now; CloseWindow(); });
-            var summon = layout.Summon;
-            bool down = pressAge < .08f;
-            if (down) summon.y += 2;
-            float breath = 1 + .1f * Mathf.Sin(HauntedClock.Now * Mathf.PI);
-            if (lit)
-            {
-                HauntedSkin.GlowAt(summon.center, summon.size * 2, Alpha(HauntedSkin.Violet, .35f * breath));
-                HauntedSkin.GlowAt(summon.center, summon.size * 1.5f, Alpha(HauntedSkin.Mint, .55f * breath));
-            }
             HauntedSkin.NineSlice(summon, HauntedSkin.Texture("brass_9"), BrassBorder, Color.white);
             var core = new Rect(summon.x + 4, summon.y + 4, summon.width - 8, summon.height - 8);
             HauntedSkin.Tex(core, HauntedSkin.Texture(lit ? "summon_core" : "summon_unlit"), down ? new Color(.9f, .9f, .9f, 1) : Color.white);
             if (lit)
             {
+                HauntedSkin.NineSlice(Grown(summon, summonGlowTuning.BezelSpread), HauntedSkin.Texture("summon_bezel_lit_9"), LitBezelBorder,
+                    Alpha(Color.white, SummonGlow.BezelAlpha(summonGlow, summonGlowTuning)));
+                GUI.BeginGroup(core);
+                HauntedSkin.GlowAt(core.size * .5f, new Vector2(core.width * summonGlowTuning.FaceWidth, core.height * summonGlowTuning.FaceHeight),
+                    Alpha(HauntedSkin.MintHi, summonGlowTuning.FaceAlpha * SummonGlow.Emphasis(summonGlow, summonGlowTuning)));
+                GUI.EndGroup();
                 HauntedSkin.Fill(new Rect(core.x + 1, core.y, core.width - 2, 2), new Color(1, 1, 1, .7f), 0);
                 if (summon.width < 160)
                 {
@@ -449,6 +481,19 @@ namespace BadAppleHotel.Game
             }
             else HauntedSkin.Label(core, placeable ? Shortfall(me, pick.costResource, pick.buildCost) : "Blocked", HauntedSkin.Typed(13), placeable ? DreamSkin.BoneDim : HauntedSkin.StampRed);
             if (placeable) DrawRegisterStamp(layout.Stamp, true, pressAge);
+        }
+        static Rect Grown(Rect r, float amount) => new Rect(r.x - amount, r.y - amount, r.width + amount * 2, r.height + amount * 2);
+        static RectOffset tightHaloBorder, wideHaloBorder, litBezelBorder;
+        static RectOffset TightHaloBorder => tightHaloBorder ?? (tightHaloBorder = new RectOffset(24, 24, 24, 24));
+        static RectOffset WideHaloBorder => wideHaloBorder ?? (wideHaloBorder = new RectOffset(48, 48, 48, 48));
+        RectOffset LitBezelBorder
+        {
+            get
+            {
+                int border = Mathf.Max(1, summonGlowTuning.BezelBorder);
+                if (litBezelBorder == null || litBezelBorder.left != border) litBezelBorder = new RectOffset(border, border, border, border);
+                return litBezelBorder;
+            }
         }
         static RectOffset brassBorder;
         static RectOffset BrassBorder => brassBorder ?? (brassBorder = new RectOffset(12, 12, 12, 12));
