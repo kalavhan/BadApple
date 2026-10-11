@@ -216,13 +216,17 @@ namespace BadAppleHotel.Game
             HauntedSkin.Tex(new Rect(r.x + 10, r.y + 10, r.width - 20, r.height - 20), HauntedSkin.Texture("body_shade"), Color.white);
             HauntedSkin.Tiled(new Rect(r.x + 10, r.yMax - 40, r.width - 20, 30), HauntedSkin.Texture("wood_h"), new Vector2(128, 128), Vector2.zero);
             HauntedSkin.Fill(new Rect(r.x + 10, r.yMax - 43, r.width - 20, 3), HauntedSkin.Brass, 0);
-            HauntedSkin.Gate(new Rect(r.x + 10, r.y + 10, 40, r.height - 20));
-            HauntedSkin.Gate(new Rect(r.xMax - 50, r.y + 10, 40, r.height - 20));
+            HauntedSkin.Gate(layout.LeftGate);
+            HauntedSkin.Gate(layout.RightGate);
+            HauntedSkin.Lintel(layout.Lintel);
+            for (int joint = 0; joint < 4; joint++)
+            {
+                float x = joint < 2 ? r.x + 18 + joint * 24 : r.xMax - 18 - (joint - 2) * 24;
+                HauntedSkin.Tex(new Rect(x - 3, r.y + 67, 6, 6), DreamSkin.Disc, HauntedSkin.BrassHi);
+            }
             hauntedGags.DrawWebs(r);
-            HauntedSkin.Lintel(new Rect(r.x + 50, r.y + 10, r.width - 100, 56));
             float plaqueAngle = Mathf.Clamp(-4f + 10f * Mathf.Exp(-6f * (now - windowOpenedAt)) * Mathf.Cos(14f * (now - windowOpenedAt)), -8f, 8f);
             HauntedSkin.Plaque(new Rect(r.x + 68, r.y + 18, 160, 42), "Summon", "Room " + (room.Def.Index + 1) + " · Do Not Disturb", plaqueAngle);
-            DrawHauntedDial(r, now);
             DrawTrayWallet(r, me, pick);
             DrawHauntedClose(new Rect(r.xMax - 40, r.y - 8, 48, 48));
 
@@ -252,11 +256,11 @@ namespace BadAppleHotel.Game
             GUI.color = new Color(1, 1, 1, k);
             DrawTrayDetail(layout, pick, placeable, lit, me, room, slot, pressAge);
             DrawTypeRail(layout.Rail);
-            hauntedGags.Draw(r, layout.Cubby(0).xMax + 5f + (layout.Slots > 2 ? layout.Cubby(1).width + 10f : 0f));
+            hauntedGags.Draw(r, layout.SpiderX);
             ectoplasm.Tuning = ectoplasmTuning;
-            ectoplasm.SetAnchor("Lintel A", new Vector2(r.x + 50 + .2f * (r.width - 100), r.y + 66), 26, 16, r.yMax - 43, true);
-            ectoplasm.SetAnchor("Lintel B", new Vector2(layout.Cabinet.xMax + 7, r.y + 66), 18, 22, r.yMax - 43, true);
-            ectoplasm.SetAnchor("Lintel C", new Vector2(layout.Summon.center.x, r.y + 66), 14, 12, layout.Summon.y, true);
+            ectoplasm.SetAnchor(Ectoplasm.LintelA, layout.LintelA.Root, 22, 16, layout.LintelA.LandingY, true);
+            ectoplasm.SetAnchor(Ectoplasm.LintelB, layout.LintelB.Root, 18, 22, layout.LintelB.LandingY, true);
+            ectoplasm.SetAnchor(Ectoplasm.LintelC, layout.LintelC.Root, 14, 12, layout.LintelC.LandingY, true);
             ectoplasm.SetAnchor("Summon 1", new Vector2(layout.Summon.x + layout.Summon.width * .62f, layout.Summon.yMax + (pressAge < .08f ? 2 : 0)), 16, 10, r.yMax + 30, lit);
             ectoplasm.SetAnchor("Summon 2", new Vector2(layout.Summon.x + layout.Summon.width * .82f, layout.Summon.yMax + (pressAge < .08f ? 2 : 0)), 11, 7, r.yMax + 30, lit);
             ectoplasm.Draw(scale);
@@ -371,7 +375,7 @@ namespace BadAppleHotel.Game
         void DrawTrayDetail(HauntedTrayLayout layout, Config.TowerDef pick, bool placeable, bool lit, Resident me, Room room, int slot, float pressAge)
         {
             var r = layout.Frame;
-            var portrait = new Rect(layout.Detail.center.x - 75, r.y + 58, 150, 96);
+            var portrait = layout.Portrait;
             var nail = new Vector2(portrait.center.x, r.y + 57);
             float age = Mathf.Max(0, HauntedClock.Now - pickChangedAt);
             float angle = 3 + 5 * Mathf.Exp(-5 * age) * Mathf.Cos(11 * age);
@@ -493,47 +497,6 @@ namespace BadAppleHotel.Game
                 HauntedSkin.Label(new Rect(cx, card.y + 100, cellW - 5, 12), caption, HauntedSkin.SmallCaps(11), new Color32(107, 82, 64, 255), TextAnchor.MiddleLeft);
                 HauntedSkin.Label(new Rect(cx, card.y + 112, cellW - 5, 19), value, HauntedSkin.Typed(13), HauntedSkin.Ink, TextAnchor.MiddleLeft);
             }
-        }
-
-        float dialAngle = -62, dialVelocity;
-        int dialFrame = -1;
-        static readonly string[] RomanNights = { "I", "II", "III", "IV", "V", "VI" };
-        void DrawHauntedDial(Rect frame, float now)
-        {
-            int count = gm.Endless ? 6 : Mathf.Max(1, gm.Cfg.match.nightCount);
-            int night = HauntedTrayLayout.DialNight(gm.Night, count, gm.Phase == Phase.Night, gm.Endless);
-            float target = count == 1 ? 0 : -62 + (night - 1) * 124f / (count - 1);
-            if (dialFrame != Time.frameCount)
-            {
-                dialFrame = Time.frameCount;
-                float remain = Mathf.Min(.05f, HauntedClock.Delta);
-                while (remain > 0)
-                {
-                    float dt = Mathf.Min(1f / 120, remain); remain -= dt;
-                    dialVelocity += (60 * (target - dialAngle) - 9 * dialVelocity) * dt;
-                    dialAngle += dialVelocity * dt;
-                }
-            }
-            float delay = Mathf.Clamp01((now - windowOpenedAt - .06f) / .26f);
-            float extra = windowClosingAt < 0 ? (1 - Mathf.Pow(1 - Mathf.Clamp01((now - windowOpenedAt) / .26f), 3) - (1 - Mathf.Pow(1 - delay, 3))) * (frame.height + 80) : 0;
-            var crest = new Rect(frame.center.x - 165, frame.y - 68 + extra, 330, 134);
-            Ui(crest);
-            HauntedSkin.Tex(crest, HauntedSkin.Texture("dial_base"), Color.white);
-            HauntedSkin.Tex(new Rect(crest.x + 86, crest.y + 37, 158, 79), HauntedSkin.Texture("dial_face"), Color.white);
-            var pivot = new Vector2(crest.x + 165, crest.y + 116);
-            for (int i = 1; i <= count; i++)
-            {
-                float theta = (count == 1 ? 0 : -62 + (i - 1) * 124f / (count - 1)) * Mathf.Deg2Rad;
-                var p = pivot + new Vector2(Mathf.Sin(theta), -Mathf.Cos(theta)) * 62;
-                if (i == night) HauntedSkin.GlowAt(p, Vector2.one * 26, Alpha(HauntedSkin.Mint, .3f));
-                HauntedSkin.Label(new Rect(p.x - 14, p.y - 12, 28, 24), i <= 6 ? RomanNights[i - 1] : i.ToString(), HauntedSkin.Gothic(15), i == night ? HauntedSkin.CostInk : HauntedSkin.Ink);
-            }
-            bool endless = gm.Endless && gm.Night >= 6;
-            HauntedSkin.Label(new Rect(pivot.x - 34, crest.y + 95, 68, 13), endless ? "ENDLESS" : "NIGHT", HauntedSkin.SmallCaps(11), HauntedSkin.BloodRed);
-            float sway = .8f * Mathf.Sin(1.3f * now) + .4f * Mathf.Sin(3.1f * now);
-            if (endless) sway += (Mathf.PerlinNoise(now * 9, .17f) - .5f) * 3;
-            HauntedSkin.Rotated(dialAngle + sway, pivot, () => HauntedSkin.Tex(new Rect(pivot.x - 6, pivot.y - 56, 12, 56), HauntedSkin.Texture("needle_finger"), new Color(1, 1, 1, gm.Phase == Phase.Night ? 1 : .6f)));
-            HauntedSkin.Tex(new Rect(pivot.x - 11, pivot.y - 13, 22, 24), HauntedSkin.Texture("skull_hub"), Color.white);
         }
 
         void DrawHauntedClose(Rect r)

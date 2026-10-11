@@ -833,14 +833,7 @@ namespace BadAppleHotel.Game
 
         void DrawTopBar()
         {
-            bool housed = (gm.Phase == Phase.Night && gm.HumanRole == Role.Monster) || (gm.Human != null && gm.Human.Room != null);
-            string phase = gm.Phase == Phase.Setup ? (housed ? "SETUP: GET READY" : "SETUP: FIND A ROOM")
-                : gm.Phase == Phase.Night ? "NIGHT " + gm.Night + (gm.Endless ? " · ENDLESS" : " / " + gm.Cfg.match.nightCount)
-                : "DAWN";
-            var r = new Rect(vw / 2 - 130, 8, 260, 42);
-            Panel(r);
-            Shadowed(new Rect(r.x, r.y + 2, r.width, 20), phase, Candle);
-            if (gm.Phase != Phase.Results) Shadowed(new Rect(r.x, r.y + 20, r.width, 20), Clock(gm.PhaseTimer), Bone);
+            DrawLiftIndicator();
 
             var menu = new Rect(10, 10, 64, 30);
             Ui(menu);
@@ -865,7 +858,7 @@ namespace BadAppleHotel.Game
         {
             if (string.IsNullOrEmpty(gm.Banner) || Time.unscaledTime > gm.BannerUntil) return;
             float width = Mathf.Min(660,vw-600);
-            var r = new Rect(vw / 2 - width/2, 56, width, width<500?76:46);
+            var r = new Rect(vw / 2 - width/2, SafeRect().yMin + 128, width, width<500?76:46);
             GUI.Box(r, GUIContent.none, box);
             Ui(r);
             GUI.Label(new Rect(r.x + 10, r.y + 4, r.width - 20, r.height - 8), gm.Banner, center);
@@ -886,7 +879,7 @@ namespace BadAppleHotel.Game
         {
             if (string.IsNullOrEmpty(gm.ToastText) || Time.unscaledTime > gm.ToastUntil) return;
             // Windows cover the bottom of the screen, so toasts move under the banner while one is open.
-            var r = new Rect(vw / 2 - 300, sel != Sel.None ? 108 : VH - 64, 600, 36);
+            var r = new Rect(vw / 2 - 300, sel != Sel.None ? SafeRect().yMin + 180 : VH - 64, 600, 36);
             GUI.Box(r, GUIContent.none, box);
             Ui(r);
             GUI.Label(r, gm.ToastText, center);

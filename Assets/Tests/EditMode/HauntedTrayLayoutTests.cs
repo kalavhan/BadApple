@@ -30,6 +30,36 @@ namespace BadAppleHotel.Tests
             Assert.That(HudLayout.Overlap(layout.Stamp, layout.Detail), Is.Zero);
         }
 
+        [TestCase(960)] [TestCase(1160)] [TestCase(1280)] [TestCase(1600)]
+        public void LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(float width)
+        {
+            for (int count = 1; count <= 3; count++)
+            {
+                var layout = new HauntedTrayLayout(HauntedTrayLayout.FrameIn(new Rect(0, 0, width, 720)), count);
+                Assert.That(layout.Lintel.x, Is.EqualTo(layout.Frame.x + 10));
+                Assert.That(layout.Lintel.xMax, Is.EqualTo(layout.Frame.xMax - 10));
+                Assert.That(layout.LeftGate.y, Is.EqualTo(layout.Lintel.yMax));
+                Assert.That(layout.RightGate.y, Is.EqualTo(layout.Lintel.yMax));
+                var anchors = new[] { layout.LintelA, layout.LintelB, layout.LintelC };
+                for (int i = 0; i < anchors.Length; i++)
+                {
+                    var a = anchors[i];
+                    Assert.That(a.Root.y, Is.EqualTo(layout.Lintel.yMax));
+                    Assert.That(a.LandingY, Is.GreaterThan(a.Root.y));
+                    Assert.That(Mathf.Abs(a.Root.x - layout.SpiderX), Is.GreaterThanOrEqualTo(16));
+                    foreach (var protectedRect in new[] { layout.Portrait, layout.Detail })
+                        Assert.That(a.Root.x < protectedRect.xMin - 4 || a.Root.x > protectedRect.xMax + 4, Is.True);
+                    for (int j = i + 1; j < anchors.Length; j++)
+                        Assert.That(Mathf.Abs(a.Root.x - anchors[j].Root.x), Is.GreaterThanOrEqualTo(120));
+                }
+                if (layout.Slots > 1)
+                {
+                    Assert.That(layout.LintelA.Root.x, Is.EqualTo(layout.Cubby(0).xMax + 5).Within(.01));
+                    Assert.That(layout.LintelA.Root.x, Is.LessThan(layout.Cubby(1).x));
+                }
+            }
+        }
+
         [Test]
         public void SafeAreaInsetsShiftWholeTrayWithoutCoveringControls()
         {

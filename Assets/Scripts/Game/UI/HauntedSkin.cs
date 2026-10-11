@@ -46,6 +46,7 @@ namespace BadAppleHotel.Game
         public static readonly Color EyeYellow = new Color32(0xFF, 0xE3, 0x6B, 255);
         public static readonly Color EyeGlow = new Color32(0xFF, 0xB5, 0x2B, 255);
         public static readonly Color ButtonInk = new Color32(0x05, 0x23, 0x1C, 255);
+        public static readonly Color PhaseInk = new Color32(0x5A, 0x10, 0x16, 255);
         public static readonly Color PlaqueInk = new Color32(0x22, 0x14, 0x0A, 255);
 
         static readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
@@ -110,6 +111,76 @@ namespace BadAppleHotel.Game
         public static GUIStyle Typed(int size) => Style(2, size);
         public static GUIStyle Serif(int size, bool italic = false) => Style(italic ? 4 : 3, size);
         public static GUIStyle SmallCaps(int size) => Style(5, size);
+
+        static readonly GUIContent measuredText = new GUIContent();
+        static readonly Dictionary<WrapKey, string[]> wrappedText = new Dictionary<WrapKey, string[]>();
+        static readonly List<string> wrapBuffer = new List<string>(4);
+
+        public static Vector2 Measure(string text, GUIStyle style)
+        {
+            measuredText.text = text ?? "";
+            return style.CalcSize(measuredText);
+        }
+
+        /// <summary>Font ascent as a fraction of em, measured from the bundled static TTFs.</summary>
+        public static float Ascender(GUIStyle style)
+        {
+            Ensure();
+            return style.font == gothic || style.font == gothicHeavy ? 1.100f : style.font == typed ? .703f : .924f;
+        }
+
+        /// <summary>Draw a single line on a shared baseline and return its advance width.</summary>
+        public static float LabelOnBaseline(float x, float baseline, string text, GUIStyle style, Color color)
+        {
+            Vector2 size = Measure(text, style);
+            bool wrap = style.wordWrap;
+            try
+            {
+                style.wordWrap = false;
+                Label(new Rect(x, baseline - Ascender(style) * style.fontSize, size.x + 2, size.y), text, style, color, TextAnchor.UpperLeft);
+            }
+            finally { style.wordWrap = wrap; }
+            return size.x;
+        }
+
+        readonly struct WrapKey : IEquatable<WrapKey>
+        {
+            readonly string text;
+            readonly int font, size;
+            readonly FontStyle style;
+            readonly float width;
+            public WrapKey(string value, GUIStyle s, float w) { text = value; font = s.font == null ? 0 : s.font.GetInstanceID(); size = s.fontSize; style = s.fontStyle; width = w; }
+            public bool Equals(WrapKey other) => text == other.text && font == other.font && size == other.size && style == other.style && width.Equals(other.width);
+            public override bool Equals(object value) => value is WrapKey other && Equals(other);
+            public override int GetHashCode() { unchecked { return (((text.GetHashCode() * 397 ^ font) * 397 ^ size) * 397 ^ (int)style) * 397 ^ width.GetHashCode(); } }
+        }
+
+        /// <summary>Word wrapping cached by content, font and width. Reuses the caller's line buffer.</summary>
+        public static void WrapLines(string text, GUIStyle style, float maxWidth, List<string> lines)
+        {
+            lines.Clear();
+            if (string.IsNullOrEmpty(text)) return;
+            var key = new WrapKey(text, style, maxWidth);
+            if (!wrappedText.TryGetValue(key, out var cached))
+            {
+                wrapBuffer.Clear();
+                foreach (string paragraph in text.Split('\n'))
+                {
+                    string line = "";
+                    foreach (string word in paragraph.Split(new[] { ' ', '\t', '\r' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        string candidate = line.Length == 0 ? word : line + " " + word;
+                        if (line.Length > 0 && Measure(candidate, style).x > maxWidth) { wrapBuffer.Add(line); line = word; }
+                        else line = candidate;
+                    }
+                    wrapBuffer.Add(line);
+                }
+                cached = wrapBuffer.ToArray();
+                if (wrappedText.Count >= 256) wrappedText.Clear();
+                wrappedText.Add(key, cached);
+            }
+            lines.AddRange(cached);
+        }
 
         readonly struct SliceKey : IEquatable<SliceKey>
         {
@@ -182,6 +253,16 @@ namespace BadAppleHotel.Game
             finally { GUI.color = old; }
         }
 
+        public static void TexFlipped(Rect r, UnityEngine.Texture tex) => TexFlipped(r, tex, Color.white);
+
+        public static void TexFlipped(Rect r, UnityEngine.Texture tex, Color tint)
+        {
+            if (!Painting || tex == null) return;
+            Color old = GUI.color;
+            try { GUI.color = old * tint; GUI.DrawTextureWithTexCoords(r, tex, new Rect(1, 0, -1, 1), true); }
+            finally { GUI.color = old; }
+        }
+
         public static void GlowAt(Vector2 center, Vector2 size, Color color) => Tex(new Rect(center - size * .5f, size), Texture("drop_glow"), color);
 
         public static void Label(Rect r, string text, GUIStyle style, Color color, TextAnchor? anchor = null)
@@ -215,7 +296,9 @@ namespace BadAppleHotel.Game
             if (!Painting) return;
             GlowAt(new Vector2(r.center.x, r.yMax + 5), new Vector2(r.width, 30), new Color(0, 0, 0, .8f));
             Tiled(r, Texture("wood_h"), new Vector2(128, 128), Vector2.zero);
-            Tex(new Rect(r.x, r.yMax - 3, r.width, 3), Texture("brass_9"), Color.white);
+            Fill(new Rect(r.x, r.yMax - 4, r.width, 1), BrassHi);
+            Fill(new Rect(r.x, r.yMax - 3, r.width, 2), Brass);
+            Fill(new Rect(r.x, r.yMax - 1, r.width, 1), BrassLow);
         }
 
         public static void Plaque(Rect r, string title, string sub, float degrees)
