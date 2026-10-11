@@ -21,7 +21,8 @@ namespace BadAppleHotel.Game
         public float SquashDuration, PuddleDuration, PuddleWidth, PuddleHeight, PuddleSpread, FlashDuration;
         public float SpeckDuration;
         public Vector2 SpeckSpeed, SpeckRadius;
-        public float FeedLength;
+        [Header("Goo appearance")]
+        [Min(0)] public float GooBrightness, GooGlow;
 
         public static EctoplasmTuning Default => new EctoplasmTuning
         {
@@ -34,7 +35,7 @@ namespace BadAppleHotel.Game
             SatelliteRadius = .35f, FadeDistance = 30f,
             SquashDuration = .07f, PuddleDuration = 1f, PuddleWidth = 2.2f, PuddleHeight = .35f, PuddleSpread = 1.3f,
             FlashDuration = .1f, SpeckDuration = .35f, SpeckSpeed = new Vector2(60f, 140f), SpeckRadius = new Vector2(1f, 1.8f),
-            FeedLength = .25f
+            GooBrightness = 1f, GooGlow = 1f
         };
     }
 }

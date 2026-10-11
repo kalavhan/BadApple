@@ -192,31 +192,69 @@ namespace BadAppleHotel.Tests
         }
 
         [Test]
-        public void A_lintel_C_impact_feeds_the_lit_button_and_swells_the_nearer_drip()
+        public void Lintel_impacts_do_not_feed_or_restart_the_summon_drips()
+        {
+            using (var surface = new Ectoplasm())
+            using (var distant = new Ectoplasm())
+            {
+                foreach (var goo in new[] { surface, distant })
+                {
+                    goo.Tuning.SatelliteChance = 0; goo.Open(28);
+                    goo.SetAnchor(Ectoplasm.LintelC, new Vector2(80, 40), 14, 12, goo == surface ? 180 : 10000, true);
+                    goo.SetAnchor(Ectoplasm.Summon1, new Vector2(84, 230), 16, 10, 300, true);
+                    goo.SetAnchor(Ectoplasm.Summon2, new Vector2(120, 230), 11, 7, 300, true);
+                }
+                for (int i = 0; i < 12 * 120 && surface.ImpactCount == 0; i++)
+                { surface.Advance(Ectoplasm.FixedStep); distant.Advance(Ectoplasm.FixedStep); }
+                Assert.Greater(surface.ImpactCount, 0); Assert.AreEqual(0, distant.ImpactCount);
+                foreach (string id in new[] { Ectoplasm.Summon1, Ectoplasm.Summon2 })
+                {
+                    surface.TryGetDrip(id, out var after); distant.TryGetDrip(id, out var unaffected);
+                    Assert.AreEqual(unaffected.Length, after.Length);
+                    Assert.AreEqual(unaffected.State, after.State);
+                    Assert.AreEqual(unaffected.Age, after.Age);
+                }
+            }
+        }
+
+        [Test]
+        public void The_shared_goo_ramp_uses_mint_and_respects_the_brightness_ceiling()
         {
             using (var goo = new Ectoplasm())
             {
-                goo.Tuning.SatelliteChance = 0;
-                goo.Open(28);
-                goo.SetAnchor(Ectoplasm.LintelC, new Vector2(80, 40), 14, 12, 180, true);
-                for (int i = 0; i < 10 * 120 && goo.DropletCount == 0; i++) goo.Advance(Ectoplasm.FixedStep);
-                Assert.AreEqual(1, goo.DropletCount);
-                goo.SetAnchor(Ectoplasm.Summon1, new Vector2(84, 230), 16, 10, 300, false);
-                goo.SetAnchor(Ectoplasm.Summon2, new Vector2(120, 230), 11, 7, 300, false);
-                goo.SetAnchor(Ectoplasm.Summon1, new Vector2(84, 230), 16, 10, 300, true);
-                goo.SetAnchor(Ectoplasm.Summon2, new Vector2(120, 230), 11, 7, 300, true);
-                Ectoplasm.DripSnapshot before1 = default, before2 = default;
-                for (int i = 0; i < 120 && goo.ImpactCount == 0; i++)
+                Color root = goo.GooAt(0), tip = goo.GooAt(1);
+                Assert.AreEqual(Color.Lerp(HauntedSkin.Mint, Color.white, .25f).r, root.r, .0001f);
+                Assert.AreEqual(HauntedSkin.Mint.b * .84f, tip.b, .0001f);
+                foreach (float brightness in new[] { 0f, .7f, 1f, 2f })
                 {
-                    goo.TryGetDrip(Ectoplasm.Summon1, out before1);
-                    goo.TryGetDrip(Ectoplasm.Summon2, out before2);
-                    goo.Advance(Ectoplasm.FixedStep);
+                    goo.Tuning.GooBrightness = brightness;
+                    for (int i = 0; i <= 20; i++)
+                    {
+                        Color c = goo.GooAt(i / 20f, .37f);
+                        Assert.LessOrEqual(c.r, 200f / 255); Assert.LessOrEqual(c.g, 1); Assert.LessOrEqual(c.b, 240f / 255);
+                        Assert.AreEqual(.37f, c.a);
+                    }
                 }
-                Assert.AreEqual(1, goo.ImpactCount);
-                goo.TryGetDrip(Ectoplasm.Summon1, out var after1); goo.TryGetDrip(Ectoplasm.Summon2, out var after2);
-                Assert.AreEqual(Ectoplasm.DripState.Swell, after1.State);
-                Assert.GreaterOrEqual(after1.Length, before1.Length * 1.25f);
-                Assert.GreaterOrEqual(after2.Length, before2.Length * 1.25f);
+            }
+        }
+
+        [Test]
+        public void Lintel_pools_stay_on_the_metal_edge_and_root_glows_do_not_grow_with_the_stem()
+        {
+            using (var goo = Tray())
+            {
+                for (int i = 0; i < 1200; i++)
+                {
+                    goo.Advance(Ectoplasm.FixedStep);
+                    goo.TryGetDrip(Ectoplasm.LintelA, out var drip);
+                    Assert.IsTrue(goo.TryGetPool(Ectoplasm.LintelA, out var pool));
+                    Assert.AreEqual(drip.Root.x, pool.center.x);
+                    Assert.AreEqual(drip.Root.y - 1, pool.center.y);
+                    Assert.That(pool.height, Is.InRange(4f, 5f));
+                    Assert.That(pool.width, Is.InRange(drip.RootWidth * 3.2f * .85f, drip.RootWidth * 3.2f));
+                    Assert.AreEqual(new Vector2(drip.RootWidth * 3.2f, 16), Ectoplasm.RootGlowSize(drip.RootWidth));
+                }
+                Assert.IsFalse(goo.TryGetPool(Ectoplasm.Summon1, out _));
             }
         }
 

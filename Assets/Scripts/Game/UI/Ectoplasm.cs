@@ -21,6 +21,7 @@ namespace BadAppleHotel.Game
             public string Id;
             public Vector2 Root;
             public float Width, Rest, LandY, Length, Neck, Bulb, Radius, Age, Duration, StartLength, StartBulb, Phase;
+            public float ReleasedAt = -100f;
             public bool Enabled, Summon, Forced;
             public DripState State;
             public System.Random Random;
@@ -40,7 +41,7 @@ namespace BadAppleHotel.Game
         {
             public DripState State;
             public Vector2 Root;
-            public float Length, Neck, Bulb, Radius, Age, Duration;
+            public float Length, Neck, Bulb, Radius, Age, Duration, RootWidth, RestLength, ReleaseAge;
             public bool Enabled;
         }
         public struct DropletSnapshot
@@ -261,6 +262,7 @@ namespace BadAppleHotel.Game
             if (drip.Random.NextDouble() < Tuning.SatelliteChance)
                 AddDroplet(drip, pos - Vector2.up * drip.Radius, velocity, Mathf.Max(.35f, drip.Radius * Tuning.SatelliteRadius), Tuning.SatelliteDelay);
             lastRelease = simulationTime;
+            drip.ReleasedAt = simulationTime;
             ReleaseCount++;
             // The detached bulb no longer belongs to the stem.
             drip.Length = Mathf.Max(drip.Rest * Tuning.RefillLength, drip.Length - 2 * drip.Radius);
@@ -316,16 +318,7 @@ namespace BadAppleHotel.Game
                 specks.Add(new Speck { Source = drop.Source, Pos = drop.Pos, Radius = Range(drop.Source, Tuning.SpeckRadius),
                     Velocity = new Vector2(Mathf.Cos(angle) * speed, -Mathf.Sin(angle) * speed) });
             }
-            if (drop.Source.Id != LintelC || closing) return;
-            Drip nearest = null;
-            foreach (var drip in drips)
-            {
-                if (!drip.Summon || !drip.Enabled) continue;
-                float added = drip.Length * Tuning.FeedLength;
-                drip.Length += added; drip.StartLength += added;
-                if (nearest == null || Mathf.Abs(drip.Root.x - drop.Pos.x) < Mathf.Abs(nearest.Root.x - drop.Pos.x)) nearest = drip;
-            }
-            if (nearest != null && !nearest.Forced) Begin(nearest, DripState.Swell);
+
         }
 
         void TickSplashes()
@@ -354,7 +347,8 @@ namespace BadAppleHotel.Game
         {
             var drip = Find(id);
             snapshot = drip == null ? default : new DripSnapshot { State = drip.State, Root = drip.Root, Length = drip.Length,
-                Neck = drip.Neck, Bulb = drip.Bulb, Radius = drip.Radius, Age = drip.Age, Duration = drip.Duration, Enabled = drip.Enabled };
+                Neck = drip.Neck, Bulb = drip.Bulb, Radius = drip.Radius, Age = drip.Age, Duration = drip.Duration, Enabled = drip.Enabled,
+                RootWidth = drip.Width, RestLength = drip.Rest, ReleaseAge = simulationTime - drip.ReleasedAt };
             return drip != null;
         }
 
@@ -370,22 +364,49 @@ namespace BadAppleHotel.Game
         static float Range(Drip drip, Vector2 range) => Range(drip, range.x, range.y);
         float Sway(Drip drip) => Tuning.Sway * Mathf.Sin(simulationTime * Tuning.SwaySpeed + drip.Phase);
 
-        static readonly Color GooTop = new Color(185 / 255f, 1, 233 / 255f, .92f);
-        static readonly Color GooBottom = new Color(95 / 255f, 214 / 255f, 182 / 255f, .92f);
-        static readonly Color Mint = new Color(126 / 255f, 245 / 255f, 210 / 255f, .28f);
-        static readonly Color Highlight = new Color(1, 1, 1, .45f);
+        /// <summary>The single colour ramp for every goo body and glow; highlights are the only exception.</summary>
+        public Color GooAt(float t, float alpha = .92f)
+        {
+            Color hi = Color.Lerp(HauntedSkin.Mint, Color.white, .25f), lo = HauntedSkin.Mint * .84f;
+            Color color = Color.Lerp(hi, lo, Mathf.Clamp01(t)) * Mathf.Max(0, Tuning.GooBrightness);
+            color.r = Mathf.Min(color.r, 200f / 255); color.g = Mathf.Min(color.g, 1); color.b = Mathf.Min(color.b, 240f / 255);
+            color.a = alpha;
+            return color;
+        }
+
+        static readonly Color Highlight = new Color(1, 1, 1, .30f);
+        static readonly Vector2[] LensOutline =
+        {
+            new Vector2(-1, 0), new Vector2(-.5f, .7071068f), new Vector2(0, 1), new Vector2(.5f, .7071068f),
+            new Vector2(1, 0), new Vector2(.5f, -.7071068f), new Vector2(0, -1), new Vector2(-.5f, -.7071068f)
+        };
+
+        public bool TryGetPool(string id, out Rect pool)
+        {
+            var drip = Find(id);
+            if (drip == null || drip.Summon) { pool = default; return false; }
+            float swell = drip.State == DripState.Swell ? Mathf.Clamp01(drip.Age / drip.Duration) : drip.State == DripState.Neck ? 1 : 0;
+            float release = Mathf.Clamp01((simulationTime - drip.ReleasedAt) / .3f);
+            float width = drip.Width * 3.2f * (1 - .15f * (1 - Mathf.SmoothStep(0, 1, release)));
+            float height = 4 * (1 + .25f * swell);
+            pool = new Rect(drip.Root.x - width * .5f, drip.Root.y - 1 - height * .5f, width, height);
+            return true;
+        }
+
+        public static Vector2 RootGlowSize(float rootWidth) => new Vector2(rootWidth * 3.2f, 16);
 
         // Fourteen contour rows when quiet. Under overlapping splashes the same contour is sampled more
         // sparsely so even all object caps together stay below 600 submitted (not just unique) vertices.
         int GeometryRows(out int total)
         {
-            int active = 0;
-            foreach (var drip in drips) if (drip.Length > .05f) active++;
+            int active = 0, roots = 0;
+            foreach (var drip in drips) if (drip.Length > .05f) { active++; roots += drip.Summon ? 6 : 18; }
             int particleVertices = droplets.Count * 25 + puddles.Count * 16 + specks.Count * 3;
-            int rows = active == 0 ? 14 : Mathf.Clamp((MaxVertices - particleVertices - active * 23) / (active * 6), 4, 14);
-            total = particleVertices + active * (rows * 6 + 23);
+            int rows = active == 0 ? 14 : Mathf.Clamp((MaxVertices - particleVertices - active * 17 - roots) / (active * 6), 3, 14);
+            total = particleVertices + active * (rows * 6 + 17) + roots;
             return rows;
         }
+
         public int GeometryVertexCount { get { GeometryRows(out int total); return total; } }
 
         public void Draw(float scale)
@@ -407,12 +428,12 @@ namespace BadAppleHotel.Game
                 {
                     float t = Mathf.Clamp01(puddle.Age / Mathf.Max(FixedStep, Tuning.PuddleDuration));
                     float rx = puddle.Radius * Tuning.PuddleWidth * Mathf.Lerp(1, Tuning.PuddleSpread, t);
-                    Ellipse(puddle.Pos, rx, rx * Tuning.PuddleHeight, WithAlpha(GooBottom, .8f * (1 - t)), 4, scale);
+                    Ellipse(puddle.Pos, rx, rx * Tuning.PuddleHeight, GooAt(.85f, .8f * (1 - t)), 4, scale);
                 }
                 foreach (var speck in specks)
                 {
                     float r = speck.Radius;
-                    Triangle(speck.Pos + new Vector2(-r, r), speck.Pos + new Vector2(0, -r), speck.Pos + new Vector2(r, r), GooTop, GooTop, GooTop, scale);
+                    Triangle(speck.Pos + new Vector2(-r, r), speck.Pos + new Vector2(0, -r), speck.Pos + new Vector2(r, r), GooAt(.6f), GooAt(.6f), GooAt(.6f), scale);
                 }
                 GL.End();
                 glowMaterial.mainTexture = DreamSkin.Glow;
@@ -421,12 +442,12 @@ namespace BadAppleHotel.Game
                 foreach (var drip in drips)
                 {
                     if (drip.Length <= .05f) continue;
-                    Glow(drip.Root + new Vector2(0, drip.Length * .5f), new Vector2(drip.Width * 2.2f, drip.Length * 1.2f), Mint, scale);
-                    Glow(drip.Root + new Vector2(Sway(drip), drip.Length - drip.Radius), Vector2.one * 20, WithAlpha(Mint, .35f * drip.Bulb / Mathf.Max(.1f, Tuning.MaximumBulb)), scale);
+                    Glow(drip.Root - Vector2.up, RootGlowSize(drip.Width), GooAt(0, .14f * Tuning.GooGlow), scale);
+                    Glow(drip.Root + new Vector2(Sway(drip), drip.Length - drip.Radius), Vector2.one * 20, GooAt(.85f, .35f * drip.Bulb / Mathf.Max(.1f, Tuning.MaximumBulb) * Tuning.GooGlow), scale);
                 }
-                foreach (var drop in droplets) if (drop.Delay <= 0) Glow(drop.Pos, Vector2.one * (drop.Radius * 4), WithAlpha(Mint, .28f * DropAlpha(drop)), scale);
+                foreach (var drop in droplets) if (drop.Delay <= 0) Glow(drop.Pos, Vector2.one * (drop.Radius * 4), GooAt(.85f, .20f * Tuning.GooGlow * DropAlpha(drop)), scale);
                 foreach (var puddle in puddles)
-                    Glow(puddle.Pos, new Vector2(puddle.Radius * 7, puddle.Radius * 3), WithAlpha(Mint, .5f * Mathf.Clamp01(1 - puddle.Age / Mathf.Max(FixedStep, Tuning.FlashDuration))), scale);
+                    Glow(puddle.Pos, new Vector2(puddle.Radius * 7, puddle.Radius * 3), GooAt(.85f, .5f * Tuning.GooGlow * Mathf.Clamp01(1 - puddle.Age / Mathf.Max(FixedStep, Tuning.FlashDuration))), scale);
                 GL.End();
             }
             finally { GL.PopMatrix(); }
@@ -460,23 +481,28 @@ namespace BadAppleHotel.Game
             float bulbY = drip.Length - radius;
             float stretch = drip.State == DripState.Neck ? Mathf.Lerp(1, 1.25f, Mathf.Clamp01(drip.Age / drip.Duration)) : 1;
             float q = (y - bulbY) / (.9f * radius * stretch);
-            return drip.Width * .5f * Mathf.Pow(1 - f, 1.6f) + drip.Neck + drip.Bulb * Mathf.Exp(-q * q);
+            return drip.Width * .5f * Mathf.Pow(1 - f, 1.6f) + drip.Neck + drip.Bulb * Mathf.Exp(-q * q)
+                + (drip.Summon ? 0 : .6f * drip.Width * Mathf.Exp(-y / 4));
         }
         Vector2 Contour(Drip drip, float fraction, float side) => drip.Root + new Vector2(Sway(drip) * fraction * fraction + side * HalfWidth(drip, fraction), drip.Length * fraction);
 
         void DrawDrip(Drip drip, int rows, float scale)
         {
             float visibility = Mathf.Clamp01(drip.Length / 3f);
-            Color top = WithAlpha(GooTop, GooTop.a * visibility), bottom = WithAlpha(GooBottom, GooBottom.a * visibility);
+            Color top = GooAt(0, .92f * visibility), bottom = GooAt(1, .92f * visibility);
             for (int i = 0; i < rows - 1; i++)
             {
-                float f0 = Mathf.Pow(i / (float)(rows - 1), .8f), f1 = Mathf.Pow((i + 1f) / (rows - 1), .8f);
-                Color c0 = Color.Lerp(top, bottom, f0), c1 = Color.Lerp(top, bottom, f1);
+                float f0 = Mathf.Pow(i / (float)(rows - 1), 1.6f), f1 = Mathf.Pow((i + 1f) / (rows - 1), 1.6f);
+                Color c0 = GooAt(f0, .92f * visibility), c1 = GooAt(f1, .92f * visibility);
                 Quad(Contour(drip, f0, -1), Contour(drip, f0, 1), Contour(drip, f1, 1), Contour(drip, f1, -1), c0, c0, c1, c1, scale);
             }
-            float w = drip.Width * .8f;
-            Quad(drip.Root + new Vector2(-w, -3), drip.Root + new Vector2(w, -3), drip.Root + new Vector2(w * .7f, 0), drip.Root + new Vector2(-w * .7f, 0),
-                WithAlpha(top, 0), WithAlpha(top, 0), top, top, scale);
+            if (TryGetPool(drip.Id, out var pool)) Lens(pool, top, scale);
+            else
+            {
+                float w = drip.Width * .8f;
+                Quad(drip.Root + new Vector2(-w, -3), drip.Root + new Vector2(w, -3), drip.Root + new Vector2(w * .7f, 0), drip.Root + new Vector2(-w * .7f, 0),
+                    WithAlpha(top, 0), WithAlpha(top, 0), top, top, scale);
+            }
             var tip = drip.Root + new Vector2(Sway(drip), drip.Length);
             float cap = HalfWidth(drip, 1);
             for (int i = 0; i < 3; i++)
@@ -484,10 +510,13 @@ namespace BadAppleHotel.Game
                 float a = i * Mathf.PI / 3, b = (i + 1) * Mathf.PI / 3;
                 Triangle(tip, tip + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * cap, tip + new Vector2(Mathf.Cos(b), Mathf.Sin(b)) * cap, bottom, bottom, bottom, scale);
             }
-            float end = Mathf.Max(3, drip.Length - drip.Radius), x0 = -HalfWidth(drip, 0) * .4f, x1 = Sway(drip) - HalfWidth(drip, Mathf.Clamp01(end / drip.Length)) * .4f;
+            float start = Mathf.Min(drip.Length, drip.Summon ? 3 : 7), end = Mathf.Max(start, drip.Length - drip.Radius);
+            float x0 = Sway(drip) * Mathf.Pow(start / drip.Length, 2) - HalfWidth(drip, start / drip.Length) * .4f;
+            float x1 = Sway(drip) - HalfWidth(drip, Mathf.Clamp01(end / drip.Length)) * .4f;
             Color shine = WithAlpha(Highlight, Highlight.a * visibility);
-            Quad(drip.Root + new Vector2(x0, Mathf.Min(3, drip.Length)), drip.Root + new Vector2(x0 + 1, Mathf.Min(3, drip.Length)),
+            Quad(drip.Root + new Vector2(x0, start), drip.Root + new Vector2(x0 + 1, start),
                 drip.Root + new Vector2(x1 + 1, end), drip.Root + new Vector2(x1, end), shine, shine, shine, shine, scale);
+
         }
 
         float DropAlpha(Droplet drop) => !drop.Source.Summon ? 1 : Mathf.Clamp01((drop.Source.LandY - drop.Pos.y) / Mathf.Max(1, Tuning.FadeDistance));
@@ -503,10 +532,18 @@ namespace BadAppleHotel.Game
                 rx = drop.Radius * Mathf.Lerp(1, 1.7f, t); ry = drop.Radius * Mathf.Lerp(1, .35f, t);
                 pos.y -= ry;
             }
-            Ellipse(pos, rx, ry, WithAlpha(GooBottom, .92f * alpha), 6, scale);
+            Ellipse(pos, rx, ry, GooAt(.85f, .92f * alpha), 6, scale);
             Vector2 highlight = pos + new Vector2(-rx * .25f, -ry * .4f);
-            Color shine = WithAlpha(Highlight, .7f * alpha);
+            Color shine = WithAlpha(Highlight, .3f * alpha);
             Triangle(highlight + Vector2.left, highlight + Vector2.up, highlight + Vector2.right, shine, shine, shine, scale);
+        }
+
+        void Lens(Rect bounds, Color color, float scale)
+        {
+            var center = bounds.center; var half = bounds.size * .5f;
+            Vector2 tip = center + Vector2.Scale(LensOutline[0], half);
+            for (int i = 1; i < LensOutline.Length - 1; i++)
+                Triangle(tip, center + Vector2.Scale(LensOutline[i], half), center + Vector2.Scale(LensOutline[i + 1], half), color, color, color, scale);
         }
 
         static Color WithAlpha(Color color, float alpha) { color.a = alpha; return color; }
