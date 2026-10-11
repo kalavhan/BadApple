@@ -26,15 +26,15 @@ namespace BadAppleHotel.EditorTools
             PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { UnityEngine.Rendering.GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel25;
             PlayerSettings.Android.useCustomKeystore = false;
-            PlayerSettings.bundleVersion = "1.30-difficulty";
-            PlayerSettings.Android.bundleVersionCode = 31;
+            PlayerSettings.bundleVersion = "1.31-haunted-tray";
+            PlayerSettings.Android.bundleVersionCode = 32;
             EditorUserBuildSettings.buildAppBundle = false;
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
                 scenes = new[] { "Assets/Scenes/Main.unity" },
                 locationPathName = output,
                 target = BuildTarget.Android,
-                options = BuildOptions.None,
+                options = BuildOptions.Development,
             });
             if (report.summary.result != BuildResult.Succeeded)
                 throw new Exception("Android build failed: " + report.summary.result + ", errors: " + report.summary.totalErrors);
