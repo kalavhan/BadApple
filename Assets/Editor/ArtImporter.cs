@@ -14,6 +14,21 @@ namespace BadAppleHotel.EditorTools
         {
             if (!assetPath.StartsWith("Assets/Resources/Art/")) return;
             var ti = (TextureImporter)assetImporter;
+            if (assetPath.StartsWith("Assets/Resources/Art/UI/Haunted/"))
+            {
+                ti.textureType = TextureImporterType.Default;
+                ti.sRGBTexture = true;
+                ti.alphaIsTransparency = true;
+                ti.mipmapEnabled = false;
+                ti.filterMode = FilterMode.Bilinear;
+                string name = System.IO.Path.GetFileNameWithoutExtension(assetPath);
+                ti.wrapMode = name == "wood_v" || name == "wood_h" || name == "damask" || name == "gate_tile"
+                    ? TextureWrapMode.Repeat : TextureWrapMode.Clamp;
+                ti.textureCompression = TextureImporterCompression.Uncompressed;
+                ti.npotScale = TextureImporterNPOTScale.None;
+                ti.maxTextureSize = 1024;
+                return;
+            }
             if (assetPath.StartsWith("Assets/Resources/Art/Walls/"))
             {
                 // WallKitImporter owns the preview sprite's pivot, size and alpha settings.

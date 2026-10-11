@@ -1,0 +1,13 @@
+Official static TTF sources (downloaded 2026-10-11).
+All weights are static instances, not variable fonts.
+
+https://raw.githubusercontent.com/Omnibus-Type/Grenze-Gotisch/master/fonts/ttf/GrenzeGotisch-Bold.ttf
+https://raw.githubusercontent.com/Omnibus-Type/Grenze-Gotisch/master/fonts/ttf/GrenzeGotisch-ExtraBold.ttf
+https://raw.githubusercontent.com/Omnibus-Type/Grenze-Gotisch/master/OFL.txt
+https://raw.githubusercontent.com/CatharsisFonts/Cormorant/master/fonts/ttf/CormorantGaramond-SemiBold.ttf
+https://raw.githubusercontent.com/CatharsisFonts/Cormorant/master/fonts/ttf/CormorantGaramond-SemiBoldItalic.ttf
+https://raw.githubusercontent.com/CatharsisFonts/Cormorant/master/fonts/ttf/CormorantSC-Bold.ttf
+https://raw.githubusercontent.com/CatharsisFonts/Cormorant/master/FONTLOG.txt
+https://raw.githubusercontent.com/CatharsisFonts/Cormorant/master/OFL.txt
+https://raw.githubusercontent.com/google/fonts/main/apache/specialelite/SpecialElite-Regular.ttf
+https://raw.githubusercontent.com/google/fonts/main/apache/specialelite/LICENSE.txt

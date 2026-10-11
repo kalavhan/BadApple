@@ -89,6 +89,8 @@ namespace BadAppleHotel.Game
             gm = GetComponent<GameManager>();
         }
 
+        void OnDestroy() { ectoplasm.Dispose(); }
+
         void OnApplicationFocus(bool focus)
         {
             if (!focus)
@@ -309,7 +311,8 @@ namespace BadAppleHotel.Game
             }
 
             gm.WallFocusRoom = sel != Sel.None ? gm.Human?.Room?.Def : null;
-            if (windowClosingAt >= 0f && Time.unscaledTime - windowClosingAt > .18f) ClearSelection();
+            if (windowClosingAt >= 0f && HauntedClock.Now - windowClosingAt > .18f) ClearSelection();
+            UpdateSummonPress();
             UpdateBanish();
             UpdateCameraFocus();
             HandleKeys();
@@ -566,7 +569,13 @@ namespace BadAppleHotel.Game
             bool wasTray = sel == Sel.Slot && room != null && selSlot >= 0 && selSlot < room.Slots.Length && room.Slots[selSlot] == null;
             bool isTray = what == Sel.Slot && room != null && slot >= 0 && slot < room.Slots.Length && room.Slots[slot] == null;
             bool same = sel == what && windowClosingAt < 0f && (what != Sel.Slot || wasTray == isTray && (isTray || selSlot == slot));
-            if (!same) windowOpenedAt = Time.unscaledTime;
+            if (!same)
+            {
+                windowOpenedAt = HauntedClock.Now;
+                summonPressedAt = -1f;
+                closingSummonSlot = -1;
+                if (isTray) ResetHauntedTray(); else ectoplasm.Clear();
+            }
             if (what != Sel.Slot || selSlot != slot) { pending = null; banishHoldStart = -1f; }
             sel = what; selSlot = slot; windowClosingAt = -1f;
             if (isTray && !same && gm.Cam != null)
@@ -580,7 +589,9 @@ namespace BadAppleHotel.Game
         void CloseWindow()
         {
             if (sel == Sel.None || windowClosingAt >= 0f) return;
-            windowClosingAt = Time.unscaledTime;
+            windowClosingAt = HauntedClock.Now;
+            summonPressedAt = -1f;
+            ectoplasm.BeginClose();
             pending = null;
             banishHoldStart = -1f;
             cardDragging = false;
@@ -589,7 +600,7 @@ namespace BadAppleHotel.Game
         /// <summary>0 to 1 as the window opens (ease-out), back to 0 while it closes.</summary>
         float WindowEase()
         {
-            float now = Time.unscaledTime;
+            float now = HauntedClock.Now;
             float open = Mathf.Clamp01((now - windowOpenedAt) / .26f);
             open = 1f - Mathf.Pow(1f - open, 3f);
             if (windowClosingAt >= 0f) open *= 1f - Mathf.Clamp01((now - windowClosingAt) / .18f);
@@ -598,6 +609,9 @@ namespace BadAppleHotel.Game
 
         void ClearSelection()
         {
+            ectoplasm.Clear();
+            summonPressedAt = -1f;
+            closingSummonSlot = -1;
             sel = Sel.None;
             selSlot = -1;
             windowClosingAt = -1f;
@@ -819,14 +833,7 @@ namespace BadAppleHotel.Game
 
         void DrawTopBar()
         {
-            bool housed = (gm.Phase == Phase.Night && gm.HumanRole == Role.Monster) || (gm.Human != null && gm.Human.Room != null);
-            string phase = gm.Phase == Phase.Setup ? (housed ? "SETUP: GET READY" : "SETUP: FIND A ROOM")
-                : gm.Phase == Phase.Night ? "NIGHT " + gm.Night + (gm.Endless ? " · ENDLESS" : " / " + gm.Cfg.match.nightCount)
-                : "DAWN";
-            var r = new Rect(vw / 2 - 130, 8, 260, 42);
-            Panel(r);
-            Shadowed(new Rect(r.x, r.y + 2, r.width, 20), phase, Candle);
-            if (gm.Phase != Phase.Results) Shadowed(new Rect(r.x, r.y + 20, r.width, 20), Clock(gm.PhaseTimer), Bone);
+            DrawLiftIndicator();
 
             var menu = new Rect(10, 10, 64, 30);
             Ui(menu);
@@ -851,7 +858,7 @@ namespace BadAppleHotel.Game
         {
             if (string.IsNullOrEmpty(gm.Banner) || Time.unscaledTime > gm.BannerUntil) return;
             float width = Mathf.Min(660,vw-600);
-            var r = new Rect(vw / 2 - width/2, 56, width, width<500?76:46);
+            var r = new Rect(vw / 2 - width/2, SafeRect().yMin + 128, width, width<500?76:46);
             GUI.Box(r, GUIContent.none, box);
             Ui(r);
             GUI.Label(new Rect(r.x + 10, r.y + 4, r.width - 20, r.height - 8), gm.Banner, center);
@@ -872,7 +879,7 @@ namespace BadAppleHotel.Game
         {
             if (string.IsNullOrEmpty(gm.ToastText) || Time.unscaledTime > gm.ToastUntil) return;
             // Windows cover the bottom of the screen, so toasts move under the banner while one is open.
-            var r = new Rect(vw / 2 - 300, sel != Sel.None ? 108 : VH - 64, 600, 36);
+            var r = new Rect(vw / 2 - 300, sel != Sel.None ? SafeRect().yMin + 180 : VH - 64, 600, 36);
             GUI.Box(r, GUIContent.none, box);
             Ui(r);
             GUI.Label(r, gm.ToastText, center);
@@ -1166,7 +1173,7 @@ namespace BadAppleHotel.Game
             {
                 case Sel.Slot:
                     if (selSlot < 0 || selSlot >= room.Slots.Length) { ClearSelection(); return; }
-                    if (room.Slots[selSlot] == null) DrawSummonTray(me, room, selSlot);
+                    if (room.Slots[selSlot] == null || closingSummonSlot == selSlot && windowClosingAt >= 0f) DrawSummonTray(me, room, selSlot);
                     else DrawTowerRing(me, room, room.Slots[selSlot]);
                     break;
                 case Sel.Bed: DrawBedCard(me, room); break;

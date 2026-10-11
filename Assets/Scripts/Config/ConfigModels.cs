@@ -233,6 +233,7 @@ namespace BadAppleHotel.Config
         public float dreamPerSecond;      // generator towers: Dream Power per second, any time
         public float dreamLevelScaling;
         public string category;           // resources | fire | bullets | electric | effects (build menu tab)
+        public string flavor;             // brief hotel-register copy; description remains factual
         public string description;
     }
 

@@ -24,6 +24,7 @@
     {
       "id": "gun_turret",
       "name": "Pistol Revenant",
+      "flavor": "Still guarding a door nobody has opened since 1931.",
       "damageType": "bullet",
       "rangeClass": "mid",
       "costResource": "dreamPower",
@@ -103,6 +104,7 @@
     {
       "id": "missile_launcher",
       "name": "Skull Mortar",
+      "flavor": "Lobs his own relatives. They don't mind.",
       "damageType": "bullet",
       "rangeClass": "long",
       "costResource": "dreamPower",
@@ -186,6 +188,7 @@
     {
       "id": "electric_tower",
       "name": "Static Doll",
+      "flavor": "Her hair stands on end. Yours will too.",
       "damageType": "electric",
       "rangeClass": "mid",
       "costResource": "faith",
@@ -267,6 +270,7 @@
     {
       "id": "dragon_statue",
       "name": "Dragon Candle",
+      "flavor": "Lit in 1888. Nobody dares blow it out.",
       "damageType": "fire",
       "rangeClass": "short",
       "costResource": "faith",
@@ -351,6 +355,7 @@
     {
       "id": "slow_totem",
       "name": "Frost Hourglass",
+      "flavor": "Every grain is a minute they'll never get back.",
       "damageType": "slow",
       "rangeClass": "mid",
       "costResource": "faith",
@@ -432,6 +437,7 @@
     {
       "id": "faith_tower",
       "name": "Votive Candle",
+      "flavor": "Pray harder. Something is listening.",
       "damageType": "none",
       "effect": "faith",
       "costResource": "dreamPower",
@@ -511,6 +517,7 @@
     {
       "id": "crystal_ball",
       "name": "Crystal ball",
+      "flavor": "Sees everything. Says nothing. Charges extra.",
       "damageType": "none",
       "effect": "clairvoyance",
       "costResource": "faith",
@@ -523,6 +530,7 @@
     {
       "id": "dream_lamp",
       "name": "Sleepy Lantern",
+      "flavor": "Dozes on the job. Somehow that helps you.",
       "damageType": "none",
       "effect": "dream",
       "category": "resources",
@@ -602,6 +610,7 @@
     {
       "id": "flame_brazier",
       "name": "Cursed Flame",
+      "flavor": "Burns cold, bills hot.",
       "damageType": "fire",
       "rangeClass": "short",
       "category": "fire",
@@ -686,6 +695,7 @@
     {
       "id": "sniper_nest",
       "name": "Ghost Marksman",
+      "flavor": "Died on night shift. Won't leave his post. Tips in lead.",
       "damageType": "bullet",
       "rangeClass": "long",
       "category": "bullets",
@@ -768,6 +778,7 @@
     {
       "id": "tesla_coil",
       "name": "Charged Porcelain",
+      "flavor": "Fine china, finer voltage. Do not dust.",
       "damageType": "electric",
       "rangeClass": "short",
       "category": "electric",

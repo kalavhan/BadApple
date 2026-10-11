@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="25" result="Passed" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.1094623">
+  <test-suite type="TestSuite" id="1000" name="Bad Apple Hotel" fullname="Bad Apple Hotel" runstate="Runnable" testcasecount="207" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.109462" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1262" name="BadAppleHotel.Tests.dll" fullname="/home/josue/.codex/worktrees/haunted-hotel-ui/BadApple/Library/ScriptAssemblies/BadAppleHotel.Tests.dll" runstate="Runnable" testcasecount="207" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.102731" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1819103" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1263" name="BadAppleHotel" fullname="BadAppleHotel" runstate="Runnable" testcasecount="207" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.102158" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1264" name="Tests" fullname="BadAppleHotel.Tests" runstate="Runnable" testcasecount="207" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.101758" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1045" name="EctoplasmTests" fullname="BadAppleHotel.Tests.EctoplasmTests" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.075271" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1056" name="A_lintel_C_impact_feeds_the_lit_button_and_swells_the_nearer_drip" fullname="BadAppleHotel.Tests.EctoplasmTests.A_lintel_C_impact_feeds_the_lit_button_and_swells_the_nearer_drip" methodname="A_lintel_C_impact_feeds_the_lit_button_and_swells_the_nearer_drip" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1297312165" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.015907" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1055" name="Anchor_updates_follow_the_slide_without_advancing_or_duplicating_particles" fullname="BadAppleHotel.Tests.EctoplasmTests.Anchor_updates_follow_the_slide_without_advancing_or_duplicating_particles" methodname="Anchor_updates_follow_the_slide_without_advancing_or_duplicating_particles" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1862210502" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.001523" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1054" name="Closing_stops_releases_but_existing_drops_squash_splash_and_finish_their_puddles" fullname="BadAppleHotel.Tests.EctoplasmTests.Closing_stops_releases_but_existing_drops_squash_splash_and_finish_their_puddles" methodname="Closing_stops_releases_but_existing_drops_squash_splash_and_finish_their_puddles" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="60098812" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.001374" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1053" name="Dark_summon_retracts_smoothly_pauses_and_refills_when_lit_again" fullname="BadAppleHotel.Tests.EctoplasmTests.Dark_summon_retracts_smoothly_pauses_and_refills_when_lit_again" methodname="Dark_summon_retracts_smoothly_pauses_and_refills_when_lit_again" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="2075092861" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000505" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1047" name="Fifteen_seconds_show_independent_cycles_with_at_least_three_staggered_releases" fullname="BadAppleHotel.Tests.EctoplasmTests.Fifteen_seconds_show_independent_cycles_with_at_least_three_staggered_releases" methodname="Fifteen_seconds_show_independent_cycles_with_at_least_three_staggered_releases" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="757719040" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.003650" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1051" name="Frame_rate_does_not_change_physics_or_release_order" fullname="BadAppleHotel.Tests.EctoplasmTests.Frame_rate_does_not_change_physics_or_release_order" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.007572" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1048" name="Frame_rate_does_not_change_physics_or_release_order(30)" fullname="BadAppleHotel.Tests.EctoplasmTests.Frame_rate_does_not_change_physics_or_release_order(30)" methodname="Frame_rate_does_not_change_physics_or_release_order" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="478028205" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.002866" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1049" name="Frame_rate_does_not_change_physics_or_release_order(60)" fullname="BadAppleHotel.Tests.EctoplasmTests.Frame_rate_does_not_change_physics_or_release_order(60)" methodname="Frame_rate_does_not_change_physics_or_release_order" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="301238669" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.001645" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1050" name="Frame_rate_does_not_change_physics_or_release_order(144)" fullname="BadAppleHotel.Tests.EctoplasmTests.Frame_rate_does_not_change_physics_or_release_order(144)" methodname="Frame_rate_does_not_change_physics_or_release_order" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1880299486" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.001562" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1046" name="Goo_body_shader_is_packaged_as_a_resource_for_player_builds" fullname="BadAppleHotel.Tests.EctoplasmTests.Goo_body_shader_is_packaged_as_a_resource_for_player_builds" methodname="Goo_body_shader_is_packaged_as_a_resource_for_player_builds" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="165734604" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.007185" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1052" name="Press_releases_both_summon_drips_together_and_drops_accelerate_then_fade_without_splats" fullname="BadAppleHotel.Tests.EctoplasmTests.Press_releases_both_summon_drips_together_and_drops_accelerate_then_fade_without_splats" methodname="Press_releases_both_summon_drips_together_and_drops_accelerate_then_fade_without_splats" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="2027918605" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000702" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1057" name="Repeated_presses_stay_within_particle_and_geometry_budgets" fullname="BadAppleHotel.Tests.EctoplasmTests.Repeated_presses_stay_within_particle_and_geometry_budgets" methodname="Repeated_presses_stay_within_particle_and_geometry_budgets" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="212793273" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.026410" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1063" name="HauntedConfigTests" fullname="BadAppleHotel.Tests.HauntedConfigTests" classname="BadAppleHotel.Tests.HauntedConfigTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.008649" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1064" name="Every_tower_has_short_flavor_and_keeps_its_factual_description" fullname="BadAppleHotel.Tests.HauntedConfigTests.Every_tower_has_short_flavor_and_keeps_its_factual_description" methodname="Every_tower_has_short_flavor_and_keeps_its_factual_description" classname="BadAppleHotel.Tests.HauntedConfigTests" runstate="Runnable" seed="1629541581" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.007652" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1065" name="HauntedTrayLayoutTests" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.005690" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1076" name="CabinetSkipsRoom113" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.CabinetSkipsRoom113" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.001027" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1073" name="CabinetSkipsRoom113(0,101)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.CabinetSkipsRoom113(0,101)" methodname="CabinetSkipsRoom113" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="56518940" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000394" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1074" name="CabinetSkipsRoom113(11,112)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.CabinetSkipsRoom113(11,112)" methodname="CabinetSkipsRoom113" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1857585429" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000042" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1075" name="CabinetSkipsRoom113(12,114)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.CabinetSkipsRoom113(12,114)" methodname="CabinetSkipsRoom113" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1330308956" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000035" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1081" name="DialUsesUpcomingNightAndCapsEndless" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.001026" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1077" name="DialUsesUpcomingNightAndCapsEndless(0,False,False,1)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless(0,False,False,1)" methodname="DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1944791072" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000212" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1078" name="DialUsesUpcomingNightAndCapsEndless(2,False,False,3)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless(2,False,False,3)" methodname="DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="323318938" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000037" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1079" name="DialUsesUpcomingNightAndCapsEndless(4,True,False,4)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless(4,True,False,4)" methodname="DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1868381234" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000032" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1080" name="DialUsesUpcomingNightAndCapsEndless(9,True,True,6)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless(9,True,True,6)" methodname="DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="593369754" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000032" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1072" name="SafeAreaInsetsShiftWholeTrayWithoutCoveringControls" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.SafeAreaInsetsShiftWholeTrayWithoutCoveringControls" methodname="SafeAreaInsetsShiftWholeTrayWithoutCoveringControls" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="185796392" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000392" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1071" name="TrayUsesSafeBottomAndKeepsColumnsSeparate" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.002072" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1066" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(1280,922)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(1280,922)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1442453644" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000981" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1067" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(1600,1040)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(1600,1040)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="238843607" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000055" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1068" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(960,936)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(960,936)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="572057030" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000057" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1069" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(1000,976)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(1000,976)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1217206539" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000045" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1070" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(1160,802)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(1160,802)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="451739565" result="Passed" start-time="2026-10-11 02:31:17Z" end-time="2026-10-11 02:31:17Z" duration="0.000044" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: /tmp/haunted-ui-qa/haunted-focused-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
