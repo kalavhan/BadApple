@@ -1,46 +1,47 @@
 # Haunted hotel summon tray
 
-The first haunted UI phase replaces the resident summon tray with the supplied wood, brass, damask, cubbies, toe tags, register and lift dial design. Other windows retain DreamSkin until subsequent review phases. This branch starts from main at `bdc1033`.
+The haunted UI is implemented on `codex/haunted-hotel-ui`, based on main at `bdc1033`. Round two follows the supplied fixes package: a permanent top lift indicator, an uninterrupted lintel, clear drip paths, a drip-driven Summon glow and consistent text baselines. The tower and monster windows retain their existing skin pending later review phases.
 
-## Behavior
+## Top lift indicator
 
-The tray remains on the 720-high HUD canvas, with its existing plate preview, range rings, type selection and card dragging. Cards use income countdowns when unaffordable. Blocked plates show a NO VACANCY stamp and a paper warning. The wallet and costs follow the selected tower's currency. Tower flavor is separate from the factual description in configuration.
+The night dial sits at the screen's top safe edge in Setup, Night, Endless and Results, for both roles. It points to the upcoming night during setup and the last played night in Results. The countdown plate shows CHECK-IN, NIGHT or ENDLESS with the relevant time; Results hides the plate. Monster numeral glows use Fear pink. A target change flashes the numeral and the damped needle overshoots once; phase changes swing the hanging plate.
 
-Summon queues a 0.22-second press animation. The existing build operation rechecks funds and placement when that delay ends. Duplicate presses cannot queue duplicate purchases, and closing or changing selection cancels a pending purchase. After a successful purchase the tray completes its close slide before the selection clears.
+`LiftDialLayout` shares geometry between drawing, hit blocking and tests. The housing includes the 200-pixel sill; its decorative wings are omitted on narrow screens. Banners begin 128 pixels below the safe top and window-open toasts begin at 180.
 
-The crest displays the current night, the upcoming night outside night phase, and VI/ENDLESS from night six in endless mode. Its needle uses an unscaled damped spring.
+## Tray and input
 
-## Motion and performance
+The tray remains 360 canvas pixels tall, 922 wide at 16:9 and at most 1040 wide at 20:9. It retains plate previews, range rings, all five type tabs, tap/drag selection, affordability countdowns and blocked-path handling.
 
-`GameHUD` exposes `Ectoplasm Tuning` in its Inspector. Defaults follow the supplied specification. Each anchor owns an independently seeded state machine; falling droplets use fixed 1/120-second gravity integration. Releases are at least 0.4 seconds apart except the two deliberate Summon press drops. Lintel C feeds the button drips. Closing stops releases, and clearing selection clears the simulation.
+Summon queues a 0.22-second press animation. The existing build operation rechecks funds and placement when the delay ends. Duplicate presses cannot buy twice; closing or changing selection cancels a pending purchase. A successful purchase completes the tray's close slide before selection clears.
 
-The renderer caps itself at five drips, eight droplets, five puddles and twenty specks, with two GL batches. It samples the fourteen-row silhouette more sparsely during dense splashes to stay below 600 submitted vertices. The included `UiAlpha` resource shader prevents the body material from being stripped from Android builds. Texture/font/nine-slice styles are cached and the tray draws only on Repaint.
+The lintel extends over both gates, which begin below its continuous four-pixel brass edge. All three lintel roots and landing heights come from `HauntedTrayLayout`: A falls through the first cubby gap, B between cabinet and register, C between register and type rail. The spider uses another gap, or a cabinet edge on layouts with fewer cubbies. C no longer feeds the button.
 
-## Responsive adjustments
+## Goo and Summon pulse
 
-The desktop references in the spec have conflicting dimensions in a few tight areas. The implementation keeps the normal 922-pixel tray at 16:9 and 1040-pixel tray at 20:9, with these readability adjustments:
+`GameHUD` exposes `Ectoplasm Tuning` and `Summon Glow Tuning` in the Inspector. Goo uses deterministic 1/120-second physics with independently seeded anchors. Normal releases stay at least 0.4 seconds apart; a Summon press deliberately releases both button drips together. Closing stops new releases and clearing selection clears the particles.
 
-- Use the full-width fallback below an 800-pixel control gap. The stated 640-pixel threshold leaves only ~50 pixels per cubby while retaining the register and rail.
-- At narrower non-fallback widths, omit excess empty cubbies and use a 240-pixel register. Stack the Summon cost beneath its label when its button is narrow.
-- Toe tags are 54 pixels tall normally and 64 when a wrapped shortfall/countdown needs two lines. Font sizes remain at least 11 pixels.
-- Place the register stamp on the cabinet’s lower rail. The tightly packed register otherwise hides NO VACANCY behind the warning or overlaps the Summon label.
-- For Blocked, move the buttons down 12 pixels and use 44-pixel heights to make room for the warning slip. All targets remain at least 44 pixels.
-- Compose rotations in canvas coordinates before the existing HUD scale, so geometry and axis-aligned input stay aligned at non-unit screen scales.
+Every body color goes through `GooAt`. The old length-dependent stem glow is replaced by fixed root and bulb glows. Lintel pools shrink briefly after release, and curved shoulders join them to the stems. Summon roots begin inside the mint core, with rounded lips spilling over the brass.
 
-## Assets
+Summon has dedicated refill/swell durations and staggered button drips. The lintel scheduler leaves release windows for the steady 2.5–3-second button beats. Halo and bezel intensity follow Summon 1's current state, with a secondary flash for Summon 2 and press feedback. The two alpha-blended nine-slice halos sit behind Cancel. Unaffordable and blocked buttons turn off their halo and lit rim while existing stems retract.
 
-`tools/art/export_haunted_ui.py` reproducibly exports the kit from SVG geometry transcribed from the supplied mockup. Run it with Python/Pillow and Chromium; source SVGs and the audit atlas are written to ignored `ArtSource/UI/Haunted/`. Only the resulting PNGs and their metadata are included. Static font files, official source URLs and licenses are under `Assets/Resources/Fonts/`.
+The renderer keeps two GL batches and caps at five drips, eight droplets, five puddles and twenty specks. Contour and tiny-droplet tessellation adapt to stay below 600 submitted vertices. `UiAlpha` is an explicit Resources shader for Android packaging. Assets, fonts, styles and nine-slices are cached; drawing runs only on Repaint.
 
-## Reproduce validation
+## Type and responsive details
 
-Use Unity 6000.3.24f1. The editor fixture captures the production HUD in a seeded hotel room; it does not substitute an HTML mockup. It exercises all five actual type-rail callbacks, card drag/release, delayed Summon, duplicate presses, losing affordability during the delay, and cancellation.
+Wallet text is one right-aligned run: a jar, seven-pixel gap, label, seven-pixel gap, then value. All text shares the specified baseline, including Faith's violet value. The register uses explicit row baselines; all tower flavor lines fit at most two lines at Cormorant italic 13, including the compact register.
+
+Existing readability adaptations are retained: use the full-width fallback below an 800-pixel control gap, use a 240-pixel register at compact widths, omit surplus empty cubbies, and stack the Summon cost on narrow buttons. Blocked warnings move the buttons down 12 pixels with 44-pixel targets. The stamp remains on the cabinet's lower rail. Rotations compose before the HUD scale.
+
+## Assets and validation
+
+`tools/art/export_haunted_ui.py` exports the supplied kit's SVG geometry and the new lift housing, wing, halos and lit bezel. Run it with Python/Pillow and Chromium. Intermediate SVGs and the audit atlas go to ignored `ArtSource/UI/Haunted/`. Font sources and licenses are under `Assets/Resources/Fonts/`.
+
+Use Unity 6000.3.24f1. The capture fixture renders the production HUD over a seeded hotel room, retaining real affordability and path-blocking rules while freezing gameplay for comparisons. The 10-second beat clip renders 300 actual frames at 30 presentation steps per second; an Editor-only `HauntedClock` override makes offline recording independent of host rendering speed. Player builds always read Unity's unscaled time.
 
 ```sh
 xvfb-run -a -s '-screen 0 1920x1080x24' Unity -batchmode -force-glcore -projectPath "$PWD" -runTests -testPlatform EditMode -testResults /tmp/haunted-editmode.xml -logFile /tmp/haunted-editmode.log
-BADAPPLE_HAUNTED_OUT="$PWD/docs/qa/haunted-tray-2026-10-11" BADAPPLE_HAUNTED_RECORD=1 xvfb-run -a -s '-screen 0 1920x1080x24' Unity -projectPath "$PWD" -executeMethod BadAppleHotel.EditorTools.HauntedTrayCapture.Run -logFile /tmp/haunted-capture.log
-BADAPPLE_APK_PATH="$PWD/Builds/BadAppleHotel-haunted-tray.apk" Unity -batchmode -nographics -quit -projectPath "$PWD" -executeMethod BadAppleHotel.EditorTools.AndroidBuild.BuildTestApk -logFile /tmp/haunted-build.log
+BADAPPLE_HAUNTED_OUT="/tmp/haunted-r2-qa/captures" BADAPPLE_HAUNTED_RECORD=1 xvfb-run -a -s '-screen 0 1920x1080x24' Unity -projectPath "$PWD" -executeMethod BadAppleHotel.EditorTools.HauntedTrayCapture.Run -logFile /tmp/haunted-capture.log
+BADAPPLE_APK_PATH="$PWD/Builds/BadAppleHotel-haunted-fixes.apk" Unity -batchmode -nographics -quit -projectPath "$PWD" -executeMethod BadAppleHotel.EditorTools.AndroidBuild.BuildTestApk -logFile /tmp/haunted-build.log
 ```
 
-The optional recording renders 450 actual frames at 30 presentation steps per second. `HauntedClock` overrides presentation time only in the Editor capture fixture; player builds always read Unity’s unscaled time. The exported video is motion evidence, not a real-time performance measurement.
-
-The APK is a development IL2CPP build for ARM64 and x86_64. Phone profiling remains a separate device check: editor rendering and simulation tests do not establish 60 fps on the test phone.
+Fresh screenshots, pulse telemetry, test reports and the video are in [the round-two review bundle](qa/haunted-tray-r2-2026-10-11/README.md). The APK is a Development IL2CPP build for ARM64 and x86_64. Phone installation and performance require a connected test device; offline editor captures do not establish real-time 60 fps.

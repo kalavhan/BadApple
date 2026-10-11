@@ -130,6 +130,8 @@ namespace BadAppleHotel.Game
         readonly HauntedGags hauntedGags = new HauntedGags();
         readonly List<Config.TowerDef> trayTowers = new List<Config.TowerDef>(4);
         readonly Dictionary<string, List<string>> trayChips = new Dictionary<string, List<string>>();
+        readonly Dictionary<string, List<string>> trayFlavorLines = new Dictionary<string, List<string>>();
+        float trayFlavorWidth = -1f, dreamWalletLabelWidth = -1f, faithWalletLabelWidth = -1f;
         Config.TowerDef[] trayConfig;
         int cachedTrayTab = -1;
         string lastTrayPick;
@@ -209,7 +211,7 @@ namespace BadAppleHotel.Game
             if (buildTab < 0 || buildTab >= TypeIds.Length) buildTab = 0;
             if (trayConfig != towers || cachedTrayTab != buildTab)
             {
-                if (trayConfig != towers) trayChips.Clear();
+                if (trayConfig != towers) { trayChips.Clear(); trayFlavorLines.Clear(); }
                 trayConfig = towers; cachedTrayTab = buildTab; trayTowers.Clear();
                 foreach (var tower in towers) if (CategoryOf(tower) == TypeIds[buildTab]) trayTowers.Add(tower);
             }
@@ -365,7 +367,20 @@ namespace BadAppleHotel.Game
         void DrawTrayWallet(Rect frame, Resident me, Config.TowerDef pick)
         {
             bool faith = pick.costResource == "faith";
-            var jar = new Rect(frame.xMax - 257, frame.y + 23, 22, 28);
+            string label = faith ? "Faith" : "Dream Power";
+            string value = Mathf.FloorToInt(gm.Wallet(me, pick.costResource)).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+            var labelStyle = HauntedSkin.Serif(17);
+            var valueStyle = HauntedSkin.Gothic(24, true);
+            if (dreamWalletLabelWidth < 0)
+            {
+                dreamWalletLabelWidth = HauntedSkin.Measure("Dream Power", labelStyle).x;
+                faithWalletLabelWidth = HauntedSkin.Measure("Faith", labelStyle).x;
+            }
+            float labelWidth = faith ? faithWalletLabelWidth : dreamWalletLabelWidth;
+            float groupWidth = 22 + 7 + labelWidth + 7 + HauntedSkin.Measure(value, valueStyle).x;
+            float baseline = frame.y + 45;
+            float x = frame.xMax - 86 - groupWidth;
+            var jar = new Rect(x, baseline - 25, 22, 28);
             HauntedSkin.GlowAt(jar.center, jar.size * 1.8f, Alpha(faith ? HauntedSkin.Violet : HauntedSkin.Mint, .3f));
             HauntedSkin.Tex(jar, HauntedSkin.Texture(faith ? "jar_violet" : "jar_mint"), Color.white);
             for (int i = 0; i < 2; i++)
@@ -373,8 +388,8 @@ namespace BadAppleHotel.Game
                 float phase = Mathf.Repeat(HauntedClock.Now / (i == 0 ? 2.2f : 3.1f) + .4f * i, 1f);
                 HauntedSkin.Tex(new Rect(jar.x + 7 + i * 6, jar.yMax - 6 - phase * 12, 2.6f, 2.6f), DreamSkin.Disc, Alpha(Color.white, 1f - phase));
             }
-            HauntedSkin.Label(new Rect(jar.xMax + 5, frame.y + 19, 102, 34), faith ? "Faith" : "Dream Power", HauntedSkin.Serif(15), HauntedSkin.Ivory, TextAnchor.MiddleLeft);
-            HauntedSkin.Label(new Rect(frame.xMax - 132, frame.y + 19, 60, 34), Mathf.FloorToInt(gm.Wallet(me, pick.costResource)).ToString(), HauntedSkin.Gothic(22), HauntedSkin.MintHi, TextAnchor.MiddleRight);
+            HauntedSkin.LabelOnBaseline(jar.xMax + 7, baseline, label, labelStyle, Alpha(HauntedSkin.Ivory, .85f));
+            HauntedSkin.LabelOnBaseline(jar.xMax + 14 + labelWidth, baseline, value, valueStyle, faith ? new Color32(217, 204, 255, 255) : HauntedSkin.MintHi);
         }
 
         void DrawTypeRail(Rect rail)
@@ -468,14 +483,15 @@ namespace BadAppleHotel.Game
                     HauntedSkin.Tex(new Rect(core.x + 7, core.y + 5, 17, 17), HauntedSkin.Texture("bell"), Color.white);
                     HauntedSkin.Label(new Rect(core.x + 27, core.y, core.width - 33, 26), "Summon", HauntedSkin.Gothic(22, true), HauntedSkin.ButtonInk);
                     DrawCostDiamond(new Vector2(core.center.x - 21, core.yMax - 10), pick.costResource == "faith");
-                    HauntedSkin.Label(new Rect(core.center.x - 14, core.yMax - 19, 45, 18), Mathf.RoundToInt(pick.buildCost).ToString(), HauntedSkin.Typed(14), HauntedSkin.ButtonInk, TextAnchor.MiddleLeft);
+                    HauntedSkin.LabelOnBaseline(core.center.x - 14, core.yMax - 5, Mathf.RoundToInt(pick.buildCost).ToString(), HauntedSkin.Typed(14), HauntedSkin.ButtonInk);
                 }
                 else
                 {
                     HauntedSkin.Tex(new Rect(core.x + 7, core.center.y - 10, 20, 20), HauntedSkin.Texture("bell"), Color.white);
-                    HauntedSkin.Label(new Rect(core.x + 29, core.y, 82, core.height), "Summon", HauntedSkin.Gothic(22, true), HauntedSkin.ButtonInk);
+                    HauntedSkin.LabelOnBaseline(core.x + 29, core.y + 29, "Summon", HauntedSkin.Gothic(22, true), HauntedSkin.ButtonInk);
                     DrawCostDiamond(new Vector2(core.xMax - 42, core.center.y), pick.costResource == "faith");
-                    HauntedSkin.Label(new Rect(core.xMax - 36, core.y, 32, core.height), Mathf.RoundToInt(pick.buildCost).ToString(), HauntedSkin.Typed(14), HauntedSkin.ButtonInk, TextAnchor.MiddleRight);
+                    string cost = Mathf.RoundToInt(pick.buildCost).ToString();
+                    HauntedSkin.LabelOnBaseline(core.xMax - 4 - HauntedSkin.Measure(cost, HauntedSkin.Typed(14)).x, core.y + 29, cost, HauntedSkin.Typed(14), HauntedSkin.ButtonInk);
                 }
                 if (windowClosingAt < 0 && summonPressedAt < 0) TapZone(layout.Summon, () => BeginSummon(me, room, slot, pick));
             }
@@ -520,27 +536,39 @@ namespace BadAppleHotel.Game
         {
             card.y += offset;
             float x = card.x + 12, w = card.width - 24;
-            HauntedSkin.Label(new Rect(x, card.y + 7, w - 48, 15), "Nightmare Register", HauntedSkin.SmallCaps(11), HauntedSkin.BloodRed, TextAnchor.MiddleLeft);
-            HauntedSkin.Label(new Rect(card.xMax - 60, card.y + 7, 48, 15), "No. " + HauntedTrayLayout.PlateNumber(System.Array.IndexOf(trayConfig, pick)), HauntedSkin.SmallCaps(11), HauntedSkin.BloodRed, TextAnchor.MiddleRight);
+            var captionStyle = HauntedSkin.SmallCaps(11);
+            HauntedSkin.LabelOnBaseline(x, card.y + 18, "Nightmare Register", captionStyle, HauntedSkin.BloodRed);
+            string plate = "No. " + HauntedTrayLayout.PlateNumber(System.Array.IndexOf(trayConfig, pick));
+            HauntedSkin.LabelOnBaseline(card.xMax - 12 - HauntedSkin.Measure(plate, captionStyle).x, card.y + 18, plate, captionStyle, HauntedSkin.BloodRed);
             HauntedSkin.Fill(new Rect(x, card.y + 24, w, 1), Alpha(HauntedSkin.BloodRed, .5f), 0);
-            HauntedSkin.Label(new Rect(x, card.y + 24, w, 29), pick.name, HauntedSkin.Gothic(24), HauntedSkin.Ink, TextAnchor.MiddleLeft);
+            HauntedSkin.LabelOnBaseline(x, card.y + 46, pick.name, HauntedSkin.Gothic(22), HauntedSkin.Ink);
             string damage = string.IsNullOrEmpty(pick.damageType) || pick.damageType == "none" ? TypeNames[System.Array.IndexOf(TypeIds, CategoryOf(pick))] : char.ToUpperInvariant(pick.damageType[0]) + pick.damageType.Substring(1);
-            HauntedSkin.Label(new Rect(x, card.y + 52, w, 16), damage + " · " + RoleLine(pick), HauntedSkin.Typed(12), HauntedSkin.BloodRed, TextAnchor.MiddleLeft);
-            HauntedSkin.Label(new Rect(x, card.y + 69, w, 34), pick.flavor ?? "", HauntedSkin.Serif(14, true), new Color32(67, 48, 31, 255), TextAnchor.UpperLeft);
+            HauntedSkin.LabelOnBaseline(x, card.y + 63, damage + " · " + RoleLine(pick), HauntedSkin.Typed(12), HauntedSkin.BloodRed);
+            if (trayFlavorWidth != w) { trayFlavorWidth = w; trayFlavorLines.Clear(); }
+            if (!trayFlavorLines.TryGetValue(pick.id, out var lines))
+            {
+                lines = new List<string>(2);
+                HauntedSkin.WrapLines(pick.flavor ?? "", HauntedSkin.Serif(13, true), w, lines);
+                trayFlavorLines.Add(pick.id, lines);
+            }
+            for (int line = 0; line < lines.Count; line++)
+                HauntedSkin.LabelOnBaseline(x, card.y + 79 + line * 16, lines[line], HauntedSkin.Serif(13, true), new Color32(67, 48, 31, 255));
             if (!trayChips.TryGetValue(pick.id, out var chips)) { chips = Chips(pick); trayChips.Add(pick.id, chips); }
             float cellW = w / chips.Count;
             for (int i = 0; i < chips.Count; i++)
             {
                 float cx = x + i * cellW;
-                if (i > 0) HauntedSkin.Fill(new Rect(cx - 4, card.y + 104, 1, 25), Alpha(HauntedSkin.Ink, .22f), 0);
+                if (i > 0) HauntedSkin.Fill(new Rect(cx - 4, card.y + 102, 1, 28), Alpha(HauntedSkin.Ink, .22f), 0);
                 string value = chips[i], caption = "EFFECT";
                 if (value.EndsWith("dmg/s")) caption = "DAMAGE";
                 else if (value.EndsWith(" tiles")) caption = "RANGE";
                 else if (value.StartsWith("door support ")) { caption = "SUPPORT"; value = value.Substring(13); }
                 else if (value.StartsWith("slows ")) { caption = "SLOW"; value = value.Substring(6); }
                 else if (value.Contains("/s")) caption = "INCOME";
-                HauntedSkin.Label(new Rect(cx, card.y + 100, cellW - 5, 12), caption, HauntedSkin.SmallCaps(11), new Color32(107, 82, 64, 255), TextAnchor.MiddleLeft);
-                HauntedSkin.Label(new Rect(cx, card.y + 112, cellW - 5, 19), value, HauntedSkin.Typed(13), HauntedSkin.Ink, TextAnchor.MiddleLeft);
+                GUI.BeginGroup(new Rect(cx, card.y + 98, cellW - 5, 34));
+                HauntedSkin.LabelOnBaseline(0, 13, caption, captionStyle, new Color32(107, 82, 64, 255));
+                HauntedSkin.LabelOnBaseline(0, 29, value, HauntedSkin.Typed(13), HauntedSkin.Ink);
+                GUI.EndGroup();
             }
         }
 

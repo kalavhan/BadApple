@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="231" result="Passed" total="231" passed="231" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 03:45:30Z" end-time="2026-10-11 03:48:28Z" duration="178.6744657">
+  <test-suite type="TestSuite" id="1000" name="Bad Apple Hotel" fullname="Bad Apple Hotel" runstate="Runnable" testcasecount="231" result="Passed" start-time="2026-10-11 03:45:30Z" end-time="2026-10-11 03:48:28Z" duration="178.674466" total="231" passed="231" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1293" name="BadAppleHotel.Tests.dll" fullname="/home/josue/.codex/worktrees/haunted-hotel-ui/BadApple/Library/ScriptAssemblies/BadAppleHotel.Tests.dll" runstate="Runnable" testcasecount="231" result="Passed" start-time="2026-10-11 03:45:30Z" end-time="2026-10-11 03:48:28Z" duration="178.089340" total="231" passed="231" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1929172" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1294" name="BadAppleHotel" fullname="BadAppleHotel" runstate="Runnable" testcasecount="231" result="Passed" start-time="2026-10-11 03:45:30Z" end-time="2026-10-11 03:48:28Z" duration="178.089063" total="231" passed="231" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1295" name="Tests" fullname="BadAppleHotel.Tests" runstate="Runnable" testcasecount="231" result="Passed" start-time="2026-10-11 03:45:30Z" end-time="2026-10-11 03:48:28Z" duration="178.085478" total="231" passed="231" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="BedKitTests" fullname="BadAppleHotel.Tests.BedKitTests" classname="BadAppleHotel.Tests.BedKitTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 03:43:01Z" end-time="2026-10-11 03:43:01Z" duration="0.037688" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1002" name="All_seven_bed_levels_fit_the_two_bed_tiles_in_game_axes" fullname="BadAppleHotel.Tests.BedKitTests.All_seven_bed_levels_fit_the_two_bed_tiles_in_game_axes" methodname="All_seven_bed_levels_fit_the_two_bed_tiles_in_game_axes" classname="BadAppleHotel.Tests.BedKitTests" runstate="Runnable" seed="2113433719" result="Passed" start-time="2026-10-11 03:43:01Z" end-time="2026-10-11 03:43:01Z" duration="0.029333" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1003" name="CentralLayoutTests" fullname="BadAppleHotel.Tests.CentralLayoutTests" classname="BadAppleHotel.Tests.CentralLayoutTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 03:43:01Z" end-time="2026-10-11 03:43:27Z" duration="26.555379" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1004" name="Hundred_layouts_have_four_central_islands_single_partitions_and_rare_shared_rooms" fullname="BadAppleHotel.Tests.CentralLayoutTests.Hundred_layouts_have_four_central_islands_single_partitions_and_rare_shared_rooms" methodname="Hundred_layouts_have_four_central_islands_single_partitions_and_rare_shared_rooms" classname="BadAppleHotel.Tests.CentralLayoutTests" runstate="Runnable" seed="961433180" result="Passed" start-time="2026-10-11 03:43:01Z" end-time="2026-10-11 03:43:27Z" duration="26.554513" asserts="0">
+              <properties />
+              <output><![CDATA[CENTRAL LAYOUT: joined maps=11/100, maps with nearby doors=100/100
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1005" name="CharacterKitTests" fullname="BadAppleHotel.Tests.CharacterKitTests" classname="BadAppleHotel.Tests.CharacterKitTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 03:43:27Z" end-time="2026-10-11 03:43:27Z" duration="0.084243" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1006" name="Every_roster_resident_has_a_mobile_3D_model_standing_on_its_feet" fullname="BadAppleHotel.Tests.CharacterKitTests.Every_roster_resident_has_a_mobile_3D_model_standing_on_its_feet" methodname="Every_roster_resident_has_a_mobile_3D_model_standing_on_its_feet" classname="BadAppleHotel.Tests.CharacterKitTests" runstate="Runnable" seed="2124141320" result="Passed" start-time="2026-10-11 03:43:27Z" end-time="2026-10-11 03:43:27Z" duration="0.080680" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1007" name="CoreBackingTests" fullname="BadAppleHotel.Tests.CoreBackingTests" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:43:27Z" end-time="2026-10-11 03:43:29Z" duration="1.560187" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1011" name="Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks" fullname="BadAppleHotel.Tests.CoreBackingTests.Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:43:27Z" end-time="2026-10-11 03:43:29Z" duration="1.559537" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1008" name="Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks(11)" fullname="BadAppleHotel.Tests.CoreBackingTests.Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks(11)" methodname="Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" seed="740707231" result="Passed" start-time="2026-10-11 03:43:27Z" end-time="2026-10-11 03:43:28Z" duration="0.718482" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1009" name="Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks(41)" fullname="BadAppleHotel.Tests.CoreBackingTests.Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks(41)" methodname="Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" seed="1067234019" result="Passed" start-time="2026-10-11 03:43:28Z" end-time="2026-10-11 03:43:29Z" duration="0.471102" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1010" name="Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks(83)" fullname="BadAppleHotel.Tests.CoreBackingTests.Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks(83)" methodname="Separators_use_one_decorative_span_and_the_same_thin_collision_without_backing_blocks" classname="BadAppleHotel.Tests.CoreBackingTests" runstate="Runnable" seed="1091832013" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.369165" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1012" name="DoorKitTests" fullname="BadAppleHotel.Tests.DoorKitTests" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" testcasecount="19" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:32Z" duration="3.088149" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1025" name="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge" fullname="BadAppleHotel.Tests.DoorKitTests.All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.031647" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1021" name="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge(0,1)" fullname="BadAppleHotel.Tests.DoorKitTests.All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge(0,1)" methodname="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1123821150" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.028947" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1022" name="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge(0,-1)" fullname="BadAppleHotel.Tests.DoorKitTests.All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge(0,-1)" methodname="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1264355083" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.000773" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1023" name="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge(1,0)" fullname="BadAppleHotel.Tests.DoorKitTests.All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge(1,0)" methodname="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1155967801" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.000727" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1024" name="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge(-1,0)" fullname="BadAppleHotel.Tests.DoorKitTests.All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge(-1,0)" methodname="All_four_doorway_directions_swing_ninety_degrees_into_the_room_about_a_fixed_hinge" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="2102389265" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.000736" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-case id="1013" name="Available_baked_doors_fit_the_frame_and_ship_complete_mobile_meshes" fullname="BadAppleHotel.Tests.DoorKitTests.Available_baked_doors_fit_the_frame_and_ship_complete_mobile_meshes" methodname="Available_baked_doors_fit_the_frame_and_ship_complete_mobile_meshes" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="452034792" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.008299" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1014" name="Closed_panels_are_parallel_to_the_wall_instead_of_preserving_export_yaw" fullname="BadAppleHotel.Tests.DoorKitTests.Closed_panels_are_parallel_to_the_wall_instead_of_preserving_export_yaw" methodname="Closed_panels_are_parallel_to_the_wall_instead_of_preserving_export_yaw" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="2117832965" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.001872" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1027" name="Damage_hits_decay_and_rebuilding_restores_the_leaf_with_one_local_pulse" fullname="BadAppleHotel.Tests.DoorKitTests.Damage_hits_decay_and_rebuilding_restores_the_leaf_with_one_local_pulse" methodname="Damage_hits_decay_and_rebuilding_restores_the_leaf_with_one_local_pulse" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="7019309" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.001818" asserts="0">
+              <properties />
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1018" name="Door_shader_compiles_for_android_GLES3" fullname="BadAppleHotel.Tests.DoorKitTests.Door_shader_compiles_for_android_GLES3" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.436133" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1016" name="Door_shader_compiles_for_android_GLES3(Vertex)" fullname="BadAppleHotel.Tests.DoorKitTests.Door_shader_compiles_for_android_GLES3(Vertex)" methodname="Door_shader_compiles_for_android_GLES3" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1672612023" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.219115" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1017" name="Door_shader_compiles_for_android_GLES3(Fragment)" fullname="BadAppleHotel.Tests.DoorKitTests.Door_shader_compiles_for_android_GLES3(Fragment)" methodname="Door_shader_compiles_for_android_GLES3" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1766012209" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.216334" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-case id="1019" name="Every_baked_door_breaks_into_textured_rubble_and_rebuilds_without_changing_materials" fullname="BadAppleHotel.Tests.DoorKitTests.Every_baked_door_breaks_into_textured_rubble_and_rebuilds_without_changing_materials" methodname="Every_baked_door_breaks_into_textured_rubble_and_rebuilds_without_changing_materials" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1613165822" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:29Z" duration="0.003926" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1032" name="Every_door_renders_identically_with_walls_up_cutaway_or_down" fullname="BadAppleHotel.Tests.DoorKitTests.Every_door_renders_identically_with_walls_up_cutaway_or_down" methodname="Every_door_renders_identically_with_walls_up_cutaway_or_down" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="239467692" result="Passed" start-time="2026-10-11 03:43:29Z" end-time="2026-10-11 03:43:31Z" duration="1.223391" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1020" name="Gameplay_upgrades_above_seven_still_pulse_when_they_share_the_same_art" fullname="BadAppleHotel.Tests.DoorKitTests.Gameplay_upgrades_above_seven_still_pulse_when_they_share_the_same_art" methodname="Gameplay_upgrades_above_seven_still_pulse_when_they_share_the_same_art" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="2020518127" result="Passed" start-time="2026-10-11 03:43:31Z" end-time="2026-10-11 03:43:31Z" duration="0.000707" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1026" name="Hidden_broken_and_unpowered_doors_cannot_emit_supernatural_light" fullname="BadAppleHotel.Tests.DoorKitTests.Hidden_broken_and_unpowered_doors_cannot_emit_supernatural_light" methodname="Hidden_broken_and_unpowered_doors_cannot_emit_supernatural_light" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1577713493" result="Passed" start-time="2026-10-11 03:43:31Z" end-time="2026-10-11 03:43:31Z" duration="0.000482" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1033" name="Imported_magical_doors_render_animated_energy_only_while_powered_and_visible" fullname="BadAppleHotel.Tests.DoorKitTests.Imported_magical_doors_render_animated_energy_only_while_powered_and_visible" methodname="Imported_magical_doors_render_animated_energy_only_while_powered_and_visible" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="481930242" result="Passed" start-time="2026-10-11 03:43:31Z" end-time="2026-10-11 03:43:31Z" duration="0.226362" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1015" name="Missing_designs_keep_their_sprite_and_only_gameplay_levels_eight_to_ten_reuse_design_seven" fullname="BadAppleHotel.Tests.DoorKitTests.Missing_designs_keep_their_sprite_and_only_gameplay_levels_eight_to_ten_reuse_design_seven" methodname="Missing_designs_keep_their_sprite_and_only_gameplay_levels_eight_to_ten_reuse_design_seven" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="228807954" result="Passed" start-time="2026-10-11 03:43:31Z" end-time="2026-10-11 03:43:31Z" duration="0.000847" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1028" name="Real_room_closed_open_broken_and_rebuilt_states_keep_path_blocking_and_visuals_in_agreement" fullname="BadAppleHotel.Tests.DoorKitTests.Real_room_closed_open_broken_and_rebuilt_states_keep_path_blocking_and_visuals_in_agreement" methodname="Real_room_closed_open_broken_and_rebuilt_states_keep_path_blocking_and_visuals_in_agreement" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1601447620" result="Passed" start-time="2026-10-11 03:43:31Z" end-time="2026-10-11 03:43:31Z" duration="0.043486" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1030" name="Rooms_share_one_material_per_design_and_disposal_releases_owned_materials" fullname="BadAppleHotel.Tests.DoorKitTests.Rooms_share_one_material_per_design_and_disposal_releases_owned_materials" methodname="Rooms_share_one_material_per_design_and_disposal_releases_owned_materials" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="2135940947" result="Passed" start-time="2026-10-11 03:43:31Z" end-time="2026-10-11 03:43:31Z" duration="0.037512" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1029" name="Unclaimed_doors_are_open_and_missing_tiers_return_to_the_existing_sprite" fullname="BadAppleHotel.Tests.DoorKitTests.Unclaimed_doors_are_open_and_missing_tiers_return_to_the_existing_sprite" methodname="Unclaimed_doors_are_open_and_missing_tiers_return_to_the_existing_sprite" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="1769022306" result="Passed" start-time="2026-10-11 03:43:31Z" end-time="2026-10-11 03:43:31Z" duration="0.037681" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1031" name="Welcome_mats_follow_live_room_state_and_share_resources_until_world_disposal" fullname="BadAppleHotel.Tests.DoorKitTests.Welcome_mats_follow_live_room_state_and_share_resources_until_world_disposal" methodname="Welcome_mats_follow_live_room_state_and_share_resources_until_world_disposal" classname="BadAppleHotel.Tests.DoorKitTests" runstate="Runnable" seed="357291300" result="Passed" start-time="2026-10-11 03:43:31Z" end-time="2026-10-11 03:43:32Z" duration="1.030385" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1034" name="DoorWelcomeMatTests" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.079955" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1035" name="Color_states_follow_selection_occupancy_sleep_death_and_empty_rooms" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Color_states_follow_selection_occupancy_sleep_death_and_empty_rooms" methodname="Color_states_follow_selection_occupancy_sleep_death_and_empty_rooms" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" seed="1776582885" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.000731" asserts="0">
+              <properties />
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1040" name="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.002280" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1036" name="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation(0,1)" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation(0,1)" methodname="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" seed="984801602" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.001187" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1037" name="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation(0,-1)" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation(0,-1)" methodname="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" seed="1378869198" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.000196" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1038" name="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation(1,0)" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation(1,0)" methodname="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" seed="1534941224" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.000181" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1039" name="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation(-1,0)" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation(-1,0)" methodname="Mat_is_flat_in_front_of_the_door_and_clear_of_the_wall_in_every_orientation" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" seed="679969607" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.000179" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-case id="1044" name="Rendered_marker_changes_color_and_disappears_when_hidden_or_in_fog" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Rendered_marker_changes_color_and_disappears_when_hidden_or_in_fog" methodname="Rendered_marker_changes_color_and_disappears_when_hidden_or_in_fog" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" seed="488964487" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.009220" asserts="0">
+              <properties />
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1043" name="Welcome_mat_shader_compiles_for_android_GLES3" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Welcome_mat_shader_compiles_for_android_GLES3" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.064405" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1041" name="Welcome_mat_shader_compiles_for_android_GLES3(Vertex)" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Welcome_mat_shader_compiles_for_android_GLES3(Vertex)" methodname="Welcome_mat_shader_compiles_for_android_GLES3" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" seed="1330482754" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.034035" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1042" name="Welcome_mat_shader_compiles_for_android_GLES3(Fragment)" fullname="BadAppleHotel.Tests.DoorWelcomeMatTests.Welcome_mat_shader_compiles_for_android_GLES3(Fragment)" methodname="Welcome_mat_shader_compiles_for_android_GLES3" classname="BadAppleHotel.Tests.DoorWelcomeMatTests" runstate="Runnable" seed="1571313748" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.029697" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1045" name="EctoplasmTests" fullname="BadAppleHotel.Tests.EctoplasmTests" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.086528" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1055" name="Anchor_updates_follow_the_slide_without_advancing_or_duplicating_particles" fullname="BadAppleHotel.Tests.EctoplasmTests.Anchor_updates_follow_the_slide_without_advancing_or_duplicating_particles" methodname="Anchor_updates_follow_the_slide_without_advancing_or_duplicating_particles" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1954597437" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.004306" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1054" name="Closing_stops_releases_but_existing_drops_squash_splash_and_finish_their_puddles" fullname="BadAppleHotel.Tests.EctoplasmTests.Closing_stops_releases_but_existing_drops_squash_splash_and_finish_their_puddles" methodname="Closing_stops_releases_but_existing_drops_squash_splash_and_finish_their_puddles" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="213866372" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.001374" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1053" name="Dark_summon_retracts_smoothly_pauses_and_refills_when_lit_again" fullname="BadAppleHotel.Tests.EctoplasmTests.Dark_summon_retracts_smoothly_pauses_and_refills_when_lit_again" methodname="Dark_summon_retracts_smoothly_pauses_and_refills_when_lit_again" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1703062196" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.000530" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1047" name="Fifteen_seconds_show_independent_cycles_with_at_least_three_staggered_releases" fullname="BadAppleHotel.Tests.EctoplasmTests.Fifteen_seconds_show_independent_cycles_with_at_least_three_staggered_releases" methodname="Fifteen_seconds_show_independent_cycles_with_at_least_three_staggered_releases" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="532435760" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.006738" asserts="0">
+              <properties />
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1051" name="Frame_rate_does_not_change_physics_or_release_order" fullname="BadAppleHotel.Tests.EctoplasmTests.Frame_rate_does_not_change_physics_or_release_order" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.006036" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1048" name="Frame_rate_does_not_change_physics_or_release_order(30)" fullname="BadAppleHotel.Tests.EctoplasmTests.Frame_rate_does_not_change_physics_or_release_order(30)" methodname="Frame_rate_does_not_change_physics_or_release_order" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="393192564" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.002455" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1049" name="Frame_rate_does_not_change_physics_or_release_order(60)" fullname="BadAppleHotel.Tests.EctoplasmTests.Frame_rate_does_not_change_physics_or_release_order(60)" methodname="Frame_rate_does_not_change_physics_or_release_order" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="404756571" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.001595" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1050" name="Frame_rate_does_not_change_physics_or_release_order(144)" fullname="BadAppleHotel.Tests.EctoplasmTests.Frame_rate_does_not_change_physics_or_release_order(144)" methodname="Frame_rate_does_not_change_physics_or_release_order" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="375586610" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.001587" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-case id="1046" name="Goo_body_shader_is_packaged_as_a_resource_for_player_builds" fullname="BadAppleHotel.Tests.EctoplasmTests.Goo_body_shader_is_packaged_as_a_resource_for_player_builds" methodname="Goo_body_shader_is_packaged_as_a_resource_for_player_builds" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1703958580" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.001159" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1056" name="Lintel_impacts_do_not_feed_or_restart_the_summon_drips" fullname="BadAppleHotel.Tests.EctoplasmTests.Lintel_impacts_do_not_feed_or_restart_the_summon_drips" methodname="Lintel_impacts_do_not_feed_or_restart_the_summon_drips" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="663723583" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.000716" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1058" name="Lintel_pools_stay_on_the_metal_edge_and_root_glows_do_not_grow_with_the_stem" fullname="BadAppleHotel.Tests.EctoplasmTests.Lintel_pools_stay_on_the_metal_edge_and_root_glows_do_not_grow_with_the_stem" methodname="Lintel_pools_stay_on_the_metal_edge_and_root_glows_do_not_grow_with_the_stem" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="68828886" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.012715" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1052" name="Press_releases_both_summon_drips_together_and_drops_accelerate_then_fade_without_splats" fullname="BadAppleHotel.Tests.EctoplasmTests.Press_releases_both_summon_drips_together_and_drops_accelerate_then_fade_without_splats" methodname="Press_releases_both_summon_drips_together_and_drops_accelerate_then_fade_without_splats" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1515792501" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.000624" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1061" name="Repeated_presses_stay_within_particle_and_geometry_budgets" fullname="BadAppleHotel.Tests.EctoplasmTests.Repeated_presses_stay_within_particle_and_geometry_budgets" methodname="Repeated_presses_stay_within_particle_and_geometry_budgets" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1323239131" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.023979" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1059" name="Summon_beats_alternate_every_two_and_a_half_to_three_seconds_with_all_five_anchors" fullname="BadAppleHotel.Tests.EctoplasmTests.Summon_beats_alternate_every_two_and_a_half_to_three_seconds_with_all_five_anchors" methodname="Summon_beats_alternate_every_two_and_a_half_to_three_seconds_with_all_five_anchors" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="1679844351" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.023413" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1060" name="Summon_lips_bridge_the_core_and_outer_bezel_then_retract_with_the_drip" fullname="BadAppleHotel.Tests.EctoplasmTests.Summon_lips_bridge_the_core_and_outer_bezel_then_retract_with_the_drip" methodname="Summon_lips_bridge_the_core_and_outer_bezel_then_retract_with_the_drip" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="415394487" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.000570" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1057" name="The_shared_goo_ramp_uses_mint_and_respects_the_brightness_ceiling" fullname="BadAppleHotel.Tests.EctoplasmTests.The_shared_goo_ramp_uses_mint_and_respects_the_brightness_ceiling" methodname="The_shared_goo_ramp_uses_mint_and_respects_the_brightness_ceiling" classname="BadAppleHotel.Tests.EctoplasmTests" runstate="Runnable" seed="379413611" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:32Z" duration="0.002604" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1062" name="FloorEnergyTests" fullname="BadAppleHotel.Tests.FloorEnergyTests" classname="BadAppleHotel.Tests.FloorEnergyTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:34Z" duration="1.553607" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1063" name="Claiming_a_room_divides_its_build_squares_with_energy_and_marks_legal_squares" fullname="BadAppleHotel.Tests.FloorEnergyTests.Claiming_a_room_divides_its_build_squares_with_energy_and_marks_legal_squares" methodname="Claiming_a_room_divides_its_build_squares_with_energy_and_marks_legal_squares" classname="BadAppleHotel.Tests.FloorEnergyTests" runstate="Runnable" seed="868751335" result="Passed" start-time="2026-10-11 03:43:32Z" end-time="2026-10-11 03:43:33Z" duration="0.400801" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1066" name="Floor_finish_is_owned_by_the_room_not_by_each_square" fullname="BadAppleHotel.Tests.FloorEnergyTests.Floor_finish_is_owned_by_the_room_not_by_each_square" methodname="Floor_finish_is_owned_by_the_room_not_by_each_square" classname="BadAppleHotel.Tests.FloorEnergyTests" runstate="Runnable" seed="230004910" result="Passed" start-time="2026-10-11 03:43:33Z" end-time="2026-10-11 03:43:33Z" duration="0.390365" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1064" name="Guests_build_anywhere_except_the_doorway_while_some_path_reaches_the_bed" fullname="BadAppleHotel.Tests.FloorEnergyTests.Guests_build_anywhere_except_the_doorway_while_some_path_reaches_the_bed" methodname="Guests_build_anywhere_except_the_doorway_while_some_path_reaches_the_bed" classname="BadAppleHotel.Tests.FloorEnergyTests" runstate="Runnable" seed="1997178470" result="Passed" start-time="2026-10-11 03:43:33Z" end-time="2026-10-11 03:43:33Z" duration="0.380251" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1065" name="Other_guests_rooms_glow_without_build_invitations_and_dark_rooms_lose_their_energy" fullname="BadAppleHotel.Tests.FloorEnergyTests.Other_guests_rooms_glow_without_build_invitations_and_dark_rooms_lose_their_energy" methodname="Other_guests_rooms_glow_without_build_invitations_and_dark_rooms_lose_their_energy" classname="BadAppleHotel.Tests.FloorEnergyTests" runstate="Runnable" seed="1500168130" result="Passed" start-time="2026-10-11 03:43:33Z" end-time="2026-10-11 03:43:34Z" duration="0.378523" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1067" name="HauntedConfigTests" fullname="BadAppleHotel.Tests.HauntedConfigTests" classname="BadAppleHotel.Tests.HauntedConfigTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.185889" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1070" name="Every_flavor_fits_two_lines_in_the_actual_register_font" fullname="BadAppleHotel.Tests.HauntedConfigTests.Every_flavor_fits_two_lines_in_the_actual_register_font" classname="BadAppleHotel.Tests.HauntedConfigTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.183485" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1068" name="Every_flavor_fits_two_lines_in_the_actual_register_font(246.0f)" fullname="BadAppleHotel.Tests.HauntedConfigTests.Every_flavor_fits_two_lines_in_the_actual_register_font(246.0f)" methodname="Every_flavor_fits_two_lines_in_the_actual_register_font" classname="BadAppleHotel.Tests.HauntedConfigTests" runstate="Runnable" seed="1628081256" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.181649" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1069" name="Every_flavor_fits_two_lines_in_the_actual_register_font(216.0f)" fullname="BadAppleHotel.Tests.HauntedConfigTests.Every_flavor_fits_two_lines_in_the_actual_register_font(216.0f)" methodname="Every_flavor_fits_two_lines_in_the_actual_register_font" classname="BadAppleHotel.Tests.HauntedConfigTests" runstate="Runnable" seed="1389263998" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.001561" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-case id="1071" name="Every_tower_has_short_flavor_and_keeps_its_factual_description" fullname="BadAppleHotel.Tests.HauntedConfigTests.Every_tower_has_short_flavor_and_keeps_its_factual_description" methodname="Every_tower_has_short_flavor_and_keeps_its_factual_description" classname="BadAppleHotel.Tests.HauntedConfigTests" runstate="Runnable" seed="1991232882" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.001300" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1072" name="HauntedTrayLayoutTests" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.007821" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1088" name="CabinetSkipsRoom113" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.CabinetSkipsRoom113" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.002573" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1085" name="CabinetSkipsRoom113(0,101)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.CabinetSkipsRoom113(0,101)" methodname="CabinetSkipsRoom113" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1299587793" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.002231" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1086" name="CabinetSkipsRoom113(11,112)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.CabinetSkipsRoom113(11,112)" methodname="CabinetSkipsRoom113" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1838020432" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000047" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1087" name="CabinetSkipsRoom113(12,114)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.CabinetSkipsRoom113(12,114)" methodname="CabinetSkipsRoom113" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="184531136" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000032" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1093" name="DialUsesUpcomingNightAndCapsEndless" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000658" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1089" name="DialUsesUpcomingNightAndCapsEndless(0,False,False,1)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless(0,False,False,1)" methodname="DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1651345693" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000242" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1090" name="DialUsesUpcomingNightAndCapsEndless(2,False,False,3)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless(2,False,False,3)" methodname="DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="605145010" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000037" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1091" name="DialUsesUpcomingNightAndCapsEndless(4,True,False,4)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless(4,True,False,4)" methodname="DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="342118043" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000034" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1092" name="DialUsesUpcomingNightAndCapsEndless(9,True,True,6)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.DialUsesUpcomingNightAndCapsEndless(9,True,True,6)" methodname="DialUsesUpcomingNightAndCapsEndless" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1970833427" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000032" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1083" name="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.002060" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1079" name="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(960)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(960)" methodname="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1697901609" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.001437" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1080" name="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(1160)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(1160)" methodname="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="822760507" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000099" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1081" name="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(1280)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(1280)" methodname="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1049260265" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000096" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1082" name="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(1600)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps(1600)" methodname="LintelDripsFollowTheBrassEdgeAndFallThroughClearGaps" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="131880449" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000093" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-case id="1084" name="SafeAreaInsetsShiftWholeTrayWithoutCoveringControls" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.SafeAreaInsetsShiftWholeTrayWithoutCoveringControls" methodname="SafeAreaInsetsShiftWholeTrayWithoutCoveringControls" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="2044086338" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000184" asserts="0">
+              <properties />
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1078" name="TrayUsesSafeBottomAndKeepsColumnsSeparate" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.001185" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1073" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(1280,922)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(1280,922)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1780683851" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000609" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1074" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(1600,1040)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(1600,1040)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1124796297" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000053" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1075" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(960,936)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(960,936)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1434210763" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000047" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1076" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(1000,976)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(1000,976)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1313384707" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000046" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1077" name="TrayUsesSafeBottomAndKeepsColumnsSeparate(1160,802)" fullname="BadAppleHotel.Tests.HauntedTrayLayoutTests.TrayUsesSafeBottomAndKeepsColumnsSeparate(1160,802)" methodname="TrayUsesSafeBottomAndKeepsColumnsSeparate" classname="BadAppleHotel.Tests.HauntedTrayLayoutTests" runstate="Runnable" seed="1355361636" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.000048" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1094" name="HotelLightingTests" fullname="BadAppleHotel.Tests.HotelLightingTests" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:36Z" duration="2.131112" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1096" name="Diagnostic_samples_use_the_same_texel_centers_and_interpolation_as_gpu_sampling" fullname="BadAppleHotel.Tests.HotelLightingTests.Diagnostic_samples_use_the_same_texel_centers_and_interpolation_as_gpu_sampling" methodname="Diagnostic_samples_use_the_same_texel_centers_and_interpolation_as_gpu_sampling" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" seed="1493570679" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:34Z" duration="0.299995" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1102" name="Disposing_old_or_already_destroyed_maps_does_not_leave_stale_global_lighting" fullname="BadAppleHotel.Tests.HotelLightingTests.Disposing_old_or_already_destroyed_maps_does_not_leave_stale_global_lighting" methodname="Disposing_old_or_already_destroyed_maps_does_not_leave_stale_global_lighting" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" seed="1634905935" result="Passed" start-time="2026-10-11 03:43:34Z" end-time="2026-10-11 03:43:35Z" duration="0.314553" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1095" name="Lamp_pool_falls_off_and_does_not_light_behind_its_mounting_face" fullname="BadAppleHotel.Tests.HotelLightingTests.Lamp_pool_falls_off_and_does_not_light_behind_its_mounting_face" methodname="Lamp_pool_falls_off_and_does_not_light_behind_its_mounting_face" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" seed="1393050004" result="Passed" start-time="2026-10-11 03:43:35Z" end-time="2026-10-11 03:43:35Z" duration="0.301856" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1101" name="Nearby_room_lamps_can_light_both_sides_without_crossing_the_partition" fullname="BadAppleHotel.Tests.HotelLightingTests.Nearby_room_lamps_can_light_both_sides_without_crossing_the_partition" methodname="Nearby_room_lamps_can_light_both_sides_without_crossing_the_partition" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" seed="985264200" result="Passed" start-time="2026-10-11 03:43:35Z" end-time="2026-10-11 03:43:35Z" duration="0.300835" asserts="0">
+              <properties />
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1099" name="Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius" fullname="BadAppleHotel.Tests.HotelLightingTests.Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:43:35Z" end-time="2026-10-11 03:43:36Z" duration="0.609407" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1097" name="Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius(Wall)" fullname="BadAppleHotel.Tests.HotelLightingTests.Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius(Wall)" methodname="Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" seed="1324004290" result="Passed" start-time="2026-10-11 03:43:35Z" end-time="2026-10-11 03:43:36Z" duration="0.303663" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1098" name="Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius(Door)" fullname="BadAppleHotel.Tests.HotelLightingTests.Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius(Door)" methodname="Solid_walls_and_closed_doors_stop_illumination_even_within_the_lamp_radius" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" seed="1956000036" result="Passed" start-time="2026-10-11 03:43:36Z" end-time="2026-10-11 03:43:36Z" duration="0.304599" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-case id="1100" name="Touching_diagonal_wall_corners_do_not_leak_light" fullname="BadAppleHotel.Tests.HotelLightingTests.Touching_diagonal_wall_corners_do_not_leak_light" methodname="Touching_diagonal_wall_corners_do_not_leak_light" classname="BadAppleHotel.Tests.HotelLightingTests" runstate="Runnable" seed="1367240258" result="Passed" start-time="2026-10-11 03:43:36Z" end-time="2026-10-11 03:43:36Z" duration="0.303538" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1103" name="LampDistributionTests" fullname="BadAppleHotel.Tests.LampDistributionTests" classname="BadAppleHotel.Tests.LampDistributionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:43:36Z" end-time="2026-10-11 03:43:38Z" duration="1.492539" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1107" name="Spaced_sconces_cover_each_room_and_corridors_with_useful_light" fullname="BadAppleHotel.Tests.LampDistributionTests.Spaced_sconces_cover_each_room_and_corridors_with_useful_light" classname="BadAppleHotel.Tests.LampDistributionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:43:36Z" end-time="2026-10-11 03:43:38Z" duration="1.491726" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1104" name="Spaced_sconces_cover_each_room_and_corridors_with_useful_light(11)" fullname="BadAppleHotel.Tests.LampDistributionTests.Spaced_sconces_cover_each_room_and_corridors_with_useful_light(11)" methodname="Spaced_sconces_cover_each_room_and_corridors_with_useful_light" classname="BadAppleHotel.Tests.LampDistributionTests" runstate="Runnable" seed="467160665" result="Passed" start-time="2026-10-11 03:43:36Z" end-time="2026-10-11 03:43:37Z" duration="0.636574" asserts="0">
+                <properties />
+                <output><![CDATA[LAMP COVERAGE seed=118661712 lamps=88 roomMin=1 corridor=0.8756552
+]]></output>
+              </test-case>
+              <test-case id="1105" name="Spaced_sconces_cover_each_room_and_corridors_with_useful_light(41)" fullname="BadAppleHotel.Tests.LampDistributionTests.Spaced_sconces_cover_each_room_and_corridors_with_useful_light(41)" methodname="Spaced_sconces_cover_each_room_and_corridors_with_useful_light" classname="BadAppleHotel.Tests.LampDistributionTests" runstate="Runnable" seed="1061161303" result="Passed" start-time="2026-10-11 03:43:37Z" end-time="2026-10-11 03:43:37Z" duration="0.463559" asserts="0">
+                <properties />
+                <output><![CDATA[LAMP COVERAGE seed=139292431 lamps=78 roomMin=1 corridor=0.8916822
+]]></output>
+              </test-case>
+              <test-case id="1106" name="Spaced_sconces_cover_each_room_and_corridors_with_useful_light(83)" fullname="BadAppleHotel.Tests.LampDistributionTests.Spaced_sconces_cover_each_room_and_corridors_with_useful_light(83)" methodname="Spaced_sconces_cover_each_room_and_corridors_with_useful_light" classname="BadAppleHotel.Tests.LampDistributionTests" runstate="Runnable" seed="1649271751" result="Passed" start-time="2026-10-11 03:43:37Z" end-time="2026-10-11 03:43:38Z" duration="0.391047" asserts="0">
+                <properties />
+                <output><![CDATA[LAMP COVERAGE seed=167781550 lamps=77 roomMin=0.9924242 corridor=0.8640761
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1108" name="LampGlowTests" fullname="BadAppleHotel.Tests.LampGlowTests" classname="BadAppleHotel.Tests.LampGlowTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.021842" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1109" name="Visible_bulbs_glow_but_lowered_hidden_and_peeked_away_lamps_do_not" fullname="BadAppleHotel.Tests.LampGlowTests.Visible_bulbs_glow_but_lowered_hidden_and_peeked_away_lamps_do_not" methodname="Visible_bulbs_glow_but_lowered_hidden_and_peeked_away_lamps_do_not" classname="BadAppleHotel.Tests.LampGlowTests" runstate="Runnable" seed="1218813645" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.020451" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1110" name="LiftDialLayoutTests" fullname="BadAppleHotel.Tests.LiftDialLayoutTests" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.003948" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1115" name="IndicatorClearsTopControlsAndResources" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.IndicatorClearsTopControlsAndResources" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.001566" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1111" name="IndicatorClearsTopControlsAndResources(960,False)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.IndicatorClearsTopControlsAndResources(960,False)" methodname="IndicatorClearsTopControlsAndResources" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="850677707" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000953" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1112" name="IndicatorClearsTopControlsAndResources(1160,True)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.IndicatorClearsTopControlsAndResources(1160,True)" methodname="IndicatorClearsTopControlsAndResources" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="713558416" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000089" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1113" name="IndicatorClearsTopControlsAndResources(1280,True)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.IndicatorClearsTopControlsAndResources(1280,True)" methodname="IndicatorClearsTopControlsAndResources" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="1672058743" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000067" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1114" name="IndicatorClearsTopControlsAndResources(1600,True)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.IndicatorClearsTopControlsAndResources(1600,True)" methodname="IndicatorClearsTopControlsAndResources" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="1479930249" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000064" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1121" name="NumeralsFollowTheSpecifiedArc" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.NumeralsFollowTheSpecifiedArc" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000810" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1117" name="NumeralsFollowTheSpecifiedArc(1,6,-62)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.NumeralsFollowTheSpecifiedArc(1,6,-62)" methodname="NumeralsFollowTheSpecifiedArc" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="1097284609" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000355" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1118" name="NumeralsFollowTheSpecifiedArc(2,6,-37.2f)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.NumeralsFollowTheSpecifiedArc(2,6,-37.2f)" methodname="NumeralsFollowTheSpecifiedArc" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="296371662" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000042" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1119" name="NumeralsFollowTheSpecifiedArc(6,6,62)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.NumeralsFollowTheSpecifiedArc(6,6,62)" methodname="NumeralsFollowTheSpecifiedArc" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="132193947" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000035" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1120" name="NumeralsFollowTheSpecifiedArc(1,1,0)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.NumeralsFollowTheSpecifiedArc(1,1,0)" methodname="NumeralsFollowTheSpecifiedArc" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="1866667015" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000035" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-case id="1116" name="SafeTopMovesEveryPartAsOneAssembly" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.SafeTopMovesEveryPartAsOneAssembly" methodname="SafeTopMovesEveryPartAsOneAssembly" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="1399510465" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000332" asserts="0">
+              <properties />
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1124" name="WingsUseTheWallsButtonClearanceThreshold" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.WingsUseTheWallsButtonClearanceThreshold" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000356" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1122" name="WingsUseTheWallsButtonClearanceThreshold(1103,False)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.WingsUseTheWallsButtonClearanceThreshold(1103,False)" methodname="WingsUseTheWallsButtonClearanceThreshold" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="171387140" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000103" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1123" name="WingsUseTheWallsButtonClearanceThreshold(1104,True)" fullname="BadAppleHotel.Tests.LiftDialLayoutTests.WingsUseTheWallsButtonClearanceThreshold(1104,True)" methodname="WingsUseTheWallsButtonClearanceThreshold" classname="BadAppleHotel.Tests.LiftDialLayoutTests" runstate="Runnable" seed="736620086" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.000043" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1125" name="MapTests" fullname="BadAppleHotel.Tests.MapTests" classname="BadAppleHotel.Tests.MapTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:59Z" duration="21.043889" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1132" name="Crystal_ball_cannot_be_upgraded" fullname="BadAppleHotel.Tests.MapTests.Crystal_ball_cannot_be_upgraded" methodname="Crystal_ball_cannot_be_upgraded" classname="BadAppleHotel.Tests.MapTests" runstate="Runnable" seed="1894456451" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.001643" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1126" name="Every_letter_shape_is_connected" fullname="BadAppleHotel.Tests.MapTests.Every_letter_shape_is_connected" methodname="Every_letter_shape_is_connected" classname="BadAppleHotel.Tests.MapTests" runstate="Runnable" seed="1040887149" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:38Z" duration="0.002282" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1127" name="Generated_hotels_are_playable_across_many_seeds" fullname="BadAppleHotel.Tests.MapTests.Generated_hotels_are_playable_across_many_seeds" methodname="Generated_hotels_are_playable_across_many_seeds" classname="BadAppleHotel.Tests.MapTests" runstate="Runnable" seed="181122738" result="Passed" start-time="2026-10-11 03:43:38Z" end-time="2026-10-11 03:43:52Z" duration="14.134253" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1129" name="Same_seed_gives_same_hotel" fullname="BadAppleHotel.Tests.MapTests.Same_seed_gives_same_hotel" methodname="Same_seed_gives_same_hotel" classname="BadAppleHotel.Tests.MapTests" runstate="Runnable" seed="1971407956" result="Passed" start-time="2026-10-11 03:43:52Z" end-time="2026-10-11 03:43:53Z" duration="1.008761" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1131" name="Selling_refunds_half_of_everything_spent" fullname="BadAppleHotel.Tests.MapTests.Selling_refunds_half_of_everything_spent" methodname="Selling_refunds_half_of_everything_spent" classname="BadAppleHotel.Tests.MapTests" runstate="Runnable" seed="116280136" result="Passed" start-time="2026-10-11 03:43:53Z" end-time="2026-10-11 03:43:53Z" duration="0.002107" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1128" name="Some_rooms_are_lonely_and_some_have_neighbours" fullname="BadAppleHotel.Tests.MapTests.Some_rooms_are_lonely_and_some_have_neighbours" methodname="Some_rooms_are_lonely_and_some_have_neighbours" classname="BadAppleHotel.Tests.MapTests" runstate="Runnable" seed="1749723682" result="Passed" start-time="2026-10-11 03:43:53Z" end-time="2026-10-11 03:43:59Z" duration="5.891666" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1130" name="Tower_ranges_come_from_range_class" fullname="BadAppleHotel.Tests.MapTests.Tower_ranges_come_from_range_class" methodname="Tower_ranges_come_from_range_class" classname="BadAppleHotel.Tests.MapTests" runstate="Runnable" seed="1134128237" result="Passed" start-time="2026-10-11 03:43:59Z" end-time="2026-10-11 03:43:59Z" duration="0.002043" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1133" name="MatchPlanTests" fullname="BadAppleHotel.Tests.MatchPlanTests" classname="BadAppleHotel.Tests.MatchPlanTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 03:44:01Z" end-time="2026-10-11 03:44:04Z" duration="2.414043" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1134" name="Sleeping_input_pans_without_waking_and_spare_rooms_remain_open" fullname="BadAppleHotel.Tests.MatchPlanTests.Sleeping_input_pans_without_waking_and_spare_rooms_remain_open" methodname="Sleeping_input_pans_without_waking_and_spare_rooms_remain_open" classname="BadAppleHotel.Tests.MatchPlanTests" runstate="Runnable" seed="1105339930" result="Passed" start-time="2026-10-11 03:43:59Z" end-time="2026-10-11 03:44:04Z" duration="4.988230" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1135" name="MonsterKitTests" fullname="BadAppleHotel.Tests.MonsterKitTests" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" testcasecount="19" result="Passed" start-time="2026-10-11 03:44:04Z" end-time="2026-10-11 03:44:11Z" duration="7.659092" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1149" name="A_bought_creature_is_queued_takes_over_at_the_next_pulse_and_then_switching_locks" fullname="BadAppleHotel.Tests.MonsterKitTests.A_bought_creature_is_queued_takes_over_at_the_next_pulse_and_then_switching_locks" methodname="A_bought_creature_is_queued_takes_over_at_the_next_pulse_and_then_switching_locks" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="270549255" result="Passed" start-time="2026-10-11 03:44:04Z" end-time="2026-10-11 03:44:04Z" duration="0.446845" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1151" name="An_escort_beside_the_monster_steps_in_front_of_tower_shots" fullname="BadAppleHotel.Tests.MonsterKitTests.An_escort_beside_the_monster_steps_in_front_of_tower_shots" methodname="An_escort_beside_the_monster_steps_in_front_of_tower_shots" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="1001467652" result="Passed" start-time="2026-10-11 03:44:04Z" end-time="2026-10-11 03:44:05Z" duration="0.396258" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1147" name="Awakening_unlocks_the_swarm_and_opens_a_rift_per_living_resident" fullname="BadAppleHotel.Tests.MonsterKitTests.Awakening_unlocks_the_swarm_and_opens_a_rift_per_living_resident" methodname="Awakening_unlocks_the_swarm_and_opens_a_rift_per_living_resident" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="753441018" result="Passed" start-time="2026-10-11 03:44:05Z" end-time="2026-10-11 03:44:05Z" duration="0.595246" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1136" name="Bots_climb_from_novice_on_night_one_to_expert_on_the_last_night_and_over_longer_in_endless" fullname="BadAppleHotel.Tests.MonsterKitTests.Bots_climb_from_novice_on_night_one_to_expert_on_the_last_night_and_over_longer_in_endless" methodname="Bots_climb_from_novice_on_night_one_to_expert_on_the_last_night_and_over_longer_in_endless" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="723108818" result="Passed" start-time="2026-10-11 03:44:05Z" end-time="2026-10-11 03:44:05Z" duration="0.370505" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1137" name="Difficulties_get_harder_from_easy_to_extra_hard_and_hard_is_the_old_ramp" fullname="BadAppleHotel.Tests.MonsterKitTests.Difficulties_get_harder_from_easy_to_extra_hard_and_hard_is_the_old_ramp" methodname="Difficulties_get_harder_from_easy_to_extra_hard_and_hard_is_the_old_ramp" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="1296660036" result="Passed" start-time="2026-10-11 03:44:05Z" end-time="2026-10-11 03:44:06Z" duration="0.398629" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1153" name="Do_not_disturb_slips_through_a_shut_door_and_out_again" fullname="BadAppleHotel.Tests.MonsterKitTests.Do_not_disturb_slips_through_a_shut_door_and_out_again" methodname="Do_not_disturb_slips_through_a_shut_door_and_out_again" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="820367174" result="Passed" start-time="2026-10-11 03:44:06Z" end-time="2026-10-11 03:44:06Z" duration="0.400639" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1144" name="Every_monster_has_a_swarm_breachers_and_an_escort_covering_all_three_resistances" fullname="BadAppleHotel.Tests.MonsterKitTests.Every_monster_has_a_swarm_breachers_and_an_escort_covering_all_three_resistances" methodname="Every_monster_has_a_swarm_breachers_and_an_escort_covering_all_three_resistances" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="757046791" result="Passed" start-time="2026-10-11 03:44:06Z" end-time="2026-10-11 03:44:07Z" duration="0.392634" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1152" name="Flambe_burns_residents_in_the_ring" fullname="BadAppleHotel.Tests.MonsterKitTests.Flambe_burns_residents_in_the_ring" methodname="Flambe_burns_residents_in_the_ring" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="2112839183" result="Passed" start-time="2026-10-11 03:44:07Z" end-time="2026-10-11 03:44:07Z" duration="0.439134" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1141" name="Hitting_residents_and_eating_parts_earn_fear_and_idling_earns_a_little" fullname="BadAppleHotel.Tests.MonsterKitTests.Hitting_residents_and_eating_parts_earn_fear_and_idling_earns_a_little" methodname="Hitting_residents_and_eating_parts_earn_fear_and_idling_earns_a_little" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="625064932" result="Passed" start-time="2026-10-11 03:44:07Z" end-time="2026-10-11 03:44:08Z" duration="0.387037" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1146" name="Horde_strength_carries_to_creatures_unlocked_later_and_evolutions_survive_switching" fullname="BadAppleHotel.Tests.MonsterKitTests.Horde_strength_carries_to_creatures_unlocked_later_and_evolutions_survive_switching" methodname="Horde_strength_carries_to_creatures_unlocked_later_and_evolutions_survive_switching" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="1387723467" result="Passed" start-time="2026-10-11 03:44:08Z" end-time="2026-10-11 03:44:08Z" duration="0.392597" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1145" name="Horde_strength_climbs_in_price_and_each_evolution_has_its_own_price" fullname="BadAppleHotel.Tests.MonsterKitTests.Horde_strength_climbs_in_price_and_each_evolution_has_its_own_price" methodname="Horde_strength_climbs_in_price_and_each_evolution_has_its_own_price" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="468958942" result="Passed" start-time="2026-10-11 03:44:08Z" end-time="2026-10-11 03:44:08Z" duration="0.383884" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1148" name="Killing_a_resident_closes_their_rift_and_their_minions_crumble" fullname="BadAppleHotel.Tests.MonsterKitTests.Killing_a_resident_closes_their_rift_and_their_minions_crumble" methodname="Killing_a_resident_closes_their_rift_and_their_minions_crumble" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="372801152" result="Passed" start-time="2026-10-11 03:44:08Z" end-time="2026-10-11 03:44:09Z" duration="0.382359" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1138" name="Level_prices_climb_by_a_fixed_step_and_the_whole_climb_costs_about_1400_fear" fullname="BadAppleHotel.Tests.MonsterKitTests.Level_prices_climb_by_a_fixed_step_and_the_whole_climb_costs_about_1400_fear" methodname="Level_prices_climb_by_a_fixed_step_and_the_whole_climb_costs_about_1400_fear" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="1124866864" result="Passed" start-time="2026-10-11 03:44:09Z" end-time="2026-10-11 03:44:09Z" duration="0.369929" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1139" name="Levels_cost_fear_and_each_one_gives_a_stat_rank" fullname="BadAppleHotel.Tests.MonsterKitTests.Levels_cost_fear_and_each_one_gives_a_stat_rank" methodname="Levels_cost_fear_and_each_one_gives_a_stat_rank" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="2016815627" result="Passed" start-time="2026-10-11 03:44:09Z" end-time="2026-10-11 03:44:09Z" duration="0.382629" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1154" name="Meat_hook_eats_a_body_part_from_across_the_hall" fullname="BadAppleHotel.Tests.MonsterKitTests.Meat_hook_eats_a_body_part_from_across_the_hall" methodname="Meat_hook_eats_a_body_part_from_across_the_hall" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="1720159203" result="Passed" start-time="2026-10-11 03:44:09Z" end-time="2026-10-11 03:44:10Z" duration="0.385487" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1140" name="One_tap_on_a_stat_buys_the_level_and_puts_the_point_there" fullname="BadAppleHotel.Tests.MonsterKitTests.One_tap_on_a_stat_buys_the_level_and_puts_the_point_there" methodname="One_tap_on_a_stat_buys_the_level_and_puts_the_point_there" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="1665188945" result="Passed" start-time="2026-10-11 03:44:10Z" end-time="2026-10-11 03:44:10Z" duration="0.377303" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1143" name="Resistances_cycle_through_one_weakness_each" fullname="BadAppleHotel.Tests.MonsterKitTests.Resistances_cycle_through_one_weakness_each" methodname="Resistances_cycle_through_one_weakness_each" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="836109475" result="Passed" start-time="2026-10-11 03:44:10Z" end-time="2026-10-11 03:44:11Z" duration="0.371872" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1142" name="Rift_batches_shrink_in_total_but_grow_per_survivor_as_residents_die" fullname="BadAppleHotel.Tests.MonsterKitTests.Rift_batches_shrink_in_total_but_grow_per_survivor_as_residents_die" methodname="Rift_batches_shrink_in_total_but_grow_per_survivor_as_residents_die" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="1357901712" result="Passed" start-time="2026-10-11 03:44:11Z" end-time="2026-10-11 03:44:11Z" duration="0.410691" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1150" name="Towers_shoot_minions_and_their_resistance_cuts_the_damage" fullname="BadAppleHotel.Tests.MonsterKitTests.Towers_shoot_minions_and_their_resistance_cuts_the_damage" methodname="Towers_shoot_minions_and_their_resistance_cuts_the_damage" classname="BadAppleHotel.Tests.MonsterKitTests" runstate="Runnable" seed="1805847141" result="Passed" start-time="2026-10-11 03:44:11Z" end-time="2026-10-11 03:44:11Z" duration="0.371722" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1155" name="PlanTests" fullname="BadAppleHotel.Tests.PlanTests" classname="BadAppleHotel.Tests.PlanTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-11 03:44:11Z" end-time="2026-10-11 03:44:50Z" duration="38.876388" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1159" name="All_character_heads_meet_all_bed_anchors_in_four_orientations" fullname="BadAppleHotel.Tests.PlanTests.All_character_heads_meet_all_bed_anchors_in_four_orientations" methodname="All_character_heads_meet_all_bed_anchors_in_four_orientations" classname="BadAppleHotel.Tests.PlanTests" runstate="Runnable" seed="262353997" result="Passed" start-time="2026-10-11 03:44:11Z" end-time="2026-10-11 03:44:11Z" duration="0.031684" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1158" name="Body_parts_keep_twelve_tiles_between_every_pair_for_every_night" fullname="BadAppleHotel.Tests.PlanTests.Body_parts_keep_twelve_tiles_between_every_pair_for_every_night" methodname="Body_parts_keep_twelve_tiles_between_every_pair_for_every_night" classname="BadAppleHotel.Tests.PlanTests" runstate="Runnable" seed="421375113" result="Passed" start-time="2026-10-11 03:44:11Z" end-time="2026-10-11 03:44:23Z" duration="11.850793" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1160" name="Camera_clamps_at_all_edges_and_centers_maps_smaller_than_view" fullname="BadAppleHotel.Tests.PlanTests.Camera_clamps_at_all_edges_and_centers_maps_smaller_than_view" methodname="Camera_clamps_at_all_edges_and_centers_maps_smaller_than_view" classname="BadAppleHotel.Tests.PlanTests" runstate="Runnable" seed="80545504" result="Passed" start-time="2026-10-11 03:44:23Z" end-time="2026-10-11 03:44:23Z" duration="0.003182" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1156" name="Ten_rooms_all_reachable_without_going_through_another_room" fullname="BadAppleHotel.Tests.PlanTests.Ten_rooms_all_reachable_without_going_through_another_room" methodname="Ten_rooms_all_reachable_without_going_through_another_room" classname="BadAppleHotel.Tests.PlanTests" runstate="Runnable" seed="2011829072" result="Passed" start-time="2026-10-11 03:44:23Z" end-time="2026-10-11 03:44:49Z" duration="25.591797" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1157" name="Three_seeds_have_distinct_bent_spines_and_room_spacing" fullname="BadAppleHotel.Tests.PlanTests.Three_seeds_have_distinct_bent_spines_and_room_spacing" methodname="Three_seeds_have_distinct_bent_spines_and_room_spacing" classname="BadAppleHotel.Tests.PlanTests" runstate="Runnable" seed="1092259940" result="Passed" start-time="2026-10-11 03:44:49Z" end-time="2026-10-11 03:44:50Z" duration="1.368433" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1161" name="Upgradeable_families_have_four_distinct_static_designs_and_complete_stats" fullname="BadAppleHotel.Tests.PlanTests.Upgradeable_families_have_four_distinct_static_designs_and_complete_stats" methodname="Upgradeable_families_have_four_distinct_static_designs_and_complete_stats" classname="BadAppleHotel.Tests.PlanTests" runstate="Runnable" seed="1482584103" result="Passed" start-time="2026-10-11 03:44:50Z" end-time="2026-10-11 03:44:50Z" duration="0.020986" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1162" name="PlanVisualTests" fullname="BadAppleHotel.Tests.PlanVisualTests" classname="BadAppleHotel.Tests.PlanVisualTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:44:50Z" end-time="2026-10-11 03:44:52Z" duration="2.019629" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1164" name="Render_every_character_on_every_bed_for_alignment_review" fullname="BadAppleHotel.Tests.PlanVisualTests.Render_every_character_on_every_bed_for_alignment_review" methodname="Render_every_character_on_every_bed_for_alignment_review" classname="BadAppleHotel.Tests.PlanVisualTests" runstate="Runnable" seed="1871724273" result="Passed" start-time="2026-10-11 03:44:50Z" end-time="2026-10-11 03:44:51Z" duration="0.448361" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1163" name="Render_three_seeded_hotels_for_layout_review" fullname="BadAppleHotel.Tests.PlanVisualTests.Render_three_seeded_hotels_for_layout_review" methodname="Render_three_seeded_hotels_for_layout_review" classname="BadAppleHotel.Tests.PlanVisualTests" runstate="Runnable" seed="970045473" result="Passed" start-time="2026-10-11 03:44:51Z" end-time="2026-10-11 03:44:52Z" duration="1.569190" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1165" name="PlaytestTests" fullname="BadAppleHotel.Tests.PlaytestTests" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-11 03:44:52Z" end-time="2026-10-11 03:45:19Z" duration="26.957477" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1171" name="A_dead_guests_door_cannot_trap_a_phased_monster" fullname="BadAppleHotel.Tests.PlaytestTests.A_dead_guests_door_cannot_trap_a_phased_monster" methodname="A_dead_guests_door_cannot_trap_a_phased_monster" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" seed="87320053" result="Passed" start-time="2026-10-11 03:44:52Z" end-time="2026-10-11 03:44:53Z" duration="0.340078" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1172" name="Account_progress_exceeds_fifty_without_integer_overflow" fullname="BadAppleHotel.Tests.PlaytestTests.Account_progress_exceeds_fifty_without_integer_overflow" methodname="Account_progress_exceeds_fifty_without_integer_overflow" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" seed="1607020646" result="Passed" start-time="2026-10-11 03:44:53Z" end-time="2026-10-11 03:44:53Z" duration="0.003446" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1167" name="Blocked_goals_are_rejected_and_circle_corners_are_walkable" fullname="BadAppleHotel.Tests.PlaytestTests.Blocked_goals_are_rejected_and_circle_corners_are_walkable" methodname="Blocked_goals_are_rejected_and_circle_corners_are_walkable" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" seed="975486323" result="Passed" start-time="2026-10-11 03:44:53Z" end-time="2026-10-11 03:44:53Z" duration="0.000883" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1166" name="Natural_rooms_have_space_walls_and_connected_paths" fullname="BadAppleHotel.Tests.PlaytestTests.Natural_rooms_have_space_walls_and_connected_paths" methodname="Natural_rooms_have_space_walls_and_connected_paths" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" seed="1384710529" result="Passed" start-time="2026-10-11 03:44:53Z" end-time="2026-10-11 03:45:06Z" duration="13.754693" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1169" name="Popup_candidates_avoid_hud_and_stay_inside_all_aspects" fullname="BadAppleHotel.Tests.PlaytestTests.Popup_candidates_avoid_hud_and_stay_inside_all_aspects" methodname="Popup_candidates_avoid_hud_and_stay_inside_all_aspects" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" seed="414717100" result="Passed" start-time="2026-10-11 03:45:06Z" end-time="2026-10-11 03:45:06Z" duration="0.001608" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1170" name="Sleep_walks_to_bed_and_closes_only_after_doorway_is_clear" fullname="BadAppleHotel.Tests.PlaytestTests.Sleep_walks_to_bed_and_closes_only_after_doorway_is_clear" methodname="Sleep_walks_to_bed_and_closes_only_after_doorway_is_clear" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" seed="1975099379" result="Passed" start-time="2026-10-11 03:45:06Z" end-time="2026-10-11 03:45:06Z" duration="0.035051" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1173" name="Ten_matches_keep_identity_secret_and_reveal_in_the_lair" fullname="BadAppleHotel.Tests.PlaytestTests.Ten_matches_keep_identity_secret_and_reveal_in_the_lair" methodname="Ten_matches_keep_identity_secret_and_reveal_in_the_lair" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" seed="890058828" result="Passed" start-time="2026-10-11 03:45:06Z" end-time="2026-10-11 03:45:11Z" duration="4.841510" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1168" name="Three_hundred_routes_across_twenty_seeds_do_not_stall" fullname="BadAppleHotel.Tests.PlaytestTests.Three_hundred_routes_across_twenty_seeds_do_not_stall" methodname="Three_hundred_routes_across_twenty_seeds_do_not_stall" classname="BadAppleHotel.Tests.PlaytestTests" runstate="Runnable" seed="794211260" result="Passed" start-time="2026-10-11 03:45:11Z" end-time="2026-10-11 03:45:19Z" duration="7.976514" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1174" name="ResidentControlTests" fullname="BadAppleHotel.Tests.ResidentControlTests" classname="BadAppleHotel.Tests.ResidentControlTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-11 03:45:19Z" end-time="2026-10-11 03:45:20Z" duration="0.341649" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1179" name="A_visible_monster_at_a_wall_peek_cannot_be_shot_through_the_solid_wall" fullname="BadAppleHotel.Tests.ResidentControlTests.A_visible_monster_at_a_wall_peek_cannot_be_shot_through_the_solid_wall" methodname="A_visible_monster_at_a_wall_peek_cannot_be_shot_through_the_solid_wall" classname="BadAppleHotel.Tests.ResidentControlTests" runstate="Runnable" seed="1752483345" result="Passed" start-time="2026-10-11 03:45:19Z" end-time="2026-10-11 03:45:19Z" duration="0.056981" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1180" name="F_key_fires_once_per_press_and_does_not_repeat_when_held" fullname="BadAppleHotel.Tests.ResidentControlTests.F_key_fires_once_per_press_and_does_not_repeat_when_held" methodname="F_key_fires_once_per_press_and_does_not_repeat_when_held" classname="BadAppleHotel.Tests.ResidentControlTests" runstate="Runnable" seed="29865104" result="Passed" start-time="2026-10-11 03:45:19Z" end-time="2026-10-11 03:45:19Z" duration="0.057788" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1175" name="Human_stays_asleep_through_door_damage_and_bites_until_the_wake_action" fullname="BadAppleHotel.Tests.ResidentControlTests.Human_stays_asleep_through_door_damage_and_bites_until_the_wake_action" methodname="Human_stays_asleep_through_door_damage_and_bites_until_the_wake_action" classname="BadAppleHotel.Tests.ResidentControlTests" runstate="Runnable" seed="574510490" result="Passed" start-time="2026-10-11 03:45:19Z" end-time="2026-10-11 03:45:19Z" duration="0.053797" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1176" name="Personal_damage_requires_a_new_explicit_shot_after_each_cooldown" fullname="BadAppleHotel.Tests.ResidentControlTests.Personal_damage_requires_a_new_explicit_shot_after_each_cooldown" methodname="Personal_damage_requires_a_new_explicit_shot_after_each_cooldown" classname="BadAppleHotel.Tests.ResidentControlTests" runstate="Runnable" seed="1714179642" result="Passed" start-time="2026-10-11 03:45:19Z" end-time="2026-10-11 03:45:19Z" duration="0.058837" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1177" name="Personal_shots_require_an_awake_player_and_an_uncloaked_target_in_clear_range" fullname="BadAppleHotel.Tests.ResidentControlTests.Personal_shots_require_an_awake_player_and_an_uncloaked_target_in_clear_range" methodname="Personal_shots_require_an_awake_player_and_an_uncloaked_target_in_clear_range" classname="BadAppleHotel.Tests.ResidentControlTests" runstate="Runnable" seed="1782414000" result="Passed" start-time="2026-10-11 03:45:19Z" end-time="2026-10-11 03:45:19Z" duration="0.052386" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1178" name="Towers_fire_automatically_without_making_the_human_attack" fullname="BadAppleHotel.Tests.ResidentControlTests.Towers_fire_automatically_without_making_the_human_attack" methodname="Towers_fire_automatically_without_making_the_human_attack" classname="BadAppleHotel.Tests.ResidentControlTests" runstate="Runnable" seed="718742530" result="Passed" start-time="2026-10-11 03:45:19Z" end-time="2026-10-11 03:45:20Z" duration="0.059323" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1181" name="RoomVisibilityTests" fullname="BadAppleHotel.Tests.RoomVisibilityTests" classname="BadAppleHotel.Tests.RoomVisibilityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:45:20Z" end-time="2026-10-11 03:45:20Z" duration="0.156531" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1183" name="A_claimed_room_stays_in_view_after_its_guest_walks_away" fullname="BadAppleHotel.Tests.RoomVisibilityTests.A_claimed_room_stays_in_view_after_its_guest_walks_away" methodname="A_claimed_room_stays_in_view_after_its_guest_walks_away" classname="BadAppleHotel.Tests.RoomVisibilityTests" runstate="Runnable" seed="1143782361" result="Passed" start-time="2026-10-11 03:45:20Z" end-time="2026-10-11 03:45:20Z" duration="0.036526" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1184" name="A_guest_always_sees_the_monster_inside_their_own_room" fullname="BadAppleHotel.Tests.RoomVisibilityTests.A_guest_always_sees_the_monster_inside_their_own_room" methodname="A_guest_always_sees_the_monster_inside_their_own_room" classname="BadAppleHotel.Tests.RoomVisibilityTests" runstate="Runnable" seed="1713381513" result="Passed" start-time="2026-10-11 03:45:20Z" end-time="2026-10-11 03:45:20Z" duration="0.054820" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1182" name="Lonely_room_bonus_never_hands_out_a_crystal_ball" fullname="BadAppleHotel.Tests.RoomVisibilityTests.Lonely_room_bonus_never_hands_out_a_crystal_ball" methodname="Lonely_room_bonus_never_hands_out_a_crystal_ball" classname="BadAppleHotel.Tests.RoomVisibilityTests" runstate="Runnable" seed="1692054146" result="Passed" start-time="2026-10-11 03:45:20Z" end-time="2026-10-11 03:45:20Z" duration="0.063926" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1185" name="RoomWallBehaviorTests" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-10-11 03:45:20Z" end-time="2026-10-11 03:45:27Z" duration="7.433201" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1203" name="Concave_returns_lower_over_room_floor_but_preserve_the_far_backdrop" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Concave_returns_lower_over_room_floor_but_preserve_the_far_backdrop" methodname="Concave_returns_lower_over_room_floor_but_preserve_the_far_backdrop" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="1436160035" result="Passed" start-time="2026-10-11 03:45:20Z" end-time="2026-10-11 03:45:20Z" duration="0.519436" asserts="0">
+              <properties />
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1189" name="Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:45:20Z" end-time="2026-10-11 03:45:22Z" duration="1.520355" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1186" name="Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames(11)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames(11)" methodname="Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="1982098027" result="Passed" start-time="2026-10-11 03:45:20Z" end-time="2026-10-11 03:45:21Z" duration="0.648673" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1187" name="Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames(41)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames(41)" methodname="Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="1590475952" result="Passed" start-time="2026-10-11 03:45:21Z" end-time="2026-10-11 03:45:21Z" duration="0.480483" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1188" name="Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames(83)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames(83)" methodname="Every_occupied_room_uploads_near_baseboards_far_walls_and_matching_spans_corners_and_door_frames" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="240658506" result="Passed" start-time="2026-10-11 03:45:21Z" end-time="2026-10-11 03:45:22Z" duration="0.389818" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1197" name="Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:45:22Z" end-time="2026-10-11 03:45:23Z" duration="1.461451" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1194" name="Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor(11)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor(11)" methodname="Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="1384401287" result="Passed" start-time="2026-10-11 03:45:22Z" end-time="2026-10-11 03:45:22Z" duration="0.617164" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1195" name="Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor(41)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor(41)" methodname="Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="143494157" result="Passed" start-time="2026-10-11 03:45:22Z" end-time="2026-10-11 03:45:23Z" duration="0.468683" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1196" name="Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor(83)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor(83)" methodname="Every_room_has_a_placed_far_wall_lamp_that_remains_full_height_and_lights_its_floor" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="488520037" result="Passed" start-time="2026-10-11 03:45:23Z" end-time="2026-10-11 03:45:23Z" duration="0.367843" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1193" name="Occupied_room_overrides_selection_and_manual_modes_override_both" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Occupied_room_overrides_selection_and_manual_modes_override_both" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:45:23Z" end-time="2026-10-11 03:45:25Z" duration="1.943782" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1190" name="Occupied_room_overrides_selection_and_manual_modes_override_both(11)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Occupied_room_overrides_selection_and_manual_modes_override_both(11)" methodname="Occupied_room_overrides_selection_and_manual_modes_override_both" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="152656256" result="Passed" start-time="2026-10-11 03:45:23Z" end-time="2026-10-11 03:45:24Z" duration="0.886203" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1191" name="Occupied_room_overrides_selection_and_manual_modes_override_both(41)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Occupied_room_overrides_selection_and_manual_modes_override_both(41)" methodname="Occupied_room_overrides_selection_and_manual_modes_override_both" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="236891968" result="Passed" start-time="2026-10-11 03:45:24Z" end-time="2026-10-11 03:45:25Z" duration="0.578987" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1192" name="Occupied_room_overrides_selection_and_manual_modes_override_both(83)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Occupied_room_overrides_selection_and_manual_modes_override_both(83)" methodname="Occupied_room_overrides_selection_and_manual_modes_override_both" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="795543709" result="Passed" start-time="2026-10-11 03:45:25Z" end-time="2026-10-11 03:45:25Z" duration="0.477250" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1202" name="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:45:25Z" end-time="2026-10-11 03:45:27Z" duration="1.986640" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1198" name="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room(11)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room(11)" methodname="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="257546602" result="Passed" start-time="2026-10-11 03:45:25Z" end-time="2026-10-11 03:45:26Z" duration="0.615664" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1199" name="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room(41)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room(41)" methodname="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="1869073818" result="Passed" start-time="2026-10-11 03:45:26Z" end-time="2026-10-11 03:45:26Z" duration="0.467636" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1200" name="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room(83)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room(83)" methodname="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="57928909" result="Passed" start-time="2026-10-11 03:45:26Z" end-time="2026-10-11 03:45:27Z" duration="0.382779" asserts="0">
+                <properties />
+              </test-case>
+              <test-case id="1201" name="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room(40102026)" fullname="BadAppleHotel.Tests.RoomWallBehaviorTests.Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room(40102026)" methodname="Short_doorway_jambs_follow_the_near_or_far_door_face_including_the_captured_room" classname="BadAppleHotel.Tests.RoomWallBehaviorTests" runstate="Runnable" seed="1577376071" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.518797" asserts="0">
+                <properties />
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1204" name="RulesTests" fullname="BadAppleHotel.Tests.RulesTests" classname="BadAppleHotel.Tests.RulesTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.013510" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1207" name="A_configured_gap_still_blocks_and_blinks_the_lowest_weapon" fullname="BadAppleHotel.Tests.RulesTests.A_configured_gap_still_blocks_and_blinks_the_lowest_weapon" methodname="A_configured_gap_still_blocks_and_blinks_the_lowest_weapon" classname="BadAppleHotel.Tests.RulesTests" runstate="Runnable" seed="1026598933" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.001545" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1205" name="Config_loads_and_validates" fullname="BadAppleHotel.Tests.RulesTests.Config_loads_and_validates" methodname="Config_loads_and_validates" classname="BadAppleHotel.Tests.RulesTests" runstate="Runnable" seed="371884134" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.001179" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1206" name="Doors_upgrade_regardless_of_weapon_levels" fullname="BadAppleHotel.Tests.RulesTests.Doors_upgrade_regardless_of_weapon_levels" methodname="Doors_upgrade_regardless_of_weapon_levels" classname="BadAppleHotel.Tests.RulesTests" runstate="Runnable" seed="1627746682" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.001148" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1211" name="Level_curve_starts_at_base_and_grows" fullname="BadAppleHotel.Tests.RulesTests.Level_curve_starts_at_base_and_grows" methodname="Level_curve_starts_at_base_and_grows" classname="BadAppleHotel.Tests.RulesTests" runstate="Runnable" seed="3327479" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.001322" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1208" name="Max_level_door_cannot_upgrade" fullname="BadAppleHotel.Tests.RulesTests.Max_level_door_cannot_upgrade" methodname="Max_level_door_cannot_upgrade" classname="BadAppleHotel.Tests.RulesTests" runstate="Runnable" seed="199958408" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.001057" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1209" name="Monster_kill_takes_90_percent_and_monster_death_pays_120_percent" fullname="BadAppleHotel.Tests.RulesTests.Monster_kill_takes_90_percent_and_monster_death_pays_120_percent" methodname="Monster_kill_takes_90_percent_and_monster_death_pays_120_percent" classname="BadAppleHotel.Tests.RulesTests" runstate="Runnable" seed="1371673173" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.004162" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1210" name="Resident_xp_includes_all_nights_bonus" fullname="BadAppleHotel.Tests.RulesTests.Resident_xp_includes_all_nights_bonus" methodname="Resident_xp_includes_all_nights_bonus" classname="BadAppleHotel.Tests.RulesTests" runstate="Runnable" seed="576813076" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.001146" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1212" name="SummonGlowTests" fullname="BadAppleHotel.Tests.SummonGlowTests" classname="BadAppleHotel.Tests.SummonGlowTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.001906" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1215" name="Glow_smoothing_is_frame_rate_independent_and_the_rim_stays_bounded" fullname="BadAppleHotel.Tests.SummonGlowTests.Glow_smoothing_is_frame_rate_independent_and_the_rim_stays_bounded" methodname="Glow_smoothing_is_frame_rate_independent_and_the_rim_stays_bounded" classname="BadAppleHotel.Tests.SummonGlowTests" runstate="Runnable" seed="121059764" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.000467" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1213" name="The_glow_target_follows_refill_swell_neck_and_release" fullname="BadAppleHotel.Tests.SummonGlowTests.The_glow_target_follows_refill_swell_neck_and_release" methodname="The_glow_target_follows_refill_swell_neck_and_release" classname="BadAppleHotel.Tests.SummonGlowTests" runstate="Runnable" seed="2026947103" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.000609" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1214" name="The_secondary_drop_and_press_add_decay_flashes_on_the_presentation_clock" fullname="BadAppleHotel.Tests.SummonGlowTests.The_secondary_drop_and_press_add_decay_flashes_on_the_presentation_clock" methodname="The_secondary_drop_and_press_add_decay_flashes_on_the_presentation_clock" classname="BadAppleHotel.Tests.SummonGlowTests" runstate="Runnable" seed="1314360440" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.000182" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1216" name="TowerFxTests" fullname="BadAppleHotel.Tests.TowerFxTests" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:28Z" duration="0.788210" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1220" name="Animated_tower_art_loads_in_one_or_eight_views_and_falls_back_when_missing" fullname="BadAppleHotel.Tests.TowerFxTests.Animated_tower_art_loads_in_one_or_eight_views_and_falls_back_when_missing" methodname="Animated_tower_art_loads_in_one_or_eight_views_and_falls_back_when_missing" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" seed="1791382237" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:27Z" duration="0.008050" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1224" name="Creatures_are_summoned_from_the_bed_evolve_attack_and_fade_back" fullname="BadAppleHotel.Tests.TowerFxTests.Creatures_are_summoned_from_the_bed_evolve_attack_and_fade_back" methodname="Creatures_are_summoned_from_the_bed_evolve_attack_and_fade_back" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" seed="1377430782" result="Passed" start-time="2026-10-11 03:45:27Z" end-time="2026-10-11 03:45:28Z" duration="0.510340" asserts="0">
+              <properties />
+              <output><![CDATA[
+IgnoreFailingMessages:true
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+Instantiating material due to calling renderer.material during edit mode. This will leak materials into the scene. You most likely want to use renderer.sharedMaterial instead.
+
+IgnoreFailingMessages:false
+]]></output>
+            </test-case>
+            <test-case id="1217" name="Each_primitive_is_one_quad_and_a_path_is_one_quad_per_segment" fullname="BadAppleHotel.Tests.TowerFxTests.Each_primitive_is_one_quad_and_a_path_is_one_quad_per_segment" methodname="Each_primitive_is_one_quad_and_a_path_is_one_quad_per_segment" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" seed="212999032" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.000667" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1222" name="Every_element_has_its_own_accent" fullname="BadAppleHotel.Tests.TowerFxTests.Every_element_has_its_own_accent" methodname="Every_element_has_its_own_accent" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" seed="1624917096" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.003556" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1221" name="Every_tower_form_has_animated_art" fullname="BadAppleHotel.Tests.TowerFxTests.Every_tower_form_has_animated_art" methodname="Every_tower_form_has_animated_art" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" seed="496251984" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.129306" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1219" name="Only_the_strongest_lights_reach_the_shaders_and_flashes_fade_out" fullname="BadAppleHotel.Tests.TowerFxTests.Only_the_strongest_lights_reach_the_shaders_and_flashes_fade_out" methodname="Only_the_strongest_lights_reach_the_shaders_and_flashes_fade_out" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" seed="2043405163" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.000529" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1218" name="Particles_age_out_wait_for_delayed_starts_and_are_capped" fullname="BadAppleHotel.Tests.TowerFxTests.Particles_age_out_wait_for_delayed_starts_and_are_capped" methodname="Particles_age_out_wait_for_delayed_starts_and_are_capped" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" seed="1744391441" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.000565" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1223" name="The_bot_simulation_never_builds_effects" fullname="BadAppleHotel.Tests.TowerFxTests.The_bot_simulation_never_builds_effects" methodname="The_bot_simulation_never_builds_effects" classname="BadAppleHotel.Tests.TowerFxTests" runstate="Runnable" seed="497314314" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.133608" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1225" name="TowerLevelTests" fullname="BadAppleHotel.Tests.TowerLevelTests" classname="BadAppleHotel.Tests.TowerLevelTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.013241" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1226" name="Levels_map_to_four_forms_and_evolve_unlocks_at_3_7_and_11" fullname="BadAppleHotel.Tests.TowerLevelTests.Levels_map_to_four_forms_and_evolve_unlocks_at_3_7_and_11" methodname="Levels_map_to_four_forms_and_evolve_unlocks_at_3_7_and_11" classname="BadAppleHotel.Tests.TowerLevelTests" runstate="Runnable" seed="670569856" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.001883" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1228" name="Reaching_each_form_costs_what_its_tier_upgrade_did_and_evolve_is_the_biggest_step" fullname="BadAppleHotel.Tests.TowerLevelTests.Reaching_each_form_costs_what_its_tier_upgrade_did_and_evolve_is_the_biggest_step" methodname="Reaching_each_form_costs_what_its_tier_upgrade_did_and_evolve_is_the_biggest_step" classname="BadAppleHotel.Tests.TowerLevelTests" runstate="Runnable" seed="1783577642" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.002063" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1227" name="Stats_climb_every_level_and_evolving_is_the_biggest_jump" fullname="BadAppleHotel.Tests.TowerLevelTests.Stats_climb_every_level_and_evolving_is_the_biggest_jump" methodname="Stats_climb_every_level_and_evolving_is_the_biggest_jump" classname="BadAppleHotel.Tests.TowerLevelTests" runstate="Runnable" seed="1849578346" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.002034" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1230" name="The_crystal_ball_still_has_a_single_level" fullname="BadAppleHotel.Tests.TowerLevelTests.The_crystal_ball_still_has_a_single_level" methodname="The_crystal_ball_still_has_a_single_level" classname="BadAppleHotel.Tests.TowerLevelTests" runstate="Runnable" seed="1606686919" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.001183" asserts="0">
+              <properties />
+            </test-case>
+            <test-case id="1229" name="Without_a_levels_block_each_upgrade_is_one_tier" fullname="BadAppleHotel.Tests.TowerLevelTests.Without_a_levels_block_each_upgrade_is_one_tier" methodname="Without_a_levels_block_each_upgrade_is_one_tier" classname="BadAppleHotel.Tests.TowerLevelTests" runstate="Runnable" seed="1125682802" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:28Z" duration="0.003851" asserts="0">
+              <properties />
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1231" name="VisibilityPlayTests" fullname="BadAppleHotel.Tests.VisibilityPlayTests" classname="BadAppleHotel.Tests.VisibilityPlayTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 03:45:30Z" end-time="2026-10-11 03:45:31Z" duration="1.262784" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1232" name="Walking_and_hotel_view_do_not_reveal_guests_behind_a_closed_door" fullname="BadAppleHotel.Tests.VisibilityPlayTests.Walking_and_hotel_view_do_not_reveal_guests_behind_a_closed_door" methodname="Walking_and_hotel_view_do_not_reveal_guests_behind_a_closed_door" classname="BadAppleHotel.Tests.VisibilityPlayTests" runstate="Runnable" seed="297924274" result="Passed" start-time="2026-10-11 03:45:28Z" end-time="2026-10-11 03:45:31Z" duration="3.532389" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1233" name="WallClosureTests" fullname="BadAppleHotel.Tests.WallClosureTests" classname="BadAppleHotel.Tests.WallClosureTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:45:31Z" end-time="2026-10-11 03:46:24Z" duration="52.930983" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1234" name="Central_room_has_one_thin_perimeter_four_corners_and_one_door_opening" fullname="BadAppleHotel.Tests.WallClosureTests.Central_room_has_one_thin_perimeter_four_corners_and_one_door_opening" methodname="Central_room_has_one_thin_perimeter_four_corners_and_one_door_opening" classname="BadAppleHotel.Tests.WallClosureTests" runstate="Runnable" seed="5580123" result="Passed" start-time="2026-10-11 03:45:31Z" end-time="2026-10-11 03:45:32Z" duration="0.408100" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1236" name="Corridors_have_three_tile_clearance_and_no_disconnected_pockets_across_a_hundred_hotels" fullname="BadAppleHotel.Tests.WallClosureTests.Corridors_have_three_tile_clearance_and_no_disconnected_pockets_across_a_hundred_hotels" methodname="Corridors_have_three_tile_clearance_and_no_disconnected_pockets_across_a_hundred_hotels" classname="BadAppleHotel.Tests.WallClosureTests" runstate="Runnable" seed="736824454" result="Passed" start-time="2026-10-11 03:45:32Z" end-time="2026-10-11 03:45:57Z" duration="25.177873" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1237" name="Peek_shader_retains_a_solid_low_base_without_removing_the_neighbour_wall" fullname="BadAppleHotel.Tests.WallClosureTests.Peek_shader_retains_a_solid_low_base_without_removing_the_neighbour_wall" methodname="Peek_shader_retains_a_solid_low_base_without_removing_the_neighbour_wall" classname="BadAppleHotel.Tests.WallClosureTests" runstate="Runnable" seed="1799352104" result="Passed" start-time="2026-10-11 03:45:57Z" end-time="2026-10-11 03:45:57Z" duration="0.033171" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1235" name="Physical_wall_parts_are_unique_thin_and_do_not_overlap_in_a_hundred_hotels" fullname="BadAppleHotel.Tests.WallClosureTests.Physical_wall_parts_are_unique_thin_and_do_not_overlap_in_a_hundred_hotels" methodname="Physical_wall_parts_are_unique_thin_and_do_not_overlap_in_a_hundred_hotels" classname="BadAppleHotel.Tests.WallClosureTests" runstate="Runnable" seed="1023084342" result="Passed" start-time="2026-10-11 03:45:57Z" end-time="2026-10-11 03:46:24Z" duration="27.310805" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1238" name="WallGraphTests" fullname="BadAppleHotel.Tests.WallGraphTests" classname="BadAppleHotel.Tests.WallGraphTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 03:46:24Z" end-time="2026-10-11 03:47:35Z" duration="70.707212" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1240" name="All_exterior_runs_corners_and_structural_cores_start_at_full_height" fullname="BadAppleHotel.Tests.WallGraphTests.All_exterior_runs_corners_and_structural_cores_start_at_full_height" methodname="All_exterior_runs_corners_and_structural_cores_start_at_full_height" classname="BadAppleHotel.Tests.WallGraphTests" runstate="Runnable" seed="1902477358" result="Passed" start-time="2026-10-11 03:46:24Z" end-time="2026-10-11 03:46:51Z" duration="26.425838" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1241" name="Cutaway_detects_occlusion_beyond_a_wall_normal_and_is_deterministic" fullname="BadAppleHotel.Tests.WallGraphTests.Cutaway_detects_occlusion_beyond_a_wall_normal_and_is_deterministic" methodname="Cutaway_detects_occlusion_beyond_a_wall_normal_and_is_deterministic" classname="BadAppleHotel.Tests.WallGraphTests" runstate="Runnable" seed="1566931419" result="Passed" start-time="2026-10-11 03:46:51Z" end-time="2026-10-11 03:46:51Z" duration="0.123096" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1239" name="Logical_boundary_coverage_and_solid_physical_footprints_hold_for_100_hotels" fullname="BadAppleHotel.Tests.WallGraphTests.Logical_boundary_coverage_and_solid_physical_footprints_hold_for_100_hotels" methodname="Logical_boundary_coverage_and_solid_physical_footprints_hold_for_100_hotels" classname="BadAppleHotel.Tests.WallGraphTests" runstate="Runnable" seed="342069012" result="Passed" start-time="2026-10-11 03:46:51Z" end-time="2026-10-11 03:47:35Z" duration="44.155235" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1242" name="WallKitTests" fullname="BadAppleHotel.Tests.WallKitTests" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-11 03:47:35Z" end-time="2026-10-11 03:47:37Z" duration="1.940005" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1245" name="Door_frame_leaves_one_tile_of_clear_passage_between_physical_posts" fullname="BadAppleHotel.Tests.WallKitTests.Door_frame_leaves_one_tile_of_clear_passage_between_physical_posts" methodname="Door_frame_leaves_one_tile_of_clear_passage_between_physical_posts" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" seed="741797392" result="Passed" start-time="2026-10-11 03:47:35Z" end-time="2026-10-11 03:47:37Z" duration="1.900208" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1243" name="Imported_kit_is_complete_and_fits_tile_footprints_with_mobile_triangle_budget" fullname="BadAppleHotel.Tests.WallKitTests.Imported_kit_is_complete_and_fits_tile_footprints_with_mobile_triangle_budget" methodname="Imported_kit_is_complete_and_fits_tile_footprints_with_mobile_triangle_budget" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" seed="595873927" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:37Z" duration="0.004417" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1250" name="Lamp_and_plain_panels_share_the_same_wall_and_crown_cross_sections" fullname="BadAppleHotel.Tests.WallKitTests.Lamp_and_plain_panels_share_the_same_wall_and_crown_cross_sections" methodname="Lamp_and_plain_panels_share_the_same_wall_and_crown_cross_sections" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" seed="1654781796" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:37Z" duration="0.009267" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1251" name="Only_sconce_shades_emit_light_in_the_shared_wall_material" fullname="BadAppleHotel.Tests.WallKitTests.Only_sconce_shades_emit_light_in_the_shared_wall_material" methodname="Only_sconce_shades_emit_light_in_the_shared_wall_material" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" seed="860677506" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:37Z" duration="0.001929" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1244" name="Outer_pilaster_broad_faces_turn_diagonally_without_widening_the_wall" fullname="BadAppleHotel.Tests.WallKitTests.Outer_pilaster_broad_faces_turn_diagonally_without_widening_the_wall" methodname="Outer_pilaster_broad_faces_turn_diagonally_without_widening_the_wall" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" seed="1160473926" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:37Z" duration="0.000665" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1249" name="Repeating_panels_reach_both_ends_with_matching_front_and_back_profiles" fullname="BadAppleHotel.Tests.WallKitTests.Repeating_panels_reach_both_ends_with_matching_front_and_back_profiles" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:37Z" duration="0.008789" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1247" name="Repeating_panels_reach_both_ends_with_matching_front_and_back_profiles(&quot;wall_straight&quot;,1.7f)" fullname="BadAppleHotel.Tests.WallKitTests.Repeating_panels_reach_both_ends_with_matching_front_and_back_profiles(&quot;wall_straight&quot;,1.7f)" methodname="Repeating_panels_reach_both_ends_with_matching_front_and_back_profiles" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" seed="688334430" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:37Z" duration="0.002427" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1248" name="Repeating_panels_reach_both_ends_with_matching_front_and_back_profiles(&quot;wall_cutaway_cap&quot;,0.45f)" fullname="BadAppleHotel.Tests.WallKitTests.Repeating_panels_reach_both_ends_with_matching_front_and_back_profiles(&quot;wall_cutaway_cap&quot;,0.45f)" methodname="Repeating_panels_reach_both_ends_with_matching_front_and_back_profiles" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" seed="1116580979" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:37Z" duration="0.005444" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1246" name="Straight_panel_faces_are_axis_aligned_before_repeating_them_along_a_wall" fullname="BadAppleHotel.Tests.WallKitTests.Straight_panel_faces_are_axis_aligned_before_repeating_them_along_a_wall" methodname="Straight_panel_faces_are_axis_aligned_before_repeating_them_along_a_wall" classname="BadAppleHotel.Tests.WallKitTests" runstate="Runnable" seed="761397418" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:37Z" duration="0.000541" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1252" name="WallMovementTests" fullname="BadAppleHotel.Tests.WallMovementTests" classname="BadAppleHotel.Tests.WallMovementTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:42Z" duration="5.211016" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1254" name="A_large_dash_cannot_cross_the_visible_wall_or_a_tower" fullname="BadAppleHotel.Tests.WallMovementTests.A_large_dash_cannot_cross_the_visible_wall_or_a_tower" methodname="A_large_dash_cannot_cross_the_visible_wall_or_a_tower" classname="BadAppleHotel.Tests.WallMovementTests" runstate="Runnable" seed="648338749" result="Passed" start-time="2026-10-11 03:47:37Z" end-time="2026-10-11 03:47:38Z" duration="1.051002" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1253" name="One_tile_door_openings_fit_both_radii_but_closed_doors_block_them" fullname="BadAppleHotel.Tests.WallMovementTests.One_tile_door_openings_fit_both_radii_but_closed_doors_block_them" methodname="One_tile_door_openings_fit_both_radii_but_closed_doors_block_them" classname="BadAppleHotel.Tests.WallMovementTests" runstate="Runnable" seed="1816762350" result="Passed" start-time="2026-10-11 03:47:38Z" end-time="2026-10-11 03:47:42Z" duration="4.159345" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1255" name="WallRenderingTests" fullname="BadAppleHotel.Tests.WallRenderingTests" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-11 03:47:42Z" end-time="2026-10-11 03:47:59Z" duration="16.391975" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1260" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 03:47:42Z" end-time="2026-10-11 03:47:42Z" duration="0.003406" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1256" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(0,-1,1,0)" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(0,-1,1,0)" methodname="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="1714624906" result="Passed" start-time="2026-10-11 03:47:42Z" end-time="2026-10-11 03:47:42Z" duration="0.002292" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1257" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(0,1,-1,0)" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(0,1,-1,0)" methodname="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="959188556" result="Passed" start-time="2026-10-11 03:47:42Z" end-time="2026-10-11 03:47:42Z" duration="0.000193" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1258" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(-1,0,0,-1)" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(-1,0,0,-1)" methodname="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="1016036465" result="Passed" start-time="2026-10-11 03:47:42Z" end-time="2026-10-11 03:47:42Z" duration="0.000155" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1259" name="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(1,0,0,1)" fullname="BadAppleHotel.Tests.WallRenderingTests.Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly(1,0,0,1)" methodname="Every_wall_face_rotates_without_mirroring_and_meets_the_next_piece_exactly" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="863255627" result="Passed" start-time="2026-10-11 03:47:42Z" end-time="2026-10-11 03:47:42Z" duration="0.000179" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1261" name="Twenty_hotels_use_the_complete_baked_kit_in_bounded_batches_and_release_owned_resources" fullname="BadAppleHotel.Tests.WallRenderingTests.Twenty_hotels_use_the_complete_baked_kit_in_bounded_batches_and_release_owned_resources" methodname="Twenty_hotels_use_the_complete_baked_kit_in_bounded_batches_and_release_owned_resources" classname="BadAppleHotel.Tests.WallRenderingTests" runstate="Runnable" seed="760196328" result="Passed" start-time="2026-10-11 03:47:42Z" end-time="2026-10-11 03:47:59Z" duration="16.387125" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[LAMP COVERAGE seed=469759406 lamps=93 roomMin=1 corridor=0.8796
+128-instance full hotel: seed=1 mode=Up submissions=15
+128-instance full hotel: seed=1 mode=Cutaway submissions=15
+128-instance full hotel: seed=1 mode=Down submissions=14
+LAMP COVERAGE seed=112532159 lamps=91 roomMin=1 corridor=0.8868623
+128-instance full hotel: seed=2 mode=Up submissions=15
+128-instance full hotel: seed=2 mode=Cutaway submissions=15
+128-instance full hotel: seed=2 mode=Down submissions=15
+LAMP COVERAGE seed=829034531 lamps=85 roomMin=1 corridor=0.8633823
+128-instance full hotel: seed=3 mode=Up submissions=13
+128-instance full hotel: seed=3 mode=Cutaway submissions=13
+128-instance full hotel: seed=3 mode=Down submissions=13
+LAMP COVERAGE seed=471800341 lamps=84 roomMin=1 corridor=0.8716545
+128-instance full hotel: seed=4 mode=Up submissions=14
+128-instance full hotel: seed=4 mode=Cutaway submissions=14
+128-instance full hotel: seed=4 mode=Down submissions=14
+LAMP COVERAGE seed=114585002 lamps=90 roomMin=1 corridor=0.8754928
+128-instance full hotel: seed=5 mode=Up submissions=14
+128-instance full hotel: seed=5 mode=Cutaway submissions=14
+128-instance full hotel: seed=5 mode=Down submissions=13
+LAMP COVERAGE seed=831086318 lamps=90 roomMin=0.9924242 corridor=0.8792597
+128-instance full hotel: seed=6 mode=Up submissions=14
+128-instance full hotel: seed=6 mode=Cutaway submissions=14
+128-instance full hotel: seed=6 mode=Down submissions=14
+LAMP COVERAGE seed=473874228 lamps=96 roomMin=0.9926471 corridor=0.8787879
+128-instance full hotel: seed=7 mode=Up submissions=15
+128-instance full hotel: seed=7 mode=Cutaway submissions=15
+128-instance full hotel: seed=7 mode=Down submissions=15
+LAMP COVERAGE seed=116650165 lamps=84 roomMin=1 corridor=0.8719783
+128-instance full hotel: seed=8 mode=Up submissions=14
+128-instance full hotel: seed=8 mode=Cutaway submissions=14
+128-instance full hotel: seed=8 mode=Down submissions=14
+LAMP COVERAGE seed=833129905 lamps=97 roomMin=1 corridor=0.8482198
+128-instance full hotel: seed=9 mode=Up submissions=13
+128-instance full hotel: seed=9 mode=Cutaway submissions=13
+128-instance full hotel: seed=9 mode=Down submissions=13
+LAMP COVERAGE seed=475897011 lamps=86 roomMin=0.9921875 corridor=0.8798902
+128-instance full hotel: seed=10 mode=Up submissions=14
+128-instance full hotel: seed=10 mode=Cutaway submissions=14
+128-instance full hotel: seed=10 mode=Down submissions=14
+LAMP COVERAGE seed=118661712 lamps=88 roomMin=1 corridor=0.8756552
+128-instance full hotel: seed=11 mode=Up submissions=15
+128-instance full hotel: seed=11 mode=Cutaway submissions=15
+128-instance full hotel: seed=11 mode=Down submissions=14
+LAMP COVERAGE seed=835221712 lamps=78 roomMin=0.9926471 corridor=0.8766816
+128-instance full hotel: seed=12 mode=Up submissions=14
+128-instance full hotel: seed=12 mode=Cutaway submissions=14
+128-instance full hotel: seed=12 mode=Down submissions=14
+LAMP COVERAGE seed=477970902 lamps=92 roomMin=1 corridor=0.8774222
+128-instance full hotel: seed=13 mode=Up submissions=15
+128-instance full hotel: seed=13 mode=Cutaway submissions=15
+128-instance full hotel: seed=13 mode=Down submissions=15
+LAMP COVERAGE seed=120730959 lamps=90 roomMin=1 corridor=0.8661219
+128-instance full hotel: seed=14 mode=Up submissions=14
+128-instance full hotel: seed=14 mode=Cutaway submissions=14
+128-instance full hotel: seed=14 mode=Down submissions=14
+LAMP COVERAGE seed=837224252 lamps=86 roomMin=1 corridor=0.8681872
+128-instance full hotel: seed=15 mode=Up submissions=14
+128-instance full hotel: seed=15 mode=Cutaway submissions=14
+128-instance full hotel: seed=15 mode=Down submissions=14
+LAMP COVERAGE seed=479987213 lamps=89 roomMin=1 corridor=0.8700966
+128-instance full hotel: seed=16 mode=Up submissions=15
+128-instance full hotel: seed=16 mode=Cutaway submissions=15
+128-instance full hotel: seed=16 mode=Down submissions=14
+LAMP COVERAGE seed=122763490 lamps=90 roomMin=1 corridor=0.8853583
+128-instance full hotel: seed=17 mode=Up submissions=15
+128-instance full hotel: seed=17 mode=Cutaway submissions=15
+128-instance full hotel: seed=17 mode=Down submissions=15
+LAMP COVERAGE seed=839266959 lamps=83 roomMin=0.9928572 corridor=0.8732395
+128-instance full hotel: seed=18 mode=Up submissions=14
+128-instance full hotel: seed=18 mode=Cutaway submissions=14
+128-instance full hotel: seed=18 mode=Down submissions=13
+LAMP COVERAGE seed=482034940 lamps=92 roomMin=0.9913793 corridor=0.8877641
+128-instance full hotel: seed=19 mode=Up submissions=15
+128-instance full hotel: seed=19 mode=Cutaway submissions=15
+128-instance full hotel: seed=19 mode=Down submissions=15
+LAMP COVERAGE seed=124799965 lamps=94 roomMin=0.9926471 corridor=0.8771282
+128-instance full hotel: seed=20 mode=Up submissions=14
+128-instance full hotel: seed=20 mode=Cutaway submissions=14
+128-instance full hotel: seed=20 mode=Down submissions=14
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1262" name="WallShaderBuildTests" fullname="BadAppleHotel.Tests.WallShaderBuildTests" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.575386" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1263" name="Android_instancing_layout_matches_submission_capacity_and_minimum_GLES_uniform_block_budget" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Android_instancing_layout_matches_submission_capacity_and_minimum_GLES_uniform_block_budget" methodname="Android_instancing_layout_matches_submission_capacity_and_minimum_GLES_uniform_block_budget" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="730185876" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.233762" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1276" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.003310" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1268" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(False,OpenGLES3,&quot;Adreno (TM) 640&quot;,&quot;OpenGL ES 3.2&quot;,False)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(False,OpenGLES3,&quot;Adreno (TM) 640&quot;,&quot;OpenGL ES 3.2&quot;,False)" methodname="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="995971298" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.000418" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1269" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,&quot;Android Emulator OpenGL ES Translator (Google SwiftShader)&quot;,&quot;OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)&quot;,False)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,&quot;Android Emulator OpenGL ES Translator (Google SwiftShader)&quot;,&quot;OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)&quot;,False)" methodname="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="151469337" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.000254" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1270" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,&quot;Android Emulator OpenGL ES Translator (Google SwiftShader)&quot;,&quot;OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 5.0.0.1)&quot;,True)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,&quot;Android Emulator OpenGL ES Translator (Google SwiftShader)&quot;,&quot;OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 5.0.0.1)&quot;,True)" methodname="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="1374982925" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.000210" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1271" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,&quot;Adreno (TM) 640&quot;,&quot;OpenGL ES 3.2 V@512.503.0&quot;,True)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,&quot;Adreno (TM) 640&quot;,&quot;OpenGL ES 3.2 V@512.503.0&quot;,True)" methodname="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="1320551483" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.000165" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1272" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,&quot;Mali-G78&quot;,&quot;OpenGL ES 3.2&quot;,True)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,&quot;Mali-G78&quot;,&quot;OpenGL ES 3.2&quot;,True)" methodname="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="1630412224" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.000129" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1273" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,Vulkan,&quot;Android Emulator OpenGL ES Translator (Google SwiftShader)&quot;,&quot;SwiftShader 4.0.0.1&quot;,True)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,Vulkan,&quot;Android Emulator OpenGL ES Translator (Google SwiftShader)&quot;,&quot;SwiftShader 4.0.0.1&quot;,True)" methodname="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="1309374253" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.000109" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1274" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLCore,&quot;llvmpipe (LLVM 20.1.2)&quot;,&quot;4.5 (Core Profile) Mesa 25.2.8&quot;,True)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLCore,&quot;llvmpipe (LLVM 20.1.2)&quot;,&quot;4.5 (Core Profile) Mesa 25.2.8&quot;,True)" methodname="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="175352886" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.000101" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1275" name="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,null,null,True)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver(True,OpenGLES3,null,null,True)" methodname="Instancing_compatibility_fallback_is_limited_to_unsupported_or_observed_legacy_driver" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="2087922668" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.000065" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1267" name="Lamp_glow_compiles_on_android_GLES3" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Lamp_glow_compiles_on_android_GLES3" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.057461" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1265" name="Lamp_glow_compiles_on_android_GLES3(Vertex)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Lamp_glow_compiles_on_android_GLES3(Vertex)" methodname="Lamp_glow_compiles_on_android_GLES3" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="478687711" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.028369" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1266" name="Lamp_glow_compiles_on_android_GLES3(Fragment)" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Lamp_glow_compiles_on_android_GLES3(Fragment)" methodname="Lamp_glow_compiles_on_android_GLES3" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="956696336" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.028470" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1264" name="Local_peek_base_fragment_compiles_on_android_GLES3" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Local_peek_base_fragment_compiles_on_android_GLES3" methodname="Local_peek_base_fragment_compiles_on_android_GLES3" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="878072306" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.221832" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1277" name="Player_build_hook_keeps_instancing_variants_for_runtime_only_wall_materials" fullname="BadAppleHotel.Tests.WallShaderBuildTests.Player_build_hook_keeps_instancing_variants_for_runtime_only_wall_materials" methodname="Player_build_hook_keeps_instancing_variants_for_runtime_only_wall_materials" classname="BadAppleHotel.Tests.WallShaderBuildTests" runstate="Runnable" seed="342646163" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.056965" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Hotel walls: preserving instancing shader variants for runtime-created materials.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1278" name="WallSightTests" fullname="BadAppleHotel.Tests.WallSightTests" classname="BadAppleHotel.Tests.WallSightTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:48:03Z" duration="3.988044" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1283" name="Fog_and_monster_sprite_follow_peek_policy_including_clairvoyance_and_room_entry" fullname="BadAppleHotel.Tests.WallSightTests.Fog_and_monster_sprite_follow_peek_policy_including_clairvoyance_and_room_entry" methodname="Fog_and_monster_sprite_follow_peek_policy_including_clairvoyance_and_room_entry" classname="BadAppleHotel.Tests.WallSightTests" runstate="Runnable" seed="565227842" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:47:59Z" duration="0.054891" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1282" name="Generated_windows_remain_straight_and_attached_to_one_room_across_twenty_hotels" fullname="BadAppleHotel.Tests.WallSightTests.Generated_windows_remain_straight_and_attached_to_one_room_across_twenty_hotels" methodname="Generated_windows_remain_straight_and_attached_to_one_room_across_twenty_hotels" classname="BadAppleHotel.Tests.WallSightTests" runstate="Runnable" seed="1537764872" result="Passed" start-time="2026-10-11 03:47:59Z" end-time="2026-10-11 03:48:03Z" duration="3.883893" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1281" name="Monster_room_crossing_requires_adjacency_even_through_an_open_door" fullname="BadAppleHotel.Tests.WallSightTests.Monster_room_crossing_requires_adjacency_even_through_an_open_door" methodname="Monster_room_crossing_requires_adjacency_even_through_an_open_door" classname="BadAppleHotel.Tests.WallSightTests" runstate="Runnable" seed="669657871" result="Passed" start-time="2026-10-11 03:48:03Z" end-time="2026-10-11 03:48:03Z" duration="0.015468" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1280" name="Sight_passes_only_the_local_opening_and_preserves_range_other_walls_and_same_room_sight" fullname="BadAppleHotel.Tests.WallSightTests.Sight_passes_only_the_local_opening_and_preserves_range_other_walls_and_same_room_sight" methodname="Sight_passes_only_the_local_opening_and_preserves_range_other_walls_and_same_room_sight" classname="BadAppleHotel.Tests.WallSightTests" runstate="Runnable" seed="1812920898" result="Passed" start-time="2026-10-11 03:48:03Z" end-time="2026-10-11 03:48:03Z" duration="0.016655" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1279" name="Window_is_three_local_cells_and_does_not_turn_corners_or_cross_doors" fullname="BadAppleHotel.Tests.WallSightTests.Window_is_three_local_cells_and_does_not_turn_corners_or_cross_doors" methodname="Window_is_three_local_cells_and_does_not_turn_corners_or_cross_doors" classname="BadAppleHotel.Tests.WallSightTests" runstate="Runnable" seed="1202186029" result="Passed" start-time="2026-10-11 03:48:03Z" end-time="2026-10-11 03:48:03Z" duration="0.015116" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1284" name="World3DTests" fullname="BadAppleHotel.Tests.World3DTests" classname="BadAppleHotel.Tests.World3DTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-11 03:48:03Z" end-time="2026-10-11 03:48:28Z" duration="25.029274" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1288" name="Directional_towers_have_32_distinct_views_per_family" fullname="BadAppleHotel.Tests.World3DTests.Directional_towers_have_32_distinct_views_per_family" methodname="Directional_towers_have_32_distinct_views_per_family" classname="BadAppleHotel.Tests.World3DTests" runstate="Runnable" seed="232100063" result="Passed" start-time="2026-10-11 03:48:03Z" end-time="2026-10-11 03:48:03Z" duration="0.010664" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1285" name="Exact_room_budgets_two_square_beds_and_wide_irregular_shapes_across_100_seeds" fullname="BadAppleHotel.Tests.World3DTests.Exact_room_budgets_two_square_beds_and_wide_irregular_shapes_across_100_seeds" methodname="Exact_room_budgets_two_square_beds_and_wide_irregular_shapes_across_100_seeds" classname="BadAppleHotel.Tests.World3DTests" runstate="Runnable" seed="972257008" result="Passed" start-time="2026-10-11 03:48:03Z" end-time="2026-10-11 03:48:28Z" duration="25.012847" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1287" name="Fixed_camera_ground_picking_and_screen_movement_agree" fullname="BadAppleHotel.Tests.World3DTests.Fixed_camera_ground_picking_and_screen_movement_agree" methodname="Fixed_camera_ground_picking_and_screen_movement_agree" classname="BadAppleHotel.Tests.World3DTests" runstate="Runnable" seed="1703591441" result="Passed" start-time="2026-10-11 03:48:28Z" end-time="2026-10-11 03:48:28Z" duration="0.001022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1289" name="Range_tradeoffs_have_real_bonuses_blind_spots_and_mixed_prices" fullname="BadAppleHotel.Tests.World3DTests.Range_tradeoffs_have_real_bonuses_blind_spots_and_mixed_prices" methodname="Range_tradeoffs_have_real_bonuses_blind_spots_and_mixed_prices" classname="BadAppleHotel.Tests.World3DTests" runstate="Runnable" seed="868888260" result="Passed" start-time="2026-10-11 03:48:28Z" end-time="2026-10-11 03:48:28Z" duration="0.002461" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1286" name="Sight_stops_at_walls_closed_doors_corners_and_distance" fullname="BadAppleHotel.Tests.World3DTests.Sight_stops_at_walls_closed_doors_corners_and_distance" methodname="Sight_stops_at_walls_closed_doors_corners_and_distance" classname="BadAppleHotel.Tests.World3DTests" runstate="Runnable" seed="1255080528" result="Passed" start-time="2026-10-11 03:48:28Z" end-time="2026-10-11 03:48:28Z" duration="0.000381" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1290" name="WorldSpriteDepthTests" fullname="BadAppleHotel.Tests.WorldSpriteDepthTests" classname="BadAppleHotel.Tests.WorldSpriteDepthTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 03:48:28Z" end-time="2026-10-11 03:48:28Z" duration="0.012005" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1292" name="Contact_shadow_stays_on_the_ground_and_hides_with_its_owner" fullname="BadAppleHotel.Tests.WorldSpriteDepthTests.Contact_shadow_stays_on_the_ground_and_hides_with_its_owner" methodname="Contact_shadow_stays_on_the_ground_and_hides_with_its_owner" classname="BadAppleHotel.Tests.WorldSpriteDepthTests" runstate="Runnable" seed="1244491295" result="Passed" start-time="2026-10-11 03:48:28Z" end-time="2026-10-11 03:48:28Z" duration="0.001078" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1291" name="Wall_depth_occludes_a_sprite_even_with_the_highest_sorting_order" fullname="BadAppleHotel.Tests.WorldSpriteDepthTests.Wall_depth_occludes_a_sprite_even_with_the_highest_sorting_order" methodname="Wall_depth_occludes_a_sprite_even_with_the_highest_sorting_order" classname="BadAppleHotel.Tests.WorldSpriteDepthTests" runstate="Runnable" seed="62110868" result="Passed" start-time="2026-10-11 03:48:28Z" end-time="2026-10-11 03:48:28Z" duration="0.009536" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: /tmp/haunted-r2-qa/editmode-results.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

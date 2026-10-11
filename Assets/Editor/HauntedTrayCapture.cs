@@ -18,7 +18,7 @@ namespace BadAppleHotel.EditorTools
     /// Reproducible captures of the real IMGUI tray over a seeded hotel room. Run a disposable
     /// graphics-enabled editor with -executeMethod BadAppleHotel.EditorTools.HauntedTrayCapture.Run,
     /// without -quit. BADAPPLE_HAUNTED_RECORD_ONLY=1 reuses preceding screenshots and reruns the recording and input checks. BADAPPLE_HAUNTED_OUT sets the output folder; BADAPPLE_HAUNTED_RECORD=1 also
-    /// records 15 seconds at 30 fps using an editor-only fixed presentation clock, as PNG frames and an ffmpeg concat file.
+    /// records 10 seconds at 30 fps using an editor-only fixed presentation clock, as PNG frames and an ffmpeg concat file.
     /// This validates desktop rendering and gameplay states; it does not measure phone performance.
     /// </summary>
     [InitializeOnLoad]
@@ -26,17 +26,31 @@ namespace BadAppleHotel.EditorTools
     {
         const string Session = "BadApple.HauntedTrayCapture";
         const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
-        const int Height = 720, RecordingFps = 30, RecordingFrameCount = 15 * RecordingFps;
-        static readonly int[] Widths = { 1280, 1600, 960, 1160 };
-        static readonly string[] Names = { "default", "unaffordable", "blocked", "faith", "endless" };
+        const int Height = 720, RecordingFps = 30, RecordingFrameCount = 10 * RecordingFps;
+        static readonly int[] Widths = { 1280, 1600, 960 };
+        static readonly string[] Names = { "default", "unaffordable", "blocked", "wallet-45", "wallet-1240", "faith", "dial-setup", "dial-no-room", "dial-night", "dial-endless", "dial-results", "dial-monster" };
 
         [Serializable] sealed class Shot
         {
-            public string scenario, file, selectedTower, resource;
+            public string scenario, file, selectedTower, resource, phase, role;
             public int width, height, seed, room, slot, night, renderedFrames, editorDrawCalls;
-            public bool placeable, affordable, endless, sleeping;
-            public float wallet, cost;
+            public int recordingFrame = -1;
+            public bool placeable, affordable, endless, sleeping, trayVisible;
+            public float wallet, cost, glow;
             public Rect tray;
+        }
+        [Serializable] sealed class BeatFrame
+        {
+            public int frame;
+            public float seconds, glow, simulationTime, primaryAge, primaryDuration, primaryLength;
+            public string primaryState, secondaryState;
+        }
+        [Serializable] sealed class Release
+        {
+            public string source;
+            public int frame;
+            public float seconds, simulationTime;
+            public bool forced;
         }
         [Serializable] sealed class Report
         {
@@ -44,6 +58,10 @@ namespace BadAppleHotel.EditorTools
             public bool success;
             public float recordingSeconds;
             public int recordingFrames;
+            public float minimumSummonReleaseGap, averagePrimaryBeat, glowMinimum, glowMaximum;
+            public List<BeatFrame> beatFrames = new List<BeatFrame>();
+            public List<Release> releases = new List<Release>();
+            public List<string> beatAssertions = new List<string>();
             public List<Shot> shots = new List<Shot>();
             public List<string> interactionAssertions = new List<string>();
             public List<string> errors = new List<string>();
@@ -53,6 +71,8 @@ namespace BadAppleHotel.EditorTools
         static GameManager game;
         static GameHUD hud;
         static Room room;
+        static Resident resident;
+        static Ectoplasm goo;
         static Report report;
         static string output, pending;
         static int scenario, phase, slot, rendered, recordingIndex, lastRecordedFrame = -1;
@@ -65,8 +85,9 @@ namespace BadAppleHotel.EditorTools
         static float walletBefore;
         static int testTab;
         static readonly string[] TestTypes = { "bullets", "fire", "electric", "effects", "resources" };
-        static int Width => Widths[Mathf.Min(scenario / Names.Length, Widths.Length - 1)];
-        static string Scenario => Names[scenario % Names.Length];
+        static int Width => scenario == Widths.Length * Names.Length ? 1160 : Widths[Mathf.Min(scenario / Names.Length, Widths.Length - 1)];
+        static string Scenario => scenario == Widths.Length * Names.Length ? "default" : Names[scenario % Names.Length];
+        static bool HasTray => !Scenario.StartsWith("dial-", StringComparison.Ordinal);
 
         static HauntedTrayCapture() { if (SessionState.GetBool(Session, false)) Hook(); }
 
@@ -113,7 +134,7 @@ namespace BadAppleHotel.EditorTools
                     recordOnly = SessionState.GetBool(Session + ".RecordOnly", false);
                     if (recordOnly) scenario = Names.Length;
                     report = new Report { generatedUtc = DateTime.UtcNow.ToString("o"), unityVersion = Application.unityVersion,
-                        scope = "Real Unity Editor Game View at 1280x720, 1600x720, 960x720 and 1160x720. Seeded room; AI/economy frozen, real unscaled presentation time, real affordability and path-blocking rules. Optional recording advances an editor-only presentation clock by 1/30 second per rendered frame; it is offline presentation evidence. Desktop visual/functional evidence, not Android phone performance." };
+                        scope = "Real Unity Editor Game View at 1280x720, 1600x720 and 960x720, plus the compact default at 1160x720. Seeded room; AI/economy frozen, real unscaled presentation time, real affordability and path-blocking rules. Optional recording advances an editor-only presentation clock by 1/30 second per rendered frame; it is offline presentation evidence. Desktop visual/functional evidence, not Android phone performance." };
                     if (recordOnly && File.Exists(Path.Combine(output, "haunted-before-recording-report.json")))
                     {
                         var previous = JsonUtility.FromJson<Report>(File.ReadAllText(Path.Combine(output, "haunted-before-recording-report.json")));
@@ -148,6 +169,7 @@ namespace BadAppleHotel.EditorTools
                 {
                     var shot = Inspect(); pending = shot.file;
                     Capture(pending); report.shots.Add(shot);
+                    Debug.Log("[HauntedTrayCapture] Screenshot " + shot.width + " " + shot.scenario + ": " + pending);
                     phase = 2; deadline = now + 30;
                 }
                 else if (phase == 2)
@@ -156,7 +178,7 @@ namespace BadAppleHotel.EditorTools
                     {
                         ValidatePng(pending, Width);
                         scenario++;
-                        if (scenario == Widths.Length * Names.Length)
+                        if (scenario == Widths.Length * Names.Length + 1)
                         {
                             if (!record) { StartInteractions(now); return; }
                             scenario = Names.Length; ConfigureView(Width); Prepare();
@@ -175,14 +197,17 @@ namespace BadAppleHotel.EditorTools
                 {
                     HauntedClock.BeginCapture(Time.unscaledTime);
                     clockFrame = -1;
+                    report.beatFrames.Clear(); report.releases.Clear(); report.beatAssertions.Clear();
                     recordingIndex = 0; lastRecordedFrame = -1; recordingFiles.Clear(); recordingTimes.Clear();
                     phase = 4;
-                    Debug.Log("[HauntedTrayCapture] Recording started: 450 frames at fixed 30 fps.");
+                    Debug.Log("[HauntedTrayCapture] Recording started: 300 frames at fixed 30 fps.");
                 }
                 else if (phase == 4 && recordingIndex >= RecordingFrameCount && Ready(recordingFiles[recordingFiles.Count - 1]))
                 {
                     foreach (string file in recordingFiles) Require(Ready(file), "A recording frame was not saved: " + file);
                     ValidatePng(recordingFiles[0], Width);
+                    SamplePreviousFrame();
+                    ValidateBeat();
                     HauntedClock.EndCapture();
                     WriteRecording((double)RecordingFrameCount / RecordingFps); StartInteractions(now); return;
                 }
@@ -201,7 +226,10 @@ namespace BadAppleHotel.EditorTools
             var def = game.Map.Rooms.OrderByDescending(candidate => (candidate.Isolated ? 0 : 1000) + candidate.BuildTiles.Count).First();
             def.Isolated = false;
             Require(game.Claim(game.Human, def, true), "Cannot claim capture room.");
-            room = game.Human.Room;
+            resident = game.Human;
+            room = resident.Room;
+            goo = (Ectoplasm)typeof(GameHUD).GetField("ectoplasm", Private).GetValue(hud);
+            goo.Released += OnRelease;
             Invoke(game, "BeginNights"); game.SetSpeed(0);
             game.Human.Asleep = true; game.Human.SleepBlend = 1;
             game.Human.Pos = game.Human.LastPos = def.BedCenter;
@@ -224,11 +252,19 @@ namespace BadAppleHotel.EditorTools
         static void Prepare()
         {
             ClearTowers();
-            game.Human.DreamPower = 218; game.Human.Faith = 120;
-            typeof(GameManager).GetProperty(nameof(GameManager.Endless)).SetValue(game, Scenario == "endless");
-            typeof(GameManager).GetProperty(nameof(GameManager.Night)).SetValue(game, Scenario == "endless" ? 8 : 3);
-            typeof(GameManager).GetProperty(nameof(GameManager.PhaseTimer)).SetValue(game, game.Cfg.match.nightSeconds * .55f);
-            if (Scenario == "unaffordable") game.Human.DreamPower = 12;
+            SetGame(nameof(GameManager.Human), resident); SetGame(nameof(GameManager.HumanRole), Role.Resident);
+            resident.IsHuman = true; resident.Room = room; resident.Asleep = true; resident.SleepBlend = 1;
+            resident.Pos = resident.LastPos = room.Def.BedCenter;
+            if (game.Monster != null) game.Monster.IsHuman = false;
+            resident.DreamPower = 218; resident.Faith = 120;
+            bool endless = Scenario == "dial-endless";
+            SetGame(nameof(GameManager.Endless), endless);
+            SetGame(nameof(GameManager.Night), endless ? 9 : 3);
+            SetGame(nameof(GameManager.Phase), Phase.Night);
+            SetGame(nameof(GameManager.PhaseTimer), 50f);
+            if (Scenario == "unaffordable") resident.DreamPower = 12;
+            if (Scenario == "wallet-45") resident.DreamPower = 45;
+            if (Scenario == "wallet-1240") resident.DreamPower = 1240;
             slot = Enumerable.Range(0, room.Slots.Length).Where(i => game.CanBuildAt(room, i))
                 .OrderBy(i => Vector2.Distance(HotelMap.Center(room.Def.BuildTiles[i]), room.Def.Center)).First();
             if (Scenario == "blocked")
@@ -249,15 +285,42 @@ namespace BadAppleHotel.EditorTools
             SetHud("previewId", Scenario == "faith" ? "slow_totem" : "gun_turret");
             var selection = typeof(GameHUD).GetNestedType("Sel", BindingFlags.NonPublic);
             Invoke(hud, "ClearSelection");
-            Invoke(hud, "OpenWindow", Enum.Parse(selection, "Slot"), slot);
             focus = (Vector3)HotelMap.Center(room.Def.BuildTiles[slot]) - HotelView3D.Rotation * Vector3.up * 1.5f;
+            if (HasTray)
+            {
+                Invoke(hud, "OpenWindow", Enum.Parse(selection, "Slot"), slot);
+                // Fix the visual seed as well as the hotel seed; OpenWindow ordinarily seeds from frame count.
+                goo.Open(40112026);
+            }
+            else if (Scenario == "dial-setup" || Scenario == "dial-no-room")
+            {
+                SetGame(nameof(GameManager.Phase), Phase.Setup);
+                SetGame(nameof(GameManager.PhaseTimer), 42f);
+                if (Scenario == "dial-no-room")
+                {
+                    resident.Room = null; resident.Asleep = false; resident.SleepBlend = 0;
+                    resident.Pos = resident.LastPos = HotelMap.Center(game.Map.Lobby);
+                    focus = (Vector3)resident.Pos - HotelView3D.Rotation * Vector3.up * 1.5f;
+                }
+            }
+            else if (Scenario == "dial-results")
+            {
+                SetGame(nameof(GameManager.Phase), Phase.Results);
+                SetGame(nameof(GameManager.Result), new MatchResult { ResidentsWin = true, Role = Role.Resident,
+                    XpGained = 120, LevelBefore = 1, LevelAfter = 2 });
+            }
+            else if (Scenario == "dial-monster")
+            {
+                SetGame(nameof(GameManager.HumanRole), Role.Monster); SetGame(nameof(GameManager.Human), null);
+                resident.IsHuman = false; game.Monster.IsHuman = true;
+            }
             game.Announce("", 0); game.Toast(""); game.Floaters.Clear();
             rendered = 0;
         }
 
         static void Refresh()
         {
-            Invoke(game, "PlaceResidentSprite", game.Human);
+            Invoke(game, "PlaceResidentSprite", resident);
             typeof(GameManager).GetField("nextVisionUpdate", Private).SetValue(game, 0f);
             Invoke(game, "UpdateVision"); Invoke(game, "UpdateFloorEnergy");
             Invoke(game, "UpdateTowerFx", game.Now, Time.unscaledDeltaTime);
@@ -267,16 +330,27 @@ namespace BadAppleHotel.EditorTools
         {
             string id = (string)typeof(GameHUD).GetField("previewId", Private).GetValue(hud);
             var tower = game.Cfg.towers.towers.First(t => t.id == id);
-            bool placeable = game.CanBuildAt(room, slot), affordable = game.Wallet(game.Human, tower.costResource) >= tower.buildCost;
-            Require(placeable == (Scenario != "blocked"), "Placeability mismatch: " + Scenario);
-            Require(affordable == (Scenario != "unaffordable"), "Affordability mismatch: " + Scenario);
-            Require(Scenario != "faith" || tower.costResource == "faith", "Faith fixture must spend Faith.");
-            var tray = (Rect)Invoke(hud, "TrayRect");
-            Require(Mathf.Abs(tray.height - 360) < .01f, "Tray must be 360 canvas px tall.");
+            bool placeable = game.CanBuildAt(room, slot), affordable = game.Wallet(resident, tower.costResource) >= tower.buildCost;
+            var tray = HasTray ? (Rect)Invoke(hud, "TrayRect") : Rect.zero;
+            float glow = (float)typeof(GameHUD).GetField("summonGlow", Private).GetValue(hud);
+            if (HasTray)
+            {
+                Require(placeable == (Scenario != "blocked"), "Placeability mismatch: " + Scenario);
+                Require(affordable == (Scenario != "unaffordable"), "Affordability mismatch: " + Scenario);
+                Require(Scenario != "faith" || tower.costResource == "faith", "Faith fixture must spend Faith.");
+                Require(Mathf.Abs(tray.height - 360) < .01f, "Tray must be 360 canvas px tall.");
+                if (!placeable || !affordable)
+                {
+                    Require(glow < .001f, "Disabled Summon still glows: " + Scenario);
+                    foreach (string anchor in new[] { Ectoplasm.Summon1, Ectoplasm.Summon2 })
+                        Require(goo.TryGetDrip(anchor, out var drip) && !drip.Enabled, "Disabled Summon still drips: " + anchor);
+                }
+            }
             return new Shot { scenario = Scenario, file = Path.Combine(output, "haunted-" + Width + "-" + Scenario + ".png"),
-                width = Screen.width, height = Screen.height, seed = game.Map.Seed, room = room.Def.Index, slot = slot,
-                selectedTower = id, resource = tower.costResource, wallet = game.Wallet(game.Human, tower.costResource), cost = tower.buildCost,
-                placeable = placeable, affordable = affordable, endless = game.Endless, night = game.Night, sleeping = game.Human.Asleep,
+                width = Screen.width, height = Screen.height, seed = game.Map.Seed, room = resident.Room?.Def.Index ?? -1, slot = slot,
+                selectedTower = HasTray ? id : "", resource = tower.costResource, wallet = game.Wallet(resident, tower.costResource), cost = tower.buildCost,
+                placeable = placeable, affordable = affordable, endless = game.Endless, night = game.Night, sleeping = resident.Asleep,
+                phase = game.Phase.ToString(), role = game.HumanRole.ToString(), trayVisible = HasTray, glow = glow,
                 renderedFrames = rendered, editorDrawCalls = UnityStats.drawCalls, tray = tray };
         }
 
@@ -388,7 +462,10 @@ namespace BadAppleHotel.EditorTools
             if (game == null || camera != game.Cam) return;
             if (phase == 4 && clockFrame != Time.frameCount)
             {
-                HauntedClock.AdvanceCapture(1f / RecordingFps);
+                // OnGUI finishes after the preceding camera render; sample that completed image
+                // before advancing the next frame. Freeze once the last PNG is queued.
+                SamplePreviousFrame();
+                HauntedClock.AdvanceCapture(recordingIndex < RecordingFrameCount ? 1f / RecordingFps : 0f);
                 clockFrame = Time.frameCount;
             }
             camera.orthographicSize = 4.7f;
@@ -412,6 +489,61 @@ namespace BadAppleHotel.EditorTools
             }
             catch (Exception error) { Fail(error.ToString()); }
         }
+        static void OnRelease(string source, float simulationTime, bool forced)
+        {
+            if (phase != 4) return;
+            int frame = Mathf.Max(0, recordingIndex - 1);
+            report.releases.Add(new Release { source = source, frame = frame, seconds = (float)frame / RecordingFps,
+                simulationTime = simulationTime, forced = forced });
+        }
+        static void SamplePreviousFrame()
+        {
+            if (recordingIndex == 0 || report.beatFrames.Count >= recordingIndex) return;
+            Require(goo.TryGetDrip(Ectoplasm.Summon1, out var primary), "Primary Summon drip missing in beat recording.");
+            Require(goo.TryGetDrip(Ectoplasm.Summon2, out var secondary), "Secondary Summon drip missing in beat recording.");
+            int frame = recordingIndex - 1;
+            report.beatFrames.Add(new BeatFrame { frame = frame, seconds = (float)frame / RecordingFps,
+                glow = (float)typeof(GameHUD).GetField("summonGlow", Private).GetValue(hud), simulationTime = goo.SimulationTime,
+                primaryState = primary.State.ToString(), secondaryState = secondary.State.ToString(),
+                primaryAge = primary.Age, primaryDuration = primary.Duration, primaryLength = primary.Length });
+        }
+        static void ValidateBeat()
+        {
+            Require(report.beatFrames.Count == RecordingFrameCount, "Each recorded frame needs matching post-render telemetry.");
+            var settled = report.beatFrames.Where(f => f.frame >= RecordingFps).ToArray();
+            var rest = settled.OrderBy(f => f.glow).First();
+            var peak = settled.OrderByDescending(f => f.glow).First();
+            report.glowMinimum = rest.glow; report.glowMaximum = peak.glow;
+            Require(peak.glow - rest.glow > .35f, "The live Summon glow did not visibly pulse.");
+            report.beatAssertions.Add("Rendered Summon glow rises by more than 0.35 between rest and peak.");
+            var releases = report.releases.Where(r => r.source == Ectoplasm.Summon1 || r.source == Ectoplasm.Summon2).ToArray();
+            Require(releases.Length >= 4, "Ten seconds must contain at least four alternating Summon releases.");
+            report.minimumSummonReleaseGap = float.MaxValue;
+            for (int i = 1; i < releases.Length; i++)
+                report.minimumSummonReleaseGap = Mathf.Min(report.minimumSummonReleaseGap, releases[i].simulationTime - releases[i-1].simulationTime);
+            Require(report.minimumSummonReleaseGap >= .399f, "Actual rendered Summon releases violate the 0.4-second gap.");
+            report.beatAssertions.Add("Live Summon releases retain at least a 0.4-second gap.");
+            var primary = releases.Where(r => r.source == Ectoplasm.Summon1).ToArray();
+            Require(primary.Length >= 2, "The primary drip must complete multiple beats.");
+            report.averagePrimaryBeat = (primary[primary.Length - 1].simulationTime - primary[0].simulationTime) / (primary.Length - 1);
+            for (int i = 1; i < primary.Length; i++)
+            {
+                float beat = primary[i].simulationTime - primary[i-1].simulationTime;
+                Require(beat >= 2.499f && beat <= 3.001f, "Actual rendered Summon beat is outside 2.5–3.0 seconds: " + beat);
+            }
+            report.beatAssertions.Add("Every complete primary Summon beat in the recording lasts 2.5–3.0 seconds.");
+            foreach (var release in primary.Where(r => r.frame < RecordingFrameCount - 8))
+                Require(report.beatFrames.Where(f => f.frame >= release.frame && f.frame <= release.frame + 8).Max(f => f.glow) > .9f,
+                    "Primary release has no synchronized glow peak near frame " + release.frame);
+            report.beatAssertions.Add("Each primary release has a synchronized glow peak above 0.9 within eight recorded frames.");
+            foreach (var pair in new[] { new { name = "glow-rest", frame = rest }, new { name = "glow-peak", frame = peak } })
+            {
+                var shot = Inspect(); shot.scenario = pair.name; shot.glow = pair.frame.glow; shot.recordingFrame = pair.frame.frame;
+                shot.file = Path.Combine(output, "haunted-" + Width + "-" + pair.name + ".png");
+                File.Copy(recordingFiles[pair.frame.frame], shot.file, true); report.shots.Add(shot);
+            }
+        }
+        static void SetGame(string name, object value) => typeof(GameManager).GetProperty(name).SetValue(game, value);
         static void SetHud(string name, object value) => typeof(GameHUD).GetField(name, Private).SetValue(hud, value);
         static object Invoke(object target, string name, params object[] args)
         {
@@ -464,6 +596,7 @@ namespace BadAppleHotel.EditorTools
         static void Stop()
         {
             HauntedClock.EndCapture();
+            if (goo != null) goo.Released -= OnRelease;
             SessionState.SetBool(Session, false); EditorApplication.update -= Tick;
             Camera.onPreCull -= CameraFrame; Camera.onPostRender -= CountFrame; Application.logMessageReceived -= Log;
         }
