@@ -118,6 +118,7 @@ namespace BadAppleHotel.Game
         {
             var m = gm.Monster;
             if (m == null) return;
+            if (gm.Floors) { DrawFloorMonsterUI(m); return; }
             DrawMonsterChip(m);
 
             if (m.Dead)

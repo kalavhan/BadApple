@@ -20,7 +20,7 @@ namespace BadAppleHotel.Tests
         {
             randomState = Random.state; art = Sprites.ArtOverride; timeScale = Time.timeScale;
             game = new GameObject("Floor energy test").AddComponent<GameManager>();
-            game.StartSimulation(ConfigLoader.Load(), 241, false);
+            game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(), 241, false);
             typeof(GameManager).GetMethod("BuildScene3D", Private).Invoke(game, null);
             game.Human.IsHuman = true; game.Human.Ai = null;
             foreach (var def in game.Map.Rooms) def.Isolated = false;

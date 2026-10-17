@@ -12,8 +12,7 @@
   },
   "monsterIncome": {
     "dreamPowerPerDoorDamage": 0.1,
-    "dreamPowerPerResidentKill": 40,
-    "faithPerBodyPart": 10
+    "dreamPowerPerResidentKill": 40
   },
   "accountXp": {
     "monsterPerResidentKilled": 100,

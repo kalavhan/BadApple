@@ -280,6 +280,7 @@ namespace BadAppleHotel.Game
 
         int BestSlotFor(Room room, Config.TowerDef def, Vector2 door, out float coverage)
         {
+            if (gm.Floors) return BestPadFor(room, def, door, out coverage);
             float range = gm.RangeOf(def, 1);
             int best = -1;
             coverage = 0f;
@@ -288,6 +289,23 @@ namespace BadAppleHotel.Game
                 if (room.Slots[i] != null || !gm.CanBuildAt(room, i)) continue;
                 float d = Vector2.Distance(HotelMap.Center(room.Def.BuildTiles[i]), door);
                 float score = d <= range ? 1f + (range - d) / range : 0.15f / (1f + d - range);
+                if (score > coverage) { coverage = score; best = i; }
+            }
+            return best;
+        }
+
+        /// <summary>Hallway floors: the pad whose range covers the most carpet, leaning a little toward the door.</summary>
+        int BestPadFor(Room room, Config.TowerDef def, Vector2 door, out float coverage)
+        {
+            int best = -1;
+            coverage = 0f;
+            float lane = Mathf.Max(1, room.Def.Lane.Count);
+            for (int i = 0; i < room.Slots.Length; i++)
+            {
+                if (room.Slots[i] != null) continue;
+                var pad = room.Def.BuildTiles[i];
+                float near = 1f / (1f + Vector2.Distance(HotelMap.Center(pad), door) * .08f);
+                float score = gm.LaneCoverage(room.Def, pad, def) / lane * 4f + near;
                 if (score > coverage) { coverage = score; best = i; }
             }
             return best;

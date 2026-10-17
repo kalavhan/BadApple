@@ -45,7 +45,7 @@ namespace BadAppleHotel.EditorTools
                         var gm=new GameObject("Bot simulation").AddComponent<GameManager>();
                         try
                         {
-                            gm.StartSimulation(cfg,seed+i,endless);
+                            gm.LegacyHotel=true; gm.StartSimulation(cfg,seed+i,endless);
                             // BADAPPLE_SIM_SKILL=0..1 pins every bot's skill (e.g. 1 for expert play); unset follows the nightly ramp.
                             if (float.TryParse(Environment.GetEnvironmentVariable("BADAPPLE_SIM_SKILL"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float skill)) gm.BotSkillOverride=skill;
                             // 16 simulation ticks per batch; identical 30 Hz physics/combat to the player.

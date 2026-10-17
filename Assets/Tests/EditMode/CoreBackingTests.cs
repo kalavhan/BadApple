@@ -19,7 +19,7 @@ namespace BadAppleHotel.Tests
             var game = new GameObject("Separator backing geometry " + seed).AddComponent<GameManager>();
             try
             {
-                game.StartSimulation(ConfigLoader.Load(), seed, false);
+                game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(), seed, false);
                 typeof(GameManager).GetMethod("BuildScene3D", Private).Invoke(game, null);
                 var root = (Transform)typeof(GameManager).GetField("worldRoot", Private).GetValue(game);
                 var instances = (WallInstances)typeof(GameManager).GetField("wallInstances", Private).GetValue(game);

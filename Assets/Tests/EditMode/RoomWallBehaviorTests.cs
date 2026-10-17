@@ -22,7 +22,7 @@ namespace BadAppleHotel.Tests
         {
             random = Random.state; art = Sprites.ArtOverride; timeScale = Time.timeScale;
             game = new GameObject("Room wall behavior " + seed).AddComponent<GameManager>();
-            game.StartSimulation(ConfigLoader.Load(), seed, false);
+            game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(), seed, false);
             typeof(GameManager).GetMethod("BuildScene3D", Private).Invoke(game, null);
             targets = Field<Texture2D>("wallStateTexture");
             instances = Field<WallInstances>("wallInstances");

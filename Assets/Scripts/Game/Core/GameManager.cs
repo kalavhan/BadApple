@@ -15,6 +15,8 @@ namespace BadAppleHotel.Game
         public int LevelBefore;
         public int LevelAfter;
         public Role Role;
+        public int Placement;          // hallway floors: 1 = last guest standing
+        public string WinnerName;
     }
 
     public class Floater
@@ -54,14 +56,13 @@ namespace BadAppleHotel.Game
         public string Banner { get; private set; }
         public float BannerUntil { get; private set; }
         public float Speed { get; private set; } = 1f;
-        public bool InMatch => Phase == Phase.Setup || Phase == Phase.Night;
+        public bool InMatch => Phase == Phase.CheckIn || Phase == Phase.Setup || Phase == Phase.Night;
 
         /// <summary>Zoomed-out whole-hotel camera (always for the monster and in setup; at night only with a crystal ball).</summary>
         public bool HotelView { get; set; }
 
         public readonly List<Resident> Residents = new List<Resident>();
         public readonly Dictionary<RoomDef, Room> RoomsByDef = new Dictionary<RoomDef, Room>();
-        public readonly List<BodyPart> Parts = new List<BodyPart>();
         public readonly List<string> Log = new List<string>();
         public readonly List<Floater> Floaters = new List<Floater>();
 
@@ -120,7 +121,8 @@ namespace BadAppleHotel.Game
             doorSprites.Clear();
             try
             {
-                Map = new HotelMap(Cfg.map, Cfg.match.roomCount, seed);
+                Map = LegacyHotel ? new HotelMap(Cfg.map, Cfg.match.roomCount, seed)
+                    : HotelMap.Floors(Cfg.map.floors, Cfg.match.playersPerMatch + Cfg.map.floors.extraFloors, seed);
             }
             catch (System.Exception e)
             {
@@ -196,6 +198,7 @@ namespace BadAppleHotel.Game
         {
             if (Cam == null || Map == null) return;
             float aspect = Mathf.Max(0.5f, Cam.aspect), dt = Time.unscaledDeltaTime;
+            if (FloorCamera(aspect, dt)) { if (!Simulation) { UpdateWallOcclusion(); UpdateDoorViews(); } return; }
             if (HotelView && !HotelViewAvailable) HotelView = false;
             bool actor = InMatch && !HotelView && ((Monster != null && HumanRole == Role.Monster) || (Human != null && Human.Alive));
             float size = !HotelView && (actor || (InMatch && sleepCameraActive)) ? HotelView3D.FollowSize / Zoom : Mathf.Max((Map.W+Map.H)*0.7071f*0.383f+2, (Map.W+Map.H)*0.7071f/(2*aspect)+2);
@@ -246,7 +249,7 @@ namespace BadAppleHotel.Game
         }
 
         public bool HotelViewAvailable =>
-            InMatch; // Overview keeps the same sight mask; it does not reveal hidden actors.
+            InMatch && !Floors; // Overview keeps the same sight mask; it does not reveal hidden actors.
 
         // ------------------------------------------------------------------ visuals helpers
 
@@ -290,6 +293,7 @@ namespace BadAppleHotel.Game
             System.Array.Clear(KnownDamageTypes, 0, KnownDamageTypes.Length);
             HotelView = false;
 
+            if (Floors) { StartFloorsMatch(role); return; }
             var defs = Cfg.monsters.monsters;
             var mdef = role == Role.Monster
                 ? (defs.FirstOrDefault(d => d.id == monsterPick) ?? defs[0])
@@ -344,6 +348,47 @@ namespace BadAppleHotel.Game
             Time.timeScale = Speed;
             Announce("Seven guests checked in. Find a room and sleep before lights out.", 7f);
             AddLog("One guest has a terrible secret.");
+        }
+
+        /// <summary>Every seat is a guest; each night one of them is the monster. The match opens at the front desk.</summary>
+        void StartFloorsMatch(Role role)
+        {
+            HumanRole = Role.Resident;
+            humanFirstMonster = role == Role.Monster;
+            Fear = Cfg.waves.startingFear;
+            FearEarned = 0f;
+            MonsterGuest = lastMonsterGuest = null;
+            RollMonsterBuffs();
+            int residentLevelForHuman = AccountProgress.Level(Cfg, Role.Resident);
+            var roster = PickRoster(Cfg.match.playersPerMatch);
+            for (int i = 0; i < Cfg.match.playersPerMatch; i++)
+            {
+                bool human = i == 0;
+                var r = new Resident
+                {
+                    Id = i, Name = human ? "You" : roster[i].name, Char = roster[i], IsHuman = human, ColorIndex = i,
+                    Health = Cfg.match.residentHealth,
+                    DreamPower = Cfg.economy.startingResources.dreamPower,
+                    Faith = Cfg.economy.startingResources.faith,
+                    XpValue = ResidentXpValue(human ? residentLevelForHuman : Random.Range(1, 6)),
+                };
+                r.Pos = r.LastPos = HotelMap.Center(Map.Lobby);
+                r.Sr = MakeSprite(r.Name, Sprites.Resident(i), r.Pos, OrderFor(r.Pos.y), matchRoot);
+                if (!Simulation) ContactShadow.Attach(r.Sr, r.Pos, new Vector2(.65f, .45f));
+                r.Model = ResidentModel(r);
+                if (r.Model == null && Sprites.UseArt)
+                {
+                    var hues = Cfg.residents.shirtHues;
+                    float hue = hues != null && hues.Length > 0 ? hues[i % hues.Length] : 0.86f;
+                    r.Anim = CharacterAnimator.Attach(r.Sr, CharacterSet.Load(r.Char.art, 1.55f), hue);
+                }
+                if (!human) r.Ai = new ResidentAI(this, r);
+                Residents.Add(r);
+            }
+            Human = Residents[0];
+            Night = 0;
+            Time.timeScale = Speed;
+            StartCheckIn();
         }
 
         /// <summary>The character the human wants to play (roster id); null = random. Everyone else is shuffled from the rest.</summary>
@@ -401,7 +446,6 @@ namespace BadAppleHotel.Game
             projectiles.Clear();
             Residents.Clear();
             RoomsByDef.Clear();
-            Parts.Clear();
             ClearMinions();
             ClearHazards();
             Log.Clear();
@@ -412,6 +456,8 @@ namespace BadAppleHotel.Game
             PendingHelpFrom = null;
             HotelView = false;
             sleepCameraActive = false;
+            MonsterGuest = lastMonsterGuest = null;
+            CheckInOrder.Clear();
             GameInput.ClearAll();
             ResetDoorViews();
         }
@@ -432,6 +478,7 @@ namespace BadAppleHotel.Game
                 BedLevel = 1,
                 DoorOpen = !teleport,
                 DoorSr = doorSprites[def],
+                WaveSize = Cfg.waves.startSize,
             };
             var bedPos = def.BedCenter;
             room.BedSr = MakeSprite("Bed", Sprites.Bed(1), bedPos, OrderFor(bedPos.y + 0.4f), matchRoot);
@@ -446,7 +493,9 @@ namespace BadAppleHotel.Game
                 r.Asleep = false;
             }
             AddLog(r.Name + " moved into Room " + (def.Index + 1) + ".");
-            if (r.IsHuman)
+            if (r.IsHuman && Floors)
+                Toast("Room " + def.RoomNumber + " on floor " + def.FloorNumber + " is yours. The lift is at the far end of the hallway.");
+            else if (r.IsHuman)
                 Toast(teleport ? "The manager dragged you into Room " + (def.Index + 1) + "." : "Room " + (def.Index + 1) + " is yours. Shut the door!");
 
             if (def.Isolated) GiveLonelyBonus(room);
@@ -518,7 +567,6 @@ namespace BadAppleHotel.Game
             projectiles.Clear();
             Residents.Clear();
             RoomsByDef.Clear();
-            Parts.Clear();
             Minions.Clear(); Rifts.Clear(); Hazards.Clear();
             Floaters.Clear();
             Monster = null;
@@ -532,13 +580,13 @@ namespace BadAppleHotel.Game
 
         void BeginNights()
         {
+            if (Floors) { StartFloorNight(); return; }
             foreach (var r in Residents) if (r.Room == null) ClaimRandom(r, true);
             Night = 1;
             Phase = Phase.Night;
             PhaseTimer = Cfg.match.nightSeconds;
             HotelView = false;
             RevealMonster();
-            SpawnParts();
             StartNightRifts();
             NightStartForMonster(Monster);
 
@@ -546,13 +594,13 @@ namespace BadAppleHotel.Game
 
         void EndNight()
         {
+            if (Floors) { EndFloorNight(); return; }
             foreach (var r in Residents) if (r.Alive) r.NightsSurvived++;
             if (!Endless && Night >= Cfg.match.nightCount) { EndMatch(); return; }
             Metrics.LevelPerNight.Add(Monster.Level);
             Night++;
             if (Endless) for (int i = 0; i < Cfg.match.endless.freeLevelsPerNight; i++) LevelUp(Monster);
             PhaseTimer = Cfg.match.nightSeconds + Cfg.match.nightBreakSeconds;
-            SpawnParts();
             StartNightRifts();
             NightStartForMonster(Monster);
             Announce("Night " + Night + " of " + Cfg.match.nightCount + ".", 3f);
@@ -560,6 +608,7 @@ namespace BadAppleHotel.Game
 
         void EndMatch()
         {
+            if (Floors) { EndFloorsMatch(); return; }
             Metrics.LevelPerNight.Add(Monster.Level);
             Phase = Phase.Results;
             HotelView = false;
@@ -579,28 +628,6 @@ namespace BadAppleHotel.Game
             res.LevelAfter = AccountProgress.Level(Cfg, HumanRole);
             Result = res;
             Announce(res.ResidentsWin ? "Dawn breaks. The residents survived!" : "Silence. The monster ate everyone.", 6f);
-        }
-
-        void SpawnParts()
-        {
-            foreach (var p in Parts) if (p.Sr != null) RemoveObject(p.Sr.gameObject);
-            Parts.Clear();
-            var tiles = Map.BodyPartSpawns(Cfg.match.bodyPartsPerNight, Cfg.bodyParts.minSpacingTiles,
-                unchecked(Map.Seed + Night * 7919), Map.Rooms.Where(IsRoomFree));
-            foreach (var t in tiles)
-            {
-                int typeIndex = Random.Range(0, Cfg.bodyParts.parts.Length);
-                var def = Cfg.bodyParts.parts[typeIndex];
-                var pos = HotelMap.Center(t);
-                var part = new BodyPart
-                {
-                    Def = def,
-                    TypeIndex = typeIndex,
-                    Tile = t,
-                    Sr = MakeSprite("Part " + def.id, Sprites.Part(def.id), pos, OrderFor(pos.y) - 5, matchRoot),
-                };
-                Parts.Add(part);
-            }
         }
 
         // ------------------------------------------------------------------ messages

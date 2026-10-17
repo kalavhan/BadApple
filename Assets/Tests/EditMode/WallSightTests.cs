@@ -145,7 +145,7 @@ namespace BadAppleHotel.Tests
             var go = new GameObject("Peek vision integration"); var game = go.AddComponent<GameManager>();
             try
             {
-                game.StartSimulation(config, 17, false);
+                game.LegacyHotel = true; game.StartSimulation(config, 17, false);
                 var def = SetLayout(game.Map);
                 game.RoomsByDef.Clear(); var occupied = new Room(def) { Owner = game.Human, DoorOpen = false };
                 game.RoomsByDef.Add(def, occupied); game.Human.Room = occupied; game.Human.Pos = new Vector2(13.5f, 10.5f);

@@ -9,7 +9,6 @@
   "roomCount": 10,
   "residentHealth": 100,
   "monsterRespawnSeconds": 10,
-  "bodyPartsPerNight": 6,
   "deadResidentsSpectate": true,
   "disguiseBuildEverySeconds": [
     6,
@@ -57,5 +56,8 @@
       "endlessRampNights": 8
     }
   ],
-  "defaultDifficulty": "normal"
+  "defaultDifficulty": "normal",
+  "checkInSeconds": 12,
+  "buildSeconds": 45,
+  "duskSeconds": 6
 }

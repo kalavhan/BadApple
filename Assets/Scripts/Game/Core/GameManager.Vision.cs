@@ -12,10 +12,10 @@ namespace BadAppleHotel.Game
         HotelMap peekMap;
         Vector2 peekPosition;
         WallPeek activeWallPeek;
-        public bool FogActive => InMatch && !(HumanRole == Role.Resident && Human != null &&
+        public bool FogActive => InMatch && !Floors && !(HumanRole == Role.Resident && Human != null &&
             (!Human.Alive || (Human.Room != null && Human.Room.HasClairvoyance())));
         public Vector2 ViewOrigin => HumanRole == Role.Monster && Monster != null ? Monster.Pos : Human != null ? Human.Pos : HotelMap.Center(Map.Lobby);
-        public float SightRadius => Cfg.residents.visionRadiusTiles + (HumanRole == Role.Monster && Monster != null ? RevealRadius(Monster) : 0);
+        public float SightRadius => Cfg.residents.visionRadiusTiles;
         public WallPeek ActiveWallPeek
         {
             get
@@ -51,6 +51,8 @@ namespace BadAppleHotel.Game
         }
         public bool IsVisible(Vector2 world)
         {
+            // Hallway floors: every guest sees their whole floor, and the floors never see each other.
+            if (Floors) return true;
             if (InOwnRoom(world)) return true;
             // Clairvoyance still reveals the hotel and guests, but a living resident in
             // a room cannot track the monster down a remote hallway. Spectators can.
@@ -121,7 +123,6 @@ namespace BadAppleHotel.Game
             }
             foreach(var resident in Residents)if(resident.Sr!=null)resident.Sr.enabled=resident==Human||!fog||IsVisible(resident.Pos);
             if(Monster?.Sr!=null)Monster.Sr.enabled=!Monster.Dead&&IsVisible(Monster.Pos);
-            foreach(var part in Parts)if(part.Sr!=null)part.Sr.enabled=!fog||IsTileVisible(part.Tile);
             foreach(var room in RoomsByDef.Values)
             {
                 bool known=room.Owner==Human||!fog||IsVisible(room.Def.BedCenter);

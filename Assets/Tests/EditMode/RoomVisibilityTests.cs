@@ -18,7 +18,7 @@ namespace BadAppleHotel.Tests
         {
             randomState = Random.state; timeScale = Time.timeScale;
             game = new GameObject("Room visibility test").AddComponent<GameManager>();
-            game.StartSimulation(ConfigLoader.Load(), 241, false);
+            game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(), 241, false);
             player = game.Human; player.IsHuman = true; player.Ai = null;
         }
 

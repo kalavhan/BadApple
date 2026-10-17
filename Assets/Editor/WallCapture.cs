@@ -171,7 +171,7 @@ namespace BadAppleHotel.EditorTools
         {
             game = GameManager.Instance;
             Random.InitState(report.randomSeed);
-            game.StartMatch(Role.Resident, "stitchwork_chef");
+            game.LegacyHotel = true; game.StartMatch(Role.Resident, "stitchwork_chef");
             game.SetSpeed(0);
             game.Announce("", 0);
             room = game.Map.Rooms.OrderByDescending(r => (r.Isolated ? 0 : 1000) + MissingRectangleArea(r)).First();

@@ -82,6 +82,7 @@ namespace BadAppleHotel.Game
         {
             if (!InMatch) return;
             Now += dt; PhaseTimer -= dt;
+            if (Floors) { StepFloors(dt); return; }
             UpdateResidents(dt, Now);
             UpdateEconomy(dt, Now);
             UpdateDisguise(dt);

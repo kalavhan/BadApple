@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace BadAppleHotel.Game
 {
-    public enum Phase { RoleSelect, Setup, Night, Results, ConfigError }
+    public enum Phase { RoleSelect, CheckIn, Setup, Night, Results, ConfigError }
     public enum Role { Resident, Monster }
     public enum ActionResult { Ok, NoMoney, Blocked, MaxLevel, Invalid, TooFar }
 
@@ -107,6 +107,10 @@ namespace BadAppleHotel.Game
         }
 
         public bool UnderAttack(float now) => now - LastAttackedTime < 2f;
+
+        // Hallway floors: this floor's minion waves, bought with Fear and kept for the whole match.
+        public int WaveSize;
+        public readonly bool[] WaveTypes = { true, false, false };
     }
 
     public class Resident
@@ -122,6 +126,7 @@ namespace BadAppleHotel.Game
         public bool Alive = true;
         public float Health;
         public int NightsSurvived;
+        public float DiedAt;
         public float XpValue;
         public float FaithBlockedUntil;
         public float BedSlowUntil;
@@ -158,7 +163,6 @@ namespace BadAppleHotel.Game
         public float Hp;
         public float DreamPower;
         public float Faith;
-        public readonly int[] Parts = new int[4]; // arm, leg, torso, eye
         public AbilityDef[] Loadout;               // [area, special (from specialLevel), utility picks...]
         public float[] Cooldowns;
         public bool Dead;
@@ -171,8 +175,6 @@ namespace BadAppleHotel.Game
         public Room AttackingRoom;
         public Resident Biting;
         public Resident LastDamager;
-        public BodyPart EatingPart;
-        public float EatProgress;
 
         // Fear economy and growth
         public float Fear, FearEarned;
@@ -210,6 +212,14 @@ namespace BadAppleHotel.Game
         public bool HitPending;                    // a single-target hit landed since the model last drew
         public string ActionPending;               // "Cast" / "Special" for the model to play
         public MonsterAI Ai;
+
+        // Hallway floors
+        public Resident Guest;                     // the guest who is the monster tonight
+        public RoomDef Floor;                      // the floor it is hunting (null before its first ride)
+        public bool InLift;                        // riding: hidden, safe, choosing a floor
+        public RoomDef LiftTarget;
+        public float LiftArriveAt;
+        public FloorMonsterAI FloorAi;
     }
 
     /// <summary>A minion: Swarm and Breachers walk from their rift to their resident's door, chew through it and attack the
@@ -252,14 +262,6 @@ namespace BadAppleHotel.Game
         public float Radius, Until, Dps, SlowPct;
         public bool NoDreams;
         public Color Color;
-        public SpriteRenderer Sr;
-    }
-
-    public class BodyPart
-    {
-        public BodyPartDef Def;
-        public int TypeIndex;
-        public Vector2Int Tile;
         public SpriteRenderer Sr;
     }
 }

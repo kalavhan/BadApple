@@ -656,6 +656,24 @@ namespace BadAppleHotel.Game
             if (gm.Phase == Phase.ConfigError) DrawError();
             else if (gm.Cfg == null) GUI.Label(new Rect(0, VH / 2 - 25, vw, 50), "Opening the hotel…", subtitle);
             else if (gm.Phase == Phase.RoleSelect) DrawMenu();
+            else if (gm.Cam != null && gm.Map != null && gm.Floors && gm.Phase == Phase.CheckIn)
+            {
+                DrawTopBar();
+                DrawFrontDesk();
+                DrawBanner();
+                DrawToast();
+                fxFront.Draw(scale);
+            }
+            else if (gm.Cam != null && gm.Map != null && gm.Floors && gm.HumanRole == Role.Monster && gm.Monster != null && gm.Monster.InLift && !gm.Monster.Dead && gm.Phase == Phase.Night)
+            {
+                DrawLiftScreen(gm.Monster);
+                DrawBanner();
+                DrawToast();
+                var menu = new Rect(vw - 84, VH - 44, 74, 34);
+                Ui(menu);
+                if (GUI.Button(menu, "Menu", centerButton)) gm.ReturnToMenu();
+                fxFront.Draw(scale);
+            }
             else if (gm.Cam != null && gm.Map != null)
             {
                 DrawWorldLabels();
@@ -896,7 +914,7 @@ namespace BadAppleHotel.Game
                 gm.RoomsByDef.TryGetValue(def, out var room);
                 if (room == null)
                 {
-                    if (gm.Phase == Phase.Setup && (gm.IsVisible(def.Center) || gm.IsTileVisible(def.DoorTile)))
+                    if (!gm.Floors && gm.Phase == Phase.Setup && (gm.IsVisible(def.Center) || gm.IsTileVisible(def.DoorTile)))
                     {
                         var c = WorldToGui(def.Center);
                         string text = "Room " + (def.Index + 1) + "\n" + def.BuildBudget + " build spots" +
@@ -960,8 +978,6 @@ namespace BadAppleHotel.Game
                     Bar(new Rect(g.x - 30, g.y, 60, 7), m.Hp / gm.MaxHp(m), Red);
                     Shadowed(new Rect(g.x - 80, g.y - 18, 160, 18), m.Def.name, Bone);
                 }
-                if (m.EatingPart != null)
-                    Bar(new Rect(g.x - 20, g.y + 10, 40, 5), m.EatProgress / gm.Cfg.bodyParts.eatSeconds, (Color)Palette.Moss);
             }
 
             foreach (var n in gm.Minions)
@@ -969,18 +985,6 @@ namespace BadAppleHotel.Game
                 if (n.Dead || n.Hp >= n.MaxHp || !gm.IsVisible(n.Pos)) continue;
                 var g = WorldToGui(n.Pos) + Vector2.up * -1.0f * GuiPerTile;
                 Bar(new Rect(g.x - 14, g.y, 28, 4), n.Hp / n.MaxHp, Red);
-            }
-
-            // the monster's eyes reveal body parts nearby
-            if (m != null && m.IsHuman && gm.RevealRadius(m) > 0f)
-            {
-                float rr = gm.RevealRadius(m);
-                foreach (var p in gm.Parts)
-                    if (Vector2.Distance(p.Tile, m.Pos) <= rr * 2f)
-                    {
-                        var g = WorldToGui(HotelMap.Center(p.Tile) + Vector2.up * 0.8f);
-                        Shadowed(new Rect(g.x - 20, g.y - 10, 40, 20), "v", (Color)Palette.Moss);
-                    }
             }
 
             foreach (var f in gm.Floaters)
@@ -1016,7 +1020,8 @@ namespace BadAppleHotel.Game
             float now = gm.Now;
 
             DrawResources(me, now);
-            DrawMonsterIntel(new Rect(vw - 270, 92, 260, gm.Monster != null && gm.HordeAwake(gm.Monster) ? 86 : 70));
+            if (gm.Floors) DrawFloorsNightChip();
+            else DrawMonsterIntel(new Rect(vw - 270, 92, 260, gm.Monster != null && gm.HordeAwake(gm.Monster) ? 86 : 70));
 
             if (!me.Alive)
             {
@@ -1074,7 +1079,10 @@ namespace BadAppleHotel.Game
 
             // hints
             string hint = null;
-            if (me.Room == null) hint = gm.Phase == Phase.Setup ? "Walk into a free room to claim it (its door is open)." : "";
+            if (gm.Floors && me.Room != null && gm.Phase == Phase.Setup)
+                hint = gm.Night == 0 ? "Tap a glowing pad beside the carpet to summon a tower. Minions walk the carpet from the lift to your door."
+                    : "Dawn break: patch your door and build before the next monster wakes.";
+            else if (me.Room == null) hint = gm.Phase == Phase.Setup ? "Walk into a free room to claim it (its door is open)." : "";
             else if (gm.Phase == Phase.Night && !me.Asleep && gm.OnBed(me)) hint = "Awake: no Dream Power, but your towers hit x" + gm.Cfg.residents.awakeWeaponDamageMultiplier + ".";
             else if (gm.Phase == Phase.Setup && me.Room.DoorOpen) hint = "Shut your door before the lights go out. Tap a bolted plate to build.";
             if (!string.IsNullOrEmpty(hint))
@@ -1097,7 +1105,7 @@ namespace BadAppleHotel.Game
             float fps = me.Room != null ? gm.FaithPerSecond(me.Room) : 0f;
             GUI.Label(new Rect(r.x + 32, r.y + 31, r.width - 40, 22), "<color=" + DreamSkin.VioletHex + "><b>Faith</b></color>  " + Mathf.FloorToInt(me.Faith) +
                 "  <size=12>+" + fps.ToString("0.#") + "/s</size>" + (blackout ? "  <color=#D7263D><b>BLACKOUT</b></color>" : ""), label);
-            string roomLine = me.Room == null ? "No room yet" : "Room " + (me.Room.Def.Index + 1) + "  ·  door " + me.Room.DoorLevel + (me.Room.DoorBroken ? " <color=#D7263D>broken</color>" : me.Room.DoorOpen ? " <color=#F2C14E>open</color>" : " shut") +
+            string roomLine = me.Room == null ? "No room yet" : "Room " + (gm.Floors ? me.Room.Def.RoomNumber : (me.Room.Def.Index + 1).ToString()) + "  ·  door " + me.Room.DoorLevel + (me.Room.DoorBroken ? " <color=#D7263D>broken</color>" : me.Room.DoorOpen ? " <color=#F2C14E>open</color>" : " shut") +
                 "  ·  bed " + me.Room.BedLevel;
             GUI.Label(new Rect(r.x + 10, r.y + 56, r.width - 20, 20), roomLine, small);
         }
@@ -1118,8 +1126,6 @@ namespace BadAppleHotel.Game
                 line += "<color=" + col + ">" + DamageTypes.Label(i) + " x" + mult.ToString("0.0#") + "</color>  ";
             }
             GUI.Label(new Rect(r.x + 8, r.y + 22, r.width - 16, 20), line, small);
-            GUI.Label(new Rect(r.x + 8, r.y + 42, r.width - 16, 20), "Ate: arm " + gm.PartCount(m, "arm") + "  leg " + gm.PartCount(m, "leg") +
-                "  torso " + gm.PartCount(m, "torso") + "  eye " + gm.PartCount(m, "eye"), small);
             if (!gm.HordeAwake(m)) return;
             // Minion multipliers stay hidden too, until one of your towers lands that type on that creature.
             var creature = gm.Creature(m, m.ActiveMinion);
@@ -1265,6 +1271,7 @@ namespace BadAppleHotel.Game
         {
             var res = gm.Result;
             if (res == null) return;
+            if (gm.Floors) { DrawFloorsResults(res); return; }
             var r = new Rect(vw / 2 - 300, 120, 600, 460);
             GUI.Box(r, GUIContent.none, box);
             Ui(r);

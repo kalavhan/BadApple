@@ -5,7 +5,7 @@ namespace BadAppleHotel.Game
 {
     /// <summary>
     /// Bot monster. Every 1.5 s it scores every living resident (walk in through an open or broken door, smash a shut
-    /// one, or grab someone in the hallway) and every body part, weighting travel time, work and the tower fire it
+    /// one, or grab someone in the hallway) weighting travel time, work and the tower fire it
     /// would stand in. It walks a BFS path, fires abilities when they pay off, spends Fear on levels and its horde,
     /// and sets the horde's resistance from the towers it has actually seen. GameManager.BotSkill scales all of it: a
     /// novice replans slowly, picks targets carelessly, sits on its abilities and its Fear, and never retreats.
@@ -20,7 +20,6 @@ namespace BadAppleHotel.Game
         float nextPlan;
         float nextUpgrade = 3f, nextAbilityThink;
         Resident targetRes;
-        BodyPart targetPart;
         Vector2Int goal;
         Vector2Int wanderGoal;
         Vector2 lastPos;
@@ -65,14 +64,14 @@ namespace BadAppleHotel.Game
             nextUpgrade -= dt;
             if (nextUpgrade <= 0f) { nextUpgrade = Mathf.Lerp(8f, 2f, gm.BotSkill); ThinkUpgrades(); }
 
-            bool busy = me.Biting != null || me.EatingPart != null ||
+            bool busy = me.Biting != null ||
                         (me.AttackingRoom != null && targetRes != null && me.AttackingRoom == targetRes.Room);
             if (!busy && (me.Pos - lastPos).sqrMagnitude < 0.0004f) stuckTime += dt; else stuckTime = 0f;
             lastPos = me.Pos;
 
             nextPlan -= dt;
             if (targetRes?.Room != null && targetRes.Room.DoorBroken && GoalIsDoor()) nextPlan = 0;
-            bool targetMoved = targetRes != null && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me)) && (HotelMap.ToTile(targetRes.Pos) - goal).sqrMagnitude > 4 && !GoalIsDoor();
+            bool targetMoved = targetRes != null && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles) && (HotelMap.ToTile(targetRes.Pos) - goal).sqrMagnitude > 4 && !GoalIsDoor();
             if (nextPlan <= 0f || stuckTime > 1.2f || path == null || TargetGone() || targetMoved)
             {
                 if (now >= commitUntil || TargetGone() || targetRes?.Room == null || targetRes.Room.DoorBroken) Plan();
@@ -106,7 +105,6 @@ namespace BadAppleHotel.Game
 
         bool TargetGone()
         {
-            if (targetPart != null && !gm.Parts.Contains(targetPart)) return true;
             if (targetRes != null && !targetRes.Alive) return true;
             return false;
         }
@@ -120,7 +118,6 @@ namespace BadAppleHotel.Game
             float bite = Mathf.Max(1f, gm.ResidentDps(me));
             float bestCost = float.MaxValue;
             Resident bestRes = null;
-            BodyPart bestPart = null;
             Vector2Int bestGoal = start;
             float keepCost = float.MaxValue;
             Vector2Int keepGoal = start;
@@ -144,7 +141,7 @@ namespace BadAppleHotel.Game
                     }
                     else
                     {
-                        if(gm.CanSee(me.Pos,r.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me))) g = rTile;
+                        if(gm.CanSee(me.Pos,r.Pos,gm.Cfg.residents.visionRadiusTiles)) g = rTile;
                         else if(rInside)
                             // Search a known room after breaking in; don't track an unseen guest's live position.
                             g = room.Def.ContainsInterior(start) ? room.Def.BedTile : room.Def.DoorInside;
@@ -164,39 +161,20 @@ namespace BadAppleHotel.Game
                     if (!rInside) cost -= 6f;                                     // a resident in the hallway is a gift
                     cost += Random.Range(0f, (1f - gm.BotSkill) * 20f);   // a novice picks its prey carelessly
                     if (r == targetRes) { keepCost = cost; keepGoal = g; }
-                    if (cost < bestCost) { bestCost = cost; bestRes = r; bestPart = null; bestGoal = g; }
+                    if (cost < bestCost) { bestCost = cost; bestRes = r; bestGoal = g; }
                 }
             }
 
-            int maxParts = gm.Cfg.bodyParts.maxPartsPerType;
-            foreach (var part in gm.Parts)
-            {
-                bool mustAssault = !gm.Metrics.DoorAssaultsPerNight.ContainsKey(gm.Night) && gm.Cfg.match.nightSeconds-gm.PhaseTimer >= gm.Cfg.progression.commitAfterSeconds;
-                if (mustAssault || me.Parts[part.TypeIndex] >= maxParts) continue;
-                var p = Pathfinding.FindPath(start, part.Tile, gm.MonsterWalkable);
-                if (p == null) continue;
-                float eat = gm.Cfg.bodyParts.eatSeconds;
-                float partThreat = gm.ThreatAt(HotelMap.Center(part.Tile), me);
-                if (partThreat * eat > me.Hp * 0.3f) continue;                 // not worth dying for a snack
-                float bonus = gm.Night <= 2 ? 3f : 1f;
-                if (part.Def.id == "torso" && me.Hp < gm.MaxHp(me) * 0.5f) bonus += 4f;
-                float cost = p.Count / speed + eat * (1f + partThreat / 20f) - bonus;
-                if (part == targetPart) { keepCost = cost; keepGoal = part.Tile; }
-                if (cost < bestCost) { bestCost = cost; bestPart = part; bestRes = null; bestGoal = part.Tile; }
-            }
-
             // keep the current target unless the new one is clearly better
-            if (keepCost < float.MaxValue && keepCost <= bestCost * 1.25f + 2f && (targetRes != null || targetPart != null))
+            if (keepCost < float.MaxValue && keepCost <= bestCost * 1.25f + 2f && targetRes != null)
             {
                 bestRes = targetRes;
-                bestPart = targetPart;
                 bestGoal = keepGoal;
             }
 
             targetRes = bestRes;
             if (bestRes != null && bestRes.Room != null && bestRes.Room.DoorBlocks) commitUntil = gm.Now + 14f;
-            targetPart = bestPart;
-            if (bestRes == null && bestPart == null)
+            if (bestRes == null)
             {
                 if (path == null || pathIdx >= path.Count || start == wanderGoal)
                 {
@@ -215,7 +193,7 @@ namespace BadAppleHotel.Game
 
         Vector2 FollowPath()
         {
-            if (targetRes != null && !GoalIsDoor() && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles+gm.RevealRadius(me))) goal = HotelMap.ToTile(targetRes.Pos);
+            if (targetRes != null && !GoalIsDoor() && gm.CanSee(me.Pos,targetRes.Pos,gm.Cfg.residents.visionRadiusTiles)) goal = HotelMap.ToTile(targetRes.Pos);
             return navigator.Steer(ref me.Pos, goal, gm.MonsterWalkable, GameManager.MonsterRadius, tickDt, tickNow, gm.Walls);
         }
 
@@ -316,8 +294,6 @@ namespace BadAppleHotel.Game
 
         bool HookTarget(float range)
         {
-            foreach (var p in gm.Parts)
-                if (me.Parts[p.TypeIndex] < gm.Cfg.bodyParts.maxPartsPerType && Vector2.Distance(me.Pos, HotelMap.Center(p.Tile)) <= range && gm.ClearLine(me.Pos, HotelMap.Center(p.Tile))) return true;
             foreach (var r in gm.Residents)
             {
                 float d = Vector2.Distance(me.Pos, r.Pos);

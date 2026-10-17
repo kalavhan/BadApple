@@ -17,7 +17,7 @@ namespace BadAppleHotel.Tests
         {
             randomState = Random.state;
             gm = new GameObject("Monster kit test").AddComponent<GameManager>();
-            gm.StartSimulation(ConfigLoader.Load(), 512, false);
+            gm.LegacyHotel = true; gm.StartSimulation(ConfigLoader.Load(), 512, false);
             while (gm.Phase == Phase.Setup) gm.StepMatch(1f / 30);
             foreach (var r in gm.Residents) r.Ai = null;
             gm.Monster.Ai = null;
@@ -359,24 +359,6 @@ namespace BadAppleHotel.Tests
             Assert.IsTrue(room.DoorBlocks, "The door stays intact.");
             for (int i = 0; i < 5 * 30 && m.PhasedRoom != null; i++) gm.StepMatch(1f / 30);
             if (room.DoorBlocks && room.Owner.Alive) Assert.IsFalse(room.Def.ContainsInterior(HotelMap.ToTile(m.Pos)), "Back out when the phase ends.");
-        }
-
-        [Test] public void Meat_hook_eats_a_body_part_from_across_the_hall()
-        {
-            var m = Become("stitchwork_chef");
-            m.Fear = 1000;
-            while (m.Level < gm.Cfg.progression.specialLevel) gm.TryBuyLevel(m);
-            while (m.Choices.Count > 0) gm.ChooseProgression(0);
-            var part = gm.Parts.FirstOrDefault();
-            Assume.That(part, Is.Not.Null);
-            var spot = gm.Map.CorridorTiles().Where(t => Vector2Int.Distance(t, part.Tile) is var d && d > 3 && d < 6)
-                .FirstOrDefault(t => gm.ClearLine(HotelMap.Center(t), HotelMap.Center(part.Tile)));
-            Assume.That(spot, Is.Not.EqualTo(default(Vector2Int)));
-            m.Pos = HotelMap.Center(spot);
-            int eaten = m.Parts.Sum();
-            Assert.IsTrue(gm.UseAbility(1));
-            Assert.AreEqual(eaten + 1, m.Parts.Sum());
-            Assert.IsFalse(gm.Parts.Contains(part));
         }
     }
 }
