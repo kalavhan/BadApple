@@ -1,0 +1,5045 @@
+[
+  {
+    "id": "hana",
+    "phase": "before",
+    "prefab": "Assets/Resources/Art3D/Characters/hana_rig.prefab",
+    "vertexCount": 10675,
+    "triangleCount": 6000,
+    "vertexCountUnchanged": true,
+    "triangleIndicesUnchanged": true,
+    "weights": {
+      "count": 10675,
+      "countMatchesVertices": true,
+      "invalidVertices": 0,
+      "maxSumError": 1.1920929E-07
+    },
+    "capVertexCount": 0,
+    "headBone": "mixamorig:Head",
+    "capVerticesNotFullyAttachedToHead": 0,
+    "capMaxHeadLocalDrift": 0.0,
+    "samplesPerClip": 8,
+    "clips": [
+      {
+        "state": "Idle",
+        "clip": "Idle",
+        "length": 10.000001,
+        "maxBoneAngleFromBind": 94.7430649,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.0453627259,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.859505057,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.16479075,
+              -0.0323600359,
+              -0.185897946
+            ],
+            "worldBoundsMax": [
+              0.173628211,
+              0.974809051,
+              0.272774577
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 1.25000012,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.854532242,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.167049363,
+              -0.031760145,
+              -0.184350371
+            ],
+            "worldBoundsMax": [
+              0.164432034,
+              0.975440264,
+              0.272638768
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 2.50000024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.8656439,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.170543313,
+              -0.0312610827,
+              -0.186044455
+            ],
+            "worldBoundsMax": [
+              0.174851313,
+              0.975918353,
+              0.272397816
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 3.75000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.8635258,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.16538915,
+              -0.0306100287,
+              -0.1864304
+            ],
+            "worldBoundsMax": [
+              0.171711177,
+              0.9765308,
+              0.273572445
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 5.00000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.855504751,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.168629035,
+              -0.0303080119,
+              -0.185824811
+            ],
+            "worldBoundsMax": [
+              0.171704367,
+              0.9768554,
+              0.271705
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 6.25000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.8612977,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.162222475,
+              -0.031341996,
+              -0.186820567
+            ],
+            "worldBoundsMax": [
+              0.175664946,
+              0.9757383,
+              0.27343592
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 7.500001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.8666893,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.163418964,
+              -0.03195287,
+              -0.186736763
+            ],
+            "worldBoundsMax": [
+              0.175363824,
+              0.975588858,
+              0.271347284
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 8.750001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.858558238,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.170318484,
+              -0.0317754932,
+              -0.183683515
+            ],
+            "worldBoundsMax": [
+              0.177727133,
+              0.9754387,
+              0.2717655
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Idle2",
+        "clip": "Idle2",
+        "length": 8.333334,
+        "maxBoneAngleFromBind": 94.77887,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.01770205,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.797840953,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.143517584,
+              -0.009398408,
+              -0.151147664
+            ],
+            "worldBoundsMax": [
+              0.133774817,
+              0.997551858,
+              0.102634154
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 1.04166675,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.7935778,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.144763365,
+              -0.009666926,
+              -0.1498219
+            ],
+            "worldBoundsMax": [
+              0.1342347,
+              0.997585535,
+              0.103730671
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 2.08333349,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.7935158,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.142403558,
+              -0.009507769,
+              -0.1479921
+            ],
+            "worldBoundsMax": [
+              0.135835946,
+              0.997331,
+              0.104818992
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 3.12500024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.7964909,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.141300678,
+              -0.009047308,
+              -0.143542945
+            ],
+            "worldBoundsMax": [
+              0.137036636,
+              0.997132242,
+              0.107465945
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 4.166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.803137541,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.140270591,
+              -0.009513555,
+              -0.146059841
+            ],
+            "worldBoundsMax": [
+              0.135226563,
+              0.99711585,
+              0.107274882
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 5.208334,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.7933077,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.14137277,
+              -0.009590628,
+              -0.144883931
+            ],
+            "worldBoundsMax": [
+              0.135999918,
+              0.997218668,
+              0.107109718
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 6.25000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.7899402,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.14382723,
+              -0.009042954,
+              -0.141293645
+            ],
+            "worldBoundsMax": [
+              0.136936575,
+              0.9970556,
+              0.106766544
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 7.291667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.7964828,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.142750472,
+              -0.009583497,
+              -0.152103543
+            ],
+            "worldBoundsMax": [
+              0.134239733,
+              0.99735105,
+              0.102495305
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Walk",
+        "clip": "Walk",
+        "length": 1.03333342,
+        "maxBoneAngleFromBind": 118.396248,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.465617478,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.815600038,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.186401576,
+              -0.0281175077,
+              -0.111772366
+            ],
+            "worldBoundsMax": [
+              0.158323586,
+              0.979163766,
+              0.129356682
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.129166678,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.6659669,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.162545547,
+              -0.01787256,
+              -0.06390243
+            ],
+            "worldBoundsMax": [
+              0.179158539,
+              0.972841144,
+              0.4388913
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.258333355,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.5470391,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.141391,
+              -0.0119433552,
+              -0.070028685
+            ],
+            "worldBoundsMax": [
+              0.17596522,
+              0.9472414,
+              0.620274961
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.387500048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.5405771,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.160593137,
+              -0.0469735,
+              0.03256061
+            ],
+            "worldBoundsMax": [
+              0.167657614,
+              0.947649837,
+              0.6771941
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.5166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.384047538,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.179883391,
+              -0.0301932432,
+              0.3350004
+            ],
+            "worldBoundsMax": [
+              0.155890763,
+              0.9773466,
+              0.671775043
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.6458334,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.386929542,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.182282224,
+              -0.0267371275,
+              0.496408343
+            ],
+            "worldBoundsMax": [
+              0.13739948,
+              0.970034063,
+              0.9110103
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.7750001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.5432628,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.182906687,
+              -0.0315317251,
+              0.5107522
+            ],
+            "worldBoundsMax": [
+              0.119375959,
+              0.9429343,
+              1.11795831
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.904166758,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.6329687,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.188414067,
+              -0.0415864922,
+              0.5909919
+            ],
+            "worldBoundsMax": [
+              0.132259071,
+              0.952827036,
+              1.1357404
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Run",
+        "clip": "Run",
+        "length": 0.700000048,
+        "maxBoneAngleFromBind": 107.841461,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.6195964,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.881202936,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.170031786,
+              -0.044685103,
+              -0.14282918
+            ],
+            "worldBoundsMax": [
+              0.188632578,
+              0.9568125,
+              0.171254963
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.087500006,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.740873158,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.19987604,
+              -0.0194162466,
+              0.0291788615
+            ],
+            "worldBoundsMax": [
+              0.183306217,
+              0.9941286,
+              0.5779806
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.175000012,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.6198042,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.175025061,
+              0.08330973,
+              0.142380565
+            ],
+            "worldBoundsMax": [
+              0.184182078,
+              0.9984135,
+              0.8950917
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.262500018,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.716916,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.150417209,
+              0.0148710273,
+              0.4082839
+            ],
+            "worldBoundsMax": [
+              0.182954147,
+              0.972152948,
+              1.05743515
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.350000024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.726063848,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.154538572,
+              -0.0409935452,
+              0.769018
+            ],
+            "worldBoundsMax": [
+              0.202221259,
+              0.9520848,
+              1.126844
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.43750003,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.973374963,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.177181914,
+              -0.00130340864,
+              0.974210143
+            ],
+            "worldBoundsMax": [
+              0.217030376,
+              0.987864733,
+              1.55715084
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.525000036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.3482765,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.183421642,
+              0.06473007,
+              1.10597217
+            ],
+            "worldBoundsMax": [
+              0.170226946,
+              0.985933661,
+              1.90506816
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.6125001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.45368481,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.180302724,
+              0.005093481,
+              1.3819325
+            ],
+            "worldBoundsMax": [
+              0.176560342,
+              0.9604417,
+              2.04244947
+            ]
+          }
+        ]
+      },
+      {
+        "state": "RunScared",
+        "clip": "RunScared",
+        "length": 1.1,
+        "maxBoneAngleFromBind": 111.187531,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.9020688,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.794486642,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.190969586,
+              -0.009975556,
+              -0.165622592
+            ],
+            "worldBoundsMax": [
+              0.2543724,
+              0.9788139,
+              0.384091258
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.1375,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.4895688,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.246613935,
+              -0.05429474,
+              0.237600565
+            ],
+            "worldBoundsMax": [
+              0.230196178,
+              0.96183145,
+              0.721275568
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.275,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.771838069,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.363108218,
+              -0.031756673,
+              0.361630082
+            ],
+            "worldBoundsMax": [
+              0.217730835,
+              0.966761231,
+              1.097147
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.412500024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.027173,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.315649778,
+              -0.00885686651,
+              0.8006023
+            ],
+            "worldBoundsMax": [
+              0.235329479,
+              0.9185982,
+              1.392122
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.55,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.38917387,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.172269329,
+              -0.00175270846,
+              1.19765162
+            ],
+            "worldBoundsMax": [
+              0.2791534,
+              0.9874033,
+              1.74837458
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.6875,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.662279,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.212867975,
+              -0.07093475,
+              1.66599476
+            ],
+            "worldBoundsMax": [
+              0.247664034,
+              0.935014248,
+              2.17694044
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.825000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 2.20937467,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.32657668,
+              0.0246242546,
+              1.77674472
+            ],
+            "worldBoundsMax": [
+              0.23379612,
+              0.984642744,
+              2.54076838
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.962500036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 2.46215057,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.330532074,
+              0.0179586671,
+              2.26075053
+            ],
+            "worldBoundsMax": [
+              0.245792791,
+              0.9162588,
+              2.856011
+            ]
+          }
+        ]
+      },
+      {
+        "state": "LieDown",
+        "clip": "LieDown",
+        "length": 5.73333359,
+        "maxBoneAngleFromBind": 116.60331,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.434803843,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.784636557,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.122187719,
+              0.06818368,
+              -0.0674648955
+            ],
+            "worldBoundsMax": [
+              0.232694551,
+              0.913267255,
+              0.45984292
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.81904763,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.772181451,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.12038298,
+              0.0823700652,
+              -0.16262275
+            ],
+            "worldBoundsMax": [
+              0.223792076,
+              0.911336541,
+              0.48339358
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 1.63809526,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 0.923219144,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.148518547,
+              0.2128147,
+              -0.238713562
+            ],
+            "worldBoundsMax": [
+              0.192356214,
+              0.9033821,
+              0.5270301
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 2.457143,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.063763,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.159461424,
+              0.185861737,
+              -0.351058662
+            ],
+            "worldBoundsMax": [
+              0.239674985,
+              0.8536923,
+              0.4134512
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 3.27619052,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.25091386,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.17701304,
+              0.155361876,
+              -0.5301711
+            ],
+            "worldBoundsMax": [
+              0.219726563,
+              0.7487033,
+              0.414325833
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 4.095238,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.52009928,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.202568814,
+              0.139374748,
+              -0.669822633
+            ],
+            "worldBoundsMax": [
+              0.172868654,
+              0.6379518,
+              0.359789819
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 4.914286,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.53101563,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.173061,
+              0.160473526,
+              -0.6612054
+            ],
+            "worldBoundsMax": [
+              0.1680181,
+              0.5760499,
+              0.353720158
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 5.73333359,
+            "nonFiniteVertices": 0,
+            "vertexCount": 10675,
+            "maxDisplacementFromBind": 1.52801013,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.139390111,
+              0.06997584,
+              -0.6606578
+            ],
+            "worldBoundsMax": [
+              0.217658311,
+              0.575696349,
+              0.35371685
+            ]
+          }
+        ]
+      }
+    ],
+    "capRigidWithHead": true
+  },
+  {
+    "id": "dexter",
+    "phase": "before",
+    "prefab": "Assets/Resources/Art3D/Characters/dexter_rig.prefab",
+    "vertexCount": 11689,
+    "triangleCount": 6000,
+    "vertexCountUnchanged": true,
+    "triangleIndicesUnchanged": true,
+    "weights": {
+      "count": 11689,
+      "countMatchesVertices": true,
+      "invalidVertices": 0,
+      "maxSumError": 1.1920929E-07
+    },
+    "capVertexCount": 0,
+    "headBone": "mixamorig:Head",
+    "capVerticesNotFullyAttachedToHead": 0,
+    "capMaxHeadLocalDrift": 0.0,
+    "samplesPerClip": 8,
+    "clips": [
+      {
+        "state": "Idle",
+        "clip": "Idle",
+        "length": 10.000001,
+        "maxBoneAngleFromBind": 47.5057373,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.0251100324,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.235699281,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.194018066,
+              -0.03425795,
+              -0.199822024
+            ],
+            "worldBoundsMax": [
+              0.198752388,
+              0.9700433,
+              0.286492825
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 1.25000012,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.23117125,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.197535425,
+              -0.0344434157,
+              -0.200713769
+            ],
+            "worldBoundsMax": [
+              0.195449218,
+              0.9722954,
+              0.2869171
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 2.50000024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.237596989,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.19964844,
+              -0.03390927,
+              -0.202449039
+            ],
+            "worldBoundsMax": [
+              0.196283624,
+              0.969612241,
+              0.286657035
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 3.75000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.237090558,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.194821447,
+              -0.0325735733,
+              -0.201005474
+            ],
+            "worldBoundsMax": [
+              0.197994426,
+              0.9717961,
+              0.2873729
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 5.00000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.234661385,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.198878527,
+              -0.0334898457,
+              -0.20238103
+            ],
+            "worldBoundsMax": [
+              0.19504118,
+              0.97434175,
+              0.286266923
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 6.25000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.237252414,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1917501,
+              -0.033642754,
+              -0.201910689
+            ],
+            "worldBoundsMax": [
+              0.200104415,
+              0.9696888,
+              0.287222922
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 7.500001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.238150671,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.193471432,
+              -0.034444876,
+              -0.201763049
+            ],
+            "worldBoundsMax": [
+              0.197802559,
+              0.9716842,
+              0.285541832
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 8.750001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.23566784,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.199874178,
+              -0.034938775,
+              -0.200805381
+            ],
+            "worldBoundsMax": [
+              0.1970571,
+              0.9713429,
+              0.286425531
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Idle2",
+        "clip": "Idle2",
+        "length": 8.333334,
+        "maxBoneAngleFromBind": 40.0234,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.0142234154,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.102148727,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.193000481,
+              -0.0102482671,
+              -0.127745137
+            ],
+            "worldBoundsMax": [
+              0.185015038,
+              0.994309,
+              0.153325632
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 1.04166675,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.101821743,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1928145,
+              -0.0102209644,
+              -0.1274728
+            ],
+            "worldBoundsMax": [
+              0.185311034,
+              0.9940793,
+              0.1550792
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 2.08333349,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.100788966,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.191446722,
+              -0.009945133,
+              -0.12551181
+            ],
+            "worldBoundsMax": [
+              0.186421514,
+              0.99421674,
+              0.156224415
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 3.12500024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.09958206,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.190007672,
+              -0.009777469,
+              -0.123036578
+            ],
+            "worldBoundsMax": [
+              0.187311381,
+              0.9946588,
+              0.1582117
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 4.166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.101022877,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.191820875,
+              -0.0110202665,
+              -0.1252747
+            ],
+            "worldBoundsMax": [
+              0.185800523,
+              0.995799839,
+              0.157452092
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 5.208334,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.100744665,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.191212654,
+              -0.0105545642,
+              -0.125241622
+            ],
+            "worldBoundsMax": [
+              0.186460957,
+              0.994513333,
+              0.158374116
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 6.25000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.1008182,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.190522611,
+              -0.009148591,
+              -0.123078868
+            ],
+            "worldBoundsMax": [
+              0.187249869,
+              0.99343437,
+              0.157361642
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 7.291667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.102541722,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.192915544,
+              -0.0106754908,
+              -0.128102139
+            ],
+            "worldBoundsMax": [
+              0.185203418,
+              0.9940232,
+              0.1530364
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Walk",
+        "clip": "Walk",
+        "length": 1.03333342,
+        "maxBoneAngleFromBind": 65.49446,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.425061435,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.124429345,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.202200443,
+              -0.02749444,
+              -0.11626859
+            ],
+            "worldBoundsMax": [
+              0.193442434,
+              0.976817131,
+              0.1660584
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.129166678,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.3948373,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.193103731,
+              -0.0278960634,
+              -0.0390127748
+            ],
+            "worldBoundsMax": [
+              0.204873323,
+              0.9690148,
+              0.435589433
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.258333355,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.59338814,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.185259238,
+              -0.0393730775,
+              -0.03375799
+            ],
+            "worldBoundsMax": [
+              0.196120933,
+              0.946135938,
+              0.600162
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.387500048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.6081372,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1929163,
+              -0.0318835378,
+              0.060168
+            ],
+            "worldBoundsMax": [
+              0.182494581,
+              0.949717939,
+              0.666347742
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.5166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.5998062,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.21047774,
+              -0.0412206054,
+              0.344754636
+            ],
+            "worldBoundsMax": [
+              0.178257465,
+              0.9742883,
+              0.658589065
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.6458334,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.7921864,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.220913231,
+              -0.0226107854,
+              0.413210869
+            ],
+            "worldBoundsMax": [
+              0.174100518,
+              0.966418,
+              0.8755777
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.7750001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.9862439,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.219126076,
+              -0.0169698317,
+              0.496457279
+            ],
+            "worldBoundsMax": [
+              0.172684029,
+              0.9425949,
+              1.06400514
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.904166758,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.994431257,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.214517087,
+              -0.0415551066,
+              0.581640244
+            ],
+            "worldBoundsMax": [
+              0.1840827,
+              0.9549267,
+              1.0884589
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Run",
+        "clip": "Run",
+        "length": 0.700000048,
+        "maxBoneAngleFromBind": 99.02361,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.569507062,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.212248474,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1823281,
+              -0.0393700227,
+              -0.146491662
+            ],
+            "worldBoundsMax": [
+              0.205998689,
+              0.9547278,
+              0.2324304
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.087500006,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.580346465,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.204462141,
+              -0.0481074452,
+              0.04359494
+            ],
+            "worldBoundsMax": [
+              0.219909161,
+              0.9927073,
+              0.57087487
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.175000012,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.890005767,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.199659511,
+              0.03824255,
+              0.153641582
+            ],
+            "worldBoundsMax": [
+              0.218021855,
+              0.9982706,
+              0.8602043
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.262500018,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.9893139,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.188404918,
+              0.0252681952,
+              0.409736574
+            ],
+            "worldBoundsMax": [
+              0.222509265,
+              0.9712099,
+              1.01367974
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.350000024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 1.04407239,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.19272086,
+              -0.0413892865,
+              0.7118593
+            ],
+            "worldBoundsMax": [
+              0.204290345,
+              0.9511892,
+              1.11928606
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.43750003,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 1.39216864,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.2023784,
+              -0.0313546658,
+              0.8750846
+            ],
+            "worldBoundsMax": [
+              0.221611232,
+              0.9862657,
+              1.47749794
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.525000036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 1.71858847,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.20714055,
+              0.02301365,
+              1.0622822
+            ],
+            "worldBoundsMax": [
+              0.212516382,
+              0.9860222,
+              1.78383684
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.6125001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 1.83060169,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.209869727,
+              0.0195704084,
+              1.31700921
+            ],
+            "worldBoundsMax": [
+              0.204196975,
+              0.9599746,
+              1.92103577
+            ]
+          }
+        ]
+      },
+      {
+        "state": "RunScared",
+        "clip": "RunScared",
+        "length": 1.1,
+        "maxBoneAngleFromBind": 117.353836,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.824311137,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.452416867,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.234943479,
+              -0.0269598756,
+              -0.1385807
+            ],
+            "worldBoundsMax": [
+              0.287477642,
+              0.9755547,
+              0.3771423
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.1375,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.6278892,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.270786762,
+              -0.0526970327,
+              0.169096425
+            ],
+            "worldBoundsMax": [
+              0.261649728,
+              0.95623,
+              0.6129587
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.275,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 1.086946,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.341696441,
+              -0.05644706,
+              0.36415714
+            ],
+            "worldBoundsMax": [
+              0.247570455,
+              0.952823162,
+              1.03104377
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.412500024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 1.23523784,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.281108022,
+              -0.0286424179,
+              0.78172493
+            ],
+            "worldBoundsMax": [
+              0.26804167,
+              0.918876231,
+              1.21936107
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.55,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 1.62684608,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.217345417,
+              -0.018840136,
+              1.12123215
+            ],
+            "worldBoundsMax": [
+              0.314081579,
+              0.979751766,
+              1.63616276
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.6875,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 1.87769115,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.249028414,
+              -0.0687632,
+              1.49823046
+            ],
+            "worldBoundsMax": [
+              0.280846059,
+              0.9344868,
+              1.91743064
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.825000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 2.410837,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.326492459,
+              -0.00749904057,
+              1.6701113
+            ],
+            "worldBoundsMax": [
+              0.2616124,
+              0.9762036,
+              2.37560058
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.962500036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 2.579421,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.300955325,
+              -0.0122821936,
+              2.137038
+            ],
+            "worldBoundsMax": [
+              0.276636928,
+              0.9214129,
+              2.59761786
+            ]
+          }
+        ]
+      },
+      {
+        "state": "LieDown",
+        "clip": "LieDown",
+        "length": 5.73333359,
+        "maxBoneAngleFromBind": 104.974388,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.416741937,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.374969065,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.171958178,
+              0.0844515562,
+              -0.104331866
+            ],
+            "worldBoundsMax": [
+              0.241071433,
+              0.909226954,
+              0.442412019
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.81904763,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.364243984,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.17029421,
+              0.075127095,
+              -0.171729222
+            ],
+            "worldBoundsMax": [
+              0.235380232,
+              0.8886129,
+              0.437960029
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 1.63809526,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.6198498,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.163832158,
+              0.26813364,
+              -0.229988888
+            ],
+            "worldBoundsMax": [
+              0.198699385,
+              0.898501039,
+              0.484466374
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 2.457143,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.6207084,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.193212241,
+              0.2585397,
+              -0.352299154
+            ],
+            "worldBoundsMax": [
+              0.241225272,
+              0.838129461,
+              0.390568554
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 3.27619052,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.5834541,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.2094118,
+              0.2292567,
+              -0.51111573
+            ],
+            "worldBoundsMax": [
+              0.226486385,
+              0.76987505,
+              0.400174558
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 4.095238,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.9195829,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.2428698,
+              0.237628847,
+              -0.6892863
+            ],
+            "worldBoundsMax": [
+              0.215135634,
+              0.664145768,
+              0.356605947
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 4.914286,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.9431949,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.210621312,
+              0.231403038,
+              -0.6944899
+            ],
+            "worldBoundsMax": [
+              0.199101821,
+              0.595348537,
+              0.355028749
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 5.73333359,
+            "nonFiniteVertices": 0,
+            "vertexCount": 11689,
+            "maxDisplacementFromBind": 0.942030668,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1715504,
+              0.216365829,
+              -0.6926582
+            ],
+            "worldBoundsMax": [
+              0.197944522,
+              0.5940265,
+              0.3557315
+            ]
+          }
+        ]
+      }
+    ],
+    "capRigidWithHead": true
+  },
+  {
+    "id": "fenwick",
+    "phase": "before",
+    "prefab": "Assets/Resources/Art3D/Characters/fenwick_rig.prefab",
+    "vertexCount": 12178,
+    "triangleCount": 5999,
+    "vertexCountUnchanged": true,
+    "triangleIndicesUnchanged": true,
+    "weights": {
+      "count": 12178,
+      "countMatchesVertices": true,
+      "invalidVertices": 0,
+      "maxSumError": 1.1920929E-07
+    },
+    "capVertexCount": 0,
+    "headBone": "mixamorig:Head",
+    "capVerticesNotFullyAttachedToHead": 0,
+    "capMaxHeadLocalDrift": 0.0,
+    "samplesPerClip": 8,
+    "clips": [
+      {
+        "state": "Idle",
+        "clip": "Idle",
+        "length": 10.000001,
+        "maxBoneAngleFromBind": 42.91327,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.0326195657,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.3165786,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.180508673,
+              -0.0370458551,
+              -0.1912139
+            ],
+            "worldBoundsMax": [
+              0.178109467,
+              0.971948147,
+              0.271555752
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 1.25000012,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.3166388,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.182249472,
+              -0.03686486,
+              -0.191694379
+            ],
+            "worldBoundsMax": [
+              0.173592657,
+              0.9738616,
+              0.271549374
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 2.50000024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.315956354,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.185436249,
+              -0.0363191441,
+              -0.193341136
+            ],
+            "worldBoundsMax": [
+              0.180325449,
+              0.9718567,
+              0.271155447
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 3.75000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.317942351,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.180708453,
+              -0.0354387164,
+              -0.19215256
+            ],
+            "worldBoundsMax": [
+              0.176622719,
+              0.973526,
+              0.2723302
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 5.00000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.314677954,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.18365401,
+              -0.0357587,
+              -0.193091333
+            ],
+            "worldBoundsMax": [
+              0.177469343,
+              0.97561425,
+              0.27070874
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 6.25000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.316769,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1778519,
+              -0.03629013,
+              -0.192975938
+            ],
+            "worldBoundsMax": [
+              0.180500478,
+              0.9718865,
+              0.272216
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 7.500001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.3154131,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.178976446,
+              -0.0369311981,
+              -0.193136752
+            ],
+            "worldBoundsMax": [
+              0.180010036,
+              0.973347843,
+              0.270398259
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 8.750001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.3145591,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.184784263,
+              -0.0370870344,
+              -0.191420019
+            ],
+            "worldBoundsMax": [
+              0.183262676,
+              0.9726194,
+              0.270558357
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Idle2",
+        "clip": "Idle2",
+        "length": 8.333334,
+        "maxBoneAngleFromBind": 31.51405,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.0170419272,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.148129612,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.163767874,
+              -0.01236952,
+              -0.102224119
+            ],
+            "worldBoundsMax": [
+              0.144131854,
+              0.9949564,
+              0.114424586
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 1.04166675,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.149306819,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.162921757,
+              -0.0127821742,
+              -0.101416714
+            ],
+            "worldBoundsMax": [
+              0.144178957,
+              0.9947816,
+              0.112336278
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 2.08333349,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.153215572,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.160291836,
+              -0.0126277721,
+              -0.09895799
+            ],
+            "worldBoundsMax": [
+              0.145436138,
+              0.995098,
+              0.113491967
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 3.12500024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.156508833,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.157821238,
+              -0.0123462,
+              -0.09456024
+            ],
+            "worldBoundsMax": [
+              0.147506535,
+              0.995404065,
+              0.11451564
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 4.166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.151118979,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.160857767,
+              -0.0127198687,
+              -0.09783713
+            ],
+            "worldBoundsMax": [
+              0.148243457,
+              0.9961172,
+              0.115124837
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 5.208334,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.15290685,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.160152674,
+              -0.0127711212,
+              -0.09686039
+            ],
+            "worldBoundsMax": [
+              0.1458194,
+              0.9952203,
+              0.113715358
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 6.25000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.157573715,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1570038,
+              -0.0120156771,
+              -0.09230132
+            ],
+            "worldBoundsMax": [
+              0.145638227,
+              0.9946138,
+              0.116298631
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 7.291667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.148843288,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.163073763,
+              -0.0125514111,
+              -0.102943368
+            ],
+            "worldBoundsMax": [
+              0.143808335,
+              0.9948827,
+              0.1136739
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Walk",
+        "clip": "Walk",
+        "length": 1.03333342,
+        "maxBoneAngleFromBind": 60.9843674,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.4200085,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.2631154,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.3061378,
+              -0.0292958319,
+              -0.08219362
+            ],
+            "worldBoundsMax": [
+              0.17676264,
+              0.9780715,
+              0.125139475
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.129166678,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.396598458,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.273892045,
+              -0.0245877076,
+              -0.0506490469
+            ],
+            "worldBoundsMax": [
+              0.190164521,
+              0.9706905,
+              0.412797481
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.258333355,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.5778921,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.23937358,
+              -0.027818596,
+              -0.0519839972
+            ],
+            "worldBoundsMax": [
+              0.181842059,
+              0.948352337,
+              0.567075551
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.387500048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.608291149,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.267253876,
+              -0.04087352,
+              0.0475574657
+            ],
+            "worldBoundsMax": [
+              0.168504,
+              0.9506831,
+              0.635782957
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.5166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.6466452,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.279199779,
+              -0.0449128971,
+              0.316616416
+            ],
+            "worldBoundsMax": [
+              0.150171831,
+              0.97539,
+              0.636243641
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.6458334,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.8169689,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.273084581,
+              -0.0217816141,
+              0.4600269
+            ],
+            "worldBoundsMax": [
+              0.143769652,
+              0.9683014,
+              0.853749454
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.7750001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.9596846,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.271302462,
+              -0.0262797978,
+              0.479305863
+            ],
+            "worldBoundsMax": [
+              0.133398324,
+              0.9446289,
+              1.03455448
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.904166758,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.08396518,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.2919482,
+              -0.03882634,
+              0.5531079
+            ],
+            "worldBoundsMax": [
+              0.1455172,
+              0.955758333,
+              1.062587
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Run",
+        "clip": "Run",
+        "length": 0.700000048,
+        "maxBoneAngleFromBind": 100.13485,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.5692,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.254534066,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.255065441,
+              -0.0438919738,
+              -0.1475259
+            ],
+            "worldBoundsMax": [
+              0.208391741,
+              0.9571634,
+              0.159168243
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.087500006,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.5411086,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.231614247,
+              -0.0405225679,
+              0.0402033143
+            ],
+            "worldBoundsMax": [
+              0.206705853,
+              0.991630554,
+              0.531103253
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.175000012,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.853898764,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.213359073,
+              0.0360356048,
+              0.145047665
+            ],
+            "worldBoundsMax": [
+              0.206700072,
+              0.9961508,
+              0.82088846
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.262500018,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.958688438,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.239200369,
+              0.01594163,
+              0.384873241
+            ],
+            "worldBoundsMax": [
+              0.20777306,
+              0.970973432,
+              0.976472437
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.350000024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.08771908,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.220660031,
+              -0.04143738,
+              0.6986498
+            ],
+            "worldBoundsMax": [
+              0.216072053,
+              0.9546975,
+              1.02642953
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.43750003,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.42825007,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.195168316,
+              -0.0184544828,
+              0.8629979
+            ],
+            "worldBoundsMax": [
+              0.187020734,
+              0.988058448,
+              1.447961
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.525000036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.69226789,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1991697,
+              0.0288747642,
+              1.02892423
+            ],
+            "worldBoundsMax": [
+              0.152937576,
+              0.9870472,
+              1.75213313
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.6125001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.80174446,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.214665011,
+              0.00838614348,
+              1.27739429
+            ],
+            "worldBoundsMax": [
+              0.185854718,
+              0.9617771,
+              1.88905454
+            ]
+          }
+        ]
+      },
+      {
+        "state": "RunScared",
+        "clip": "RunScared",
+        "length": 1.1,
+        "maxBoneAngleFromBind": 125.075272,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.8289028,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.465828419,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.218797639,
+              -0.0234526973,
+              -0.143111825
+            ],
+            "worldBoundsMax": [
+              0.276331067,
+              0.9768365,
+              0.3758015
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.1375,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.671932161,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.25480628,
+              -0.04882159,
+              0.207077026
+            ],
+            "worldBoundsMax": [
+              0.2487789,
+              0.9613459,
+              0.6307054
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.275,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.03773558,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.378720641,
+              -0.0595501,
+              0.3438944
+            ],
+            "worldBoundsMax": [
+              0.2382788,
+              0.9597261,
+              0.99088186
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.412500024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.32231879,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.3365053,
+              -0.0415117666,
+              0.738167644
+            ],
+            "worldBoundsMax": [
+              0.258659,
+              0.92479986,
+              1.2619071
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.55,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.68498993,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.198092923,
+              -0.01572906,
+              1.10052693
+            ],
+            "worldBoundsMax": [
+              0.3125081,
+              0.9815916,
+              1.6466403
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.6875,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 1.89564121,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.228392974,
+              -0.06634485,
+              1.51068473
+            ],
+            "worldBoundsMax": [
+              0.279076755,
+              0.9392917,
+              1.90222907
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.825000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 2.34733248,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.329285979,
+              -0.0119167482,
+              1.64414525
+            ],
+            "worldBoundsMax": [
+              0.255817235,
+              0.980428457,
+              2.314406
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.962500036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 2.62063122,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.351097941,
+              -0.0215775874,
+              2.07729459
+            ],
+            "worldBoundsMax": [
+              0.268718779,
+              0.9254496,
+              2.60083866
+            ]
+          }
+        ]
+      },
+      {
+        "state": "LieDown",
+        "clip": "LieDown",
+        "length": 5.73333359,
+        "maxBoneAngleFromBind": 104.445946,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.420195371,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.3868642,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.143304,
+              0.06481329,
+              -0.08250231
+            ],
+            "worldBoundsMax": [
+              0.214041069,
+              0.91770345,
+              0.432558775
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.81904763,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.389374852,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.148663372,
+              0.06612257,
+              -0.171665043
+            ],
+            "worldBoundsMax": [
+              0.207786366,
+              0.9115511,
+              0.438918769
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 1.63809526,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.6414888,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.164925739,
+              0.169258341,
+              -0.2322911
+            ],
+            "worldBoundsMax": [
+              0.1755373,
+              0.9117173,
+              0.4770918
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 2.457143,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.6535552,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.182205677,
+              0.174138591,
+              -0.337219357
+            ],
+            "worldBoundsMax": [
+              0.232143775,
+              0.868406,
+              0.3629132
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 3.27619052,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.627312541,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.196203455,
+              0.119817555,
+              -0.526070833
+            ],
+            "worldBoundsMax": [
+              0.2001808,
+              0.7694329,
+              0.382721126
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 4.095238,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.910187244,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.230254248,
+              0.126897112,
+              -0.6940645
+            ],
+            "worldBoundsMax": [
+              0.202685878,
+              0.5783961,
+              0.3367414
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 4.914286,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.9366009,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.195921987,
+              0.137874618,
+              -0.690412641
+            ],
+            "worldBoundsMax": [
+              0.187384114,
+              0.5363611,
+              0.332619816
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 5.73333359,
+            "nonFiniteVertices": 0,
+            "vertexCount": 12178,
+            "maxDisplacementFromBind": 0.9335243,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.16445516,
+              0.07736152,
+              -0.688565135
+            ],
+            "worldBoundsMax": [
+              0.1896016,
+              0.536426544,
+              0.332178622
+            ]
+          }
+        ]
+      }
+    ],
+    "capRigidWithHead": true
+  },
+  {
+    "id": "cornelius",
+    "phase": "before",
+    "prefab": "Assets/Resources/Art3D/Characters/cornelius_rig.prefab",
+    "vertexCount": 5983,
+    "triangleCount": 6000,
+    "vertexCountUnchanged": true,
+    "triangleIndicesUnchanged": true,
+    "weights": {
+      "count": 5983,
+      "countMatchesVertices": true,
+      "invalidVertices": 0,
+      "maxSumError": 1.1920929E-07
+    },
+    "capVertexCount": 0,
+    "headBone": "mixamorig:Head",
+    "capVerticesNotFullyAttachedToHead": 0,
+    "capMaxHeadLocalDrift": 0.0,
+    "samplesPerClip": 8,
+    "clips": [
+      {
+        "state": "Idle",
+        "clip": "Idle",
+        "length": 10.000001,
+        "maxBoneAngleFromBind": 37.19643,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.0338465869,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.244679928,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.173658356,
+              -0.0287078731,
+              -0.180766791
+            ],
+            "worldBoundsMax": [
+              0.189383924,
+              0.956365645,
+              0.2663503
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 1.25000012,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.245266289,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.175947413,
+              -0.0285136439,
+              -0.180619031
+            ],
+            "worldBoundsMax": [
+              0.1741398,
+              0.958120048,
+              0.2668896
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 2.50000024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.2447213,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.178625122,
+              -0.0279626437,
+              -0.182508975
+            ],
+            "worldBoundsMax": [
+              0.191602409,
+              0.956537366,
+              0.2665241
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 3.75000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.2462645,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.174001411,
+              -0.0271195583,
+              -0.181593388
+            ],
+            "worldBoundsMax": [
+              0.188205719,
+              0.95781523,
+              0.267118663
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 5.00000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.243687,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1772719,
+              -0.0273623839,
+              -0.1821501
+            ],
+            "worldBoundsMax": [
+              0.188092485,
+              0.959756851,
+              0.2663983
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 6.25000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.245033264,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.171135411,
+              -0.0279681049,
+              -0.182270974
+            ],
+            "worldBoundsMax": [
+              0.191517249,
+              0.9566085,
+              0.267134935
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 7.500001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.2438609,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.172427386,
+              -0.0285095163,
+              -0.182314843
+            ],
+            "worldBoundsMax": [
+              0.1917272,
+              0.957756937,
+              0.265403867
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 8.750001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.243799642,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.178118855,
+              -0.0286847241,
+              -0.180575222
+            ],
+            "worldBoundsMax": [
+              0.19424656,
+              0.957546055,
+              0.26647532
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Idle2",
+        "clip": "Idle2",
+        "length": 8.333334,
+        "maxBoneAngleFromBind": 33.0993652,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.0171965733,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.099985294,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.160177663,
+              -0.006812957,
+              -0.09030425
+            ],
+            "worldBoundsMax": [
+              0.144715,
+              0.9791357,
+              0.110197172
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 1.04166675,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.100114882,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1593104,
+              -0.0067242505,
+              -0.0887215361
+            ],
+            "worldBoundsMax": [
+              0.144880682,
+              0.9790261,
+              0.111063145
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 2.08333349,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.100549988,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.157287091,
+              -0.006704402,
+              -0.08505606
+            ],
+            "worldBoundsMax": [
+              0.1460365,
+              0.9793259,
+              0.11054565
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 3.12500024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.0992674455,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1550268,
+              -0.00642464031,
+              -0.08112203
+            ],
+            "worldBoundsMax": [
+              0.148071021,
+              0.979459167,
+              0.11139515
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 4.166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.100260332,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1580089,
+              -0.007507895,
+              -0.08786609
+            ],
+            "worldBoundsMax": [
+              0.148513168,
+              0.979771256,
+              0.107795618
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 5.208334,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.100746386,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.157080084,
+              -0.007446793,
+              -0.08400416
+            ],
+            "worldBoundsMax": [
+              0.146514654,
+              0.979473054,
+              0.107224025
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 6.25000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.1008417,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1539761,
+              -0.00652616937,
+              -0.07935675
+            ],
+            "worldBoundsMax": [
+              0.1463466,
+              0.979153454,
+              0.110284843
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 7.291667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.100854315,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.15983808,
+              -0.007440773,
+              -0.09150424
+            ],
+            "worldBoundsMax": [
+              0.144484118,
+              0.979248941,
+              0.10789457
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Walk",
+        "clip": "Walk",
+        "length": 1.03333342,
+        "maxBoneAngleFromBind": 77.034874,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.417404443,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.2579472,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.178398162,
+              -0.023167586,
+              -0.08585768
+            ],
+            "worldBoundsMax": [
+              0.173093691,
+              0.9619864,
+              0.126047611
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.129166678,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.355018944,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.168473259,
+              -0.0194828324,
+              -0.0475997366
+            ],
+            "worldBoundsMax": [
+              0.185104057,
+              0.9551145,
+              0.419315875
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.258333355,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.552386761,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.157803744,
+              -0.0222015567,
+              -0.0492422655
+            ],
+            "worldBoundsMax": [
+              0.177920312,
+              0.9326882,
+              0.57865864
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.387500048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.5649989,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.166423529,
+              -0.0332254879,
+              0.0451334976
+            ],
+            "worldBoundsMax": [
+              0.165622532,
+              0.9342607,
+              0.6393799
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.5166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.5660613,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.187155366,
+              -0.03532232,
+              0.3224038
+            ],
+            "worldBoundsMax": [
+              0.1516484,
+              0.96068275,
+              0.633946061
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.6458334,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.7589502,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.196068764,
+              -0.02012084,
+              0.4693375
+            ],
+            "worldBoundsMax": [
+              0.142842129,
+              0.9545808,
+              0.844353557
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.7750001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.96014607,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.19557023,
+              -0.0163285546,
+              0.482989043
+            ],
+            "worldBoundsMax": [
+              0.1326521,
+              0.9300064,
+              1.02845573
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.904166758,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.975848556,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.19032371,
+              -0.03530268,
+              0.5614796
+            ],
+            "worldBoundsMax": [
+              0.144528344,
+              0.93961,
+              1.05397391
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Run",
+        "clip": "Run",
+        "length": 0.700000048,
+        "maxBoneAngleFromBind": 111.418129,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.5683942,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.295618951,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.17047435,
+              -0.036816977,
+              -0.13609609
+            ],
+            "worldBoundsMax": [
+              0.179055229,
+              0.94062525,
+              0.170223743
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.087500006,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.5304527,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.169237792,
+              -0.0328005068,
+              0.0437045619
+            ],
+            "worldBoundsMax": [
+              0.197120667,
+              0.974145532,
+              0.553299546
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.175000012,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.8431727,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.160721421,
+              0.0446564741,
+              0.146240681
+            ],
+            "worldBoundsMax": [
+              0.210223585,
+              0.97692,
+              0.836864233
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.262500018,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.9417622,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.156936854,
+              0.0229042359,
+              0.385806352
+            ],
+            "worldBoundsMax": [
+              0.2210758,
+              0.955104768,
+              0.9911579
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.350000024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 1.01224113,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.168823555,
+              -0.04044382,
+              0.7116298
+            ],
+            "worldBoundsMax": [
+              0.18715544,
+              0.938780665,
+              1.0310725
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.43750003,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 1.35226011,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.184646815,
+              -0.0106677832,
+              0.877919853
+            ],
+            "worldBoundsMax": [
+              0.160961017,
+              0.9728049,
+              1.44269168
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.525000036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 1.68682563,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.189900726,
+              0.0274124332,
+              1.02973127
+            ],
+            "worldBoundsMax": [
+              0.137446344,
+              0.9718112,
+              1.74765956
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.6125001,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 1.78739548,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.1890584,
+              0.014640349,
+              1.27958
+            ],
+            "worldBoundsMax": [
+              0.163392037,
+              0.946664333,
+              1.87835193
+            ]
+          }
+        ]
+      },
+      {
+        "state": "RunScared",
+        "clip": "RunScared",
+        "length": 1.1,
+        "maxBoneAngleFromBind": 115.958679,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.82014,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.456281424,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.203527078,
+              -0.0277456,
+              -0.1301913
+            ],
+            "worldBoundsMax": [
+              0.250312746,
+              0.961373568,
+              0.3607995
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.1375,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.669856,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.228373766,
+              -0.0453564338,
+              0.2052517
+            ],
+            "worldBoundsMax": [
+              0.231242731,
+              0.944288552,
+              0.5990685
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.275,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 1.02644873,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.337541252,
+              -0.0491104238,
+              0.346543223
+            ],
+            "worldBoundsMax": [
+              0.2242162,
+              0.9460256,
+              1.00170279
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.412500024,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 1.34254,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.302085668,
+              -0.0231715254,
+              0.7428362
+            ],
+            "worldBoundsMax": [
+              0.24222219,
+              0.9069791,
+              1.23767436
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.55,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 1.66858041,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.186509728,
+              -0.0178197436,
+              1.10886693
+            ],
+            "worldBoundsMax": [
+              0.285618842,
+              0.968110561,
+              1.59742868
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.6875,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 1.947876,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.210619941,
+              -0.062163692,
+              1.50810027
+            ],
+            "worldBoundsMax": [
+              0.2589183,
+              0.9212831,
+              1.91247618
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.825000048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 2.330787,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.291447163,
+              -0.00425563473,
+              1.6354295
+            ],
+            "worldBoundsMax": [
+              0.240519434,
+              0.9652113,
+              2.320686
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.962500036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 2.661526,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.315404177,
+              -0.00339661259,
+              2.076209
+            ],
+            "worldBoundsMax": [
+              0.249750555,
+              0.9068321,
+              2.57848048
+            ]
+          }
+        ]
+      },
+      {
+        "state": "LieDown",
+        "clip": "LieDown",
+        "length": 5.73333359,
+        "maxBoneAngleFromBind": 98.2538,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.423425078,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.3549252,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.141599908,
+              0.0849199742,
+              -0.06709077
+            ],
+            "worldBoundsMax": [
+              0.2012612,
+              0.8976872,
+              0.42617932
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.81904763,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.35360086,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.13135837,
+              0.08211394,
+              -0.154626369
+            ],
+            "worldBoundsMax": [
+              0.1942838,
+              0.8935451,
+              0.4260815
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 1.63809526,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.6066817,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.156395227,
+              0.1531296,
+              -0.222370714
+            ],
+            "worldBoundsMax": [
+              0.1638026,
+              0.8911248,
+              0.470862836
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 2.457143,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.607795656,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.174776465,
+              0.15900898,
+              -0.329636
+            ],
+            "worldBoundsMax": [
+              0.211700469,
+              0.8513906,
+              0.364985317
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 3.27619052,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.5806349,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.186362818,
+              0.116667621,
+              -0.49319312
+            ],
+            "worldBoundsMax": [
+              0.179835349,
+              0.7553945,
+              0.379022449
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 4.095238,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.882998049,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.214614227,
+              0.143831864,
+              -0.6713811
+            ],
+            "worldBoundsMax": [
+              0.189956054,
+              0.5859225,
+              0.3331343
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 4.914286,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.911091,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.184577972,
+              0.14030005,
+              -0.6730845
+            ],
+            "worldBoundsMax": [
+              0.175166622,
+              0.53437376,
+              0.326401561
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 5.73333359,
+            "nonFiniteVertices": 0,
+            "vertexCount": 5983,
+            "maxDisplacementFromBind": 0.90863955,
+            "capMaxHeadLocalDrift": 0.0,
+            "worldBoundsMin": [
+              -0.15185833,
+              0.09367003,
+              -0.6705367
+            ],
+            "worldBoundsMax": [
+              0.2178682,
+              0.5355356,
+              0.3257262
+            ]
+          }
+        ]
+      }
+    ],
+    "capRigidWithHead": true
+  },
+  {
+    "id": "moldy_matron",
+    "phase": "before",
+    "prefab": "Assets/Resources/Art3D/Monsters/moldy_matron_rig.prefab",
+    "vertexCount": 13782,
+    "triangleCount": 8000,
+    "vertexCountUnchanged": true,
+    "triangleIndicesUnchanged": true,
+    "weights": {
+      "count": 13782,
+      "countMatchesVertices": true,
+      "invalidVertices": 0,
+      "maxSumError": 1.1920929E-07
+    },
+    "capVertexCount": 2502,
+    "headBone": "Head",
+    "capVerticesNotFullyAttachedToHead": 2455,
+    "capMaxHeadLocalDrift": 0.390954435,
+    "samplesPerClip": 8,
+    "clips": [
+      {
+        "state": "Idle",
+        "clip": "Monster-Idle",
+        "length": 5.33333349,
+        "maxBoneAngleFromBind": 62.47552,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.0637823641,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.179136291,
+            "capMaxHeadLocalDrift": 0.08068982,
+            "worldBoundsMin": [
+              -0.370616257,
+              -0.09887064,
+              -0.259211361
+            ],
+            "worldBoundsMax": [
+              0.365857244,
+              0.9692306,
+              0.365830481
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.6666667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.182793289,
+            "capMaxHeadLocalDrift": 0.08116921,
+            "worldBoundsMin": [
+              -0.3263129,
+              -0.0936448947,
+              -0.2564867
+            ],
+            "worldBoundsMax": [
+              0.350712538,
+              0.9652091,
+              0.3680377
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 1.33333337,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.178791881,
+            "capMaxHeadLocalDrift": 0.107528724,
+            "worldBoundsMin": [
+              -0.358967483,
+              -0.09889761,
+              -0.259146273
+            ],
+            "worldBoundsMax": [
+              0.3621539,
+              0.9722836,
+              0.3662653
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 2.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.178515717,
+            "capMaxHeadLocalDrift": 0.07036533,
+            "worldBoundsMin": [
+              -0.371820569,
+              -0.09447656,
+              -0.256406724
+            ],
+            "worldBoundsMax": [
+              0.369307637,
+              0.9632792,
+              0.3684852
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 2.66666675,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.175935462,
+            "capMaxHeadLocalDrift": 0.106709242,
+            "worldBoundsMin": [
+              -0.3292337,
+              -0.09668306,
+              -0.262708843
+            ],
+            "worldBoundsMax": [
+              0.351414382,
+              0.96807605,
+              0.362954259
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 3.33333349,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.176320523,
+            "capMaxHeadLocalDrift": 0.110351376,
+            "worldBoundsMin": [
+              -0.3665067,
+              -0.0979287252,
+              -0.261022627
+            ],
+            "worldBoundsMax": [
+              0.371860743,
+              0.9713952,
+              0.364258766
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 4.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.178818271,
+            "capMaxHeadLocalDrift": 0.07277864,
+            "worldBoundsMin": [
+              -0.3759315,
+              -0.09697402,
+              -0.258144975
+            ],
+            "worldBoundsMax": [
+              0.369633973,
+              0.9644757,
+              0.366712928
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 4.666667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.183075473,
+            "capMaxHeadLocalDrift": 0.110159948,
+            "worldBoundsMin": [
+              -0.328603983,
+              -0.09554345,
+              -0.258231044
+            ],
+            "worldBoundsMax": [
+              0.343829274,
+              0.969239354,
+              0.366725683
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Walk",
+        "clip": "Monster-Walk",
+        "length": 1.2,
+        "maxBoneAngleFromBind": 68.08707,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.53034085,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.172552109,
+            "capMaxHeadLocalDrift": 0.0761139,
+            "worldBoundsMin": [
+              -0.3988415,
+              -0.106267624,
+              -0.234362662
+            ],
+            "worldBoundsMax": [
+              0.333213985,
+              0.955463469,
+              0.395358741
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.15,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.540797055,
+            "capMaxHeadLocalDrift": 0.09314423,
+            "worldBoundsMin": [
+              -0.347212017,
+              -0.118984483,
+              -0.191578284
+            ],
+            "worldBoundsMax": [
+              0.338808119,
+              0.9476977,
+              0.5859168
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.3,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.6301744,
+            "capMaxHeadLocalDrift": 0.104433507,
+            "worldBoundsMin": [
+              -0.405492425,
+              -0.103388123,
+              -0.219303414
+            ],
+            "worldBoundsMax": [
+              0.371019065,
+              0.9148123,
+              0.73540765
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.450000018,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.6075727,
+            "capMaxHeadLocalDrift": 0.0723432,
+            "worldBoundsMin": [
+              -0.429071665,
+              -0.159338847,
+              -0.07194872
+            ],
+            "worldBoundsMax": [
+              0.3765263,
+              0.9169093,
+              0.7735796
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.6,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.623332,
+            "capMaxHeadLocalDrift": 0.0746081844,
+            "worldBoundsMin": [
+              -0.421738267,
+              -0.17223227,
+              0.143211648
+            ],
+            "worldBoundsMax": [
+              0.297928274,
+              0.958782136,
+              0.7989095
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.75,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.8413588,
+            "capMaxHeadLocalDrift": 0.0901276842,
+            "worldBoundsMin": [
+              -0.4079572,
+              -0.0886125639,
+              0.279727042
+            ],
+            "worldBoundsMax": [
+              0.28629005,
+              0.9534697,
+              1.03422332
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.900000036,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.01529455,
+            "capMaxHeadLocalDrift": 0.09611845,
+            "worldBoundsMin": [
+              -0.467848837,
+              -0.0672976449,
+              0.257074475
+            ],
+            "worldBoundsMax": [
+              0.3166784,
+              0.91049397,
+              1.20600688
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 1.05000007,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.00034022,
+            "capMaxHeadLocalDrift": 0.08010812,
+            "worldBoundsMin": [
+              -0.472497046,
+              -0.162510931,
+              0.4136529
+            ],
+            "worldBoundsMax": [
+              0.323087156,
+              0.9162401,
+              1.22973073
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Run",
+        "clip": "Monster-Run",
+        "length": 0.733333349,
+        "maxBoneAngleFromBind": 114.755539,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.7641311,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.366943359,
+            "capMaxHeadLocalDrift": 0.196119338,
+            "worldBoundsMin": [
+              -0.344123125,
+              -0.203945279,
+              -0.39563185
+            ],
+            "worldBoundsMax": [
+              0.351092637,
+              0.8461905,
+              0.342808366
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.09166667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.6117217,
+            "capMaxHeadLocalDrift": 0.24715896,
+            "worldBoundsMin": [
+              -0.351748765,
+              -0.199133545,
+              -0.237384185
+            ],
+            "worldBoundsMax": [
+              0.293868124,
+              0.8810061,
+              0.572758853
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.183333337,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.8116569,
+            "capMaxHeadLocalDrift": 0.214743465,
+            "worldBoundsMin": [
+              -0.3611247,
+              -0.158225179,
+              -0.0976014
+            ],
+            "worldBoundsMax": [
+              0.334769666,
+              0.8916853,
+              0.825795531
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 0.275,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.8280284,
+            "capMaxHeadLocalDrift": 0.128978461,
+            "worldBoundsMin": [
+              -0.3908118,
+              -0.158253312,
+              0.09601967
+            ],
+            "worldBoundsMax": [
+              0.3174984,
+              0.855585,
+              0.9563248
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 0.366666675,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.03651738,
+            "capMaxHeadLocalDrift": 0.177268356,
+            "worldBoundsMin": [
+              -0.371397436,
+              -0.160610855,
+              0.464176953
+            ],
+            "worldBoundsMax": [
+              0.290693164,
+              0.8511289,
+              1.16372049
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 0.458333343,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.30865777,
+            "capMaxHeadLocalDrift": 0.2373079,
+            "worldBoundsMin": [
+              -0.354116678,
+              -0.170023978,
+              0.512557745
+            ],
+            "worldBoundsMax": [
+              0.2966439,
+              0.882369936,
+              1.50782025
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 0.55,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.60424042,
+            "capMaxHeadLocalDrift": 0.17982319,
+            "worldBoundsMin": [
+              -0.321833849,
+              -0.09671337,
+              0.708393753
+            ],
+            "worldBoundsMax": [
+              0.33642602,
+              0.8927941,
+              1.83753157
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 0.641666651,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.70137668,
+            "capMaxHeadLocalDrift": 0.08881398,
+            "worldBoundsMin": [
+              -0.358310282,
+              -0.210350335,
+              1.067773
+            ],
+            "worldBoundsMax": [
+              0.3494798,
+              0.8569271,
+              1.85521626
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Attack",
+        "clip": "Porter-Lash",
+        "length": 2.66666675,
+        "maxBoneAngleFromBind": 103.875748,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 1.12938929,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.294751644,
+            "capMaxHeadLocalDrift": 0.173499152,
+            "worldBoundsMin": [
+              -0.4447931,
+              -0.121536337,
+              -0.160654247
+            ],
+            "worldBoundsMax": [
+              0.439370036,
+              0.9131771,
+              0.4633476
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.3809524,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.2545149,
+            "capMaxHeadLocalDrift": 0.220684528,
+            "worldBoundsMin": [
+              -0.35091114,
+              -0.108149789,
+              -0.260519743
+            ],
+            "worldBoundsMax": [
+              0.4530844,
+              0.9504434,
+              0.428385735
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.7619048,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.5994817,
+            "capMaxHeadLocalDrift": 0.3368358,
+            "worldBoundsMin": [
+              -0.4030407,
+              -0.163772181,
+              -0.5267794
+            ],
+            "worldBoundsMax": [
+              0.4426613,
+              0.8579249,
+              0.355284929
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 1.14285719,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.6920166,
+            "capMaxHeadLocalDrift": 0.342558473,
+            "worldBoundsMin": [
+              -0.395165384,
+              -0.153743267,
+              -0.368718624
+            ],
+            "worldBoundsMax": [
+              0.429144323,
+              0.9090568,
+              0.3829506
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 1.52380955,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.00712216,
+            "capMaxHeadLocalDrift": 0.283682823,
+            "worldBoundsMin": [
+              -0.288021028,
+              -0.1494106,
+              -0.0922578052
+            ],
+            "worldBoundsMax": [
+              0.5219809,
+              0.8059081,
+              0.8558566
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 1.90476191,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.710190356,
+            "capMaxHeadLocalDrift": 0.223894164,
+            "worldBoundsMin": [
+              -0.3110708,
+              -0.131301582,
+              -0.14438422
+            ],
+            "worldBoundsMax": [
+              0.48835212,
+              0.8875127,
+              0.756700456
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 2.28571439,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.246850237,
+            "capMaxHeadLocalDrift": 0.1951295,
+            "worldBoundsMin": [
+              -0.414936066,
+              -0.119880207,
+              -0.168439865
+            ],
+            "worldBoundsMax": [
+              0.4599434,
+              0.921042,
+              0.46156925
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 2.66666675,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.294751883,
+            "capMaxHeadLocalDrift": 0.173499212,
+            "worldBoundsMin": [
+              -0.444793165,
+              -0.121536113,
+              -0.160654172
+            ],
+            "worldBoundsMax": [
+              0.4393701,
+              0.9131772,
+              0.4633478
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Cast",
+        "clip": "Monster-Cast",
+        "length": 2.966667,
+        "maxBoneAngleFromBind": 135.16777,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 1.021835,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.551853955,
+            "capMaxHeadLocalDrift": 0.136155486,
+            "worldBoundsMin": [
+              -0.295310616,
+              -0.143742934,
+              -0.388432145
+            ],
+            "worldBoundsMax": [
+              0.435452938,
+              0.949943542,
+              0.4849739
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.423809558,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.779433131,
+            "capMaxHeadLocalDrift": 0.2757674,
+            "worldBoundsMin": [
+              -0.130672023,
+              -0.13828662,
+              -0.429783165
+            ],
+            "worldBoundsMax": [
+              0.466705859,
+              0.8677596,
+              0.487918139
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.8476191,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.7673178,
+            "capMaxHeadLocalDrift": 0.264662236,
+            "worldBoundsMin": [
+              -0.284353673,
+              -0.147413835,
+              -0.3515923
+            ],
+            "worldBoundsMax": [
+              0.415512741,
+              0.9933515,
+              0.494857252
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 1.2714287,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.433220357,
+            "capMaxHeadLocalDrift": 0.34236452,
+            "worldBoundsMin": [
+              -0.297386944,
+              -0.191780075,
+              -0.416968584
+            ],
+            "worldBoundsMax": [
+              0.333040416,
+              0.7338899,
+              0.5362699
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 1.69523823,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.4137664,
+            "capMaxHeadLocalDrift": 0.381617934,
+            "worldBoundsMin": [
+              -0.2611242,
+              -0.185995772,
+              -0.395455
+            ],
+            "worldBoundsMax": [
+              0.328998268,
+              0.7970852,
+              0.5335655
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 2.11904788,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.4441005,
+            "capMaxHeadLocalDrift": 0.147394866,
+            "worldBoundsMin": [
+              -0.267840922,
+              -0.101494916,
+              -0.290456176
+            ],
+            "worldBoundsMax": [
+              0.3944798,
+              0.987234354,
+              0.424506843
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 2.54285741,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.56588614,
+            "capMaxHeadLocalDrift": 0.172294721,
+            "worldBoundsMin": [
+              -0.311180472,
+              -0.139160275,
+              -0.388818026
+            ],
+            "worldBoundsMax": [
+              0.4374004,
+              0.9638182,
+              0.487507164
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 2.966667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.551854134,
+            "capMaxHeadLocalDrift": 0.1361554,
+            "worldBoundsMin": [
+              -0.295310974,
+              -0.143743038,
+              -0.3884322
+            ],
+            "worldBoundsMax": [
+              0.435452938,
+              0.9499436,
+              0.4849739
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Special",
+        "clip": "Monster-Cast",
+        "length": 2.966667,
+        "maxBoneAngleFromBind": 135.16777,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 1.021835,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.551853955,
+            "capMaxHeadLocalDrift": 0.136155486,
+            "worldBoundsMin": [
+              -0.295310616,
+              -0.143742934,
+              -0.388432145
+            ],
+            "worldBoundsMax": [
+              0.435452938,
+              0.949943542,
+              0.4849739
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.423809558,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.779433131,
+            "capMaxHeadLocalDrift": 0.2757674,
+            "worldBoundsMin": [
+              -0.130672023,
+              -0.13828662,
+              -0.429783165
+            ],
+            "worldBoundsMax": [
+              0.466705859,
+              0.8677596,
+              0.487918139
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.8476191,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.7673178,
+            "capMaxHeadLocalDrift": 0.264662236,
+            "worldBoundsMin": [
+              -0.284353673,
+              -0.147413835,
+              -0.3515923
+            ],
+            "worldBoundsMax": [
+              0.415512741,
+              0.9933515,
+              0.494857252
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 1.2714287,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.433220357,
+            "capMaxHeadLocalDrift": 0.34236452,
+            "worldBoundsMin": [
+              -0.297386944,
+              -0.191780075,
+              -0.416968584
+            ],
+            "worldBoundsMax": [
+              0.333040416,
+              0.7338899,
+              0.5362699
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 1.69523823,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.4137664,
+            "capMaxHeadLocalDrift": 0.381617934,
+            "worldBoundsMin": [
+              -0.2611242,
+              -0.185995772,
+              -0.395455
+            ],
+            "worldBoundsMax": [
+              0.328998268,
+              0.7970852,
+              0.5335655
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 2.11904788,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.4441005,
+            "capMaxHeadLocalDrift": 0.147394866,
+            "worldBoundsMin": [
+              -0.267840922,
+              -0.101494916,
+              -0.290456176
+            ],
+            "worldBoundsMax": [
+              0.3944798,
+              0.987234354,
+              0.424506843
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 2.54285741,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.56588614,
+            "capMaxHeadLocalDrift": 0.172294721,
+            "worldBoundsMin": [
+              -0.311180472,
+              -0.139160275,
+              -0.388818026
+            ],
+            "worldBoundsMax": [
+              0.4374004,
+              0.9638182,
+              0.487507164
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 2.966667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.551854134,
+            "capMaxHeadLocalDrift": 0.1361554,
+            "worldBoundsMin": [
+              -0.295310974,
+              -0.143743038,
+              -0.3884322
+            ],
+            "worldBoundsMax": [
+              0.435452938,
+              0.9499436,
+              0.4849739
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Eat",
+        "clip": "Monster-Eat",
+        "length": 6.933334,
+        "maxBoneAngleFromBind": 127.125038,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.7461186,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.353853136,
+            "capMaxHeadLocalDrift": 0.07496257,
+            "worldBoundsMin": [
+              -0.387046218,
+              -0.138257936,
+              -0.2612235
+            ],
+            "worldBoundsMax": [
+              0.449462354,
+              0.94272536,
+              0.456636965
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.866666734,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.8417349,
+            "capMaxHeadLocalDrift": 0.175056681,
+            "worldBoundsMin": [
+              -0.586011052,
+              -0.257185966,
+              -0.03952305
+            ],
+            "worldBoundsMax": [
+              0.486500263,
+              0.451043069,
+              0.645014346
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 1.73333347,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.10021353,
+            "capMaxHeadLocalDrift": 0.3065285,
+            "worldBoundsMin": [
+              -0.591457844,
+              -0.2738399,
+              -0.133816853
+            ],
+            "worldBoundsMax": [
+              0.377780735,
+              0.419798017,
+              0.6839238
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 2.60000014,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.113152,
+            "capMaxHeadLocalDrift": 0.309184343,
+            "worldBoundsMin": [
+              -0.60103935,
+              -0.2741651,
+              -0.157172829
+            ],
+            "worldBoundsMax": [
+              0.390673339,
+              0.401426256,
+              0.6946965
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 3.466667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.10324287,
+            "capMaxHeadLocalDrift": 0.226371169,
+            "worldBoundsMin": [
+              -0.589103937,
+              -0.2788211,
+              -0.149671033
+            ],
+            "worldBoundsMax": [
+              0.389519036,
+              0.4190033,
+              0.685985744
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 4.33333349,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.8856962,
+            "capMaxHeadLocalDrift": 0.264153779,
+            "worldBoundsMin": [
+              -0.593369246,
+              -0.285323381,
+              -0.112337619
+            ],
+            "worldBoundsMax": [
+              0.326900721,
+              0.4234717,
+              0.6299191
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 5.20000029,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.619187236,
+            "capMaxHeadLocalDrift": 0.1726169,
+            "worldBoundsMin": [
+              -0.5055799,
+              -0.175300479,
+              0.0339817069
+            ],
+            "worldBoundsMax": [
+              0.367118418,
+              0.568272,
+              0.670898259
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 6.066667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.2567902,
+            "capMaxHeadLocalDrift": 0.107230194,
+            "worldBoundsMin": [
+              -0.493976951,
+              -0.14615269,
+              -0.242077
+            ],
+            "worldBoundsMax": [
+              0.4321683,
+              0.891420364,
+              0.384754241
+            ]
+          }
+        ]
+      },
+      {
+        "state": "Death",
+        "clip": "Monster-Death",
+        "length": 2.966667,
+        "maxBoneAngleFromBind": 107.954361,
+        "sampledBoneMotion": true,
+        "maxInterSampleVertexDisplacement": 0.7635193,
+        "samples": [
+          {
+            "sample": 0,
+            "time": 0.0,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.354175359,
+            "capMaxHeadLocalDrift": 0.07496251,
+            "worldBoundsMin": [
+              -0.386906981,
+              -0.138257846,
+              -0.261449635
+            ],
+            "worldBoundsMax": [
+              0.449511,
+              0.942725241,
+              0.456773162
+            ]
+          },
+          {
+            "sample": 1,
+            "time": 0.423809558,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.702479,
+            "capMaxHeadLocalDrift": 0.209291831,
+            "worldBoundsMin": [
+              -0.390125632,
+              -0.160956591,
+              -0.299140215
+            ],
+            "worldBoundsMax": [
+              0.461339951,
+              0.910449147,
+              0.4231338
+            ]
+          },
+          {
+            "sample": 2,
+            "time": 0.8476191,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.570688069,
+            "capMaxHeadLocalDrift": 0.206277952,
+            "worldBoundsMin": [
+              -0.472059965,
+              -0.133342385,
+              -0.5984003
+            ],
+            "worldBoundsMax": [
+              0.41432333,
+              0.856272638,
+              0.248882934
+            ]
+          },
+          {
+            "sample": 3,
+            "time": 1.2714287,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 0.7741823,
+            "capMaxHeadLocalDrift": 0.283201039,
+            "worldBoundsMin": [
+              -0.4676242,
+              -0.153024644,
+              -0.710684538
+            ],
+            "worldBoundsMax": [
+              0.514611363,
+              0.8099824,
+              0.06991027
+            ]
+          },
+          {
+            "sample": 4,
+            "time": 1.69523823,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.2263329,
+            "capMaxHeadLocalDrift": 0.390954435,
+            "worldBoundsMin": [
+              -0.5045808,
+              -0.136439368,
+              -0.9088868
+            ],
+            "worldBoundsMax": [
+              0.594871044,
+              0.6282117,
+              0.0610896535
+            ]
+          },
+          {
+            "sample": 5,
+            "time": 2.11904788,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.39453089,
+            "capMaxHeadLocalDrift": 0.339751244,
+            "worldBoundsMin": [
+              -0.486498475,
+              -0.176665932,
+              -1.11625981
+            ],
+            "worldBoundsMax": [
+              0.807485461,
+              0.300605267,
+              0.104989149
+            ]
+          },
+          {
+            "sample": 6,
+            "time": 2.54285741,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.35111749,
+            "capMaxHeadLocalDrift": 0.3371174,
+            "worldBoundsMin": [
+              -0.3722725,
+              -0.226079941,
+              -1.13926268
+            ],
+            "worldBoundsMax": [
+              0.8135121,
+              0.270420551,
+              0.130482867
+            ]
+          },
+          {
+            "sample": 7,
+            "time": 2.966667,
+            "nonFiniteVertices": 0,
+            "vertexCount": 13782,
+            "maxDisplacementFromBind": 1.36526477,
+            "capMaxHeadLocalDrift": 0.3409792,
+            "worldBoundsMin": [
+              -0.367658079,
+              -0.2221376,
+              -1.13999248
+            ],
+            "worldBoundsMax": [
+              0.80760026,
+              0.26803267,
+              0.130331874
+            ]
+          }
+        ]
+      }
+    ],
+    "capRigidWithHead": false
+  }
+]

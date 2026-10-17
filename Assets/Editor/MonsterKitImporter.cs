@@ -177,6 +177,7 @@ namespace BadAppleHotel.EditorTools
                 int sourceTriangles = skin.sharedMesh.triangles.Length / 3;
                 var reduced = CharacterKitImporter.Reduce(skin.sharedMesh, TriangleBudget); reduced.name = "monster_" + id + "_skinned";
                 reduced.bindposes = skin.sharedMesh.bindposes;
+                CharacterSkinningRepair.Apply(id, reduced, skin.bones);
                 var white = new Color[reduced.vertexCount]; for (int i = 0; i < white.Length; i++) white[i] = Color.white; reduced.colors = white;
                 reduced.RecalculateBounds();
                 skin.sharedMesh = CharacterKitImporter.SaveAsset(reduced, $"{Output}/{id}_skinned.asset");

@@ -1,0 +1,13 @@
+{
+  "unityVersion": "6000.3.24f1",
+  "mode": "EditMode",
+  "jobId": "1bceee3cc03548119eb7a59d703dff60",
+  "fixtures": ["CharacterSkinningTests", "CharacterKitTests", "MonsterKitTests"],
+  "total": 39,
+  "passed": 39,
+  "failed": 0,
+  "skipped": 0,
+  "durationSeconds": 9.200023,
+  "sampledAnimationPoses": 256,
+  "visualReview": "Blender inspection of before/after Run poses for all five rigs, front/back resident poses, and Mildred Cast including the low rear brim."
+}
