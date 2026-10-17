@@ -85,8 +85,8 @@ namespace BadAppleHotel.Game
             hotelLighting?.Dispose(); hotelLighting = null; wallLamps.Clear(); wallPanels.Clear(); lampGlowMaterial=null; lampGlowView=null;
             foreach(var asset in sceneAssets) if(asset!=null) RemoveObject(asset);
             sceneAssets.Clear(); wallStates.Clear(); wallBatches.Clear(); WallPieceCounts.Clear(); nextWallUpdate=0; WallFocusRoom=null;
-            doorModels.Clear(); doorMaterials.Clear(); liftGates.Clear(); floorProps.Clear(); LanternCount = 0;
-            liftGateSprite = lanternSprite = null; lanternMaterial = null;   // the old ones are destroyed with sceneAssets above
+            doorModels.Clear(); doorMaterials.Clear(); liftGates.Clear();
+            liftGateSprite = null;   // the old one is destroyed with sceneAssets above
             doorMats.Clear(); doorMatMesh = null; doorMatMaterial = null;
             wallKit=WallKit.Load(); wallInstances=new WallInstances(); wallCoreViews.Clear();
             wallHeightAt=CurrentWallHeight;
@@ -146,7 +146,6 @@ namespace BadAppleHotel.Game
                 if(!Application.isEditor)mesh.UploadMeshData(true);
             }
             wallBatches.Clear();
-            if(Map.IsFloors)foreach(var def in Map.Rooms)AddHallwayLanterns(def);
             hotelLighting=HotelLighting.Build(Map,wallLamps);hotelLighting.Bind();
             sceneAssets.Add(hotelLighting.LightMap);
             UpdateWallStateTexture(true);
@@ -331,7 +330,7 @@ namespace BadAppleHotel.Game
         }
         Material lampGlowMaterial;
         MeshRenderer lampGlowView;
-        const float TorchRadius = 7.5f, TorchRoomRadius = 7f, TorchSpacing = 7f;
+        const float TorchRadius = 9f, TorchRoomRadius = 7f, TorchSpacing = 6f;
 
         void PoseDoor(SpriteRenderer door,RoomDef def,bool open)
         {

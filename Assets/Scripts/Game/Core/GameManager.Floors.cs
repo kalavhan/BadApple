@@ -294,64 +294,10 @@ namespace BadAppleHotel.Game
             else if (m.IsHuman) Toast("Floor " + floor.FloorNumber + ": " + (owner != null ? owner.Name : "empty") + "'s hallway.");
         }
 
-        Sprite liftGateSprite, lanternSprite;
-        Material lanternMaterial;
+        Sprite liftGateSprite;
         readonly Dictionary<RoomDef, SpriteRenderer> liftGates = new Dictionary<RoomDef, SpriteRenderer>();
-        /// <summary>Per-storey props (lanterns) shown only while their storey is the one being watched.</summary>
-        readonly List<KeyValuePair<RoomDef, SpriteRenderer>> floorProps = new List<KeyValuePair<RoomDef, SpriteRenderer>>();
-        public int LanternCount { get; private set; }
-        const float LanternSpacing = 8f, LanternRadius = 7f, LanternHeight = 1.75f;
         /// <summary>Extra lamp brightness on the hallway floors, so pools read clearly against the dusk between them.</summary>
         [Range(0f, 1.5f)] public float LampBoost = .6f;
-
-        /// <summary>
-        /// Spirit lanterns hung over the carpet every few steps: the light comes in warm pools from its sources, with
-        /// dusk between them, and the middle of a wide hallway is never pitch dark.
-        /// </summary>
-        void AddHallwayLanterns(RoomDef def)
-        {
-            var picked = new List<Vector2>();
-            var torches = new List<Vector2>();
-            foreach (var w in wallLamps) if (Map.FloorOfWorld(w.Position) == def) torches.Add(w.Position);
-            if (lanternSprite == null)
-            {
-                var tex = Resources.Load<Texture2D>("Art/UI/Haunted/drop_glow");
-                if (tex == null) return;
-                lanternSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f), 100f);
-                lanternSprite.name = "Lantern glow";
-                sceneAssets.Add(lanternSprite);
-            }
-            if (lanternMaterial == null)
-            {
-                // Additive, so the halo adds light instead of being clipped like the cut-out world sprites.
-                lanternMaterial = new Material(Resources.Load<Shader>("Shaders/UiAdditive")) { name = "Lantern glow (additive)" };
-                sceneAssets.Add(lanternMaterial);
-            }
-            foreach (var tile in def.Lane)
-            {
-                var p = HotelMap.Center(tile);
-                bool clear = true;
-                foreach (var q in picked) if ((q - p).sqrMagnitude < LanternSpacing * LanternSpacing) { clear = false; break; }
-                // Leave the carpet right under a wall torch to that torch.
-                foreach (var q in torches) if ((q - p).sqrMagnitude < 3.5f * 3.5f) { clear = false; break; }
-                if (!clear) continue;
-                picked.Add(p);
-                wallLamps.Add(new HotelLighting.Lamp(p, Vector2.up, LanternRadius, .9f, torch: true, omni: true));
-                LanternCount++;
-                // The lantern itself: a warm halo and a hot core, hanging above the carpet.
-                foreach (var (size, color) in new[] { (2.2f, new Color(1f, .6f, .25f, .28f)), (.55f, new Color(1f, .9f, .66f, .9f)) })
-                {
-                    var glow = MakeSprite("Lantern", lanternSprite, p, -2700, worldRoot);
-                    var pos = (Vector3)p - HotelView3D.Forward * 0f + Vector3.back * LanternHeight;
-                    glow.transform.SetPositionAndRotation(pos, HotelView3D.SpriteRotation);
-                    glow.transform.localScale = Vector3.one * (size / Mathf.Max(.01f, lanternSprite.bounds.size.x));
-                    glow.color = color;
-                    glow.sharedMaterial = lanternMaterial;
-                    glow.sortingOrder = 6000;
-                    floorProps.Add(new KeyValuePair<RoomDef, SpriteRenderer>(def, glow));
-                }
-            }
-        }
 
         /// <summary>The lift on each floor: a brass door frame in the wall behind the landing, holding a scissor gate.</summary>
         void CreateLiftDoors(RoomDef def)
@@ -545,7 +491,6 @@ namespace BadAppleHotel.Game
             fogTex.SetPixels32(fogPx);
             fogTex.Apply(false);
             foreach (var gate in liftGates) if (gate.Value != null) gate.Value.enabled = gate.Key == floor;
-            foreach (var prop in floorProps) if (prop.Value != null) prop.Value.enabled = prop.Key == floor;
         }
 
         /// <summary>Orthographic size that fits a whole floor on screen in the isometric view.</summary>
