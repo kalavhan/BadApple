@@ -168,7 +168,8 @@ namespace BadAppleHotel.Tests
             float left = game.Fear;
             Step(1f);
             Assert.AreEqual(left, game.Fear, .01f, "nobody spends Fear at dawn");
-            while (game.Phase == Phase.Setup) Step(1f);
+            // Check on the very step the next night starts, before the new monster has had a chance to spend.
+            while (game.Phase == Phase.Setup) game.StepMatch(1f / 30f);
             if (game.Phase == Phase.Night) Assert.GreaterOrEqual(game.Fear + .01f, left, "the next monster inherits it");
         }
 

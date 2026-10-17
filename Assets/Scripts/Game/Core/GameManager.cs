@@ -161,7 +161,8 @@ namespace BadAppleHotel.Game
         /// <summary>Follow-camera zoom: 1 is the widest view; pinching zooms in up to 82% closer.</summary>
         public const float MinZoom = 1f, MaxZoom = 1.82f, DefaultZoom = 1.15f;
         public float Zoom { get; private set; } = DefaultZoom;
-        public void SetZoom(float zoom) => Zoom = Mathf.Clamp(zoom, MinZoom, MaxZoom);
+        // On the hallway floors the widest zoom shows the whole storey.
+        public void SetZoom(float zoom) => Zoom = Mathf.Clamp(zoom, Floors ? DefaultZoom / FloorViewZoom : MinZoom, MaxZoom);
         // The monster player's guest sleeps through the night, but the camera follows the monster, not the bed.
         public bool SleepingCamera => InMatch && HumanRole == Role.Resident && Human != null && Human.Alive && Human.Asleep;
 

@@ -656,11 +656,10 @@ namespace BadAppleHotel.Game
             if (gm.Phase == Phase.ConfigError) DrawError();
             else if (gm.Cfg == null) GUI.Label(new Rect(0, VH / 2 - 25, vw, 50), "Opening the hotel…", subtitle);
             else if (gm.Phase == Phase.RoleSelect) DrawMenu();
-            else if (gm.Cam != null && gm.Map != null && gm.Floors && gm.Phase == Phase.CheckIn)
+            else if (gm.Cam != null && gm.Map != null && gm.Floors && gm.Phase == Phase.CheckIn && (gm.Human == null || gm.Human.Room == null))
             {
                 DrawTopBar();
-                DrawFrontDesk();
-                DrawBanner();
+                DrawFrontDesk();   // the clerk's speech bubble replaces the banner here
                 DrawToast();
                 fxFront.Draw(scale);
             }

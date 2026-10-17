@@ -86,6 +86,7 @@ namespace BadAppleHotel.Game
             foreach(var asset in sceneAssets) if(asset!=null) RemoveObject(asset);
             sceneAssets.Clear(); wallStates.Clear(); wallBatches.Clear(); WallPieceCounts.Clear(); nextWallUpdate=0; WallFocusRoom=null;
             doorModels.Clear(); doorMaterials.Clear(); liftGates.Clear();
+            liftGateSprite = null;   // the old one is destroyed with sceneAssets above
             doorMats.Clear(); doorMatMesh = null; doorMatMaterial = null;
             wallKit=WallKit.Load(); wallInstances=new WallInstances(); wallCoreViews.Clear();
             wallHeightAt=CurrentWallHeight;
@@ -283,9 +284,10 @@ namespace BadAppleHotel.Game
                 var room=type==Tile.RoomFloor?Map.RoomContaining(tile):null;
                 indices[i]=candidates.Count;
                 candidates.Add(new HotelLampPlan.Candidate(position,panel.Normal,room?.Index??Map.Rooms.Count,room!=null&&RoomLampStaysUp(panel.State,room),
-                    room!=null?HotelLampPlan.RoomLampRadius:HotelLampPlan.CorridorLampRadius));
+                    Map.IsFloors?(room!=null?TorchRoomRadius:TorchRadius):room!=null?HotelLampPlan.RoomLampRadius:HotelLampPlan.CorridorLampRadius,Map.IsFloors));
             }
-            var chosen=HotelLampPlan.Select(Map,candidates);
+            // Hallway floors light in torch pools; the older hotel keeps its even coverage plan.
+            var chosen=Map.IsFloors?HotelLampPlan.SelectTorches(Map,candidates,TorchSpacing):HotelLampPlan.Select(Map,candidates);
             var glowPanels=new List<WallInstances.Record>();
             for(int i=0;i<wallPanels.Count;i++)
             {
@@ -328,6 +330,7 @@ namespace BadAppleHotel.Game
         }
         Material lampGlowMaterial;
         MeshRenderer lampGlowView;
+        const float TorchRadius = 9f, TorchRoomRadius = 7f, TorchSpacing = 6f;
 
         void PoseDoor(SpriteRenderer door,RoomDef def,bool open)
         {

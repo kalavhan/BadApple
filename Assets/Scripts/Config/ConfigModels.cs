@@ -42,7 +42,10 @@ namespace BadAppleHotel.Config
         public float sizeCostBase = 25f, sizeCostGrowth = 1.25f;
         public float[] typeCosts = { 0f, 45f, 70f };   // creature 0 comes free
         public float startingFear = 20f;
-        public float perNightGrowth = 0.08f;           // minion health and damage per night after the first
+        // Every night after the first, minions come back tougher: compounding health, damage and speed.
+        public float perNightHealth = 0.18f, perNightDamage = 0.12f, perNightSpeed = 0.05f;
+        public float maxSpeedGrowth = 0.5f;             // speed stops growing at +50%
+        public float monsterHealth = 0.6f;              // the monster's health on the hallway floors (x baseHealth)
         public float buffDamage = 0.35f, buffSpeed = 0.3f, buffHealth = 0.5f;   // the visited floor's monster buff
         public float idleFearPerSecond = 0.6f;          // a monster riding the lift still earns a little
     }

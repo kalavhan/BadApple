@@ -4,6 +4,8 @@ sampler2D _HotelLightMap;
 float4 _HotelLightSize;
 fixed4 _HotelLampColor;
 float _HotelLightingEnabled;
+// Extra lamp gain on top of the base .65 (the hallway floors light in brighter torch pools; 0 elsewhere).
+float _HotelLampBoost;
 // Brief dream-effect lights (muzzle flashes, impacts, summons) from DreamFx: xy position,
 // z inverse squared radius; rgb colour. A handful at most, cleared when nothing flashes.
 float4 _FxLightPos[6];
@@ -38,7 +40,7 @@ inline fixed3 HotelLampLight(float2 worldXY, float2 outwardNormalXY, float visib
     float2 uv = samplePosition / max(_HotelLightSize.xy, float2(1, 1));
     float inside = step(0, uv.x) * step(0, uv.y) * step(uv.x, 1) * step(uv.y, 1);
     float light = tex2D(_HotelLightMap, uv).r;
-    fixed3 lamp = lerp(fixed3(.72,.67,.60), _HotelLampColor.rgb, .3) * light * .65 * inside;
+    fixed3 lamp = lerp(fixed3(.72,.67,.60), _HotelLampColor.rgb, .3) * light * (.65 + _HotelLampBoost) * inside;
     return (lamp + HotelFxLight(samplePosition) * fxGain) * saturate(visible) * saturate(_HotelLightingEnabled);
 }
 

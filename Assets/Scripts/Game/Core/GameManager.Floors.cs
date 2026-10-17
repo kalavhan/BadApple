@@ -24,8 +24,6 @@ namespace BadAppleHotel.Game
         public readonly List<Resident> CheckInOrder = new List<Resident>();
         public int CheckInIndex { get; private set; }
         public Resident CheckingIn => Phase == Phase.CheckIn && CheckInIndex < CheckInOrder.Count ? CheckInOrder[CheckInIndex] : null;
-        /// <summary>The floor card the player is looking at on the room list (HUD).</summary>
-        public RoomDef PreviewFloor { get; set; }
         float checkInBotAt;
 
         /// <summary>True while the human is the guest the manager is talking to.</summary>
@@ -39,9 +37,8 @@ namespace BadAppleHotel.Game
             Phase = Phase.CheckIn;
             PhaseTimer = Cfg.match.checkInSeconds;
             checkInBotAt = Random.Range(0.8f, 1.6f);
-            PreviewFloor = Map.Rooms[0];
             foreach (var r in Residents) if (r.Sr != null) r.Sr.enabled = false;
-            Announce("The manager rings the bell. Guests come up to the desk one at a time.", 4f);
+            Announce("The clerk rings the bell. Guests come up to the desk one at a time.", 4f);
         }
 
         void UpdateCheckIn(float dt)
@@ -59,6 +56,7 @@ namespace BadAppleHotel.Game
             if (Phase != Phase.CheckIn || r == null || r != CheckingIn || def == null || !IsRoomFree(def)) return false;
             if (!Claim(r, def, true)) return false;
             if (r.Sr != null) r.Sr.enabled = true;
+            LastKeyTaken = def; LastKeyTakenBy = r; LastKeyTakenAt = Time.unscaledTime;
             r.LastPos = r.Pos;
             AddLog(r.Name + " took Room " + def.RoomNumber + " on floor " + def.FloorNumber + ".");
             CheckInIndex++;
@@ -68,14 +66,17 @@ namespace BadAppleHotel.Game
             return true;
         }
 
-        /// <summary>Bots like long hallways (more time to shoot) with a little personal taste.</summary>
+        /// <summary>Nobody sees the floor plans at the desk, so a bot just takes one of the keys still hanging.</summary>
         RoomDef BotFloorPick()
         {
             var free = Map.Rooms.Where(IsRoomFree).ToList();
-            if (free.Count == 0) return null;
-            float skill = BotSkill;
-            return free.OrderByDescending(d => d.Lane.Count * skill + d.BuildTiles.Count * .2f + Random.Range(0f, 40f) * (1.2f - skill)).First();
+            return free.Count == 0 ? null : free[Random.Range(0, free.Count)];
         }
+
+        /// <summary>The last key taken at the desk and when (the HUD flies it from its hook to the counter).</summary>
+        public RoomDef LastKeyTaken { get; private set; }
+        public Resident LastKeyTakenBy { get; private set; }
+        public float LastKeyTakenAt { get; private set; } = -9f;
 
         void FinishCheckIn()
         {
@@ -295,6 +296,8 @@ namespace BadAppleHotel.Game
 
         Sprite liftGateSprite;
         readonly Dictionary<RoomDef, SpriteRenderer> liftGates = new Dictionary<RoomDef, SpriteRenderer>();
+        /// <summary>Extra lamp brightness on the hallway floors, so pools read clearly against the dusk between them.</summary>
+        [Range(0f, 1.5f)] public float LampBoost = .6f;
 
         /// <summary>The lift on each floor: a brass door frame in the wall behind the landing, holding a scissor gate.</summary>
         void CreateLiftDoors(RoomDef def)
@@ -368,7 +371,8 @@ namespace BadAppleHotel.Game
             return 1f + (kind == 0 ? w.buffDamage : kind == 1 ? w.buffSpeed : w.buffHealth);
         }
 
-        float NightGrowth => 1f + Mathf.Max(0, Night - 1) * Cfg.waves.perNightGrowth;
+        /// <summary>Minion growth for tonight: compounding per night after the first.</summary>
+        float NightGrowth(float perNight) => Mathf.Pow(1f + perNight, Mathf.Max(0, Night - 1));
 
         /// <summary>Pulse k of P on every hunted floor: each floor sends its share of its wave, cycling through its creatures.</summary>
         void ReleaseFloorPulse(Monster m, int k, int pulses)
@@ -385,8 +389,10 @@ namespace BadAppleHotel.Game
                 {
                     int type = types[(rift.ReleasedTonight + s) % types.Length];
                     var n = SpawnMinion(m, type, rift, rift.Pos);
-                    n.Hp = n.MaxHp = n.MaxHp * NightGrowth;
-                    n.Damage *= NightGrowth;
+                    var w = Cfg.waves;
+                    n.Hp = n.MaxHp = n.MaxHp * NightGrowth(w.perNightHealth);
+                    n.Damage *= NightGrowth(w.perNightDamage);
+                    n.SpeedMult = Mathf.Min(1f + w.maxSpeedGrowth, NightGrowth(w.perNightSpeed));
                 }
                 rift.ReleasedTonight += count;
             }
@@ -414,7 +420,7 @@ namespace BadAppleHotel.Game
             get
             {
                 if (!Floors || !InMatch) return null;
-                if (Phase == Phase.CheckIn) return PreviewFloor;
+                if (Phase == Phase.CheckIn && (Human == null || Human.Room == null)) return null;
                 if (HumanRole == Role.Monster && Monster != null && !Monster.InLift && Monster.Floor != null) return Monster.Floor;
                 if (Human != null && Human.Room != null) return Human.Room.Def;
                 return null;
@@ -432,18 +438,14 @@ namespace BadAppleHotel.Game
         {
             if (!Floors || !InMatch || HotelView) { floorCameraSet = false; return false; }
             if (HumanRole == Role.Monster && Monster != null && !Monster.InLift && !Monster.Dead) { floorCameraSet = false; return false; }
-            bool desk = Phase == Phase.CheckIn;
-            var floor = desk ? (PreviewFloor ?? Map.Rooms[0]) : ViewFloor;
+            var floor = ViewFloor;
             RectInt rect = floor != null ? floor.ViewBounds : new RectInt(0, 0, Map.W, Map.H);
-            // At the desk the register covers the left of the screen; the floor sits in the space beside it.
-            float size = desk ? FloorViewSize(rect, aspect * (1f - DeskPanelFraction)) : FloorViewSize(rect, aspect) * DefaultZoom / Zoom;
+            // A guest's view starts FloorViewZoom closer than the whole floor; pinching out shows all of it.
+            float size = FloorViewSize(rect, aspect) * DefaultZoom / (Zoom * FloorViewZoom);
             var center = rect.center;
-            if (desk)
-            {
-                var right = new Vector2(HotelView3D.Right.x, HotelView3D.Right.y);
-                if (right.sqrMagnitude > 1e-4f) center -= right / right.sqrMagnitude * (size * aspect * DeskPanelFraction);
-            }
-            if (sleepCameraActive && Phase != Phase.CheckIn)
+            if (floor != null && Human != null && Human.Room != null && floor == Human.Room.Def && !sleepCameraActive)
+                center = Vector2.Lerp(rect.center, floor.Center, .3f);   // lean a little toward the guest's room
+            if (sleepCameraActive)
             {
                 if (recenterCamera)
                 {
@@ -466,7 +468,8 @@ namespace BadAppleHotel.Game
             return true;
         }
 
-        public const float DeskPanelFraction = .58f;
+        /// <summary>How much closer than "whole floor" a guest's view starts (pinch out to see all of it).</summary>
+        public const float FloorViewZoom = 1.3f;
 
         RoomDef litFloor;
         bool litFloorSet;

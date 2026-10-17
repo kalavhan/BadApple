@@ -327,6 +327,7 @@ namespace BadAppleHotel.Game
         bool CanAct(Resident r)
         {
             if (r != null && r.IsMonster) { if (r.IsHuman) Toast(Floors ? "You are the monster tonight. Your floor is quiet until dawn." : "You are hiding. Wait for lights out."); return false; }
+            if (r != null && Floors && Phase == Phase.CheckIn) { if (r.IsHuman) Toast("Building starts once every guest has a key."); return false; }
             return r != null && r.Alive && r.Room != null && InMatch;
         }
 

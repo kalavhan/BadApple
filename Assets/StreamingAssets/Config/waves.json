@@ -3,11 +3,19 @@
   "maxSize": 12,
   "sizeCostBase": 25,
   "sizeCostGrowth": 1.25,
-  "typeCosts": [0, 45, 70],
+  "typeCosts": [
+    0,
+    45,
+    70
+  ],
   "startingFear": 20,
-  "perNightGrowth": 0.08,
   "buffDamage": 0.35,
   "buffSpeed": 0.3,
   "buffHealth": 0.5,
-  "idleFearPerSecond": 0.6
+  "idleFearPerSecond": 0.6,
+  "perNightHealth": 0.18,
+  "perNightDamage": 0.12,
+  "perNightSpeed": 0.05,
+  "maxSpeedGrowth": 0.5,
+  "monsterHealth": 0.6
 }

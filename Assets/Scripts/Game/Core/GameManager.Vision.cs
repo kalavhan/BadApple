@@ -84,6 +84,7 @@ namespace BadAppleHotel.Game
             bool fog=FogActive; Shader.SetGlobalFloat("_HotelFog",fog?1:0);
             // Hallway floors: shaders skip every square outside the watched storey, so only it is drawn.
             Shader.SetGlobalFloat("_HotelHideUnseen",fog&&Floors?1:0);
+            Shader.SetGlobalFloat("_HotelLampBoost",Floors?LampBoost:0);
             if(Time.unscaledTime>=nextVisionUpdate)
             {
                 nextVisionUpdate=Time.unscaledTime+0.06f;
