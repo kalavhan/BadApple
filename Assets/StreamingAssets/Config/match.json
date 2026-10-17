@@ -57,7 +57,7 @@
     }
   ],
   "defaultDifficulty": "normal",
-  "checkInSeconds": 12,
+  "checkInSeconds": 15,
   "buildSeconds": 45,
   "duskSeconds": 6
 }

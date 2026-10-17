@@ -426,7 +426,7 @@ namespace BadAppleHotel.Game
 
         void Walk(Minion n, Vector2Int goal, bool stunned, float dt, float now)
         {
-            float speed = stunned ? 0f : n.Creature.speed * (now < n.SlowUntil ? 1f - n.SlowPct : 1f) * FloorBuff(n, 1);
+            float speed = stunned ? 0f : n.Creature.speed * n.SpeedMult * (now < n.SlowUntil ? 1f - n.SlowPct : 1f) * FloorBuff(n, 1);
             var move = n.Navigator.Steer(ref n.Pos, goal, MonsterWalkable, Cfg.minions.radius, dt, now, Walls);
             if (move.sqrMagnitude > 0.0001f) n.Facing = move.normalized;
             // Spread out a little so a batch does not stack into one sprite.

@@ -5,9 +5,8 @@ using UnityEngine;
 namespace BadAppleHotel.Game
 {
     /// <summary>
-    /// Screens for the hallway floors. The front desk: the manager calls guests up one at a time, and the room list
-    /// shows every floor's hallway as a register card with its plan; the live floor behind it follows the card you
-    /// look at. The lift: the monster player's first-person car, with the floor dial above the gate, brass floor
+    /// Screens for the hallway floors. The front desk: the clerk calls guests up one at a time and each takes a key
+    /// from the rack (room numbers only, no plans). The lift: the monster player's first-person car, with the floor dial above the gate, brass floor
     /// buttons on the right and the selected floor's register on the left, where Fear grows that floor's waves.
     /// Both are built from the haunted-hotel kit (wood, brass, paper, the lift gate) like the summon windows.
     /// </summary>
@@ -67,104 +66,208 @@ namespace BadAppleHotel.Game
 
         // ------------------------------------------------------------ front desk
 
-        /// <summary>Fraction of the screen width the register covers; the camera frames the previewed floor beside it.</summary>
-        const float DeskPanelFraction = GameManager.DeskPanelFraction;
+        static readonly Color ClerkInk = new Color32(0x0C, 0x05, 0x0A, 255);
+        static readonly Color ClerkCoat = new Color32(0x2E, 0x16, 0x28, 255);
 
+        /// <summary>
+        /// The lobby: a key rack on the wall, the clerk behind the counter asking in a speech bubble, the bell and the
+        /// register on the counter. Guests come up one at a time (15 s each); the player taps a key on the rack to
+        /// take that room. The keys show only room numbers: nobody sees a floor's layout before going up.
+        /// </summary>
         void DrawFrontDesk()
         {
             HauntedSkin.Ensure();
-            var safe = SafeRect();
-            float panelW = Mathf.Min(vw * DeskPanelFraction, 820f);
-            var panel = new Rect(safe.xMin + 14f, safe.yMin + 112f, panelW - 20f, safe.yMax - safe.yMin - 128f);
-            Ui(panel);
-            HauntedSkin.WoodFrame(panel);
-            var guest = gm.CheckingIn;
             float now = HauntedClock.Now;
+            var all = new Rect(0, 0, vw, VH);
+            Ui(all);
+            var guest = gm.CheckingIn;
 
-            // The manager behind the counter, and who is at the desk.
-            var head = new Rect(panel.x + 24f, panel.y + 18f, panel.width - 48f, 34f);
-            HauntedSkin.Label(head, "Front Desk", HauntedSkin.Gothic(30, true), HauntedSkin.BrassHi, TextAnchor.MiddleLeft);
-            string line = guest == null ? "\"That's everyone. Sleep tight.\""
-                : guest.IsHuman ? "\"Good evening. Which room shall it be? " + Mathf.CeilToInt(Mathf.Max(0f, gm.PhaseTimer)) + "\""
-                : "\"" + guest.Name + ", your key, and do lock the door...\"";
-            HauntedSkin.Label(new Rect(head.x, head.yMax, head.width, 24f), line, HauntedSkin.Serif(18, true), HauntedSkin.Bone, TextAnchor.MiddleLeft);
-
-            // The queue: everyone in calling order, the current guest lit, checked-in guests with their room.
-            float qx = head.x, qy = head.yMax + 30f;
-            for (int i = 0; i < gm.CheckInOrder.Count; i++)
+            // Lobby wall and lamplight.
+            HauntedSkin.Fill(all, HauntedSkin.Plum);
+            HauntedSkin.Tiled(all, HauntedSkin.Texture("damask"), new Vector2(180f, 180f), Vector2.zero);
+            HauntedSkin.Fill(all, new Color(.04f, .015f, .04f, .5f));
+            foreach (float x in new[] { vw * .1f, vw * .9f })
             {
-                var r = gm.CheckInOrder[i];
+                HauntedSkin.GlowAt(new Vector2(x, 150f), new Vector2(420f, 420f), new Color(1f, .78f, .42f, .22f + .03f * Mathf.Sin(now * 7f + x)));
+                HauntedSkin.GlowAt(new Vector2(x, 150f), new Vector2(60f, 60f), new Color(1f, .9f, .7f, .8f));
+            }
+
+            // The key rack.
+            float rackW = Mathf.Min(vw * .5f, 620f), rackH = 330f;
+            var rack = new Rect(Mathf.Max(vw * .62f - rackW * .5f, 400f), 70f, rackW, rackH);
+            HauntedSkin.Plaque(new Rect(rack.center.x - 130f, rack.y - 52f, 260f, 44f), "Reception", "keys · one per guest", -1.5f);
+            HauntedSkin.WoodFrame(rack);
+            var floors = gm.Map.Rooms;
+            int columns = 3, rows = Mathf.CeilToInt(floors.Count / (float)columns);
+            float cw = (rack.width - 36f) / columns, ch = (rack.height - 36f) / rows;
+            var keyHooks = new Dictionary<RoomDef, Vector2>();
+            for (int i = 0; i < floors.Count; i++)
+            {
+                var def = floors[i];
+                int row = rows - 1 - i / columns, col = i % columns;   // top floors on the top row, like the building
+                var cubby = new Rect(rack.x + 18f + col * cw + 3f, rack.y + 18f + row * ch + 3f, cw - 6f, ch - 6f);
+                HauntedSkin.NineSlice(cubby, HauntedSkin.Texture("cubby_9"), new RectOffset(14, 14, 14, 14), Color.white);
+                var plate = new Rect(cubby.center.x - 26f, cubby.y + 6f, 52f, 20f);
+                HauntedSkin.Fill(plate, HauntedSkin.Brass, 3f);
+                HauntedSkin.BrassRim(plate, 1f);
+                HauntedSkin.Label(plate, def.RoomNumber, HauntedSkin.Typed(13), HauntedSkin.Ink);
+                var hook = new Vector2(cubby.center.x, plate.yMax + 10f);
+                HauntedSkin.Fill(new Rect(hook.x - 3f, hook.y - 4f, 6f, 6f), HauntedSkin.BrassMid, 3f);
+                keyHooks[def] = hook;
+                gm.RoomsByDef.TryGetValue(def, out var room);
+                bool flying = def == gm.LastKeyTaken && Time.unscaledTime - gm.LastKeyTakenAt < .8f;
+                if (room == null)
+                {
+                    bool mine = gm.HumanAtDesk;
+                    float swing = 6f * Mathf.Sin(now * 1.7f + i * 1.3f) * (mine ? 1f : .4f);
+                    DrawKey(hook, def.RoomNumber, swing, mine);
+                    if (mine) TapZone(cubby, () => TakeKey(def));
+                }
+                else if (!flying)
+                {
+                    string who = room.Owner == null ? "" : room.Owner.IsHuman ? "yours" : room.Owner.Char != null ? room.Owner.Char.name : room.Owner.Name;
+                    HauntedSkin.Label(new Rect(cubby.x + 4f, hook.y + 14f, cubby.width - 8f, 18f), who, HauntedSkin.Serif(15, true),
+                        room.Owner != null && room.Owner.IsHuman ? HauntedSkin.Mint : new Color(.75f, .7f, .62f, 1f));
+                }
+            }
+
+            // The clerk, behind the counter in front of the rack.
+            var counterTop = VH - 196f;
+            var clerk = new Vector2(rack.x - 130f, counterTop);
+            DrawClerk(clerk, now);
+
+            // The counter: the register, the bell, and the queue of guests.
+            var counter = new Rect(0, counterTop, vw, VH - counterTop);
+            HauntedSkin.Tiled(counter, HauntedSkin.Texture("wood_h"), new Vector2(128f, 128f), Vector2.zero);
+            HauntedSkin.Fill(new Rect(0, counterTop, vw, 2f), HauntedSkin.BrassHi);
+            HauntedSkin.Fill(new Rect(0, counterTop + 2f, vw, 3f), HauntedSkin.Brass);
+            HauntedSkin.Fill(new Rect(0, counterTop + 5f, vw, 1f), HauntedSkin.BrassLow);
+            HauntedSkin.Fill(new Rect(0, counterTop + 46f, vw, VH - counterTop - 46f), new Color(0, 0, 0, .35f));
+            var register = new Rect(vw * .5f - 170f, counterTop - 26f, 340f, 64f);
+            HauntedSkin.Rotated(-2f, register.center, () =>
+            {
+                HauntedSkin.RegisterCard(register);
+                HauntedSkin.Label(new Rect(register.x + 16f, register.y + 6f, register.width - 32f, 22f), "Guest register", HauntedSkin.SmallCaps(13), HauntedSkin.BrassLow, TextAnchor.UpperLeft);
+                if (guest != null)
+                    HauntedSkin.Label(new Rect(register.x + 16f, register.y + 26f, register.width - 32f, 30f),
+                        (guest.Char != null ? guest.Char.name : guest.Name) + "  ·  " + Mathf.CeilToInt(Mathf.Max(0f, gm.PhaseTimer)) + " s",
+                        HauntedSkin.Typed(18), HauntedSkin.Ink, TextAnchor.UpperLeft);
+            });
+            var bell = new Rect(register.xMax + 30f, counterTop - 48f, 60f, 56f);
+            HauntedSkin.Tex(bell, HauntedSkin.Texture("bell"), Color.white);
+            float queueX = 30f;
+            HauntedSkin.Label(new Rect(queueX, counterTop + 54f, 200f, 20f), "In line", HauntedSkin.SmallCaps(13), HauntedSkin.Brass, TextAnchor.UpperLeft);
+            float qx = queueX, qy = counterTop + 78f;
+            foreach (var r in gm.CheckInOrder)
+            {
                 bool current = r == guest, done = r.Room != null;
-                string label = (r.IsHuman ? "You" : r.Name) + (done ? " · " + r.Room.Def.RoomNumber : "");
-                var style = HauntedSkin.Typed(12);
-                float w = HauntedSkin.Measure(label, style).x + 18f;
-                if (qx + w > panel.xMax - 24f) { qx = head.x; qy += 26f; }
-                var chip = new Rect(qx, qy, w, 22f);
+                string label = (r.IsHuman ? "You" : r.Char != null ? r.Char.name : r.Name) + (done ? " · " + r.Room.Def.RoomNumber : "");
+                var style = HauntedSkin.Typed(13);
+                float w = HauntedSkin.Measure(label, style).x + 20f;
+                if (qx + w > vw - 30f) { qx = queueX; qy += 30f; }
+                var chip = new Rect(qx, qy, w, 24f);
                 HauntedSkin.Fill(chip, current ? HauntedSkin.Brass : done ? HauntedSkin.WoodTop : HauntedSkin.Plum, 4f);
-                if (current) HauntedSkin.GlowAt(chip.center, chip.size * 1.6f, new Color(1f, .82f, .48f, .25f + .15f * Mathf.Sin(now * 4f)));
+                if (current) HauntedSkin.GlowAt(chip.center, chip.size * 1.7f, new Color(1f, .82f, .48f, .25f + .15f * Mathf.Sin(now * 4f)));
                 HauntedSkin.Label(chip, label, style, current ? HauntedSkin.Ink : done ? new Color(.75f, .7f, .62f, 1f) : HauntedSkin.Bone);
-                qx += w + 6f;
+                qx += w + 8f;
             }
 
-            // The room list: one register card per floor, with its hallway plan.
-            int columns = 3;
-            int rows = Mathf.CeilToInt(gm.Map.Rooms.Count / (float)columns);
-            float gridTop = qy + 34f, gridBottom = panel.yMax - 74f;
-            float gap = 10f;
-            float cardW = (panel.width - 48f - gap * (columns - 1)) / columns;
-            float cardH = Mathf.Min((gridBottom - gridTop - gap * (rows - 1)) / rows, cardW * .62f);
-            for (int i = 0; i < gm.Map.Rooms.Count; i++)
+            // A key that was just taken flies from its hook down to the counter.
+            if (gm.LastKeyTaken != null && keyHooks.TryGetValue(gm.LastKeyTaken, out var from))
             {
-                var def = gm.Map.Rooms[i];
-                var card = new Rect(panel.x + 24f + (i % columns) * (cardW + gap), gridTop + (i / columns) * (cardH + gap), cardW, cardH);
-                DrawFloorCard(def, card, guest);
+                float k = (Time.unscaledTime - gm.LastKeyTakenAt) / .8f;
+                if (k >= 0f && k < 1f)
+                {
+                    var to = new Vector2(register.center.x, counterTop - 30f);
+                    var p = Vector2.Lerp(from, to, k * k * (3f - 2f * k)) + Vector2.up * -60f * Mathf.Sin(k * Mathf.PI);
+                    DrawKey(p, gm.LastKeyTaken.RoomNumber, 40f * k, true);
+                }
             }
 
-            // Take the room (the human at the desk), or wait for the others.
-            var foot = new Rect(panel.x + 24f, panel.yMax - 62f, panel.width - 48f, 46f);
-            var pick = gm.PreviewFloor;
-            if (gm.HumanAtDesk && pick != null && gm.IsRoomFree(pick))
-            {
-                var button = new Rect(foot.xMax - 300f, foot.y, 300f, foot.height);
-                HauntedSkin.Fill(button, HauntedSkin.MintDeep, 6f);
-                HauntedSkin.GlowAt(button.center, button.size * 1.3f, new Color(.5f, 1f, .85f, .2f + .1f * Mathf.Sin(now * 3f)));
-                HauntedSkin.BrassRim(button, 2f);
-                HauntedSkin.Label(button, "Take Room " + pick.RoomNumber, HauntedSkin.Gothic(24, true), HauntedSkin.MintHi);
-                TapZone(button, () => { if (gm.PickFloor(gm.Human, gm.PreviewFloor)) fxFront.Say(button.center - new Vector2(0, 40), "CHECKED IN", "ROOM " + pick.RoomNumber); });
-                HauntedSkin.Label(new Rect(foot.x, foot.y, foot.width - 310f, foot.height),
-                    "Longer hallways give your towers more time. The lift is at the start, your room at the end.", HauntedSkin.Serif(15), HauntedSkin.Bone, TextAnchor.MiddleLeft);
-            }
-            else
-            {
-                string wait = gm.HumanAtDesk ? "Pick a free room from the register." :
-                    gm.Human != null && gm.Human.Room != null ? "You are in Room " + gm.Human.Room.Def.RoomNumber + ". The others are still checking in..." :
-                    "Waiting for your turn at the desk...";
-                HauntedSkin.Label(foot, wait, HauntedSkin.Serif(17, true), HauntedSkin.Bone, TextAnchor.MiddleLeft);
-            }
+            // What the clerk says.
+            string say;
+            bool justTaken = gm.LastKeyTakenBy != null && !gm.LastKeyTakenBy.IsHuman && Time.unscaledTime - gm.LastKeyTakenAt < 1.6f;
+            if (justTaken)
+                say = "Room " + gm.LastKeyTaken.RoomNumber + ". Sleep tight, " + (gm.LastKeyTakenBy.Char != null ? gm.LastKeyTakenBy.Char.name : gm.LastKeyTakenBy.Name) + ".";
+            else if (guest == null) say = "That's everyone. Mind the lift.";
+            else if (guest.IsHuman)
+                say = "Good evening, " + (guest.Char != null ? guest.Char.name : "dear guest") + ". Which key will it be? Take one, quickly now.";
+            else say = "Ah, " + (guest.Char != null ? guest.Char.name : guest.Name) + ". Take your time... not too much.";
+            DrawSpeechBubble(new Vector2(clerk.x - 40f, clerk.y - 286f), say, now);
         }
 
-        void DrawFloorCard(RoomDef def, Rect card, Resident guest)
+        void TakeKey(RoomDef def)
         {
-            gm.RoomsByDef.TryGetValue(def, out var room);
-            bool free = room == null, previewed = gm.PreviewFloor == def;
-            HauntedSkin.RegisterCard(card);
-            if (previewed) HauntedSkin.Border(new Rect(card.x - 2f, card.y - 2f, card.width + 4f, card.height + 4f), HauntedSkin.Mint, 2.5f, 6f);
-            float thumb = card.height - 16f;
-            var plan = new Rect(card.x + 8f, card.y + 8f, thumb, thumb);
-            HauntedSkin.Fill(plan, new Color(.07f, .03f, .05f, 1f), 3f);
-            HauntedSkin.Tex(plan, FloorThumb(def), free ? Color.white : new Color(1f, 1f, 1f, .45f));
-            var text = new Rect(plan.xMax + 8f, card.y + 6f, card.xMax - plan.xMax - 14f, card.height - 12f);
-            HauntedSkin.Label(new Rect(text.x, text.y, text.width, 24f), "Room " + def.RoomNumber, HauntedSkin.Gothic(20, true), HauntedSkin.Ink, TextAnchor.UpperLeft);
-            HauntedSkin.Label(new Rect(text.x, text.y + 24f, text.width, 16f), "Floor " + def.FloorNumber, HauntedSkin.SmallCaps(12), HauntedSkin.BrassLow, TextAnchor.UpperLeft);
-            HauntedSkin.Label(new Rect(text.x, text.y + 42f, text.width, 16f), def.Lane.Count + " steps of hallway", HauntedSkin.Typed(11), HauntedSkin.Ink, TextAnchor.UpperLeft);
-            HauntedSkin.Label(new Rect(text.x, text.y + 58f, text.width, 16f), def.BuildTiles.Count + " tower pads", HauntedSkin.Typed(11), HauntedSkin.CostInk, TextAnchor.UpperLeft);
-            if (!free)
+            if (!gm.PickFloor(gm.Human, def)) return;
+            fxFront.Say(new Vector2(vw * .5f, VH * .45f), "CHECKED IN", "ROOM " + def.RoomNumber);
+        }
+
+        /// <summary>A brass room key with a paper tag, hanging from its hook (pivot) and swinging by degrees.</summary>
+        void DrawKey(Vector2 hook, string number, float degrees, bool lit)
+        {
+            if (!repaint) return;
+            HauntedSkin.Rotated(degrees, hook, () =>
             {
-                var stamp = new Rect(card.center.x - card.width * .3f, card.center.y - card.height * .28f, card.width * .6f, card.height * .56f);
-                HauntedSkin.Rotated(-12f, stamp.center, () => HauntedSkin.Tex(stamp, HauntedSkin.Texture("stamp_no_vacancy"), new Color(1f, 1f, 1f, .85f)));
-                HauntedSkin.Label(new Rect(text.x, card.yMax - 22f, text.width, 16f), room.Owner != null ? (room.Owner.IsHuman ? "You" : room.Owner.Name) : "", HauntedSkin.Typed(12), HauntedSkin.BloodRed, TextAnchor.UpperLeft);
+                var brass = lit ? HauntedSkin.BrassHi : HauntedSkin.Brass;
+                if (lit) HauntedSkin.GlowAt(hook + Vector2.up * 30f, new Vector2(70f, 90f), new Color(1f, .85f, .5f, .22f));
+                DreamSkin.Ring(hook + Vector2.up * 10f, 18f, 4f, brass);
+                HauntedSkin.Fill(new Rect(hook.x - 2f, hook.y + 18f, 4f, 30f), brass, 1f);
+                HauntedSkin.Fill(new Rect(hook.x + 2f, hook.y + 38f, 7f, 3f), brass, 1f);
+                HauntedSkin.Fill(new Rect(hook.x + 2f, hook.y + 44f, 5f, 3f), brass, 1f);
+                var tag = new Rect(hook.x - 34f, hook.y + 6f, 26f, 40f);
+                HauntedSkin.Fill(tag, HauntedSkin.TagPaper, 3f);
+                HauntedSkin.Border(tag, HauntedSkin.TagPaperDark, 1f, 3f);
+                HauntedSkin.Rotated(-90f, tag.center, () => HauntedSkin.Label(new Rect(tag.center.x - 20f, tag.center.y - 10f, 40f, 20f), number, HauntedSkin.Typed(12), HauntedSkin.Ink));
+            });
+        }
+
+        /// <summary>The clerk: a tall silhouette in a tailcoat, bow tie and two lamp-yellow eyes that blink.</summary>
+        void DrawClerk(Vector2 feet, float now)
+        {
+            if (!repaint) return;
+            float bob = Mathf.Sin(now * 1.3f) * 2f;
+            var shoulders = new Rect(feet.x - 92f, feet.y - 200f + bob, 184f, 220f);
+            HauntedSkin.GlowAt(new Vector2(feet.x, feet.y - 110f), new Vector2(320f, 360f), new Color(0, 0, 0, .7f));
+            DreamSkin.Fill(shoulders, ClerkCoat, 70f);
+            DreamSkin.Border(shoulders, new Color(.66f, .55f, 1f, .35f), 2f, 70f);                                   // violet rim light
+            DreamSkin.Fill(new Rect(feet.x - 14f, feet.y - 196f + bob, 28f, 90f), HauntedSkin.Ivory, 4f);              // shirt front
+            DreamSkin.Fill(new Rect(feet.x - 30f, feet.y - 196f + bob, 16f, 70f), ClerkInk, 6f);                       // lapels
+            DreamSkin.Fill(new Rect(feet.x + 14f, feet.y - 196f + bob, 16f, 70f), ClerkInk, 6f);
+            DreamSkin.Fill(new Rect(feet.x - 16f, feet.y - 194f + bob, 14f, 10f), HauntedSkin.BloodRed, 4f);         // bow tie
+            DreamSkin.Fill(new Rect(feet.x + 2f, feet.y - 194f + bob, 14f, 10f), HauntedSkin.BloodRed, 4f);
+            DreamSkin.Fill(new Rect(feet.x - 4f, feet.y - 193f + bob, 8f, 8f), HauntedSkin.StampRed, 3f);
+            var head = new Rect(feet.x - 36f, feet.y - 284f + bob, 72f, 86f);
+            DreamSkin.Fill(new Rect(feet.x - 14f, feet.y - 206f + bob, 28f, 16f), ClerkInk, 4f);                      // neck
+            DreamSkin.Fill(head, ClerkInk, 34f);
+            DreamSkin.Border(head, new Color(.66f, .55f, 1f, .3f), 1.5f, 34f);
+            DreamSkin.Fill(new Rect(head.x - 2f, head.y - 4f, head.width + 4f, 30f), new Color32(0x05, 0x02, 0x04, 255), 14f); // slicked hair
+            bool blink = Mathf.Repeat(now, 4.3f) < .12f;
+            foreach (float side in new[] { -1f, 1f })
+            {
+                var eye = new Vector2(feet.x + side * 14f, head.y + 44f);
+                HauntedSkin.GlowAt(eye, new Vector2(34f, 26f), new Color(1f, .75f, .2f, .55f));
+                DreamSkin.Fill(new Rect(eye.x - 7f, eye.y - (blink ? 1f : 3.5f), 14f, blink ? 2f : 7f), HauntedSkin.EyeYellow, 3f);
             }
-            TapZone(card, () => gm.PreviewFloor = def);
+            DreamSkin.Fill(new Rect(feet.x - 12f, head.y + 64f, 24f, 2f), new Color(.5f, .2f, .2f, .6f), 1f);          // thin smile
+        }
+
+        void DrawSpeechBubble(Vector2 at, string text, float now)
+        {
+            if (!repaint) return;
+            var style = HauntedSkin.Serif(19, true);
+            float w = 300f;
+            var lines = new List<string>();
+            HauntedSkin.WrapLines(text, style, w - 36f, lines);
+            float h = 26f + lines.Count * 24f;
+            var bubble = new Rect(Mathf.Max(12f, at.x - w), at.y - h + Mathf.Sin(now * 2f) * 1.5f, w, h);
+            HauntedSkin.GlowAt(bubble.center + Vector2.up * 6f, bubble.size * 1.15f, new Color(0, 0, 0, .6f));
+            DreamSkin.Fill(bubble, HauntedSkin.Paper, 18f);
+            DreamSkin.Border(bubble, HauntedSkin.PaperDark, 2f, 18f);
+            // the tail, stepping down toward the clerk
+            DreamSkin.Fill(new Rect(bubble.xMax - 40f, bubble.yMax - 4f, 18f, 16f), HauntedSkin.Paper, 8f);
+            DreamSkin.Fill(new Rect(bubble.xMax - 22f, bubble.yMax + 12f, 10f, 10f), HauntedSkin.Paper, 5f);
+            for (int i = 0; i < lines.Count; i++)
+                HauntedSkin.Label(new Rect(bubble.x + 18f, bubble.y + 13f + i * 24f, w - 36f, 24f), lines[i], style, HauntedSkin.Ink, TextAnchor.UpperLeft);
         }
 
         // ------------------------------------------------------------ the lift (monster player)
@@ -394,6 +497,15 @@ namespace BadAppleHotel.Game
         /// <summary>Resident view at night on the hallway floors: who is the monster tonight and where it is.</summary>
         void DrawFloorsNightChip()
         {
+            if (gm.Phase == Phase.CheckIn && gm.CheckingIn != null)
+            {
+                var c = new Rect(vw - 270, 92, 260, 48);
+                Panel(c);
+                var at = gm.CheckingIn;
+                GUI.Label(new Rect(c.x + 8, c.y + 4, c.width - 16, 20), "<b>Front desk</b>  ·  " + (at.Char != null ? at.Char.name : at.Name) + " is taking a key", small);
+                GUI.Label(new Rect(c.x + 8, c.y + 24, c.width - 16, 20), (gm.CheckInOrder.Count - gm.CheckInIndex) + " guests still in line", small);
+                return;
+            }
             if (gm.Phase != Phase.Night || gm.Monster == null) return;
             var m = gm.Monster;
             var r = new Rect(vw - 270, 92, 260, 70);

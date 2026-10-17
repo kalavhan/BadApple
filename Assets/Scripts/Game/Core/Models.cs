@@ -233,6 +233,7 @@ namespace BadAppleHotel.Game
         public Vector2 Pos;
         public Vector2 Facing = Vector2.down;
         public float Hp, MaxHp, Damage;
+        public float SpeedMult = 1f;         // hallway floors: grows every night
         public int Resist;
         public float NextAttackAt;
         public float SlowPct, SlowUntil, StunUntil, BurnDps, BurnUntil;

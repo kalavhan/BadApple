@@ -12,12 +12,16 @@ namespace BadAppleHotel.Game
         {
             public readonly Vector2 Position, Normal;
             public readonly float Radius, Strength;
+            /// <summary>A torch: a bright pool that falls off with distance and leaves dusk between lamps (hallway floors).</summary>
+            public readonly bool Torch;
+            /// <summary>Hangs in the open (a hallway lantern) and lights all around, not just in front of a wall.</summary>
+            public readonly bool Omni;
             /// <param name="position">XY position on the decorated wall face.</param>
             /// <param name="normal">Outward direction from that wall into its room or corridor.</param>
-            public Lamp(Vector2 position, Vector2 normal, float radius = 4f, float strength = 1f)
+            public Lamp(Vector2 position, Vector2 normal, float radius = 4f, float strength = 1f, bool torch = false, bool omni = false)
             {
                 Position = position; Normal = normal.normalized;
-                Radius = Mathf.Clamp(radius, .25f, 12f); Strength = Mathf.Clamp01(strength);
+                Radius = Mathf.Clamp(radius, .25f, 12f); Strength = Mathf.Clamp01(strength); Torch = torch; Omni = omni;
             }
         }
 
@@ -92,7 +96,15 @@ namespace BadAppleHotel.Game
         public static float Contribution(Lamp lamp,Vector2 origin,Vector2 point,Func<int,int,bool> opaque)
         {
             var delta=point-lamp.Position;float distance=delta.magnitude;
-            if(distance>=lamp.Radius||Vector2.Dot(delta,lamp.Normal)<-.015f||!Sight.Clear(origin,point,opaque))return 0;
+            if(distance>=lamp.Radius||(!lamp.Omni&&Vector2.Dot(delta,lamp.Normal)<-.015f)||!Sight.Clear(lamp.Omni?lamp.Position:origin,point,opaque))return 0;
+            if(lamp.Torch)
+            {
+                // Like a torch: bright right beside it, then a steady inverse-square-ish fade to nothing at its radius.
+                float t=1-distance/lamp.Radius;
+                float glow=Mathf.Exp(-distance*distance/2.2f);
+                float side=lamp.Omni?1f:.75f+.25f*Mathf.Clamp01(Vector2.Dot(delta/Mathf.Max(.001f,distance),lamp.Normal));
+                return Mathf.Min(1,t*t*.8f+glow*.6f)*side*lamp.Strength;
+            }
             float radial=1-distance/lamp.Radius;radial=radial*radial*(3-2*radial);
             // A bright pool right under the sconce makes the lamp read as the source;
             // the wider, softer falloff keeps the far side of its area usable.

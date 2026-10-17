@@ -17,13 +17,36 @@ namespace BadAppleHotel.Game
             public readonly HotelLighting.Lamp Lamp;
             public readonly int Group;
             public readonly bool StaysUp;
-            public Candidate(Vector2 position,Vector2 normal,int group,bool staysUp,float radius=8f)
-            { Lamp=new HotelLighting.Lamp(position,normal,radius);Group=group;StaysUp=staysUp; }
+            public Candidate(Vector2 position,Vector2 normal,int group,bool staysUp,float radius=8f,bool torch=false)
+            { Lamp=new HotelLighting.Lamp(position,normal,radius,1f,torch);Group=group;StaysUp=staysUp; }
         }
         readonly struct Sample
         {
             public readonly Vector2 Point;public readonly int Group;
             public Sample(Vector2 point,int group){Point=point;Group=group;}
+        }
+
+        /// <summary>Torches every so often along the hallway walls (never closer than spacing), plus one in each room,
+        /// so the light comes in pools from its sources with dusk between them.</summary>
+        public static HashSet<int> SelectTorches(HotelMap map,IReadOnlyList<Candidate> candidates,float spacing)
+        {
+            var selected=new HashSet<int>();var picked=new List<Vector2>();
+            var order=new List<int>();for(int i=0;i<candidates.Count;i++)order.Add(i);
+            order.Sort((a,b)=>{var pa=candidates[a].Lamp.Position;var pb=candidates[b].Lamp.Position;return pa.y!=pb.y?pa.y.CompareTo(pb.y):pa.x.CompareTo(pb.x);});
+            var roomsLit=new HashSet<int>();
+            foreach(int i in order)
+            {
+                var c=candidates[i];
+                if(c.Group<map.Rooms.Count)
+                {
+                    // One lamp per guest room, on a wall that stays up.
+                    if(c.StaysUp&&roomsLit.Add(c.Group)){selected.Add(i);picked.Add(c.Lamp.Position);}
+                    continue;
+                }
+                bool clear=true;foreach(var p in picked)if((p-c.Lamp.Position).sqrMagnitude<spacing*spacing){clear=false;break;}
+                if(clear){selected.Add(i);picked.Add(c.Lamp.Position);}
+            }
+            return selected;
         }
 
         public static HashSet<int> Select(HotelMap map,IReadOnlyList<Candidate> candidates)

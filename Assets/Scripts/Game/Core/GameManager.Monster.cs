@@ -23,7 +23,7 @@ namespace BadAppleHotel.Game
         float EndlessHealth => Endless ? Cfg.match.endless.healthMultiplier + (Night - 1) * Cfg.match.endless.healthPerNight : 1f;
         float EndlessDamage => Endless ? Cfg.match.endless.damageMultiplier + (Night - 1) * Cfg.match.endless.damagePerNight : 1f;
 
-        public float MaxHp(Monster m) => m.Def.baseHealth *
+        public float MaxHp(Monster m) => m.Def.baseHealth * (Floors ? Cfg.waves.monsterHealth : 1f) *
             (1 + (m.Level - 1) * Cfg.progression.autoHealthPerLevel + StatBonus(m, "vitality")) * EndlessHealth;
         public float AttackMult(Monster m) =>
             (1 + (m.Level - 1) * Cfg.progression.autoAttackPerLevel) * (1 + StatBonus(m, "maw")) * EndlessDamage;
