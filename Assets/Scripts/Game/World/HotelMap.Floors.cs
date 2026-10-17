@@ -18,7 +18,7 @@ namespace BadAppleHotel.Game
         /// <summary>Tight box around the floor's walls, for framing the camera.</summary>
         public RectInt ViewBounds;
         public int FloorNumber => Index + 1;
-        public string RoomNumber => FloorNumber + "0" + (Index % 3 + 1);
+        public string RoomNumber => FloorNumber + "01";
     }
 
     /// <summary>
@@ -59,8 +59,10 @@ namespace BadAppleHotel.Game
             IsFloors = true;
             Seed = seed;
             int columns = Mathf.Max(1, fc.columns), rows = (floorCount + columns - 1) / columns;
-            W = columns * fc.cellSize;
-            H = rows * fc.cellSize;
+            // The storeys share one tile grid but sit apart, never touching; only the watched one is lit.
+            int pitch = fc.cellSize + Mathf.Max(0, fc.gap);
+            W = columns * pitch;
+            H = rows * pitch;
             Tiles = new Tile[W, H];
             roomId = new int[W, H];
             floorId = new int[W, H];
@@ -69,7 +71,7 @@ namespace BadAppleHotel.Game
             for (int i = 0; i < floorCount; i++)
             {
                 // Floor 1 at the bottom left, reading like a building directory.
-                var origin = new Vector2Int(i % columns * fc.cellSize, i / columns * fc.cellSize);
+                var origin = new Vector2Int(i % columns * pitch, i / columns * pitch);
                 bool built = false;
                 for (int attempt = 0; attempt < 40 && !built; attempt++)
                 {

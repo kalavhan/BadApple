@@ -376,6 +376,7 @@ namespace BadAppleHotel.Config
         public int extraFloors = 2;      // spare floors on top of one per player, so the last guest still has a choice
         public int columns = 3;          // floors laid side by side in the shared tile grid
         public int cellSize = 36;        // square tile footprint of one floor, margins included
+        public int gap = 12;             // empty tiles between storeys in the shared grid
         public int lanesMin = 3, lanesMax = 5;
         public int lanePitchMax = 7;     // rows from one lane to the next
         public int laneWidth = 2;        // carpet width

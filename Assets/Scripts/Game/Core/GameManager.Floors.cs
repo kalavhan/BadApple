@@ -409,6 +409,7 @@ namespace BadAppleHotel.Game
             get
             {
                 if (!Floors || !InMatch) return null;
+                if (Phase == Phase.CheckIn) return PreviewFloor;
                 if (HumanRole == Role.Monster && Monster != null && !Monster.InLift && Monster.Floor != null) return Monster.Floor;
                 if (Human != null && Human.Room != null) return Human.Room.Def;
                 return null;
@@ -461,6 +462,27 @@ namespace BadAppleHotel.Game
         }
 
         public const float DeskPanelFraction = .58f;
+
+        RoomDef litFloor;
+        bool litFloorSet;
+
+        /// <summary>Lights the watched storey's squares (and its walls); every other storey stays dark.</summary>
+        void FloorVision()
+        {
+            var floor = ViewFloor;
+            if (litFloorSet && floor == litFloor) return;
+            litFloor = floor; litFloorSet = true;
+            for (int y = 0; y < Map.H; y++)
+                for (int x = 0; x < Map.W; x++)
+                {
+                    int i = y * Map.W + x;
+                    visible[i] = floor != null && Map.FloorOf(new Vector2Int(x, y)) == floor;
+                    byte value = visible[i] ? (byte)255 : (byte)0;
+                    fogPx[i] = new Color32(value, value, value, 255);
+                }
+            fogTex.SetPixels32(fogPx);
+            fogTex.Apply(false);
+        }
 
         /// <summary>Orthographic size that fits a whole floor on screen in the isometric view.</summary>
         public static float FloorViewSize(RectInt bounds, float aspect)
