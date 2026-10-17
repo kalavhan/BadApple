@@ -66,31 +66,6 @@ namespace BadAppleHotel.Tests
         }
 
         [Test]
-        public void Body_parts_keep_twelve_tiles_between_every_pair_for_every_night()
-        {
-            for (int seed = 1; seed <= 35; seed++)
-            {
-                var map = new HotelMap(cfg.map, 10, seed);
-                for (int night = 1; night <= cfg.match.nightCount; night++)
-                {
-                    var empty = map.Rooms.Skip(6).ToArray();
-                    var parts = map.BodyPartSpawns(cfg.match.bodyPartsPerNight, cfg.bodyParts.minSpacingTiles, seed + night * 7919, empty);
-                    Assert.AreEqual(cfg.match.bodyPartsPerNight, parts.Count);
-                    Assert.IsTrue(parts.Any(p => map.DeadEnds.Contains(p)), "at least one dead-end hiding place");
-                    Assert.IsTrue(parts.Any(p => map.RoomContaining(p) != null), "at least one empty-room hiding place");
-                    for (int i = 0; i < parts.Count; i++)
-                    {
-                        var room = map.RoomContaining(parts[i]);
-                        Assert.IsTrue(room == null || empty.Contains(room));
-                        for (int j = i + 1; j < parts.Count; j++)
-                            Assert.GreaterOrEqual(Vector2Int.Distance(parts[i], parts[j]), cfg.bodyParts.minSpacingTiles);
-                    }
-                    CollectionAssert.AreEqual(parts, map.BodyPartSpawns(parts.Count, cfg.bodyParts.minSpacingTiles, seed + night * 7919, empty));
-                }
-            }
-        }
-
-        [Test]
         public void All_character_heads_meet_all_bed_anchors_in_four_orientations()
         {
             Assert.AreEqual(7, cfg.residents.roster.Length);

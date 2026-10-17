@@ -106,7 +106,6 @@ namespace BadAppleHotel.Game
                 a.Size = TowerSize.TryGetValue(key.Substring(6), out var ts) ? ts : 1.15f;
                 return true;
             }
-            if (key.StartsWith("part_")) { a.File = key; a.Size = 0.75f; return true; }
             return false;
         }
 
@@ -522,38 +521,6 @@ namespace BadAppleHotel.Game
             c.Rect(8, 13, 1, 2, Palette.Rust);
             c.Ellipse(11, 14, 2, 1, Palette.Moss);
             c.Set(13, 15, Palette.Moss);
-            c.Outline(Palette.Ink);
-            return c.ToSprite(Center);
-        });
-
-        public static Sprite Part(string id) => Cached("part_" + id, () =>
-        {
-            var c = new PixelCanvas(12, 12);
-            var flesh = Palette.Shade(Palette.Bone, 0.9f);
-            switch (id)
-            {
-                case "leg":
-                    c.Rect(5, 3, 2, 7, flesh);
-                    c.Rect(5, 2, 4, 2, flesh);
-                    c.Set(6, 7, Palette.Ink);
-                    break;
-                case "torso":
-                    c.Ellipse(6, 6, 4, 5, flesh);
-                    c.Line(6, 2, 6, 10, Palette.Ink);
-                    c.Set(5, 4, Palette.Ink); c.Set(7, 6, Palette.Ink); c.Set(5, 8, Palette.Ink);
-                    break;
-                case "eye":
-                    c.Ellipse(6, 6, 4, 4, Palette.Bone);
-                    c.Ellipse(6, 6, 2, 2, Palette.Teal);
-                    c.Set(6, 6, Palette.Ink);
-                    c.Set(3, 7, Palette.Rust); c.Set(9, 5, Palette.Rust);
-                    break;
-                default: // arm
-                    c.Line(2, 3, 8, 8, flesh);
-                    c.Line(2, 4, 8, 9, flesh);
-                    c.Ellipse(9, 9, 1, 1, flesh);
-                    break;
-            }
             c.Outline(Palette.Ink);
             return c.ToSprite(Center);
         });

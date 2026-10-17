@@ -43,7 +43,7 @@ namespace BadAppleHotel.EditorTools
             try
             {
                 game = new GameObject("Tower FX capture").AddComponent<GameManager>();
-                game.StartSimulation(ConfigLoader.Load(), 241, false);
+                game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(), 241, false);
                 camera = new GameObject("Tower FX camera").AddComponent<Camera>();
                 camera.enabled = false; camera.orthographic = true;
                 camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(.035f, .03f, .045f);
@@ -52,7 +52,7 @@ namespace BadAppleHotel.EditorTools
                 typeof(GameManager).GetProperty(nameof(GameManager.Simulation)).SetValue(game, false);
                 Sprites.ArtOverride = true;
                 UnityEngine.Random.InitState(241);
-                game.StartMatch(Role.Resident, "stitchwork_chef");
+                game.LegacyHotel = true; game.StartMatch(Role.Resident, "stitchwork_chef");
                 game.SetSpeed(0);
                 var def = game.Map.Rooms.OrderByDescending(room => room.BuildTiles.Count).First();
                 def.Isolated = false;

@@ -85,14 +85,14 @@ namespace BadAppleHotel.Game
             hotelLighting?.Dispose(); hotelLighting = null; wallLamps.Clear(); wallPanels.Clear(); lampGlowMaterial=null; lampGlowView=null;
             foreach(var asset in sceneAssets) if(asset!=null) RemoveObject(asset);
             sceneAssets.Clear(); wallStates.Clear(); wallBatches.Clear(); WallPieceCounts.Clear(); nextWallUpdate=0; WallFocusRoom=null;
-            doorModels.Clear(); doorMaterials.Clear();
+            doorModels.Clear(); doorMaterials.Clear(); liftGates.Clear();
             doorMats.Clear(); doorMatMesh = null; doorMatMaterial = null;
             wallKit=WallKit.Load(); wallInstances=new WallInstances(); wallCoreViews.Clear();
             wallHeightAt=CurrentWallHeight;
             Camera.onPreCull -= DrawWallInstances; Camera.onPreCull += DrawWallInstances;
             BuildHotelFloors();
             var graph=Walls;
-            wallTextureWidth=Mathf.NextPowerOfTwo(graph.Runs.Count+graph.Perimeter.Spans.Count+graph.Perimeter.Corners.Count+Map.Rooms.Count);
+            wallTextureWidth=Mathf.NextPowerOfTwo(graph.Runs.Count+graph.Perimeter.Spans.Count+graph.Perimeter.Corners.Count+Map.Rooms.Count*(Map.IsFloors?2:1));
             wallStateTexture=new Texture2D(wallTextureWidth,2,TextureFormat.RGBAFloat,false,true) { name="Wall run states",filterMode=FilterMode.Point,wrapMode=TextureWrapMode.Clamp };
             sceneAssets.Add(wallStateTexture); wallStatePixels=new Color[wallTextureWidth*2];
             hotelWallMaterial=new Material(Resources.Load<Shader>("Shaders/HotelWall"));
@@ -132,6 +132,7 @@ namespace BadAppleHotel.Game
                 ApplyDoorLook(def);
                 CreateDoorMat(def);
             }
+            if(Map.IsFloors)foreach(var def in Map.Rooms)CreateLiftDoors(def);
             BuildWallPanels();
             WallBatchCount=wallInstances.MaxDrawCalls+(lampGlowView!=null?1:0);WallTriangleCount=wallInstances.TotalTriangles+wallLamps.Count*2;
             foreach(var batch in wallBatches)
@@ -213,6 +214,9 @@ namespace BadAppleHotel.Game
         {
             var tile=Map.Get(cell.x,cell.y);
             var room=tile==Tile.Door?Map.RoomAtDoor(cell):tile==Tile.RoomFloor?Map.RoomContaining(cell):null;
+            // Hallway floors: build pads are walnut boards that carry the spectral energy once their floor is claimed.
+            var pad=Map.IsFloors&&tile==Tile.Corridor?Map.PadOwner(cell):null;
+            if(pad!=null)return new Color((pad.Index*5+2)%3==0?1:0,0,Mathf.Repeat(pad.Index*.6180339f,1),1);
             if(room==null)return new Color(0,0,.37f,0);
             int minX=int.MaxValue,maxX=int.MinValue,minY=int.MaxValue,maxY=int.MinValue;
             foreach(var f in room.Floor){minX=Mathf.Min(minX,f.x);maxX=Mathf.Max(maxX,f.x);minY=Mathf.Min(minY,f.y);maxY=Mathf.Max(maxY,f.y);}

@@ -15,7 +15,7 @@ Shader "BadApple/HotelLampGlow"
             sampler2D_float _WallStates;
             sampler2D _HotelVision;
             float4 _HotelSize, _WallPeekBounds;
-            float _HotelFog, _WallClock, _WallPeekEnabled;
+            float _HotelFog, _HotelHideUnseen, _WallClock, _WallPeekEnabled;
             struct appdata { float4 vertex:POSITION;float2 uv:TEXCOORD0;float2 state:TEXCOORD1;float2 ground:TEXCOORD2; };
             struct v2f { float4 pos:SV_POSITION;float2 uv:TEXCOORD0;float2 ground:TEXCOORD1;float2 rule:TEXCOORD2; };
             v2f vert(appdata v)
@@ -36,6 +36,7 @@ Shader "BadApple/HotelLampGlow"
                     clip(-min(edge.x,edge.y)-.0001);
                 }
                 float sight=tex2D(_HotelVision,(floor(i.ground)+.5)/_HotelSize.xy).r;
+                clip(.5-_HotelHideUnseen*step(sight,.5)); // hallway floors: other storeys are not drawn at all
                 float visible=lerp(1,step(.9,sight),_HotelFog);
                 float radius=dot(i.uv,i.uv);clip(1-radius);
                 float halo=pow(1-radius,3)*.42+exp(-radius*35)*.35;

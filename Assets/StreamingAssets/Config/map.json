@@ -44,5 +44,22 @@
     20,
     20,
     20
-  ]
+  ],
+  "floors": {
+    "extraFloors": 2,
+    "columns": 3,
+    "cellSize": 36,
+    "lanesMin": 3,
+    "lanesMax": 5,
+    "lanePitchMax": 7,
+    "laneWidth": 2,
+    "padDepth": 2,
+    "turnJitter": 4,
+    "verticalChance": 0.5,
+    "roomInterior": {
+      "x": 5,
+      "y": 4
+    },
+    "gap": 12
+  }
 }

@@ -10,25 +10,6 @@ namespace BadAppleHotel.Game
     {
         // ------------------------------------------------------------------ monster stats
 
-        int PartIndex(string id)
-        {
-            var parts = Cfg.bodyParts.parts;
-            for (int i = 0; i < parts.Length; i++) if (parts[i].id == id) return i;
-            return -1;
-        }
-
-        public int PartCount(Monster m, string id)
-        {
-            int i = PartIndex(id);
-            return i >= 0 && i < m.Parts.Length ? m.Parts[i] : 0;
-        }
-
-        float PartValue(string id)
-        {
-            int i = PartIndex(id);
-            return i >= 0 ? Cfg.bodyParts.parts[i].perPart : 0f;
-        }
-
         /// <summary>The bonus a stat track gives at the monster's current rank (0.16 = +16%).</summary>
         public float StatBonus(Monster m, string id)
         {
@@ -42,11 +23,10 @@ namespace BadAppleHotel.Game
         float EndlessHealth => Endless ? Cfg.match.endless.healthMultiplier + (Night - 1) * Cfg.match.endless.healthPerNight : 1f;
         float EndlessDamage => Endless ? Cfg.match.endless.damageMultiplier + (Night - 1) * Cfg.match.endless.damagePerNight : 1f;
 
-        public float MaxHp(Monster m) => (m.Def.baseHealth + PartCount(m, "torso") * PartValue("torso")) *
+        public float MaxHp(Monster m) => m.Def.baseHealth *
             (1 + (m.Level - 1) * Cfg.progression.autoHealthPerLevel + StatBonus(m, "vitality")) * EndlessHealth;
-        public float AttackMult(Monster m) => (1f + PartCount(m, "arm") * PartValue("arm")) *
+        public float AttackMult(Monster m) =>
             (1 + (m.Level - 1) * Cfg.progression.autoAttackPerLevel) * (1 + StatBonus(m, "maw")) * EndlessDamage;
-        public float RevealRadius(Monster m) => PartCount(m, "eye") * PartValue("eye");
 
         /// <summary>Kit rank multiplier for damage (rank 1..3).</summary>
         public float RankDamage(int rank) => Cfg.progression.rankDamage[Mathf.Clamp(rank, 1, 3) - 1];
@@ -63,7 +43,7 @@ namespace BadAppleHotel.Game
         public float MonsterSpeed(Monster m, float now)
         {
             if (now < m.StunUntil) return 0f;
-            float s = m.Def.moveSpeed * (1f + PartCount(m, "leg") * PartValue("leg")) * (1f + StatBonus(m, "stride"));
+            float s = m.Def.moveSpeed * (1f + StatBonus(m, "stride"));
             if (now < m.SprintUntil) s *= Cfg.monsters.sprintMultiplier;
             if (m.Frenzy) s *= Cfg.progression.frenzyMultiplier;
             if (now < m.SlowUntil) s *= 1f - m.SlowPct;
@@ -96,6 +76,7 @@ namespace BadAppleHotel.Game
         void HandleHumanMonsterKeys()
         {
             if (HumanRole != Role.Monster || Monster == null) return;
+            if (Floors && GameInput.ConsumePressed(KeyCode.L) && NearLift(Monster)) EnterLift(Monster);
             if (GameInput.ConsumePressed(KeyCode.Alpha1)) UseAbility(0);
             if (GameInput.ConsumePressed(KeyCode.Alpha2)) UseAbility(1);
             if (GameInput.ConsumePressed(KeyCode.Alpha3)) UseAbility(2);
@@ -121,7 +102,17 @@ namespace BadAppleHotel.Game
             if (m.Dead) return;
             EndPhase(m, now);
 
-            Vector2 move = m.IsHuman ? HotelView3D.Move(GameInput.Move) : (m.Ai != null ? m.Ai.Tick(dt, now) : Vector2.zero);
+            Vector2 move = m.IsHuman ? HotelView3D.Move(GameInput.Move)
+                : m.FloorAi != null ? m.FloorAi.Tick(dt, now) : m.Ai != null ? m.Ai.Tick(dt, now) : Vector2.zero;
+            if (m.InLift)
+            {
+                // Riding: hidden and out of reach, healing a little, still earning a trickle of Fear.
+                m.Hp = Mathf.Min(MaxHp(m), m.Hp + MaxHp(m) * .03f * dt);
+                if (Phase == Phase.Night) AddFear(m, Cfg.waves.idleFearPerSecond * dt);
+                UpdateLift(m);
+                if (m.InLift) { if (m.Sr != null) m.Sr.enabled = false; return; }
+                move = Vector2.zero;
+            }
             if (now < m.DashUntil)
             {
                 m.Pos = Slide(m.Pos, m.DashVelocity * dt, MonsterWalkable, MonsterRadius);
@@ -133,12 +124,11 @@ namespace BadAppleHotel.Game
                 m.Pos = Slide(m.Pos, move * MonsterSpeed(m, now) * dt, MonsterWalkable, MonsterRadius);
             }
             if (!CanStand(m.Pos, MonsterWalkable, MonsterRadius))
-                m.Pos = Unstick(m.Pos, MonsterWalkable, MonsterRadius, HotelMap.Center(Map.MonsterSpawn));
+                m.Pos = Unstick(m.Pos, MonsterWalkable, MonsterRadius, HotelMap.Center(m.Floor != null ? m.Floor.LiftLanding : Map.MonsterSpawn));
 
             m.AttackingRoom = null;
             m.Biting = null;
             if (Phase == Phase.Night) MonsterAttack(m, now);
-            UpdateEating(m, dt);
             UpdateScouting(m, now);
 
             if (Simulation) return;
@@ -252,7 +242,8 @@ namespace BadAppleHotel.Game
             {
                 AddFear(m, dmg * Cfg.progression.fear.perDoorDamage);
                 m.LastDamageAt = Now; m.Frenzy = false;
-                m.DreamPower += dmg * Cfg.economy.monsterIncome.dreamPowerPerDoorDamage;
+                float dream = dmg * Cfg.economy.monsterIncome.dreamPowerPerDoorDamage;
+                if (m.Guest != null) m.Guest.DreamPower += dream; else m.DreamPower += dream;
             }
             if (door.DoorHp > 0f) return;
             door.DoorHp = 0f;
@@ -280,41 +271,16 @@ namespace BadAppleHotel.Game
             if (r.Health <= 0f) KillResident(r, byMonster);
         }
 
-        void UpdateEating(Monster m, float dt)
-        {
-            BodyPart near = null;
-            foreach (var p in Parts)
-                if (Vector2.Distance(m.Pos, HotelMap.Center(p.Tile)) < 0.8f) { near = p; break; }
-
-            if (near == null || m.AttackingRoom != null || m.Biting != null || m.Parts[near.TypeIndex] >= Cfg.bodyParts.maxPartsPerType)
-            {
-                m.EatingPart = null;
-                m.EatProgress = 0f;
-                return;
-            }
-            if (m.EatingPart != near) { m.EatingPart = near; m.EatProgress = 0f; }
-            m.EatProgress += dt;
-            if (m.EatProgress < Cfg.bodyParts.eatSeconds) return;
-            EatPart(m, near);
-        }
-
-        void EatPart(Monster m, BodyPart part)
-        {
-            float oldMax = MaxHp(m);
-            m.Parts[part.TypeIndex] = Mathf.Min(Cfg.bodyParts.maxPartsPerType, m.Parts[part.TypeIndex] + 1);
-            m.Hp += MaxHp(m) - oldMax;
-            m.Faith += Cfg.economy.monsterIncome.faithPerBodyPart;
-            AddFear(m, Cfg.progression.fear.perPart);
-            Parts.Remove(part);
-            if (part.Sr != null) RemoveObject(part.Sr.gameObject);
-            m.EatingPart = null;
-            m.EatProgress = 0f;
-            AddFloater(m.Pos + Vector2.up * 1.5f, "+" + part.Def.name, (Color)Palette.Moss);
-            AddLog(m.Def.name + " ate a " + part.Def.name.ToLower() + ".");
-        }
-
         void Respawn(Monster m)
         {
+            if (Floors)
+            {
+                m.Dead = false;
+                m.Hp = MaxHp(m);
+                EnterLift(m);
+                if (m.IsHuman) Announce("You crawl back into the lift. Pick a floor.", 3f);
+                return;
+            }
             m.Dead = false;
             m.Pos = m.Lair != null ? HotelMap.Center(m.Lair.Def.BedTile) : HotelMap.Center(Map.MonsterSpawn);
             m.Hp = MaxHp(m);
@@ -358,12 +324,8 @@ namespace BadAppleHotel.Game
             }
             m.DreamPower = 0f;
             m.Faith = 0f;
-            for (int i = 0; i < m.Parts.Length; i++)
-                m.Parts[i] = Mathf.FloorToInt(m.Parts[i] * Cfg.bodyParts.keepOnRespawnPct);
             m.SlowUntil = m.StunUntil = m.BurnUntil = m.JamUntil = m.RampageUntil = m.CloakUntil = m.DashUntil = m.PhaseUntil = 0f;
             m.PhasedRoom = null;
-            m.EatingPart = null;
-            m.EatProgress = 0f;
         }
 
         void KillResident(Resident r, bool byMonster = true)
@@ -372,14 +334,17 @@ namespace BadAppleHotel.Game
             r.Alive = false;
             r.Asleep = false;
             r.Health = 0f;
+            r.DiedAt = Now;
             // A phased-in porter must not remain sealed inside a dead guest's room.
             if (r.Room != null)
             {
                 r.Room.DoorOpen = true; r.Room.CloseWhenClear = false; RefreshDoor(r.Room);
             }
             var reward = EconomyRules.MonsterKillReward(Cfg.economy, r.DreamPower, r.Faith, r.XpValue);
-            m.DreamPower += reward.DreamPower + Cfg.economy.monsterIncome.dreamPowerPerResidentKill;
-            m.Faith += reward.Faith;
+            // On the hallway floors the spoils go to the guest playing the monster tonight.
+            var earner = m.Guest;
+            if (earner != null) { earner.DreamPower += reward.DreamPower + Cfg.economy.monsterIncome.dreamPowerPerResidentKill; earner.Faith += reward.Faith; }
+            else { m.DreamPower += reward.DreamPower + Cfg.economy.monsterIncome.dreamPowerPerResidentKill; m.Faith += reward.Faith; }
             if (byMonster) AddFear(m, Cfg.progression.fear.perKill);
             else Metrics.KillsByMinions++;
             m.LastKillAt = Now;
@@ -485,20 +450,11 @@ namespace BadAppleHotel.Game
                     DamageResident(r, damage, true);
         }
 
-        /// <summary>Maître Gorge: reel in a body part and eat it on the spot, or yank a resident out of an open doorway.</summary>
+        /// <summary>Maître Gorge: yank a resident out of an open doorway.</summary>
         bool MeatHook(Monster m, AbilityDef a)
         {
-            BodyPart part = null;
-            float best = a.radius;
-            foreach (var p in Parts)
-            {
-                float d = Vector2.Distance(m.Pos, HotelMap.Center(p.Tile));
-                if (d <= best && m.Parts[p.TypeIndex] < Cfg.bodyParts.maxPartsPerType && ClearLine(m.Pos, HotelMap.Center(p.Tile))) { best = d; part = p; }
-            }
-            if (part != null) { EatPart(m, part); return true; }
-
             Resident prey = null;
-            best = a.radius;
+            float best = a.radius;
             foreach (var r in Residents)
             {
                 if (!r.Alive) continue;

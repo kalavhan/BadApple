@@ -18,13 +18,33 @@ namespace BadAppleHotel.Config
         public int roomCount;
         public float residentHealth;
         public float monsterRespawnSeconds;
-        public int bodyPartsPerNight;
         public EndlessConfig endless = new EndlessConfig();
         public DifficultyDef[] difficulties;
         public string defaultDifficulty = "normal";
         public bool deadResidentsSpectate;
         public float[] disguiseBuildEverySeconds = { 6f, 14f };
         public int disguiseMaxBuildings = 4;
+        /// <summary>Seconds each guest has at the front desk before the manager picks a room for them.</summary>
+        public float checkInSeconds = 12f;
+        /// <summary>Building time after check-in, before the first night.</summary>
+        public float buildSeconds = 45f;
+        /// <summary>Quiet seconds between nights while the next monster wakes.</summary>
+        public float duskSeconds = 6f;
+    }
+
+    /// <summary>Minion waves on every floor. Each floor's wave size and creature types are bought with the shared Fear pool
+    /// and stay bought for the rest of the match, whichever guest is the monster.</summary>
+    [Serializable]
+    public class WavesConfig
+    {
+        public int startSize = 3;            // minions each floor sends per pulse before any Fear is spent
+        public int maxSize = 12;
+        public float sizeCostBase = 25f, sizeCostGrowth = 1.25f;
+        public float[] typeCosts = { 0f, 45f, 70f };   // creature 0 comes free
+        public float startingFear = 20f;
+        public float perNightGrowth = 0.08f;           // minion health and damage per night after the first
+        public float buffDamage = 0.35f, buffSpeed = 0.3f, buffHealth = 0.5f;   // the visited floor's monster buff
+        public float idleFearPerSecond = 0.6f;          // a monster riding the lift still earns a little
     }
 
     /// <summary>A difficulty: how well bots play, from start on night 1 (and during setup) to end on the last night of
@@ -62,7 +82,6 @@ namespace BadAppleHotel.Config
     {
         public float dreamPowerPerDoorDamage;
         public float dreamPowerPerResidentKill;
-        public float faithPerBodyPart;
     }
 
     [Serializable]
@@ -287,25 +306,6 @@ namespace BadAppleHotel.Config
     }
 
     [Serializable]
-    public class BodyPartDef
-    {
-        public string id;
-        public string name;
-        public string effect;
-        public float perPart;
-    }
-
-    [Serializable]
-    public class BodyPartsConfig
-    {
-        public float minSpacingTiles = 12f;
-        public float eatSeconds;
-        public int maxPartsPerType;
-        public float keepOnRespawnPct;
-        public BodyPartDef[] parts;
-    }
-
-    [Serializable]
     public class AbilityDef
     {
         public string id;
@@ -362,6 +362,28 @@ namespace BadAppleHotel.Config
         public int maxNearestDoorDistance = 32;
         public int deadEndCount = 4;
         public int loopCount = 2;
+        /// <summary>The hallway tower-defense layout: one floor per guest room (see HotelMap.Floors).</summary>
+        public FloorsConfig floors = new FloorsConfig();
+    }
+
+    /// <summary>
+    /// One floor per room: the lift at one end, a carpeted lane that winds back and forth (the path the monster
+    /// and its minions walk), build pads either side of the carpet, and the guest's room at the far end.
+    /// </summary>
+    [Serializable]
+    public class FloorsConfig
+    {
+        public int extraFloors = 2;      // spare floors on top of one per player, so the last guest still has a choice
+        public int columns = 3;          // floors laid side by side in the shared tile grid
+        public int cellSize = 36;        // square tile footprint of one floor, margins included
+        public int gap = 12;             // empty tiles between storeys in the shared grid
+        public int lanesMin = 3, lanesMax = 5;
+        public int lanePitchMax = 7;     // rows from one lane to the next
+        public int laneWidth = 2;        // carpet width
+        public int padDepth = 2;         // build pads within this many tiles of the carpet
+        public int turnJitter = 4;       // how far a lane's turn can move in from the end
+        public float verticalChance = 0.5f;
+        public UnityEngine.Vector2Int roomInterior = new UnityEngine.Vector2Int(5, 4);
     }
 
     [Serializable]
@@ -401,11 +423,11 @@ namespace BadAppleHotel.Config
         public DoorsConfig doors;
         public TowersConfig towers;
         public MonstersConfig monsters;
-        public BodyPartsConfig bodyParts;
         public AbilitiesConfig abilities;
         public MapConfig map;
         public ResidentsConfig residents;
         public MonsterProgressionConfig progression;
         public MinionsConfig minions;
+        public WavesConfig waves = new WavesConfig();
     }
 }

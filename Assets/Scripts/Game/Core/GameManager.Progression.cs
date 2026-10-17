@@ -16,7 +16,6 @@ namespace BadAppleHotel.Game
     {
         public bool Endless { get; private set; }
         public float Now { get; private set; }
-        float nextPartSpawn;
         public float Income(float raw) => Mathf.Min(raw, Cfg.progression.incomeThreshold) + Mathf.Max(0, raw-Cfg.progression.incomeThreshold)*Cfg.progression.incomeExcessMultiplier;
         public void StartEndless(Role role, string pick) { StartMatch(role, pick); Endless = true; }
         public static int PersonalBest(Role role) => PlayerPrefs.GetInt("bah_endless_" + role, 0);
@@ -30,7 +29,6 @@ namespace BadAppleHotel.Game
             var area = Cfg.abilities.abilities.First(a => a.id == m.Def.area);
             m.Loadout = new[] { area };
             m.Cooldowns = new float[1];
-            nextPartSpawn = Now + Cfg.progression.partSpawnSeconds;
         }
 
         // ------------------------------------------------------------------ Fear
@@ -39,7 +37,10 @@ namespace BadAppleHotel.Game
         public void AddFear(Monster m, float amount)
         {
             if (m == null || amount <= 0f || float.IsNaN(amount) || float.IsInfinity(amount)) return;
-            m.Fear += amount; m.FearEarned += amount;
+            m.FearEarned += amount;
+            // Hallway floors: one Fear pool shared by every night's monster.
+            if (Floors) { Fear += amount; FearEarned += amount; return; }
+            m.Fear += amount;
         }
 
         /// <summary>Fear price of the monster's next level, or -1 at the cap.</summary>
@@ -242,28 +243,6 @@ namespace BadAppleHotel.Game
                 if (now < m.SlowZoneUntil)
                     foreach (var r in Residents) if (Vector2.Distance(r.Pos,m.Pos)<4) r.SlowUntil = now+0.2f;
             }
-            if (now >= nextPartSpawn)
-            {
-                nextPartSpawn = now + Mathf.Max(Cfg.progression.partSpawnMinSeconds, Cfg.progression.partSpawnSeconds-Night*Cfg.progression.partSpawnReductionPerNight);
-                if (Parts.Count < Cfg.match.bodyPartsPerNight) AddOnePart();
-            }
-        }
-        void AddOnePart()
-        {
-            var options = Map.BodyPartSpawns(Cfg.match.bodyPartsPerNight, Cfg.bodyParts.minSpacingTiles, Random.Range(1,int.MaxValue), Map.Rooms.Where(IsRoomFree).ToArray());
-            foreach (var tile in options)
-            {
-                if (Parts.Any(p => Vector2Int.Distance(p.Tile,tile)<Cfg.bodyParts.minSpacingTiles)) continue;
-                AddPartAt(tile);
-                break;
-            }
-        }
-        void AddPartAt(Vector2Int tile)
-        {
-            int type = Random.Range(0,Cfg.bodyParts.parts.Length); var def = Cfg.bodyParts.parts[type];
-            var p = new BodyPart { Def=def, TypeIndex=type, Tile=tile };
-            p.Sr = MakeSprite("part", Sprites.Part(def.id), HotelMap.Center(tile), OrderFor(tile.y), matchRoot);
-            Parts.Add(p);
         }
         AudioClip roar;
         void Roar()

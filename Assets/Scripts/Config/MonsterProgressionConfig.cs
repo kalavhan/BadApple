@@ -10,7 +10,7 @@ namespace BadAppleHotel.Config
     /// <summary>Where the monster's Fear comes from.</summary>
     [Serializable] public class FearConfig
     {
-        public float perResidentDamage, perDoorDamage, perKill, perPart, idlePerSecond, idleAfterSeconds, perNight;
+        public float perResidentDamage, perDoorDamage, perKill, idlePerSecond, idleAfterSeconds, perNight;
     }
     /// <summary>One of the five stat tracks a level point can go into.</summary>
     [Serializable] public class StatTrackDef
@@ -35,7 +35,7 @@ namespace BadAppleHotel.Config
         public float[] rankDamage, rankCooldown;
         public string[] utilityAbilities;
         public float hungerSeconds, frenzyMultiplier, incomeThreshold, incomeExcessMultiplier;
-        public float partSpawnSeconds, partSpawnReductionPerNight, partSpawnMinSeconds, lairHealPerSecond;
+        public float lairHealPerSecond;
         public float maxStunSeconds = 0.3f, stunRecoverySeconds = 1.2f;
         public float commitAfterSeconds, riskPerNight, riskPerMinuteWithoutKill, retreatHealth;
     }

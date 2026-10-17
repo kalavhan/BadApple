@@ -99,7 +99,7 @@ namespace BadAppleHotel.Tests
                         // Simulation supplies a complete seeded map and match without starting the
                         // editor frame loop. Invoke the production renderer explicitly, including
                         // real imported meshes, atlas, material and animated-state texture.
-                        game.StartSimulation(config, seed, false);
+                        game.LegacyHotel = true; game.StartSimulation(config, seed, false);
                         build.Invoke(game, null);
                         foreach (string id in PieceIds)
                             Assert.IsTrue(game.WallPieceCounts.TryGetValue(id, out int count) && count > 0,

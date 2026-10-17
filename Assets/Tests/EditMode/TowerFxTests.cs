@@ -116,7 +116,7 @@ namespace BadAppleHotel.Tests
             var game = new GameObject("Simulation without effects").AddComponent<GameManager>();
             try
             {
-                game.StartSimulation(ConfigLoader.Load(), 7, false);
+                game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(), 7, false);
                 for (int i = 0; i < 600 && game.InMatch; i++) game.StepMatch(.1f);
                 typeof(GameManager).GetMethod("UpdateTowerFx", Private, null, new[] { typeof(float), typeof(float) }, null).Invoke(game, new object[] { 1f, .1f });
                 Assert.IsNull(game.Effects);
@@ -133,9 +133,9 @@ namespace BadAppleHotel.Tests
             UnityEngine.TestTools.LogAssert.ignoreFailingMessages = true;
             try
             {
-                game.StartSimulation(ConfigLoader.Load(), 241, false);
+                game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(), 241, false);
                 typeof(GameManager).GetProperty(nameof(GameManager.Simulation)).SetValue(game, false);
-                game.StartMatch(Role.Resident, "stitchwork_chef");
+                game.LegacyHotel = true; game.StartMatch(Role.Resident, "stitchwork_chef");
                 game.SetSpeed(0);
                 var def = game.Map.Rooms.OrderByDescending(r => r.BuildTiles.Count).First();
                 def.Isolated = false;

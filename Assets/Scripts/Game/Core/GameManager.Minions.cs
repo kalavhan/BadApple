@@ -143,8 +143,8 @@ namespace BadAppleHotel.Game
         {
             if (now < nextScout) return;
             nextScout = now + 0.5f;
-            float radius = Cfg.residents.visionRadiusTiles + RevealRadius(m);
-            float reveal = RevealRadius(m);
+            float radius = Cfg.residents.visionRadiusTiles;
+            const float reveal = 0f;
             var here = HotelMap.ToTile(m.Pos);
             foreach (var room in RoomsByDef.Values)
             {
@@ -192,14 +192,15 @@ namespace BadAppleHotel.Game
             foreach (var rift in Rifts) if (rift.Sr != null) RemoveObject(rift.Sr.gameObject);
             Rifts.Clear();
             pulsesFired = 0;
-            if (m == null || !HordeAwake(m)) return;
+            if (m == null || (!Floors && !HordeAwake(m))) return;
             // Awakened mid-night: the pulses already gone are skipped.
             var pulses = Cfg.minions.pulseSeconds;
             float elapsed = Phase == Phase.Night ? Cfg.match.nightSeconds - PhaseTimer : 0f;
             while (pulsesFired < pulses.Length - 1 && elapsed > pulses[pulsesFired] + 1f) pulsesFired++;
-            foreach (var room in RoomsByDef.Values.Where(r => r.Owner != null && r.Owner.Alive && r != m.Lair))
+            foreach (var room in RoomsByDef.Values.Where(r => r.Owner != null && r.Owner.Alive && r != m.Lair && r.Owner != m.Guest))
             {
-                var rift = new Rift { Room = room, Pos = RiftSpot(room) };
+                // Hallway floors: the waves step out of the lift.
+                var rift = new Rift { Room = room, Pos = Floors ? HotelMap.Center(room.Def.LiftLanding) : RiftSpot(room) };
                 if (!Simulation && matchRoot != null)
                 {
                     rift.Sr = MakeSprite("Rift", Sprites.Ring, rift.Pos, OrderFor(rift.Pos.y) - 30, matchRoot);
@@ -265,13 +266,14 @@ namespace BadAppleHotel.Game
         {
             var m = Monster;
             if (m == null) return;
-            if (Phase == Phase.Night && HordeAwake(m))
+            if (Phase == Phase.Night && (Floors || HordeAwake(m)))
             {
                 var pulses = Cfg.minions.pulseSeconds;
                 float elapsed = Cfg.match.nightSeconds - PhaseTimer;
                 while (pulsesFired < pulses.Length && elapsed >= pulses[pulsesFired])
                 {
-                    ReleasePulse(m, pulsesFired, pulses.Length);
+                    if (Floors) ReleaseFloorPulse(m, pulsesFired, pulses.Length);
+                    else ReleasePulse(m, pulsesFired, pulses.Length);
                     pulsesFired++;
                 }
                 // Mildred's mourning moss: evolved escorts heal her while she is near.
@@ -354,7 +356,7 @@ namespace BadAppleHotel.Game
             if (n.Dead) return;
             if (n.Rift != null && n.Rift.Shrine && Vector2.Distance(n.Pos, n.Rift.Pos) <= ShrineRadius())
                 n.Hp = Mathf.Min(n.MaxHp, n.Hp + n.MaxHp * ShrineRegen() * dt);
-            if (n.IsEscort) { StepEscort(n, m, dt, now); return; }
+            if (n.IsEscort && !Floors) { StepEscort(n, m, dt, now); return; }
 
             var room = n.Rift != null ? n.Rift.Room : null;
             var owner = room?.Owner;
@@ -406,7 +408,7 @@ namespace BadAppleHotel.Game
             if (now < n.NextAttackAt) return true;
             n.NextAttackAt = now + n.Creature.interval;
             if (n.Evolved && n.Creature.evolve == "tongue") r.SlowUntil = Mathf.Max(r.SlowUntil, now + 1f);
-            DamageResident(r, n.Damage * n.Creature.residentMultiplier, false);
+            DamageResident(r, n.Damage * n.Creature.residentMultiplier * FloorBuff(n, 0), false);
             return true;
         }
 
@@ -414,18 +416,17 @@ namespace BadAppleHotel.Game
         {
             if (now < n.NextAttackAt) return;
             n.NextAttackAt = now + n.Creature.interval;
-            float hit = n.Damage * n.Creature.doorMultiplier;
+            float hit = n.Damage * n.Creature.doorMultiplier * FloorBuff(n, 0);
             if (n.Evolved && n.Creature.evolve == "rotDoor") { hit *= 1.4f; room.RotUntil = Mathf.Max(room.RotUntil, now + 4f); }
             bool wasShut = room.DoorBlocks;
             DamageDoor(room, hit, false);
             if (!wasShut || !room.DoorBroken || !n.Evolved) return;
-            if (n.Creature.evolve == "dropPart" && Parts.Count < Cfg.match.bodyPartsPerNight) AddPartAt(room.Def.DoorOutside);
             if (n.Creature.evolve == "shatter" && room.Owner != null && room.Owner.Alive) room.Owner.StunUntil = now + 1.5f;
         }
 
         void Walk(Minion n, Vector2Int goal, bool stunned, float dt, float now)
         {
-            float speed = stunned ? 0f : n.Creature.speed * (now < n.SlowUntil ? 1f - n.SlowPct : 1f);
+            float speed = stunned ? 0f : n.Creature.speed * (now < n.SlowUntil ? 1f - n.SlowPct : 1f) * FloorBuff(n, 1);
             var move = n.Navigator.Steer(ref n.Pos, goal, MonsterWalkable, Cfg.minions.radius, dt, now, Walls);
             if (move.sqrMagnitude > 0.0001f) n.Facing = move.normalized;
             // Spread out a little so a batch does not stack into one sprite.
@@ -487,7 +488,7 @@ namespace BadAppleHotel.Game
         public void DamageMinion(Minion n, float amount, Resident source)
         {
             if (n.Dead || amount <= 0f) return;
-            n.Hp -= amount;
+            n.Hp -= amount / FloorBuff(n, 2);
             if (n.Hp <= 0f) MinionDies(n);
         }
 

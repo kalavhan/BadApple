@@ -23,7 +23,7 @@ Shader "BadApple/HotelFloor"
             #include "HotelSpectral.cginc"
             sampler2D _WoodA, _WoodB, _Carpet, _Binding, _FloorCells, _HotelVision;
             float4 _HotelSize;
-            float _HotelFog, _WoodTiles, _CarpetTiles;
+            float _HotelFog, _HotelHideUnseen, _WoodTiles, _CarpetTiles;
             struct appdata { float4 vertex:POSITION; fixed4 color:COLOR; };
             // color: r finish, g plank direction, b zone seed, a room-owned (may carry energy).
             struct v2f { float4 pos:SV_POSITION; float2 world:TEXCOORD0; fixed4 zone:COLOR; };
@@ -81,6 +81,7 @@ Shader "BadApple/HotelFloor"
                 }
 
                 float sight=tex2D(_HotelVision,(cell+.5)/_HotelSize.xy).r;
+                clip(.5-_HotelHideUnseen*step(sight,.5)); // hallway floors: other storeys are not drawn at all
                 float seen=lerp(1,step(.9,sight),_HotelFog);
                 float ambient=lerp(1,.30,saturate(_HotelLightingEnabled));
                 fixed3 lamp=HotelLampLight(p,float2(0,0),seen);

@@ -85,8 +85,8 @@
           "doorMultiplier": 3.5,
           "residentMultiplier": 0.5,
           "evolveName": "Butcher's Ram",
-          "evolve": "dropPart",
-          "evolveText": "Leaves a body part when it breaks a door",
+          "evolve": "shatter",
+          "evolveText": "Breaking a door stuns everyone inside for 1.5 s",
           "interceptChance": 0.0,
           "evolveCost": 100
         },

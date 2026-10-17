@@ -21,7 +21,7 @@ namespace BadAppleHotel.Tests
             GameInput.ClearAll();
             game = new GameObject("Resident controls test").AddComponent<GameManager>();
             var config = ConfigLoader.Load();
-            game.StartSimulation(config, 241, false);
+            game.LegacyHotel = true; game.StartSimulation(config, 241, false);
             player = game.Human; player.IsHuman = true; player.Ai = null;
             var room = game.Map.Rooms[0]; room.Isolated = false;
             Assert.IsTrue(game.Claim(player, room, true));

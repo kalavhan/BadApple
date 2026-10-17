@@ -33,8 +33,7 @@ namespace BadAppleHotel.Game
             var view = m.Model;
             view.SetSize(1f + GrowthStage(m) * 0.06f);
             if (m.ActionPending != null) { view.PlayAction(m.ActionPending); m.ActionPending = null; }
-            if (m.EatingPart != null) view.PlayAction("Eat");
-            else if (m.Biting == null && m.AttackingRoom == null) view.StopAction();
+            if (m.Biting == null && m.AttackingRoom == null) view.StopAction();
             float speed = moving ? MonsterSpeed(m, Now) : 0f;
             view.Drive(m.Pos, m.Facing, speed, false, m.HitPending);
             m.HitPending = false;

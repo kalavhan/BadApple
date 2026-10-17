@@ -4,21 +4,20 @@ Working title. A local prototype of a 7-player 2.5D game: **1 Monster vs 6 Resid
 
 Seven players spend six nights in a hotel hosting a reunion of occultists. One is secretly a monster a guest conjured; the other six fortify their rooms and survive.
 
-## Match in one minute
+## Match in one minute (hallway floors, October 17)
 
-- Up to 60 s to pick a room; once all seven guests have rooms, lights out follows in 3 s. Standard has 6 nights of 90 s each. Residents win by surviving all six nights; the Monster wins by killing everyone first.
-- **Dream Power** comes from the bed (6 upgrade levels). **Faith** (shown as the smiling Bad Apple) comes from upgradeable faith towers.
-- Door upgrades are blocked if the new door level would be more than **4 levels above your lowest weapon**; the lowest weapon blinks so you know what to upgrade.
-- Every match scatters 10 irregular rooms along crooked corridors: one with 30 build spaces, three with 26, three with 23, and three with 20. Two bed squares and a permanently clear access path are additional to those counts. Lonely rooms get a free random building. Seven guests claim rooms, leaving three empty.
-- Residents walk (joystick) to a free room. Sleep walks to the bed and shuts the door once the doorway clears. Awake, you earn nothing but your weapons hit x1.1.
-- Towers: gun, missile, electric, dragon statue, slow totem (short / mid / long range, auto-fire when the Monster is in range), faith tower, and the crystal ball (see the whole hotel). Sell any building for 50% back.
-- Seven-tile sight while walking and sleeping, including setup. Walls and shut doors block sight; explored floor stays dimly remembered, and a crystal ball reveals the hotel. Nearby walls fade when they obstruct your view in a hallway.
-- The Monster hunts body parts (arm, leg, torso, eye) or players, upgrades resistances to bullet/electric/fire/slow, and chooses up to 5 abilities as match levels increase. Evolutions unlock at levels 5/10/15/20; ascensions continue every 5 levels afterward.
-- Monster kills a Resident: takes 90% of their resources and earns match XP. Residents kill the Monster: the killer gets 120% of its resources; the Monster respawns.
-- Account XP: Monster per Resident killed, Resident per night survived. Separate Monster and Resident levels.
+- **Front desk.** Seven guests come up to the desk one at a time, in a random order. The register shows every floor's plan (hallway length and tower pads); each guest takes a room and the lift sends them straight up to it. There are nine floors, so the last guest still has a choice.
+- **One floor per guest.** Each floor is a carpeted hallway that winds from the lift to the guest's room, like a tower-defense lane. Towers go on the glowing spectral pads beside the carpet, never on it and never in the room. Every floor rolls its own layout (lanes, turns, orientation).
+- **Build break**, then nights. Each night a random living guest (never the same one twice in a row) becomes a random monster. Their own floor gets a quiet night, and their bed keeps earning Dream Power.
+- **Waves** step out of the lift on every other floor and walk the carpet to the door. The monster rides the lift (first person: floor dial above the gate, brass floor buttons on the right) to the floor it wants to hunt; while it is there, that floor's minions get the monster's buff (damage, speed or health, rolled per monster kind each match).
+- **Fear** is one pool shared by every night's monster. It buys bigger waves and new creature types per floor, and those stay bought for the rest of the match. Fear left unspent carries over to the next monster.
+- No body parts and no monster stat buying. The match runs until one guest is left; that guest wins.
+- Tuning: `match.json` (`checkInSeconds`, `buildSeconds`, `duskSeconds`, `nightSeconds`), `map.json` → `floors`, and `waves.json`.
+
+The older single connected hotel is still in the code (`GameManager.LegacyHotel`) so the wall, door and room tests and the capture tools keep working.
 
 ## Balance lives in JSON
-Balance data lives in `Assets/StreamingAssets/Config/` (`match`, `economy`, `beds`, `doors`, `towers`, `monsters`, `bodyparts`, `abilities`, `map`, `residents`, `monster_progression`). The bot simulation reports and phone playtests guide tuning. `ConfigLoader` loads and validates them at startup.
+Balance data lives in `Assets/StreamingAssets/Config/` (`match`, `economy`, `beds`, `doors`, `towers`, `monsters`, `abilities`, `map`, `residents`, `monster_progression`, `minions`, `waves`). The bot simulation reports and phone playtests guide tuning. `ConfigLoader` loads and validates them at startup.
 
 ## Play the local demo (milestone 1)
 
@@ -28,7 +27,7 @@ Balance data lives in `Assets/StreamingAssets/Config/` (`match`, `economy`, `bed
 
 **Resident:** use the fixed bottom-left joystick or WASD to walk into a free room. Press **Sleep** (E / Space) anywhere inside your room to walk to bed and close the door safely. The same button wakes you. A separate small button opens or closes the door when you are near it. Sleeping hides the joystick; drag the world to pan, and use **Recenter** / R to return. Dragging also works while awake or spectating. Tap the floor to build, a tower to upgrade or sell, or the bed/door to upgrade. Hotel view keeps your current sight limits; a crystal ball reveals the whole hotel.
 
-**Monster:** during setup, you look and move like an ordinary guest. Claim a room and sleep; harmless decoy furniture appears automatically. At lights out you transform in that room, which becomes your respawn lair. Use WASD / arrows or the joystick to hunt. Stand beside a shut door to smash it, or near a resident to bite. Stand on body parts to eat them. Choose skills when slots open, then use their touch buttons or keys 1–5. Evolution choices add a passive and an ability; the left panel buys resistances.
+**Monster:** during setup, you look and move like an ordinary guest. Claim a room and sleep; harmless decoy furniture appears automatically. At lights out you transform in that room, which becomes your respawn lair. Use WASD / arrows or the joystick to hunt. Stand beside a shut door to smash it, or near a resident to bite. Choose skills when slots open, then use their touch buttons or keys 1–5. Evolution choices add a passive and an ability; the left panel buys resistances.
 
 Use the 1x / 2x / 4x buttons to fast-forward. Results award Monster or Resident XP (saved locally).
 

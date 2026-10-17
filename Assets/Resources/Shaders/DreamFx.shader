@@ -18,7 +18,7 @@ Shader "BadApple/DreamFx"
             #include "HotelSpectral.cginc"
             sampler2D _HotelVision;
             float4 _HotelSize;
-            float _HotelFog, _FxTime;
+            float _HotelFog, _HotelHideUnseen, _FxTime;
             struct appdata { float4 vertex:POSITION; fixed4 color:COLOR; float2 uv:TEXCOORD0; float4 data:TEXCOORD1; float2 ground:TEXCOORD2; };
             struct v2f { float4 pos:SV_POSITION; fixed4 color:COLOR; float2 uv:TEXCOORD0; float4 data:TEXCOORD1; float seen:TEXCOORD2; };
 
@@ -28,6 +28,8 @@ Shader "BadApple/DreamFx"
                 o.pos=UnityObjectToClipPos(v.vertex); o.uv=v.uv; o.data=v.data; o.color=v.color;
                 float sight=tex2Dlod(_HotelVision,float4((floor(v.ground)+.5)/max(_HotelSize.xy,float2(1,1)),0,0)).r;
                 o.seen=lerp(1,step(.9,sight),_HotelFog);
+                // Hallway floors: effects on other storeys are pushed out of view entirely.
+                if(_HotelHideUnseen>.5&&sight<.5)o.pos=float4(2,2,2,1);
                 return o;
             }
 

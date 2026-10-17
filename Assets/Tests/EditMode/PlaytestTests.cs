@@ -98,7 +98,7 @@ namespace BadAppleHotel.Tests
             var gm=new GameObject().AddComponent<GameManager>();
             try
             {
-                gm.StartSimulation(ConfigLoader.Load(),77,false);
+                gm.LegacyHotel = true; gm.StartSimulation(ConfigLoader.Load(),77,false);
                 var guest=gm.Residents.First(r=>!r.IsMonster);guest.IsHuman=true;
                 var def=gm.Map.Rooms[0];Assert.IsTrue(gm.Claim(guest,def,false));
                 guest.Pos=HotelMap.Center(def.DoorInside)+(Vector2)(def.DoorTile-def.DoorInside)*0.45f;
@@ -116,7 +116,7 @@ namespace BadAppleHotel.Tests
             var gm=new GameObject().AddComponent<GameManager>();
             try
             {
-                gm.StartSimulation(ConfigLoader.Load(),88,false);
+                gm.LegacyHotel = true; gm.StartSimulation(ConfigLoader.Load(),88,false);
                 while(gm.Phase==Phase.Setup)gm.StepMatch(1f/30);
                 var victim=gm.Residents.First();victim.Room.DoorOpen=false;
                 gm.Monster.Pos=victim.Pos;gm.Monster.PhasedRoom=victim.Room;gm.Monster.PhaseUntil=gm.Now+4;
@@ -145,7 +145,7 @@ namespace BadAppleHotel.Tests
                     var gm=new GameObject().AddComponent<GameManager>();
                     try
                     {
-                        gm.StartSimulation(ConfigLoader.Load(),seed,false);
+                        gm.LegacyHotel = true; gm.StartSimulation(ConfigLoader.Load(),seed,false);
                         Assert.AreEqual(7,gm.Residents.Count);Assert.AreEqual(7,gm.Residents.Select(r=>r.Char.id).Distinct().Count());
                         Assert.IsNull(gm.Monster);
                         Resident hidden=gm.HiddenMonster; Vector2 last=hidden.Pos;

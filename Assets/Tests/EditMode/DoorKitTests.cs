@@ -558,7 +558,7 @@ namespace BadAppleHotel.Tests
         void BuildGame()
         {
             game = new GameObject("Door gameplay fixture").AddComponent<GameManager>();
-            game.StartSimulation(ConfigLoader.Load(), 241, false);
+            game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(), 241, false);
         }
         void UseDoorRendering() => typeof(GameManager).GetProperty(nameof(GameManager.Simulation)).SetValue(game, false);
         Dictionary<RoomDef, DoorModel> Models() => (Dictionary<RoomDef, DoorModel>)typeof(GameManager).GetField("doorModels", Private).GetValue(game);

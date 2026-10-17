@@ -29,7 +29,7 @@ namespace BadAppleHotel.Tests
             Assert.IsNotNull(gm);
             Assert.IsNotNull(gm.Cfg, gm.ConfigError);
             Assert.IsNotNull(gm.Map, gm.ConfigError);
-            gm.StartMatch(Role.Resident, "stitchwork_chef");
+            gm.LegacyHotel = true; gm.StartMatch(Role.Resident, "stitchwork_chef");
             gm.SetSpeed(0);
             var me = gm.Human;
             // Use a central room so camera movement has room in both directions.
@@ -84,10 +84,6 @@ namespace BadAppleHotel.Tests
                 Assert.IsTrue(gm.MonsterWalkable(spare.DoorTile.x, spare.DoorTile.y));
                 Assert.IsTrue(spare.Floor.All(t => gm.MonsterWalkable(t.x, t.y)));
             }
-            Assert.AreEqual(gm.Cfg.match.bodyPartsPerNight, gm.Parts.Count);
-            for (int i = 0; i < gm.Parts.Count; i++)
-                for (int j = i + 1; j < gm.Parts.Count; j++)
-                    Assert.GreaterOrEqual(Vector2Int.Distance(gm.Parts[i].Tile, gm.Parts[j].Tile), 12f);
             gm.ReturnToMenu();
             yield return null;
         }

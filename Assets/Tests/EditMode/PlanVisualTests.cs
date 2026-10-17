@@ -21,7 +21,6 @@ namespace BadAppleHotel.Tests
             foreach (int seed in new[] { 19, 2026, 7717 })
             {
                 var map = new HotelMap(cfg.map, 10, seed);
-                var parts = map.BodyPartSpawns(6, 12, seed, map.Rooms.Skip(6));
                 for (int x = 0; x < map.W; x++)
                     for (int y = 0; y < map.H; y++)
                     {
@@ -34,7 +33,6 @@ namespace BadAppleHotel.Tests
                             case Tile.RoomFloor: color = map.RoomContaining(tile).IsCentral ? new Color32(75, 125, 175, 255) : new Color32(76, 113, 109, 255); break;
                             case Tile.Door: color = new Color32(249, 202, 106, 255); break;
                         }
-                        if (parts.Contains(tile)) color = Color.red;
                         if (map.DeadEnds.Contains(tile)) color = Color.cyan;
                         if (tile == map.Lobby) color = Color.green;
                         for (int dx = 0; dx < scale; dx++)

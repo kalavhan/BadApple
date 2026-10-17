@@ -41,7 +41,7 @@ namespace BadAppleHotel.Game
             switch (Map.Get(x, y))
             {
                 case Tile.Corridor:
-                    return true;
+                    return !Floors || Map.IsCarpet(x, y);
                 case Tile.RoomFloor:
                 {
                     if (TowerAt(v) != null) return false;
@@ -67,7 +67,7 @@ namespace BadAppleHotel.Game
             switch (Map.Get(x, y))
             {
                 case Tile.Corridor:
-                    return true;
+                    return !Floors || Map.IsCarpet(x, y);
                 case Tile.RoomFloor:
                     return TowerAt(v) == null;
                 case Tile.Door:
@@ -285,7 +285,8 @@ namespace BadAppleHotel.Game
         {
             foreach (var r in Residents)
             {
-                if (!r.Alive || r.IsMonster || r.Room == null) continue;
+                // On the hallway floors the guest who is the monster tonight keeps earning in bed.
+                if (!r.Alive || (r.IsMonster && !Floors) || r.Room == null) continue;
                 r.DreamPower += (DreamPerSecond(r, now) + DreamGenPerSecond(r.Room)) * dt;
                 if (now < r.FaithBlockedUntil) continue;
                 r.Faith += FaithPerSecond(r.Room) * dt;
@@ -307,16 +308,16 @@ namespace BadAppleHotel.Game
             foreach (var t in room.Slots)
                 if (t != null && t.IsFaith)
                     f += UpgradeRules.FaithRate(Cfg.towers, t.Def, t.Level);
-            return room.Owner.IsMonster ? 0f : Income(f);
+            return room.Owner.IsMonster && !Floors ? 0f : Income(f);
         }
 
         /// <summary>Bed income while asleep; awakeDreamPowerMultiplier (0 by default) while awake.</summary>
         public float DreamPerSecond(Resident r, float now)
         {
-            if (r.Room == null || r.IsMonster) return 0f;
+            if (r.Room == null || (r.IsMonster && !Floors)) return 0f;
             float bed = Cfg.beds.levels[r.Room.BedLevel - 1].dreamPowerPerSecond;
             if (now < r.BedSlowUntil) bed *= r.BedSlowValue;
-            return Income(bed) * (r.Asleep ? 1f : Cfg.residents.awakeDreamPowerMultiplier);
+            return Income(bed) * (r.Asleep || r.IsMonster ? 1f : Cfg.residents.awakeDreamPowerMultiplier);
         }
 
         public float BedRate(Room room) => Cfg.beds.levels[room.BedLevel - 1].dreamPowerPerSecond;
@@ -325,7 +326,7 @@ namespace BadAppleHotel.Game
 
         bool CanAct(Resident r)
         {
-            if (r != null && r.IsMonster) { if (r.IsHuman) Toast("You are hiding. Wait for lights out."); return false; }
+            if (r != null && r.IsMonster) { if (r.IsHuman) Toast(Floors ? "You are the monster tonight. Your floor is quiet until dawn." : "You are hiding. Wait for lights out."); return false; }
             return r != null && r.Alive && r.Room != null && InMatch;
         }
 
@@ -347,7 +348,7 @@ namespace BadAppleHotel.Game
 
         public TowerInstance TowerAt(Vector2Int tile)
         {
-            var def = Map.RoomContaining(tile);
+            var def = Floors ? Map.PadOwner(tile) : Map.RoomContaining(tile);
             if (def == null || !RoomsByDef.TryGetValue(def, out var room)) return null;
             int i = def.BuildIndex(tile);
             return i >= 0 && i < room.Slots.Length ? room.Slots[i] : null;
@@ -449,6 +450,7 @@ namespace BadAppleHotel.Game
         public bool CanBuildAt(Room room, int slot)
         {
             if (slot < 0 || slot >= room.Slots.Length || room.Slots[slot] != null) return false;
+            if (Floors) return true;   // pads never sit on the carpet, so the lane always stays open
             var def = room.Def;
             var blocked = new HashSet<Vector2Int> { def.BuildTiles[slot] };
             for (int i = 0; i < room.Slots.Length; i++) if (room.Slots[i] != null) blocked.Add(def.BuildTiles[i]);

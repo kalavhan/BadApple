@@ -17,7 +17,7 @@ namespace BadAppleHotel.Tests
             var game=new GameObject("Lamp coverage "+seed).AddComponent<GameManager>();
             try
             {
-                game.StartSimulation(ConfigLoader.Load(),seed,false);
+                game.LegacyHotel = true; game.StartSimulation(ConfigLoader.Load(),seed,false);
                 typeof(GameManager).GetMethod("BuildScene3D",Private).Invoke(game,null);
                 AssertCoverage(game);
             }

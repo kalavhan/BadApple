@@ -109,7 +109,7 @@ namespace BadAppleHotel.EditorTools
         static void Initialize()
         {
             game = GameManager.Instance; Random.InitState(40102027);
-            game.StartMatch(Role.Resident, "stitchwork_chef"); game.SetSpeed(0); game.enabled = false;
+            game.LegacyHotel = true; game.StartMatch(Role.Resident, "stitchwork_chef"); game.SetSpeed(0); game.enabled = false;
             foreach (var def in game.Map.Rooms) def.Isolated = false;
             var choices = new List<WallPeek>();
             for (int x = 0; x < game.Map.W; x++) for (int y = 0; y < game.Map.H; y++)

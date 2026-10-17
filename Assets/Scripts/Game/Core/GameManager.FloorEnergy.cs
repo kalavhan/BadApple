@@ -31,7 +31,7 @@ namespace BadAppleHotel.Game
                 { name = "Floor cells", filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
             var cells = new Color32[Map.W * Map.H];
             for (int x = 0; x < Map.W; x++) for (int y = 0; y < Map.H; y++)
-                cells[y * Map.W + x] = Map.Get(x, y) == Tile.Corridor ? new Color32(255, 0, 0, 255) : new Color32(0, 0, 0, 255);
+                cells[y * Map.W + x] = Map.Get(x, y) == Tile.Corridor && Map.IsCarpet(x, y) ? new Color32(255, 0, 0, 255) : new Color32(0, 0, 0, 255);
             floorCellTexture.SetPixels32(cells); floorCellTexture.Apply(false); sceneAssets.Add(floorCellTexture);
             floorMaterial.SetTexture("_FloorCells", floorCellTexture);
 

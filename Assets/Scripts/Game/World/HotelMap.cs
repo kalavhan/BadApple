@@ -7,7 +7,7 @@ namespace BadAppleHotel.Game
     public enum Tile { Void, Corridor, Wall, Door, RoomFloor }
 
     /// <summary>Static layout data for one guest room (generated per match).</summary>
-    public class RoomDef
+    public partial class RoomDef
     {
         public int Index;
         public char Letter;                 // which deformed letter the room grew from

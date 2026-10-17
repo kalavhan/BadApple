@@ -34,7 +34,7 @@ namespace BadAppleHotel.Config
                 yield break;
             }
             var texts = new Dictionary<string, string>();
-            foreach (var name in new[] { "match", "economy", "beds", "doors", "towers", "monsters", "bodyparts", "abilities", "map", "residents", "monster_progression", "minions" })
+            foreach (var name in new[] { "match", "economy", "beds", "doors", "towers", "monsters", "abilities", "map", "residents", "monster_progression", "minions", "waves" })
             {
                 string url = Application.streamingAssetsPath + "/" + Folder + "/" + name + ".json";
                 using (var request = UnityWebRequest.Get(url))
@@ -65,12 +65,12 @@ namespace BadAppleHotel.Config
                 doors = Parse<DoorsConfig>(readText, "doors"),
                 towers = Parse<TowersConfig>(readText, "towers"),
                 monsters = Parse<MonstersConfig>(readText, "monsters"),
-                bodyParts = Parse<BodyPartsConfig>(readText, "bodyparts"),
                 abilities = Parse<AbilitiesConfig>(readText, "abilities"),
                 map = Parse<MapConfig>(readText, "map"),
                 residents = Parse<ResidentsConfig>(readText, "residents"),
                 progression = Parse<MonsterProgressionConfig>(readText, "monster_progression"),
                 minions = Parse<MinionsConfig>(readText, "minions"),
+                waves = Parse<WavesConfig>(readText, "waves"),
             };
             Validate(cfg);
             return cfg;
@@ -134,7 +134,6 @@ namespace BadAppleHotel.Config
             Require(c.map != null && c.map.width >= 32 && c.map.height >= 24, "map.json: map must be at least 32 x 24");
             Require(c.map.corridorWidth >= 1 && c.map.corridorWidth <= 5 && c.map.minDoorDistance > 0 &&
                 c.map.maxNearestDoorDistance >= c.map.minDoorDistance, "map.json: invalid corridor width or door spacing");
-            Require(c.bodyParts.minSpacingTiles > 0, "bodyparts.json: minSpacingTiles must be positive");
             Require(c.map.roomMinBuildTiles >= 20 && c.map.roomInteriorMin.x >= 6 && c.map.roomInteriorMin.y >= 5,
                 "map.json: rooms need at least 20 usable build tiles and at least 6 x 5 interiors");
             Require(c.map.roomBuildTiles != null && c.map.roomBuildTiles.Length == c.match.roomCount &&

@@ -15,7 +15,7 @@ namespace BadAppleHotel.Tests
         {
             GameManager gm=null;
             for(int i=0;i<90;i++) { yield return null;gm=GameManager.Instance;if(gm?.Map!=null)break; }
-            Assert.IsNotNull(gm?.Map);gm.StartMatch(Role.Resident,"stitchwork_chef");gm.SetSpeed(0);
+            Assert.IsNotNull(gm?.Map);gm.LegacyHotel = true; gm.StartMatch(Role.Resident,"stitchwork_chef");gm.SetSpeed(0);
             // Keep lonely-room gifts out of the way so only the normal sight rules apply.
             var own=gm.Map.Rooms[0];own.Isolated=false;
             Assert.IsTrue(gm.Claim(gm.Human,own,false));

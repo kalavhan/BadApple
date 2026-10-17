@@ -400,40 +400,5 @@ namespace BadAppleHotel.Game
             }
             return best;
         }
-
-        /// <summary>Spaced pickups, preferring dead ends and unclaimed rooms. Never weakens the spacing rule.</summary>
-        public List<Vector2Int> BodyPartSpawns(int count, float spacing, int seed, IEnumerable<RoomDef> emptyRooms)
-        {
-            var preferred = new List<Vector2Int>(DeadEnds);
-            foreach (var room in emptyRooms) preferred.AddRange(room.Floor);
-            var candidates = new List<Vector2Int>(preferred);
-            candidates.AddRange(CorridorTiles());
-            candidates.RemoveAll(p => (p - MonsterSpawn).sqrMagnitude < 16 || Rooms.Exists(r => Manhattan(p, r.DoorTile) < 2));
-            var random = new System.Random(seed);
-            float minSq = spacing * spacing;
-            for (int attempt = 0; attempt < 100; attempt++)
-            {
-                var placed = new List<Vector2Int>();
-                for (int i = 0; i < count; i++)
-                {
-                    var options = new List<Vector2Int>();
-                    foreach (var p in candidates)
-                    {
-                        bool allowed = true;
-                        foreach (var other in placed) if ((p - other).sqrMagnitude < minSq) { allowed = false; break; }
-                        if (allowed) options.Add(p);
-                    }
-                    if (options.Count == 0) break;
-                    var ends = options.FindAll(p => DeadEnds.Contains(p));
-                    var rooms = options.FindAll(p => Get(p.x, p.y) == Tile.RoomFloor);
-                    // Alternate hiding places so one large empty room cannot monopolize the pool.
-                    if (i % 2 == 0 && ends.Count > 0) options = ends;
-                    else if (rooms.Count > 0) options = rooms;
-                    placed.Add(options[random.Next(options.Count)]);
-                }
-                if (placed.Count == count) return placed;
-            }
-            throw new InvalidOperationException("Cannot place body parts at the configured minimum spacing.");
-        }
     }
 }

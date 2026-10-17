@@ -12,10 +12,11 @@ namespace BadAppleHotel.Game
         HotelMap peekMap;
         Vector2 peekPosition;
         WallPeek activeWallPeek;
-        public bool FogActive => InMatch && !(HumanRole == Role.Resident && Human != null &&
-            (!Human.Alive || (Human.Room != null && Human.Room.HasClairvoyance())));
+        // Hallway floors: only the storey being watched is lit; the others stay dark, like the rest of the building.
+        public bool FogActive => InMatch && (Floors ? ViewFloor != null : !(HumanRole == Role.Resident && Human != null &&
+            (!Human.Alive || (Human.Room != null && Human.Room.HasClairvoyance()))));
         public Vector2 ViewOrigin => HumanRole == Role.Monster && Monster != null ? Monster.Pos : Human != null ? Human.Pos : HotelMap.Center(Map.Lobby);
-        public float SightRadius => Cfg.residents.visionRadiusTiles + (HumanRole == Role.Monster && Monster != null ? RevealRadius(Monster) : 0);
+        public float SightRadius => Cfg.residents.visionRadiusTiles;
         public WallPeek ActiveWallPeek
         {
             get
@@ -34,7 +35,7 @@ namespace BadAppleHotel.Game
         {
             if(fogTex!=null)RemoveObject(fogTex);
             fogTex=new Texture2D(Map.W,Map.H,TextureFormat.RGBA32,false) { filterMode=FilterMode.Point,wrapMode=TextureWrapMode.Clamp };
-            fogPx=new Color32[Map.W*Map.H]; visible=new bool[fogPx.Length];explored=new bool[fogPx.Length];nextVisionUpdate=0;
+            fogPx=new Color32[Map.W*Map.H]; visible=new bool[fogPx.Length];explored=new bool[fogPx.Length];nextVisionUpdate=0; litFloorSet=false;
             Shader.SetGlobalTexture("_HotelVision",fogTex);
             Shader.SetGlobalVector("_HotelSize",new Vector4(Map.W,Map.H,0,0));
             Shader.SetGlobalFloat("_HotelFog",0);
@@ -51,6 +52,8 @@ namespace BadAppleHotel.Game
         }
         public bool IsVisible(Vector2 world)
         {
+            // Hallway floors: every guest sees their whole storey, and the storeys never see each other.
+            if (Floors) { var f = ViewFloor; return f == null || Map.FloorOfWorld(world) == f; }
             if (InOwnRoom(world)) return true;
             // Clairvoyance still reveals the hotel and guests, but a living resident in
             // a room cannot track the monster down a remote hallway. Spectators can.
@@ -79,11 +82,14 @@ namespace BadAppleHotel.Game
         {
             if(Simulation||fogTex==null||Map==null)return;
             bool fog=FogActive; Shader.SetGlobalFloat("_HotelFog",fog?1:0);
+            // Hallway floors: shaders skip every square outside the watched storey, so only it is drawn.
+            Shader.SetGlobalFloat("_HotelHideUnseen",fog&&Floors?1:0);
             if(Time.unscaledTime>=nextVisionUpdate)
             {
                 nextVisionUpdate=Time.unscaledTime+0.06f;
                 System.Array.Clear(visible,0,visible.Length);
-                if(fog)
+                if(fog&&Floors)FloorVision();
+                else if(fog)
                 {
                     var origin=ViewOrigin; float radius=SightRadius;
                     var peek=ActiveWallPeek;
@@ -121,7 +127,6 @@ namespace BadAppleHotel.Game
             }
             foreach(var resident in Residents)if(resident.Sr!=null)resident.Sr.enabled=resident==Human||!fog||IsVisible(resident.Pos);
             if(Monster?.Sr!=null)Monster.Sr.enabled=!Monster.Dead&&IsVisible(Monster.Pos);
-            foreach(var part in Parts)if(part.Sr!=null)part.Sr.enabled=!fog||IsTileVisible(part.Tile);
             foreach(var room in RoomsByDef.Values)
             {
                 bool known=room.Owner==Human||!fog||IsVisible(room.Def.BedCenter);

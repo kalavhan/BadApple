@@ -26,10 +26,11 @@ namespace BadAppleHotel.Game
             float now = HauntedClock.Now;
             bool results = gm.Phase == Phase.Results;
             bool endless = gm.Endless && gm.Night >= 6;
-            int count = gm.Endless ? 6 : Mathf.Max(1, gm.Cfg.match.nightCount);
+            int count = gm.Floors ? Mathf.Clamp(gm.Night + 1, 6, 9) : gm.Endless ? 6 : Mathf.Max(1, gm.Cfg.match.nightCount);
             int night = HauntedTrayLayout.DialNight(gm.Night, count, gm.Phase == Phase.Night || results, gm.Endless);
             StepLiftNeedle(count, night, now);
-            string phaseWord = results ? "CHECK-OUT" : gm.Phase == Phase.Setup ? "CHECK-IN" : endless ? "ENDLESS" : "NIGHT";
+            string phaseWord = results ? "CHECK-OUT" : gm.Phase == Phase.CheckIn ? "CHECK-IN" : gm.Floors && gm.Phase == Phase.Setup ? (gm.Night == 0 ? "BUILD" : "DAWN")
+                : gm.Phase == Phase.Setup ? "CHECK-IN" : endless ? "ENDLESS" : "NIGHT";
             if (phaseWord != dialPhaseWord) { dialPhaseWord = phaseWord; dialPhaseAt = now; }
 
             if (d.Wings)
@@ -85,7 +86,8 @@ namespace BadAppleHotel.Game
             if (second != plateSecond || gm.Night != plateNight || gm.Phase != platePhase || housed != plateHasRoom || endless != plateEndless)
             {
                 plateSecond = second; plateNight = gm.Night; platePhase = gm.Phase; plateHasRoom = housed; plateEndless = endless;
-                plateText = gm.Phase == Phase.Setup && !housed ? "Find a room · " + Clock(second)
+                plateText = gm.Floors && housed ? "Room " + gm.Human.Room.Def.RoomNumber + " · " + Clock(second)
+                    : gm.Phase == Phase.Setup && !housed ? "Find a room · " + Clock(second)
                     : endless ? "Night " + gm.Night + " · " + Clock(second) : Clock(second);
             }
             var phaseStyle = HauntedSkin.SmallCaps(11);

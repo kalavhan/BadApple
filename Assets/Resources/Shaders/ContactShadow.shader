@@ -14,7 +14,7 @@ Shader "BadApple/ContactShadow"
             #include "UnityCG.cginc"
             sampler2D _HotelVision;
             float4 _HotelSize;
-            float _HotelFog, _Opacity;
+            float _HotelFog, _HotelHideUnseen, _Opacity;
             struct appdata { float4 vertex:POSITION; float2 uv:TEXCOORD0; };
             struct v2f { float4 pos:SV_POSITION; float2 uv:TEXCOORD0; float2 world:TEXCOORD1; };
             v2f vert(appdata v)
@@ -30,6 +30,7 @@ Shader "BadApple/ContactShadow"
                 float radius = length(i.uv * 2 - 1);
                 float alpha = (1 - smoothstep(.15, 1, radius)) * .35 * _Opacity;
                 float sight = tex2D(_HotelVision, (floor(i.world) + .5) / max(_HotelSize.xy, 1)).r;
+                clip(.5-_HotelHideUnseen*step(sight,.5)); // hallway floors: other storeys are not drawn at all
                 alpha *= lerp(1, sight, _HotelFog);
                 return fixed4(.025, .012, .015, alpha);
             }

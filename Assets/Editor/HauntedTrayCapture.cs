@@ -221,7 +221,7 @@ namespace BadAppleHotel.EditorTools
             hud = game.GetComponent<GameHUD>();
             Require(hud != null, "The production GameHUD is missing.");
             Random.InitState(40112026);
-            game.StartMatch(Role.Resident, "stitchwork_chef");
+            game.LegacyHotel = true; game.StartMatch(Role.Resident, "stitchwork_chef");
             game.SetSpeed(0); game.enabled = false;
             var def = game.Map.Rooms.OrderByDescending(candidate => (candidate.Isolated ? 0 : 1000) + candidate.BuildTiles.Count).First();
             def.Isolated = false;

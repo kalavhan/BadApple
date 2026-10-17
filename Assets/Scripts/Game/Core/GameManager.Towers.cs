@@ -201,6 +201,7 @@ namespace BadAppleHotel.Game
         void SpawnProjectile(Vector2 from, Vector2 to, string type, Monster target, Minion minion = null)
         {
             if (Simulation || matchRoot == null) return;
+            if (Floors && !IsVisible(from)) return;   // shots on other storeys are never seen
             if (TowerAttackFx(from, type, target, minion)) return;
             var sr = MakeSprite("shot", Sprites.Projectile(type), from, 6000, matchRoot);
             projectiles.Add(new Projectile { T = sr.transform, From = from, To = to, Born = Now, Duration = 0.15f });

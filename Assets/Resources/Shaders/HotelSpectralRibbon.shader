@@ -15,7 +15,7 @@ Shader "BadApple/HotelSpectralRibbon"
             #include "HotelSpectral.cginc"
             sampler2D _HotelVision;
             float4 _HotelSize;
-            float _HotelFog;
+            float _HotelFog, _HotelHideUnseen;
             struct appdata { float4 vertex:POSITION; float2 uv:TEXCOORD0; float2 cell:TEXCOORD1; };
             struct v2f { float4 pos:SV_POSITION; float2 uv:TEXCOORD0; float2 cell:TEXCOORD1; };
             v2f vert(appdata v)
@@ -31,6 +31,7 @@ Shader "BadApple/HotelSpectralRibbon"
             {
                 float4 s=SpectralCell(i.cell);
                 float sight=tex2D(_HotelVision,(i.cell+.5)/_HotelSize.xy).r;
+                clip(.5-_HotelHideUnseen*step(sight,.5)); // hallway floors: other storeys are not drawn at all
                 float seen=lerp(1,step(.9,sight),_HotelFog);
                 float t=_Time.y, h=saturate(i.uv.y), r=1-h;
                 // Curtain folds drift sideways while bright wisps climb from the floor.
