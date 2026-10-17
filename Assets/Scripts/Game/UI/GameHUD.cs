@@ -1086,7 +1086,7 @@ namespace BadAppleHotel.Game
             else if (gm.Phase == Phase.Night && !me.Asleep && gm.OnBed(me)) hint = "Awake: no Dream Power, but your towers hit x" + gm.Cfg.residents.awakeWeaponDamageMultiplier + ".";
             else if (gm.Phase == Phase.Setup && me.Room.DoorOpen) hint = "Shut your door before the lights go out. Tap a bolted plate to build.";
             if (!string.IsNullOrEmpty(hint))
-                Shadowed(new Rect(vw / 2 - 300, VH - 96, 600, 24), hint, Bone);
+                Shadowed(new Rect(vw / 2 - 420, VH - 96, 840, 24), hint, Bone);
 
 
         }

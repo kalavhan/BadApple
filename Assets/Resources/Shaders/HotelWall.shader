@@ -20,7 +20,7 @@ Shader "BadApple/HotelWall"
             sampler2D _MainTex, _HotelVision;
             sampler2D_float _WallStates; // Heights and timestamps require full precision on mobile GPUs.
             float4 _HotelSize;
-            float _HotelFog, _WallClock;
+            float _HotelFog, _HotelHideUnseen, _WallClock;
             float4 _WallPeekBounds;
             float _WallPeekEnabled;
             UNITY_INSTANCING_BUFFER_START(WallProps)
@@ -67,6 +67,7 @@ Shader "BadApple/HotelWall"
                 if(i.rule.z>1.5 && i.rule.z<2.5) clip(.46-i.rule.x);
                 if(i.rule.z>2.5 && i.rule.z<3.5) clip(i.rule.x-i.rule.w);
                 float sight=tex2D(_HotelVision,(floor(i.world)+.5)/_HotelSize.xy).r;
+                clip(.5-_HotelHideUnseen*step(sight,.5)); // hallway floors: other storeys are not drawn at all
                 float fog=lerp(1,lerp(.06,1,sight),_HotelFog);
                 fixed3 albedo=(i.rule.z>3.5 && i.rule.z<5.5)?i.color.rgb:tex2D(_MainTex,i.uv).rgb*i.color.rgb;
                 float ambient=lerp(1,.30,saturate(_HotelLightingEnabled));

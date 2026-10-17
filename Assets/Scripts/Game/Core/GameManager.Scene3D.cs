@@ -85,7 +85,7 @@ namespace BadAppleHotel.Game
             hotelLighting?.Dispose(); hotelLighting = null; wallLamps.Clear(); wallPanels.Clear(); lampGlowMaterial=null; lampGlowView=null;
             foreach(var asset in sceneAssets) if(asset!=null) RemoveObject(asset);
             sceneAssets.Clear(); wallStates.Clear(); wallBatches.Clear(); WallPieceCounts.Clear(); nextWallUpdate=0; WallFocusRoom=null;
-            doorModels.Clear(); doorMaterials.Clear();
+            doorModels.Clear(); doorMaterials.Clear(); liftGates.Clear();
             doorMats.Clear(); doorMatMesh = null; doorMatMaterial = null;
             wallKit=WallKit.Load(); wallInstances=new WallInstances(); wallCoreViews.Clear();
             wallHeightAt=CurrentWallHeight;

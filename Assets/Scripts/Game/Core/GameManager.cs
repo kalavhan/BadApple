@@ -158,11 +158,12 @@ namespace BadAppleHotel.Game
         bool recenterCamera;
         Vector2 cameraPosition, cameraVelocity;
         float lastCameraInput = -100f;
-        /// <summary>Follow-camera zoom: 1 is the widest view; pinching zooms in up to 40% closer.</summary>
-        public const float MinZoom = 1f, MaxZoom = 1.4f, DefaultZoom = 1.15f;
+        /// <summary>Follow-camera zoom: 1 is the widest view; pinching zooms in up to 82% closer.</summary>
+        public const float MinZoom = 1f, MaxZoom = 1.82f, DefaultZoom = 1.15f;
         public float Zoom { get; private set; } = DefaultZoom;
         public void SetZoom(float zoom) => Zoom = Mathf.Clamp(zoom, MinZoom, MaxZoom);
-        public bool SleepingCamera => InMatch && Human != null && Human.Alive && Human.Asleep;
+        // The monster player's guest sleeps through the night, but the camera follows the monster, not the bed.
+        public bool SleepingCamera => InMatch && HumanRole == Role.Resident && Human != null && Human.Alive && Human.Asleep;
 
         /// <summary>
         /// A floor point an open HUD window is about (a build plate, a tower). While set, the camera eases so the
@@ -492,7 +493,7 @@ namespace BadAppleHotel.Game
                 r.Pos = HotelMap.Center(def.BedTile);
                 r.Asleep = false;
             }
-            AddLog(r.Name + " moved into Room " + (def.Index + 1) + ".");
+            if (!Floors) AddLog(r.Name + " moved into Room " + (def.Index + 1) + ".");
             if (r.IsHuman && Floors)
                 Toast("Room " + def.RoomNumber + " on floor " + def.FloorNumber + " is yours. The lift is at the far end of the hallway.");
             else if (r.IsHuman)

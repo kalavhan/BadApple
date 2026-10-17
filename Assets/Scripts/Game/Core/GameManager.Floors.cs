@@ -130,7 +130,7 @@ namespace BadAppleHotel.Game
             humanFirstMonster = false;
             MonsterGuest = lastMonsterGuest = guest;
             guest.IsMonster = true;
-            if (guest.IsHuman) HumanRole = Role.Monster;
+            if (guest.IsHuman) { HumanRole = Role.Monster; sleepCameraActive = false; }
             // The guest sleeps through the night; the monster is what they dream up.
             guest.SleepRequested = false;
             guest.Asleep = true;
@@ -188,6 +188,7 @@ namespace BadAppleHotel.Game
             ClearHazards();
             if (MonsterGuest != null) MonsterGuest.IsMonster = false;
             MonsterGuest = null;
+            if (HumanRole == Role.Monster) { sleepCameraActive = false; floorCameraSet = false; }
             HumanRole = Role.Resident;
             Phase = Phase.Setup;
             PhaseTimer = Cfg.match.duskSeconds;
@@ -286,11 +287,14 @@ namespace BadAppleHotel.Game
             m.Pos = HotelMap.Center(floor.LiftLanding);
             m.Facing = ((Vector2)(floor.LiftLanding - floor.LiftTile)).normalized;
             var owner = RoomsByDef[floor].Owner;
+            // The player's camera drops any old pan and follows the monster onto its new floor.
+            if (m.IsHuman) { sleepCameraActive = false; recenterCamera = false; floorCameraSet = false; }
             if (owner != null && owner.IsHuman) Announce(m.Def.name + " stepped out of the lift on your floor!", 3f);
             else if (m.IsHuman) Toast("Floor " + floor.FloorNumber + ": " + (owner != null ? owner.Name : "empty") + "'s hallway.");
         }
 
         Sprite liftGateSprite;
+        readonly Dictionary<RoomDef, SpriteRenderer> liftGates = new Dictionary<RoomDef, SpriteRenderer>();
 
         /// <summary>The lift on each floor: a brass door frame in the wall behind the landing, holding a scissor gate.</summary>
         void CreateLiftDoors(RoomDef def)
@@ -318,6 +322,7 @@ namespace BadAppleHotel.Game
             gate.transform.localScale = new Vector3(.9f / bounds.x, 1.24f / bounds.y, 1f);
             gate.color = new Color(1f, .9f, .7f, 1f);
             gate.sortingOrder = 5000 - Mathf.RoundToInt((face.x + face.y) * 10);
+            liftGates[def] = gate;
         }
 
         // ------------------------------------------------------------------ waves and Fear
@@ -482,6 +487,7 @@ namespace BadAppleHotel.Game
                 }
             fogTex.SetPixels32(fogPx);
             fogTex.Apply(false);
+            foreach (var gate in liftGates) if (gate.Value != null) gate.Value.enabled = gate.Key == floor;
         }
 
         /// <summary>Orthographic size that fits a whole floor on screen in the isometric view.</summary>

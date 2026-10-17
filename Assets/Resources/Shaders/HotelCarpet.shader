@@ -21,7 +21,7 @@ Shader "BadApple/HotelCarpet"
             #include "HotelLighting.cginc"
             sampler2D _HotelVision, _FieldA, _FieldB, _Binding;
             float4 _HotelSize, _Size;
-            float _HotelFog;
+            float _HotelFog, _HotelHideUnseen;
             struct a { float4 vertex:POSITION; float2 uv:TEXCOORD0; fixed4 color:COLOR; };
             struct v { float4 pos:SV_POSITION; float2 world:TEXCOORD0; float2 uv:TEXCOORD1; fixed4 color:COLOR; };
             v vert(a i) { v o; o.pos=UnityObjectToClipPos(i.vertex); o.world=mul(unity_ObjectToWorld,i.vertex).xy; o.uv=i.uv; o.color=i.color; return o; }
@@ -36,6 +36,7 @@ Shader "BadApple/HotelCarpet"
                 fixed3 c=border<band?tex2D(_Binding,float2(along/(band*4),border/band)).rgb:field;
                 c*=lerp(.7,1,saturate(border/.015));
                 float sight=tex2D(_HotelVision,(floor(i.world)+.5)/_HotelSize.xy).r;
+                clip(.5-_HotelHideUnseen*step(sight,.5)); // hallway floors: other storeys are not drawn at all
                 float ambient=lerp(1,.25,saturate(_HotelLightingEnabled));
                 fixed3 lamp=HotelLampLight(i.world,float2(0,0),lerp(1,step(.9,sight),_HotelFog));
                 return fixed4(c*(ambient+lamp)*lerp(1,lerp(.06,1,sight),_HotelFog),1);
