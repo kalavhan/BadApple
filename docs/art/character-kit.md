@@ -31,3 +31,15 @@ Residents without a rig keep procedural motion: turning to face the walking dire
 Not yet implemented: per-seat shirt colours (the models keep their magenta), the head-socket psychic beam, and 3D monsters.
 
 `CharacterKitTests` checks that every roster resident has a model with floor contact, centered pivot, triangle budget and UVs.
+
+## Coat and mushroom skin repair — October 17, 2026
+
+Hana, Dexter, Fenwick and Cornelius had coat/body vertices assigned to forearms and fingers; some panels were entirely hand-weighted. Widow Mildred (`moldy_matron`) had upper-arm and clavicle influence across the mushroom cap, including its low rear brim. These were baked skin-weight defects rather than animation-controller faults.
+
+`CharacterSkinningRepair` removes arm spill from measured coat regions, transfers it to the hips/spine, preserves sleeves and hands, and attaches Mildred's cap and upper veil to Head. It uses the inspected exports' Z-up bind-space coordinates, a narrow transition near the shoulders/neck, normalized weights with at most four influences, and an absolute influence cap so repeating the repair is a no-op. Profiles are specific to these exports; remeasure them if character proportions or bind-space scale change.
+
+The five shipped `*_skinned.asset` meshes were repaired in place: Hana 813 vertices, Dexter 651, Fenwick 979, Cornelius 1,288, Mildred 2,735. Positions, topology, UVs, textures, avatars and animation clips are unchanged. Both character and monster importers apply the repair after simplification on future bakes. When original FBXs are unavailable, use **Bad Apple → Art → Repair coat and mushroom skin weights**; this repairs the existing baked assets without rebuilding the kits. The current checkout does not include `Assets/TripoModels`.
+
+Validation: 39 focused EditMode tests passed, including 19 skinning regressions that rotate both arms while checking protected coat/cap vertices and confirming that the arms still move. All 256 sampled controller poses had finite geometry and valid weights. Across Mildred's 2,502 cap vertices (including the low brim), maximum drift relative to Head fell from 0.390954 to 0.000001322 mesh units. Every repair was verified idempotent. Her existing gliding locomotion remains in use; this repair does not add cloth simulation.
+
+Saved evidence: [before/after Fenwick](../qa/character-skinning-2026-10-17/fenwick-before-after.png) (original left, repaired right), [before animation metrics](../qa/character-skinning-2026-10-17/before.json), [after animation metrics](../qa/character-skinning-2026-10-17/after.json), and [repair checks](../qa/character-skinning-2026-10-17/repair-checks.json). `CharacterSkinningValidation` can reproduce the captures from the local snapshots under `Temp/rig-repair`; it uses disposable preview scenes and never saves the user's scene.

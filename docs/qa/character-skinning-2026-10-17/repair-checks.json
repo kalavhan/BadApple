@@ -1,0 +1,32 @@
+[
+  {
+    "id": "hana",
+    "changedVertices": 813,
+    "secondApplicationChanges": 0,
+    "geometryDelta": 0.0
+  },
+  {
+    "id": "dexter",
+    "changedVertices": 651,
+    "secondApplicationChanges": 0,
+    "geometryDelta": 0.0
+  },
+  {
+    "id": "fenwick",
+    "changedVertices": 979,
+    "secondApplicationChanges": 0,
+    "geometryDelta": 0.0
+  },
+  {
+    "id": "cornelius",
+    "changedVertices": 1288,
+    "secondApplicationChanges": 0,
+    "geometryDelta": 0.0
+  },
+  {
+    "id": "moldy_matron",
+    "changedVertices": 2735,
+    "secondApplicationChanges": 0,
+    "geometryDelta": 0.0
+  }
+]

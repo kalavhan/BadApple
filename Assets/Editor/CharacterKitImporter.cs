@@ -124,6 +124,7 @@ namespace BadAppleHotel.EditorTools
                 var skin = instance.GetComponentInChildren<SkinnedMeshRenderer>(true);
                 var reduced = Reduce(skin.sharedMesh); reduced.name = "character_" + model.Id + "_skinned";
                 reduced.bindposes = skin.sharedMesh.bindposes;
+                CharacterSkinningRepair.Apply(model.Id, reduced, skin.bones);
                 var white = new Color[reduced.vertexCount]; for (int i = 0; i < white.Length; i++) white[i] = Color.white; reduced.colors = white;
                 reduced.RecalculateBounds();
                 skin.sharedMesh = SaveAsset(reduced, $"{Output}/{model.Id}_skinned.asset");
